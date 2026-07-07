@@ -1,0 +1,35 @@
+{% assign page_url = page.url | default: '/' %}
+{% assign active_lang = page.lang | default: site.lang | default: 'en' %}
+{% assign app_title = site.title | default: 'ASCII VJ Remix' %}
+{% assign social_image = page.image | default: site.image | default: '/assets/images/ascii-social-card.png' %}
+{% assign social_image_alt = page.image_alt | default: site.seo.default_social_image_alt | default: page.title | default: site.title %}
+{% assign og_locale = site.seo.og_locale_overrides[active_lang] | default: active_lang %}
+{% if page_url contains '/es/docs/' %}
+  {% assign english_alt_url = page_url | remove_first: '/es' %}
+  {% assign spanish_alt_url = page_url %}
+{% elsif page_url contains '/docs/' %}
+  {% assign english_alt_url = page_url %}
+  {% assign spanish_alt_url = '/es' | append: page_url %}
+{% elsif page_url contains '/es/' %}
+  {% assign english_alt_url = page_url | remove_first: '/es' %}
+  {% assign spanish_alt_url = page_url %}
+{% else %}
+  {% assign english_alt_url = page_url %}
+  {% assign spanish_alt_url = '/es' | append: page_url %}
+{% endif %}
+<meta name="application-name" content="{{ app_title | escape }}">
+<meta name="apple-mobile-web-app-title" content="{{ app_title | escape }}">
+<meta name="language" content="{{ active_lang | escape }}">
+<meta property="og:locale:alternate" content="{% if active_lang == 'es' %}{{ site.seo.og_locale_overrides.en | default: 'en_US' }}{% else %}{{ site.seo.og_locale_overrides.es | default: 'es_ES' }}{% endif %}">
+<meta property="og:image" content="{{ social_image | absolute_url }}">
+<meta name="twitter:image" content="{{ social_image | absolute_url }}">
+<meta property="og:image:alt" content="{{ social_image_alt | escape }}">
+<meta name="twitter:image:alt" content="{{ social_image_alt | escape }}">
+{% if social_image | absolute_url contains 'https://' %}
+<meta property="og:image:secure_url" content="{{ social_image | absolute_url }}">
+{% endif %}
+<link rel="alternate" hreflang="en" href="{{ english_alt_url | absolute_url }}">
+<link rel="alternate" hreflang="es" href="{{ spanish_alt_url | absolute_url }}">
+<link rel="alternate" hreflang="x-default" href="{{ english_alt_url | absolute_url }}">
+<script id="site-translations" type="application/json">{{ site.data.i18n | jsonify }}</script>
+<script defer src="{{ '/assets/js/site.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>

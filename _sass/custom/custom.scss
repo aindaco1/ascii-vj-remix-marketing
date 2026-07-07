@@ -1,0 +1,204 @@
+@font-face {
+  font-family: "VCR OSD Mono";
+  src: url("/assets/fonts/VCR_OSD_MONO_1.001.ttf") format("truetype");
+  font-display: swap;
+}
+
+:root {
+  --dw-bg: #040506;
+  --dw-panel: #090a0c;
+  --dw-panel-2: #101216;
+  --dw-panel-3: #171a20;
+  --dw-border: #5d6573;
+  --dw-border-soft: #2c323c;
+  --dw-text: #ffffff;
+  --dw-muted: #c6ccd8;
+  --dw-faint: #7f8795;
+  --dw-cyan: #00e5ff;
+  --dw-pink: #ff2bd6;
+  --dw-yellow: #f6e770;
+  --dw-radius: 0;
+}
+
+body {
+  background: var(--dw-bg);
+  color: var(--dw-muted);
+}
+
+
+body,
+.main-content,
+.main-content p,
+.main-content li,
+.main-content a,
+.main-content table,
+.main-content blockquote {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.main-content a {
+  font-weight: 700;
+}
+
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--dw-cyan);
+  outline-offset: 3px;
+}
+
+.site-header,
+.side-bar,
+.main-header {
+  background: var(--dw-panel);
+  border-color: var(--dw-border-soft);
+}
+
+.site-title,
+.site-title:hover,
+.site-button,
+.site-global-header,
+.site-global-header a {
+  color: var(--dw-text);
+  font-family: "VCR OSD Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.site-global-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 2rem;
+  border-bottom: 1px solid var(--dw-border-soft);
+  background: var(--dw-panel);
+}
+
+.site-global-header .brand {
+  color: var(--dw-text);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.site-global-header .home-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+}
+
+.site-global-header .home-nav a {
+  color: var(--dw-muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.site-global-header .home-nav a:hover,
+.site-global-header .home-nav a:focus {
+  color: var(--dw-cyan);
+}
+
+.main-content h1,
+.main-content h2,
+.main-content h3 {
+  color: var(--dw-text);
+  font-family: "VCR OSD Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+  text-transform: uppercase;
+}
+
+.main-content h3 {
+  color: var(--dw-cyan);
+  font-size: 0.95rem;
+  letter-spacing: 0.06em;
+}
+
+.main-content blockquote,
+.main-content table,
+.main-content .callout {
+  background: var(--dw-panel-2);
+  border-color: var(--dw-border-soft);
+}
+
+.main-content code,
+.main-content pre {
+  color: var(--dw-text);
+  background: var(--dw-panel-2);
+}
+
+.label,
+.label-blue,
+.label-green {
+  border-radius: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: 1rem;
+  transform: translateY(-200%);
+  z-index: 1000;
+  padding: 0.65rem 0.85rem;
+  color: var(--dw-bg);
+  background: var(--dw-cyan);
+  font-weight: 800;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+html[lang="en"] .site-nav .nav-list-item:has(> a[href^="/es/"]),
+html[lang="es"] .site-nav .nav-list-item:has(> a[href^="/docs/"]) {
+  display: none;
+}
+
+.docs-language-switcher {
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 1rem;
+  font-family: "VCR OSD Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+}
+
+.docs-language-switcher select,
+.language-switcher {
+  max-width: 12rem;
+  border: 1px solid var(--dw-border-soft);
+  border-radius: 0;
+  color: var(--dw-text);
+  background: var(--dw-panel-2);
+}
+
+.support-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .8rem;
+  margin: 1.5rem 0;
+}
+
+.support-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: .75rem 1rem;
+  border: 1px solid var(--dw-border);
+  color: var(--dw-text);
+  background: var(--dw-panel-2);
+  font-weight: 800;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.support-button--primary {
+  color: var(--dw-bg);
+  background: var(--dw-cyan);
+  border-color: var(--dw-cyan);
+}

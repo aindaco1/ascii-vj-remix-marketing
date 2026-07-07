@@ -1,0 +1,18 @@
+{% assign current_lang = page.lang | default: site.lang | default: 'en' %}
+{% if current_lang == 'es' %}
+  {% assign home_href = '/es/' %}
+  {% assign docs_href = '/es/docs/' %}
+  {% assign support_href = '/es/support/' %}
+{% else %}
+  {% assign home_href = '/' %}
+  {% assign docs_href = '/docs/' %}
+  {% assign support_href = '/support/' %}
+{% endif %}
+<header class="home-header site-global-header" aria-label="Site header">
+  <a href="{{ home_href | relative_url }}" class="brand">ASCII VJ Remix</a>
+  <nav class="home-nav" aria-label="Primary navigation">
+    <a href="{{ docs_href | relative_url }}" data-i18n="nav.docs">Overview</a>
+    <a href="https://github.com/aindaco1/ascii-vj-remix" data-i18n="nav.repo">Github</a>
+    <a href="{{ support_href | relative_url }}" data-i18n="nav.support">Support</a>
+  </nav>
+</header>

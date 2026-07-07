@@ -1,0 +1,9 @@
+<footer class="home-footer">
+  <span data-i18n="footer.tagline">Simple visuals for DJs. Deep ASCII control for VJs.</span>
+  <select id="footer-language-switcher" class="language-switcher" data-language-switcher aria-label="Language">
+    {% for pair in site.data.i18n %}
+      {% assign locale = pair[1] %}
+      <option value="{{ pair[0] }}">{{ locale.native_name }}</option>
+    {% endfor %}
+  </select>
+</footer>

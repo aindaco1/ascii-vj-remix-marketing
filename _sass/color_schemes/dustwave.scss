@@ -1,0 +1,24 @@
+$body-font-family: "Inter", system-ui, -apple-system, blinkmacsystemfont, "Segoe UI", sans-serif;
+$mono-font-family: "VCR OSD Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+$content-width: 58rem;
+$nav-width: 18rem;
+$body-line-height: 1.65;
+$content-line-height: 1.7;
+$border-radius: 0;
+
+$color-scheme: dustwave;
+$body-background-color: #040506;
+$body-heading-color: #ffffff;
+$body-text-color: #e6eaf2;
+$link-color: #00e5ff;
+$nav-child-link-color: #c6ccd8;
+$sidebar-color: #090a0c;
+$base-button-color: #101216;
+$btn-primary-color: #00e5ff;
+$code-background-color: #101216;
+$feedback-color: #171a20;
+$table-background-color: #090a0c;
+$search-background-color: #101216;
+$search-result-preview-color: #c6ccd8;
+
+@import "./vendor/accessible-pygments/github-dark";

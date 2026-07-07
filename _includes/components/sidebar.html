@@ -1,0 +1,23 @@
+{%- comment -%}
+  Local override: docs sidebar without the product-title home link.
+  The public marketing header already carries the product name; docs navigation should stay focused on docs sections.
+{%- endcomment -%}
+
+<header class="side-bar">
+  <div class="site-header site-header--docs-nav-only">
+    <button id="menu-button" class="site-button btn-reset" aria-label="Menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><use xlink:href="#svg-menu"></use></svg>
+    </button>
+  </div>
+
+  {% include_cached components/site_nav.html %}
+
+  <div class="d-md-block d-none site-footer">
+  {% capture nav_footer_custom %}
+    {%- include nav_footer_custom.html -%}
+  {% endcapture %}
+  {% if nav_footer_custom != "" %}
+    {{ nav_footer_custom }}
+  {% endif %}
+  </div>
+</header>

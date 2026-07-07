@@ -1,0 +1,14 @@
+native_name: English
+site:
+  title: ASCII VJ Remix
+  skip_to_content: Skip to main content
+nav:
+  docs: Overview
+  repo: Github
+  support: Support
+footer:
+  tagline: Simple visuals for DJs. Deep ASCII control for VJs.
+  language_label: Language
+home:
+  primary_cta: Download
+  secondary_cta: Docs
