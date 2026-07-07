@@ -1,4 +1,5 @@
 {% assign current_lang = page.lang | default: site.lang | default: 'en' %}
+{% assign labels = site.data.i18n[current_lang].nav | default: site.data.i18n.en.nav %}
 {% assign current_url = page.url | default: '/' %}
 {% assign is_docs_page = false %}
 {% if current_url == '/docs/' or current_url contains '/docs/' or current_url == '/es/docs/' or current_url contains '/es/docs/' %}
@@ -17,9 +18,9 @@
   <a href="{{ home_href | relative_url }}" class="brand">ASCII VJ Remix</a>
   <nav class="home-nav" aria-label="Primary navigation">
     {% unless is_docs_page %}
-      <a href="{{ docs_href | relative_url }}" data-i18n="nav.docs">Docs</a>
+      <a href="{{ docs_href | relative_url }}" data-i18n="nav.docs">{{ labels.docs | default: 'Docs' }}</a>
     {% endunless %}
-    <a href="https://github.com/aindaco1/ascii-vj-remix" data-i18n="nav.repo">Github</a>
-    <a href="{{ support_href | relative_url }}" data-i18n="nav.support">Support</a>
+    <a href="https://github.com/aindaco1/ascii-vj-remix" data-i18n="nav.repo">{{ labels.repo | default: 'Github' }}</a>
+    <a href="{{ support_href | relative_url }}" data-i18n="nav.support">{{ labels.support | default: 'Support' }}</a>
   </nav>
 </header>

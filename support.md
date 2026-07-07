@@ -2,6 +2,8 @@
 title: "Support"
 description: Support ASCII VJ Remix development, releases, accessibility, performance, localization, and live visual features for DJs and VJs.
 nav_order: 5
+nav_enabled: false
+nav_exclude: true
 ---
 
 # Support ASCII VJ Remix

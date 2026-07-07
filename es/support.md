@@ -3,6 +3,8 @@ title: "Apoyar"
 description: Apoya el desarrollo, los lanzamientos, la accesibilidad, el rendimiento, la localización y las funciones visuales en vivo de ASCII VJ Remix.
 nav_order: 5
 lang: es
+nav_enabled: false
+nav_exclude: true
 ---
 
 # Apoya ASCII VJ Remix
