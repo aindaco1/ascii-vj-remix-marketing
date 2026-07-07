@@ -3,7 +3,7 @@ site:
   title: ASCII VJ Remix
   skip_to_content: Skip to main content
 nav:
-  docs: Overview
+  docs: Docs
   repo: Github
   support: Support
 footer:
