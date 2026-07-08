@@ -20,6 +20,7 @@
 <meta name="application-name" content="{{ app_title | escape }}">
 <meta name="apple-mobile-web-app-title" content="{{ app_title | escape }}">
 <meta name="language" content="{{ active_lang | escape }}">
+<link rel="icon" type="image/svg+xml" href="{{ '/assets/images/ascii-demo.svg' | relative_url }}">
 <meta property="og:locale:alternate" content="{% if active_lang == 'es' %}{{ site.seo.og_locale_overrides.en | default: 'en_US' }}{% else %}{{ site.seo.og_locale_overrides.es | default: 'es_ES' }}{% endif %}">
 <meta property="og:image" content="{{ social_image | absolute_url }}">
 <meta name="twitter:image" content="{{ social_image | absolute_url }}">
