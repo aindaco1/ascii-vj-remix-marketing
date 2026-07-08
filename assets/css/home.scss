@@ -22,11 +22,11 @@
   z-index: 0;
   margin: 0;
   overflow: hidden;
-  color: rgba(60, 255, 102, .22);
+  color: rgba(60, 255, 102, .14);
   background: transparent;
   font: 700 clamp(.62rem, .92vw, .95rem)/1.08 "VCR OSD Mono", "SFMono-Regular", Menlo, Consolas, monospace;
   letter-spacing: .08em;
-  text-shadow: 0 0 14px rgba(60, 255, 102, .32);
+  text-shadow: 0 0 12px rgba(60, 255, 102, .2);
   white-space: pre;
   pointer-events: none;
   user-select: none;
@@ -42,6 +42,7 @@
 
 .home-shell .site-global-header {
   background: transparent;
+  border-bottom: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {
