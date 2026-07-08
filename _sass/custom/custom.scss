@@ -103,6 +103,12 @@ summary:focus-visible,
   color: var(--dw-cyan);
 }
 
+@media (max-width: 49.999rem) {
+  body.docs-nav-open .main > .site-global-header {
+    display: none;
+  }
+}
+
 .main-content h1,
 .main-content h2,
 .main-content h3 {

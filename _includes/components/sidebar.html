@@ -11,13 +11,4 @@
   </div>
 
   {% include_cached components/site_nav.html %}
-
-  <div class="d-md-block d-none site-footer">
-  {% capture nav_footer_custom %}
-    {%- include nav_footer_custom.html -%}
-  {% endcapture %}
-  {% if nav_footer_custom != "" %}
-    {{ nav_footer_custom }}
-  {% endif %}
-  </div>
 </header>

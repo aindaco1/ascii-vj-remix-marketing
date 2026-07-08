@@ -70,6 +70,18 @@
     });
   }
 
+  function syncDocsMenuState() {
+    const nav = document.getElementById('site-nav');
+    if (!nav) return;
+
+    const sync = () => {
+      document.body.classList.toggle('docs-nav-open', nav.classList.contains('nav-open'));
+    };
+
+    sync();
+    new MutationObserver(sync).observe(nav, { attributes: true, attributeFilter: ['class'] });
+  }
+
   function initAsciiBackground() {
     if (!document.body.classList.contains('home-shell')) return;
 
@@ -156,6 +168,7 @@
 
   applyTranslations(activeLang);
   pruneDocsNav(activeLang);
+  syncDocsMenuState();
   initAsciiBackground();
 
   document.querySelectorAll('[data-language-switcher]').forEach((select) => {
