@@ -17,6 +17,9 @@ seo:
 theme: just-the-docs
 permalink: pretty
 
+include:
+  - .well-known
+
 lang: en
 color_scheme: dustwave
 search_enabled: true
