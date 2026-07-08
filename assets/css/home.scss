@@ -17,49 +17,36 @@
 }
 
 .home-shell::before {
-  content:
-    "ASCII VJ REMIX  //  LIVE SOURCE  //  FFT  //  CELL  //  GLYPH  //  OUTPUT  //  00 01 10 11\A"
-    "................................................................................................\A"
-    "CAMERA>FRAME>RAMP>GLYPH>SCAN  01001100  01101001  01110110  01100101  +++  RMS=0.42  FPS=60\A"
-    "///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////\A"
-    "DENSITY  ####....####....####....####....####....####....####....####....####....####....####\A"
-    "BRIGHT   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\A"
-    "ASCII VJ REMIX  //  LOCAL MEDIA  //  AUDIO REACTIVE  //  POP OUT  //  NATIVE OUTPUT  //  LOOP\A"
-    "01010101 00110011 11110000 00001111 10101010 01010101 00110011 11110000 00001111 10101010\A"
-    "SCANLINE  ....::::////++++####++++////::::....  GLYPH MAP  ....::::////++++####++++////::::\A"
-    "OUTPUT>PROJECTOR>ROOM  //  VIDEO>CELL>TEXTURE  //  SOURCE>PRESET>PARAMS  //  KEEP LOCAL\A"
-    "................................................................................................\A"
-    "AUDIO  KICK....SNARE....HATS....BASS....KICK....SNARE....HATS....BASS....KICK....SNARE....\A";
+  content: "";
   position: fixed;
-  inset: -14vh -12vw;
+  inset: -20vh -16vw;
   z-index: 0;
   display: block;
-  color: rgba(60, 255, 102, .11);
-  font: 700 clamp(.58rem, .95vw, .92rem)/1.7 "VCR OSD Mono", "SFMono-Regular", Menlo, Consolas, monospace;
-  letter-spacing: .16em;
-  white-space: pre;
-  text-shadow: 0 0 16px rgba(60, 255, 102, .28);
+  background-image: url("/assets/images/ascii-background.svg");
+  background-repeat: repeat;
+  background-size: clamp(560px, 54vw, 880px) auto;
+  opacity: .32;
   pointer-events: none;
   user-select: none;
-  transform: translate3d(-1.8rem, -1.2rem, 0) rotate(-7deg);
-  animation: ascii-background-drift 24s linear infinite alternate;
-  -webkit-mask-image: radial-gradient(circle at 50% 40%, #000 0, rgba(0,0,0,.9) 42%, transparent 78%);
-  mask-image: radial-gradient(circle at 50% 40%, #000 0, rgba(0,0,0,.9) 42%, transparent 78%);
+  transform: translate3d(-2vw, -2vh, 0) rotate(-6deg);
+  animation: ascii-background-drift 7s linear infinite;
+  -webkit-mask-image: linear-gradient(90deg, rgba(0,0,0,.42), #000 12%, #000 88%, rgba(0,0,0,.42));
+  mask-image: linear-gradient(90deg, rgba(0,0,0,.42), #000 12%, #000 88%, rgba(0,0,0,.42));
 }
 
-.home-shell > * {
+.home-shell > :not(.skip-link) {
   position: relative;
   z-index: 1;
 }
 
 @keyframes ascii-background-drift {
   from {
-    opacity: .5;
-    transform: translate3d(-1.8rem, -1.2rem, 0) rotate(-7deg);
+    background-position: 0 0;
+    transform: translate3d(-3vw, -3vh, 0) rotate(-6deg);
   }
   to {
-    opacity: .9;
-    transform: translate3d(1.2rem, .8rem, 0) rotate(-7deg);
+    background-position: 360px 220px;
+    transform: translate3d(3vw, 2vh, 0) rotate(-6deg);
   }
 }
 
