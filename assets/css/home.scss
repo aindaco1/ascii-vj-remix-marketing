@@ -16,43 +16,37 @@
   overflow-x: hidden;
 }
 
-.home-shell::before {
-  content: "";
+.ascii-art-background {
   position: fixed;
-  inset: -20vh -16vw;
+  inset: -8vh -8vw;
   z-index: 0;
-  display: block;
-  background-image: url("/assets/images/ascii-background.svg");
-  background-repeat: repeat;
-  background-size: clamp(560px, 54vw, 880px) auto;
-  opacity: .32;
+  margin: 0;
+  overflow: hidden;
+  color: rgba(60, 255, 102, .22);
+  background: transparent;
+  font: 700 clamp(.62rem, .92vw, .95rem)/1.08 "VCR OSD Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+  letter-spacing: .08em;
+  text-shadow: 0 0 14px rgba(60, 255, 102, .32);
+  white-space: pre;
   pointer-events: none;
   user-select: none;
-  transform: translate3d(-2vw, -2vh, 0) rotate(-6deg);
-  animation: ascii-background-drift 7s linear infinite;
-  -webkit-mask-image: linear-gradient(90deg, rgba(0,0,0,.42), #000 12%, #000 88%, rgba(0,0,0,.42));
-  mask-image: linear-gradient(90deg, rgba(0,0,0,.42), #000 12%, #000 88%, rgba(0,0,0,.42));
+  transform: rotate(-5deg);
+  -webkit-mask-image: linear-gradient(90deg, rgba(0,0,0,.46), #000 10%, #000 90%, rgba(0,0,0,.46));
+  mask-image: linear-gradient(90deg, rgba(0,0,0,.46), #000 10%, #000 90%, rgba(0,0,0,.46));
 }
 
-.home-shell > :not(.skip-link) {
+.home-shell > :not(.skip-link):not(.ascii-art-background) {
   position: relative;
   z-index: 1;
 }
 
-@keyframes ascii-background-drift {
-  from {
-    background-position: 0 0;
-    transform: translate3d(-3vw, -3vh, 0) rotate(-6deg);
-  }
-  to {
-    background-position: 360px 220px;
-    transform: translate3d(3vw, 2vh, 0) rotate(-6deg);
-  }
+.home-shell .site-global-header {
+  background: transparent;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .home-shell::before {
-    animation: none;
+  .ascii-art-background {
+    opacity: .85;
   }
 }
 
