@@ -164,22 +164,19 @@ html[lang="es"] .site-nav .nav-list-item:has(> a[href^="/docs/"]) {
 }
 
 .docs-language-switcher {
-  display: grid;
-  gap: 0.35rem;
+  display: flex;
+  justify-content: flex-end;
   margin-top: 1rem;
-  font-family: "VCR OSD Mono", "SFMono-Regular", Menlo, Consolas, monospace;
-  text-transform: uppercase;
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
 }
 
-.docs-language-switcher select,
 .language-switcher {
   max-width: 12rem;
   border: 1px solid var(--dw-border-soft);
   border-radius: 0;
   color: var(--dw-text);
   background: var(--dw-panel-2);
+  font: 700 12px/1 "VCR OSD Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+  text-transform: uppercase;
 }
 
 .support-actions {
