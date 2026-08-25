@@ -9,7 +9,7 @@ lang: es
 # Pruebas
 
 Esta guía documenta los controles automatizados actuales, las rutas de verificación manual,
-y expectativas de pruebas futuras para ASCII VJ Remix.
+y brechas de cobertura conocidas para ASCII VJ Remix.
 
 Las pruebas se centran en paquetes fuera de línea, inicio del renderizador, cambio de fuente,
 salida nativa, comportamiento de medios/cámara/audio, permisos Tauri, sidecars FFmpeg,
@@ -42,7 +42,7 @@ npm run check:desktop            # Main desktop validation gate
 npm run check:release            # Release-oriented gate; expects staged FFmpeg sidecar
 npm run bundle:debug             # Build and validate local debug bundle
 npm run bundle:release           # Release gate, release build, bundle check
-npm run check:windows-authenticode # Future signed Windows release signature check
+npm run check:windows-authenticode # Inactive signed-Windows path signature check
 npm run smoke:native-output      # Native output performance helper
 npm run smoke:ui-perf            # UI performance helper
 npm run smoke:release-install    # Release artifact install/updater smoke
@@ -126,8 +126,8 @@ npm run smoke:ui-perf
 ```
 
 El análisis de registros nativos informa tanto de las tasas de carga de origen como de tasas de omisión de carga. Un saludable
-24 FPS la fuente en una pantalla de 60 Hz debe cargar una velocidad cercana a la fuente y omitir el
-duplicar ticks de visualización mientras la presentación permanece cerca de la frecuencia de actualización.
+La fuente 24 FPS en una pantalla de 60 Hz carga cerca de la velocidad de la fuente y salta
+la pantalla duplicada marca mientras la presentación permanece cerca de la frecuencia de actualización.
 Para cambios en el modo de glifo, incluya al menos un ajuste preestablecido ASCII tradicional en el manual
 Pop Out comprueba y confirma que los cambios en el conjunto de caracteres/familia de fuentes no ocultan el
 Controles de glifo/celda.
@@ -230,8 +230,8 @@ visible.
 
 ## Comprobaciones de hardware y plataforma
 
-La aplicación depende del hardware real y de las pilas de medios del sistema operativo. Las pruebas automatizadas no pueden
-cubrir todo todavía.
+La aplicación depende del hardware real y de las pilas de medios del sistema operativo. Las pruebas automatizadas no
+cubren todas las combinaciones de hardware y plataforma.
 
 Matrices manuales importantes:
 
@@ -271,9 +271,9 @@ scripts/podman_codec_tests.sh
 La imagen de Podman tiene como valor predeterminado el Nodo 24. Use `NODE_MAJOR=26` solo cuando esté explícitamente
 probando una línea base de Nodo más nueva.
 
-## CI y expectativas de lanzamiento
+## CI y comportamiento de liberación
 
-La versión CI debe:
+Lanzamiento de CI:
 
 - construir artefactos macOS, Windows y Linux.
 - verificar el comportamiento del paquete sin conexión.
@@ -285,28 +285,24 @@ La versión CI debe:
 - cargue instaladores, paquetes de actualización, firmas y `latest.json`.
 - validar macOS Firma de ID de desarrollador, notarización, grapado y Gatekeeper
 aceptación antes de publicar artefactos macOS.
-- publicar artefactos Windows 0.9.5 como vistas previas sin firmar; futuro firmado Windows
-Las versiones deben validar el firmante de Authenticode y el estado de la marca de tiempo antes de
-publicar artefactos Windows.
+- publica artefactos Windows 0.9.6 como vistas previas sin firmar; el inactivo firmado
+La ruta Windows incluye el firmante de Authenticode y la validación de marca de tiempo.
 - Ejecute instalar controles de humo después de la publicación.
 - ejecute el actualizador macOS de identidad/humo de reemplazo en `macos-26`.
 
-El endurecimiento de versiones futuras debería agregar:
-
-- real Windows y Linux instalan pruebas de humo en máquinas físicas o VM.
-- una verificación de retención de subvenciones de TCC manual o con máquina limpia a través de una actualización pública.
-- Windows Verificaciones de reputación de SmartScreen en máquinas limpias.
-
 ## Brechas conocidas
 
-- Aún no existe un paquete integral de accesibilidad automatizada.
-- Aún no hay un conjunto de pruebas completo de i18n/l10n.
-- Aún no hay un paquete de salida visual dorado para ajustes preestablecidos.
-- Aún no hay una prueba comparativa de latencia de cámara automatizada.
+- No existe un paquete integral de accesibilidad automatizada.
+- No hay un conjunto de pruebas completo de i18n/l10n.
+- No hay un paquete de salida visual dorado para ajustes preestablecidos.
+- Sin punto de referencia de latencia de cámara automatizado.
 - Se incluyen análisis, mapeo, eventos falsos y ensamblaje SysEx experimentales de MIDI.
 automatizado; Los barridos de control físico y la restauración del banco completo aún requieren la
 Equipo UC-33e/mioXC.
-- La cobertura de medios/cámaras/audio nativos de Linux necesita pruebas automáticas más amplias.
+- La cobertura de audio/cámara/medios nativos de Linux está limitada fuera de CI.
+
+Lanzamiento prospectivo, plataforma, accesibilidad, localización y rendimiento.
+La cobertura se rastrea en [Roadmap](/es/docs/reference/roadmap/).
 
 
 ## Material de origen

@@ -8,7 +8,7 @@ lang: es
 
 # Rendimiento
 
-Esta guía documenta el modelo de desempeño actual, los comportamientos objetivo y
+Esta guía documenta el modelo de desempeño actual, el comportamiento de aceptación y
 prácticas de validación para ASCII VJ Remix.
 
 El trabajo de interpretación tiene que ver con el ritmo del cuadro, GPU
@@ -34,21 +34,22 @@ controles.
 - Vigila térmicas y batería. Esta aplicación puede mantener intencionalmente CPU, GPU, cámara,
 decodificación de medios y análisis de audio activos.
 
-## Objetivos prácticos
+## Comportamiento de aceptación práctica
 
-Estos son objetivos prácticos, no garantías estrictas para todo el hardware.
+Estos son criterios de regresión para el hardware compatible, no garantías de velocidad de fotogramas.
+en cada máquina.
 
 |Área|Objetivo|
 | --- | --- |
 |Imagen de demostración|El renderizador se inicia automáticamente y permanece receptivo mientras los ajustes preestablecidos/WTF/audio cambian los parámetros.|
 |Vídeo de demostración|Reproducción fluida a través de cambios de fuente y transiciones preestablecidas sin reiniciar el video a menos que cambie la fuente.|
-|vista previa principal|No debe colapsar a FPS bajo de un solo dígito cuando Pop Out está abierto en hardware compatible.|
-|Pop Out|La salida nativa debe acercarse a la actualización de la pantalla en la imagen de demostración y el vídeo de demostración en versiones optimizadas.|
+|vista previa principal|No colapsa a FPS bajo de un solo dígito únicamente porque Pop Out está abierto en hardware compatible.|
+|Pop Out|Los enfoques de salida nativa muestran la actualización de la imagen de demostración y el vídeo de demostración en versiones optimizadas.|
 |Cámara Pop Out|Prefiera rutas de captura/presentación nativas del último fotograma para minimizar la latencia visible.|
-|Reactividad de audio|La respuesta visual debe ser inmediata y al mismo tiempo preservar un análisis estable de RMS/banda/tiempo.|
-|Cambio de fuente|Los interruptores de imagen/vídeo integrados deben estar limitados y no deben dejar el renderizador atascado.|
-|Controlar la interfaz de usuario|Los controles deslizantes, los botones preestablecidos, la selección de fuente y el conmutador WTF deben permanecer interactivos bajo la carga de renderizado.|
-|MIDI|Los controles continuos deben parecer inmediatos al cuadro sin crear una actualización IPC/renderizado por mensaje de hardware sin formato.|
+|Reactividad de audio|La respuesta visual sigue siendo inmediata y al mismo tiempo conserva un análisis estable de RMS/banda/tiempo.|
+|Cambio de fuente|Los interruptores de imagen/vídeo integrados están limitados y no dejan el renderizador atascado.|
+|Controlar la interfaz de usuario|Los controles deslizantes, los botones preestablecidos, la selección de fuente y el conmutador WTF permanecen interactivos bajo la carga de renderizado.|
+|MIDI|Los controles continuos están fusionados en marcos y siguen respondiendo sin una actualización IPC/renderizado por mensaje de hardware sin formato.|
 
 ## Modelo de rendimiento del renderizador
 
@@ -113,8 +114,8 @@ continúa durante toda la interpolación.
 
 ### WebGPU
 
-WebGPU es el principal objetivo de calidad visual. Debería seguir siendo la primera opción
-tiempos de ejecución compatibles con Chromium/WebView.
+WebGPU es el principal objetivo de calidad visual y la primera opción en capacidad
+Tiempos de ejecución de Chromium/WebView.
 
 Esté atento a:
 
@@ -125,8 +126,8 @@ Esté atento a:
 
 ### WebGL2
 
-WebGL2 es el respaldo integrado más importante de GPU. Debería realizar un seguimiento visual
-WebGPU lo más fielmente posible.
+WebGL2 es el respaldo integrado más importante de GPU y realiza un seguimiento visual de WebGPU como
+tan de cerca como sea práctico.
 
 Esté atento a:
 
@@ -156,7 +157,7 @@ Normas:
 - Utilice la salida nativa `wgpu` cuando esté disponible.
 - Mantenga los permisos de la ventana de salida al mínimo.
 - Prefiere la transferencia directa de fotogramas o rutas de captura nativas del último fotograma.
-- Mantenga limitados los recursos en modo glifo. Los cambios en el juego de caracteres deberían actualizar el
+- Mantenga limitados los recursos en modo glifo. Los cambios en el juego de caracteres actualizan el
 rampa/parámetros de glifos pequeños, no activan la carga de fuentes ilimitadas ni dinámicas grandes
 asignación de atlas.
 - Evite bloquear la interfaz de usuario principal mientras se presenta la ventana de salida.
@@ -169,7 +170,7 @@ versión, versión fuente y regresiones de ritmo.
 
 ### Imágenes estáticas
 
-La representación de imágenes estáticas debería ser la opción más económica. Jitter, modulación de audio,
+La representación de imágenes estáticas es el camino más barato. Jitter, modulación de audio,
 y las transiciones WTF pueden animar la salida sin recargar la imagen.
 
 Evitar:
@@ -202,7 +203,7 @@ reducciones de latencia.
 
 ### Reactividad de audio
 
-El análisis de audio debe ser estable pero no lento.
+El análisis de audio está optimizado para una respuesta en vivo estable.
 
 Normas:
 
@@ -210,7 +211,7 @@ Normas:
 - Utilice vectores de funciones como RMS, graves, medios, agudos, flujo, pulso de ritmo y
 fase en lugar de muestras crudas ilimitadas.
 - Mantenga los ayudantes de mezcla densa derivados de los mismos buffers del analizador delimitados:
-bandas medias-bajas/medias-altas, la presencia, el brillo y la densidad no deberían sumar
+bandas medias-bajas/medias-altas, la presencia, el brillo y la densidad no suman
 Historia ilimitada o audio sin formato IPC.
 - Modulación de abrazadera para que la alta sensibilidad no pueda generar negro puro o blanco puro
 pantallas.
@@ -348,16 +349,8 @@ Investigue inmediatamente cuando:
 - la salida de la cámara se congela o acumula fotogramas obsoletos.
 - El uso de CPU/GPU aumenta después de cerrar Pop Out.
 
-## Trabajo de desempeño futuro
-
-- Conjunto de pruebas comparativas de compilación optimizada y repetible.
-- Pruebas sintéticas de latencia de cámara con marca de tiempo.
-- Pruebas de tiempo de respuesta de audio-reactividad.
-- Pruebas visuales limitadas o de salida dorada para ajustes preestablecidos representativos.
-- Rutas nativas para compartir texturas en Windows y Linux comparables a macOS
-trabajo de cámara/salida.
-- Paneles de rendimiento para la vista previa principal FPS, salida FPS, caídas de fotogramas y
-propagación de la versión del parámetro.
+Punto de referencia prospectivo, prueba de latencia, uso compartido de texturas y panel de rendimiento
+el trabajo se rastrea en [Roadmap](/es/docs/reference/roadmap/).
 
 
 ## Material de origen

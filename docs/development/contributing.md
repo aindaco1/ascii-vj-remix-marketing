@@ -20,7 +20,7 @@ desktop-only feature is added.
 | Path | Purpose |
 | --- | --- |
 | `index.html`, `style.css`, `app.js` | Main renderer lab UI and control logic. |
-| `renderers/gpu/` | Vendored/adapted GPU renderer, media source abstraction, WebGPU/WebGL2 backends, and renderer assets. |
+| `renderers/gpu/` | GPU renderer, media source abstraction, WebGPU/WebGL2 backends, and renderer assets. |
 | `renderers/desktop/` | Tauri adapter and output-display helpers. |
 | `renderers/shared/midi-mapping.js` | UC-33e profile, mapping validation, scaling, soft takeover, and event coalescing. |
 | `src-tauri/` | Tauri v2 desktop shell, native output window, media registry, audio providers, FFmpeg media engine, capabilities, icons, and packaging config. |
@@ -162,12 +162,12 @@ HOST_PORT=8011 CONTAINER_PORT=8010 ASCILINE_RESTART=1 scripts/podman_run.sh pyth
   fonts, analytics, remote provider SDKs, or runtime codec downloads.
 - Keep user-selected files behind explicit user selection.
 - Do not add broad home-directory or filesystem grants.
-- Keep the normal Source UI focused on static local sources until stream mode is
-  fully productized.
+- Keep the normal Source UI focused on static local sources. Stream mode remains
+  development-only.
 - Preserve the Vite/static smoke harness and renderer portability when adding
   desktop-only Tauri features.
 - Keep stats overlay user-controlled. Randomization, presets, and audio
-  reactivity should not silently turn it off.
+  reactivity must not silently turn it off.
 - Avoid renderer restarts when switching presets, audio settings, or live-safe
   controls.
 - Run appropriate checks before opening a PR.
@@ -182,8 +182,8 @@ Use the project practice docs when changing shared behavior:
   manual hardware validation.
 - [Accessibility](/docs/operations/accessibility/): keyboard, focus, labels, contrast, and
   dense-control best practices.
-- [Internationalization](/docs/operations/internationalization/): future bundled translation catalog and string
-  ownership rules.
+- [Internationalization](/docs/operations/internationalization/): current language boundary, string ownership,
+  and localization-safe UI rules.
 
 ## Frontend and Renderer Work
 
@@ -221,7 +221,7 @@ Keep capabilities narrow:
 - Main window: media selection, output management, audio providers, updater.
 - Output window: minimal listen/close/fullscreen permissions only.
 
-The 0.9.5 MIDI command surface is also main-window only. Native MIDI code lives
+The MIDI command surface is main-window only. Native MIDI code lives
 in `src-tauri/src/midi.rs`; the first supported port is the DIN-connected
 mioXC. Do not grant MIDI or SysEx commands to the output window. See
 [MIDI_UC33E](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MIDI_UC33E.md) before changing the hardware profile.
@@ -285,8 +285,9 @@ tccutil reset AudioCapture com.asciline.remix.dev
 
 ## FFmpeg and Media Engine Work
 
-The project is moving long-term stream/media preparation toward a Rust/FFmpeg
-pipeline instead of bundling Python in production.
+The Rust/FFmpeg pipeline provides local stream/media preparation without
+bundling Python in production. Python/OpenCV remains development and reference
+infrastructure.
 
 Development commands use these environment variables when set:
 
@@ -298,9 +299,9 @@ ASCILINE_FFPROBE=/path/to/ffprobe
 Preview the media pipeline:
 
 ```bash
-npm run media:decode-preview -- media/point-click-test.mp4 96 54 2
-npm run media:pipeline-preview -- media/point-click-test.mp4 96 54 12 5 false
-npm run media:native-session-preview -- media/point-click-test.mp4 96 54 12 5 true 4
+npm run media:decode-preview -- media/demo-video-2.mp4 96 54 2
+npm run media:pipeline-preview -- media/demo-video-2.mp4 96 54 12 5 false
+npm run media:native-session-preview -- media/demo-video-2.mp4 96 54 12 5 true 4
 ```
 
 Run parity checks:
@@ -311,8 +312,8 @@ npm run test:decode-resize
 npm run check:media
 ```
 
-Release builds should use reviewed FFmpeg/ffprobe sidecars. Stage binaries with
-explicit provenance:
+The release workflow uses reviewed FFmpeg/ffprobe sidecars. Stage local binaries
+with explicit provenance:
 
 ```bash
 npm run ffmpeg:stage -- --ffmpeg /path/to/ffmpeg --ffprobe /path/to/ffprobe --license LGPL-2.1-or-later --source "reviewed reproducible build notes"
@@ -379,9 +380,9 @@ The updater secret script passes values to `gh secret set` over stdin, not as
 command-line arguments. Use `-- --repo owner/repo` or `-- --key /path/to/key`
 after the npm script if the defaults are wrong.
 
-For 0.9.5, `release:secrets:check:public` requires updater signing and macOS
-Developer ID notarization readiness. Windows artifacts are published as unsigned
-previews and do not require Windows signing secrets.
+`release:secrets:check:public` requires updater signing and macOS Developer ID
+notarization readiness. The current Windows release path publishes unsigned
+preview artifacts and does not require Windows signing secrets.
 
 For an updater-disabled local development bundle:
 
@@ -438,13 +439,13 @@ npm run release:secrets:set:macos -- \
 When `--keychain-password-file` is omitted, the script generates a random
 temporary keychain password and stores it in `KEYCHAIN_PASSWORD`.
 
-Future signed Windows releases can use Azure Artifact Signing through
+The repository contains an inactive Azure Artifact Signing path in
 `src-tauri/tauri.windows-signed.conf.json`, which invokes
 `src-tauri/windows-artifact-sign.cmd`; that wrapper calls
 `scripts/windows_artifact_sign.ps1`. This signs Windows artifacts before Tauri
-creates updater signatures. The active 0.9.5 Windows release path does not use
-this config and publishes unsigned preview artifacts. Configure the Azure values
-only if Azure becomes the chosen Windows signing backend:
+creates updater signatures. The current Windows release path does not use this
+config and publishes unsigned 0.9.6 preview artifacts. Configure the Azure
+values only after Windows signing is enabled as a release policy:
 
 ```bash
 npm run release:secrets:set:windows -- \
@@ -460,8 +461,8 @@ node scripts/check_github_release_secrets.mjs --require-windows-signing
 The helper stores `AZURE_CLIENT_SECRET` as a GitHub Actions secret and the other
 Azure IDs as GitHub repository variables. The Azure client secret is the only
 required Windows signing secret; keep it out of shell history and chat logs.
-Prefer the future SignPath Foundation/license-cleanup track before enabling paid
-Azure signing for routine public releases.
+Provider selection and Windows signing rollout remain roadmap decisions; the
+inactive tooling does not describe the current distribution posture.
 
 Use these checks before publishing release changes:
 

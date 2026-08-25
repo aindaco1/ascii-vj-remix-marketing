@@ -60,7 +60,7 @@ Las familias visuales integradas incluyen apariencias extremas como Neon Sledgeh
 
 Los ajustes preestablecidos de ASCII tradicionales incluyen Classic Camera ASCII, ANSI Newsprint, Terminal Mono y Dense Typewriter.
 
-La versión 0.9.5 agregó 23 ajustes preestablecidos de personajes inspirados en ascii.today acreditados, incluidos Broadway KB, Computer, Doom, Ghost, Modular, Standard, Univers y Doh.
+El catálogo de ajustes preestablecidos actual incluye 23 ajustes preestablecidos de personajes acreditados inspirados en ascii.today, incluidos Broadway KB, Computer, Doom, Ghost, Modular, Standard, Univers y Doh.
 
 Los ajustes preestablecidos del usuario se pueden guardar, duplicar, actualizar, eliminar, importar y exportar. Los ajustes preestablecidos conservan la fuente de medios activa a menos que el usuario la cambie explícitamente.
 
@@ -100,7 +100,7 @@ Los controles de amortiguación de mezcla densa y ruido de fondo ayudan a que la
 - El primer perfil de hardware utiliza un Evolution/M-Audio UC-33e a través de ambas direcciones DIN de un iConnectivity mioXC.
 - Cuatro páginas dirigidas a canales cubren control visual, de audio, preestablecido y fino/de usuario con toma de control suave, aprendizaje MIDI, ranuras preestablecidas numéricas estables y captura/restauración SysEx limitada.
 - MIDI no puede cambiar fuentes, cámara, Pop Out, pantallas de salida, archivos, actualizaciones o configuraciones de informes de fallas.
-- Pasan las pruebas automatizadas de mapeo, transporte, seguridad y alcance; el barrido de control físico completo y la restauración/verificación SysEx de extremo a extremo siguen incompletos, por lo que la función sigue siendo experimental.
+- Pasan las pruebas automatizadas de mapeo, transporte, seguridad y alcance. La validación física cubre actualmente macOS Apple Silicon con el UC-33e conectado por DIN a través de un mioXC; El USB directo UC-33e no es compatible y la validación física de Windows/Linux está incompleta.
 
 ## Pop Out y pantallas externas
 
@@ -113,7 +113,7 @@ La ventana de salida está centrada en la presentación y tiene una superficie d
 - Construido con Tauri v2.
 - El tiempo de ejecución de producción es solo local de forma predeterminada.
 - GitHub La infraestructura del actualizador de versiones está configurada.
-- El CI de versión pública macOS requiere artefactos firmados y notariados con el ID del desarrollador.
+- Los artefactos públicos 0.9.6 macOS están firmados con el ID del desarrollador, notariados, engrapados y validados por Gatekeeper.
 - La ruta de lanzamiento 0.9.6 macOS valida el diseño de DMG, la identidad del ID del desarrollador, la identidad del archivo del actualizador y el reemplazo del actualizador basado en la aplicación.
 - Los artefactos Windows actuales siguen siendo versiones preliminares sin firmar.
 - El envío de informes de fallos es solo de producción, se revisa/desinfecta y se enruta a través de la capa de escritorio Rust al relé Cloudflare Worker.
@@ -122,7 +122,7 @@ La ventana de salida está centrada en la presentación y tiene una superficie d
 
 - El trabajo de transmisión heredado ASCILINE y las sesiones de transmisión Rust/FFmpeg más nuevas existen, pero están ocultas de la interfaz de usuario de origen normal.
 - La política complementaria FFmpeg y la compatibilidad con códecs se encuentran en el trabajo del colaborador/lanzamiento.
-- Se envía soporte experimental para UC-33e/mioXC MIDI; La puesta en servicio física y la validación más amplia de la plataforma siguen siendo trabajos de seguimiento.
+- La compatibilidad experimental con UC-33e/mioXC MIDI se envía con la validación documentada del hardware macOS Apple Silicon.
 
 
 

@@ -10,6 +10,8 @@ lang: es
 
 Los comandos se leen desde `package.json` cuando están disponibles. Utilice scripts fuente como autoridad; Estos documentos son regenerados por `scripts/sync_ascii_docs.rb`.
 
+Las rutas de dispositivos de medios agrupados se generalizan en esta referencia pública. Utilice `package.json` cuando inspeccione la implementación exacta del script.
+
 |Comando|Guión fuente|
 | --- | --- |
 |`npm run dev`|`vite --host 127.0.0.1 --port 8010`|
@@ -27,7 +29,7 @@ Los comandos se leen desde `package.json` cuando están disponibles. Utilice scr
 |`npm run check:ffmpeg-release`|`node scripts/check_ffmpeg_resources.mjs --require-current-platform`|
 |`npm run check:macos-notarization`|`node scripts/check_macos_notarization.mjs --profile release`|
 |`npm run check:windows-authenticode`|`node scripts/check_windows_authenticode.mjs --profile release`|
-|`npm run check:media`|`npm run test:frame-prep && npm run test:decode-resize && npm run media:pipeline-preview -- media/point-click-test.mp4 96 54 12 5 false && npm run media:pipeline-preview -- media/point-click-test.mp4 96 54 12 5 true && npm run media:native-session-preview -- media/point-click-test.mp4 96 54 12 5 false 4 && npm run media:native-session-preview -- media/point-click-test.mp4 96 54 12 5 true 4`|
+|`npm run check:media`|`npm run test:frame-prep && npm run test:decode-resize && npm run media:pipeline-preview -- media/<bundled-test-fixture>.mp4 96 54 12 5 false && npm run media:pipeline-preview -- media/<bundled-test-fixture>.mp4 96 54 12 5 true && npm run media:native-session-preview -- media/<bundled-test-fixture>.mp4 96 54 12 5 false 4 && npm run media:native-session-preview -- media/<bundled-test-fixture>.mp4 96 54 12 5 true 4`|
 |`npm run check:tauri-policy`|`node scripts/check_tauri_policy.mjs`|
 |`npm run release:version:check`|`node scripts/check_release_version.mjs`|
 |`npm run release:secrets:check`|`node scripts/check_github_release_secrets.mjs`|

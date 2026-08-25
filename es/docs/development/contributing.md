@@ -18,10 +18,10 @@ Se agrega la función solo de escritorio.
 
 ## Mapa del repositorio
 
-|Camino|Propósito|
+|Camino|Objetivo|
 | --- | --- |
 |`index.html`, `style.css`, `app.js`|Interfaz de usuario del laboratorio de renderizado principal y lógica de control.|
-|`renderers/gpu/`|Renderizador GPU proporcionado/adaptado, abstracción de fuente de medios, backends WebGPU/WebGL2 y recursos de renderizado.|
+|`renderers/gpu/`|Renderizador GPU, abstracción de fuente de medios, backends WebGPU/WebGL2 y activos de renderizador.|
 |`renderers/desktop/`|Adaptador Tauri y ayudantes de visualización de salida.|
 |`renderers/shared/midi-mapping.js`|Perfil UC-33e, validación de mapeo, escalado, adquisición suave y fusión de eventos.|
 |`src-tauri/`|Shell de escritorio Tauri v2, ventana de salida nativa, registro de medios, proveedores de audio, motor de medios FFmpeg, capacidades, íconos y configuración de empaquetado.|
@@ -100,7 +100,7 @@ Los atributos no interrumpen la firma de la aplicación. Puede anular el directo
 
 ## Comandos comunes
 
-|Comando|uso|
+|Comando|Usar|
 | --- | --- |
 |`npm run dev`|Servidor de desarrollo del navegador en `127.0.0.1:8010`.|
 |`npm run build`|Compilación de producción Vite más copia de activos en tiempo de ejecución.|
@@ -163,12 +163,12 @@ HOST_PORT=8011 CONTAINER_PORT=8010 ASCILINE_RESTART=1 scripts/podman_run.sh pyth
 fuentes, análisis, SDK de proveedores remotos o descargas de códecs en tiempo de ejecución.
 - Mantenga los archivos seleccionados por el usuario detrás de la selección explícita del usuario.
 - No agregue concesiones amplias de directorio principal o sistema de archivos.
-- Mantenga la interfaz de usuario de origen normal centrada en fuentes locales estáticas hasta que se active el modo de transmisión.
-completamente producido.
+- Mantenga la interfaz de usuario de origen normal centrada en fuentes locales estáticas. El modo de transmisión permanece
+solo desarrollo.
 - Preservar el arnés de humo estático/Vite y la portabilidad del renderizador al agregar
 Funciones Tauri solo de escritorio.
 - Mantenga la superposición de estadísticas controlada por el usuario. Aleatorización, ajustes preestablecidos y audio.
-La reactividad no debe apagarlo silenciosamente.
+la reactividad no debe apagarlo silenciosamente.
 - Evite reinicios del renderizador al cambiar ajustes preestablecidos, configuraciones de audio o seguridad en vivo
 controles.
 - Realice las comprobaciones adecuadas antes de abrir un PR.
@@ -183,8 +183,8 @@ latencia de la cámara, respuesta de audio y validación de compilación optimiz
 Validación manual del hardware.
 - [Accesibilidad](/es/docs/operations/accessibility/): teclado, enfoque, etiquetas, contraste y
 mejores prácticas de control denso.
-- [Internacionalización](/es/docs/operations/internationalization/): futura cadena y catálogo de traducción incluido
-reglas de propiedad.
+- [Internacionalización](/es/docs/operations/internationalization/): límite del idioma actual, propiedad de la cadena,
+y reglas de UI seguras para la localización.
 
 ## Trabajo de frontend y renderizador
 
@@ -222,7 +222,7 @@ Mantenga las capacidades limitadas:
 - Ventana principal: selección de medios, gestión de salida, proveedores de audio, actualizador.
 - Ventana de salida: permisos mínimos de escucha/cierre/pantalla completa únicamente.
 
-La superficie de comando 0.9.5 MIDI también es solo para la ventana principal. El código nativo MIDI vive
+La superficie de comando MIDI es únicamente la ventana principal. El código nativo MIDI vive
 en `src-tauri/src/midi.rs`; El primer puerto admitido es el conectado DIN.
 mioXC. No otorgue comandos MIDI o SysEx a la ventana de salida. Ver
 [MIDI_UC33E](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MIDI_UC33E.md) antes de cambiar el perfil de hardware.
@@ -286,8 +286,9 @@ tccutil reset AudioCapture com.asciline.remix.dev
 
 ## Trabajo de FFmpeg y Media Engine
 
-El proyecto está avanzando en la preparación de transmisiones/medios a largo plazo hacia un Rust/FFmpeg.
-pipeline en lugar de agrupar Python en producción.
+La canalización Rust/FFmpeg proporciona preparación de medios/transmisión local sin
+agrupar Python en producción. Python/OpenCV sigue siendo desarrollo y referencia
+infraestructura.
 
 Los comandos de desarrollo utilizan estas variables de entorno cuando se configuran:
 
@@ -299,9 +300,9 @@ ASCILINE_FFPROBE=/path/to/ffprobe
 Vista previa del canal de medios:
 
 ```bash
-npm run media:decode-preview -- media/point-click-test.mp4 96 54 2
-npm run media:pipeline-preview -- media/point-click-test.mp4 96 54 12 5 false
-npm run media:native-session-preview -- media/point-click-test.mp4 96 54 12 5 true 4
+npm run media:decode-preview -- media/demo-video-2.mp4 96 54 2
+npm run media:pipeline-preview -- media/demo-video-2.mp4 96 54 12 5 false
+npm run media:native-session-preview -- media/demo-video-2.mp4 96 54 12 5 true 4
 ```
 
 Ejecute comprobaciones de paridad:
@@ -312,8 +313,8 @@ npm run test:decode-resize
 npm run check:media
 ```
 
-Las versiones de lanzamiento deben utilizar sidecars FFmpeg/ffprobe revisados. Escenario binarios con
-procedencia explícita:
+El flujo de trabajo de lanzamiento utiliza sidecars FFmpeg/ffprobe revisados. Escribir binarios locales
+con procedencia explícita:
 
 ```bash
 npm run ffmpeg:stage -- --ffmpeg /path/to/ffmpeg --ffprobe /path/to/ffprobe --license LGPL-2.1-or-later --source "reviewed reproducible build notes"
@@ -380,9 +381,9 @@ El script secreto del actualizador pasa valores a `gh secret set` a través de l
 Argumentos de línea de comando. Utilice `-- --repo owner/repo` o `-- --key /path/to/key`
 después del script npm si los valores predeterminados son incorrectos.
 
-Para 0.9.5, `release:secrets:check:public` requiere la firma del actualizador y macOS
-Preparación para la certificación notarial de identificación del desarrollador. Los artefactos Windows se publican como sin firmar.
-vistas previas y no requieren secretos de firma Windows.
+`release:secrets:check:public` requiere la firma del actualizador y el ID de desarrollador macOS
+preparación para la notarización. La ruta de lanzamiento actual de Windows se publica sin firmar.
+obtenga una vista previa de los artefactos y no requiere secretos de firma Windows.
 
 Para un paquete de desarrollo local con actualizador deshabilitado:
 
@@ -439,13 +440,13 @@ npm run release:secrets:set:macos -- \
 Cuando se omite `--keychain-password-file`, el script genera un código aleatorio
 contraseña temporal del llavero y la almacena en `KEYCHAIN_PASSWORD`.
 
-Las futuras versiones firmadas de Windows pueden usar Azure Artifact Signing a través de
+El repositorio contiene una ruta de firma de artefactos de Azure inactiva en
 `src-tauri/tauri.windows-signed.conf.json`, que invoca
 `src-tauri/windows-artifact-sign.cmd`; ese envoltorio llama
 `scripts/windows_artifact_sign.ps1`. Esto firma artefactos Windows antes de Tauri
-crea firmas de actualización. La ruta de versión activa 0.9.5 Windows no utiliza
-esta configuración y publica artefactos de vista previa sin firmar. Configurar los valores de Azure
-solo si Azure se convierte en el backend de firma Windows elegido:
+crea firmas de actualización. La ruta de lanzamiento actual de Windows no utiliza esto
+config y publica artefactos de vista previa 0.9.6 sin firmar. Configurar Azure
+valores solo después de que la firma Windows esté habilitada como política de lanzamiento:
 
 ```bash
 npm run release:secrets:set:windows -- \
@@ -461,8 +462,8 @@ node scripts/check_github_release_secrets.mjs --require-windows-signing
 El asistente almacena `AZURE_CLIENT_SECRET` como un secreto de acciones GitHub y el otro
 ID de Azure como variables del repositorio GitHub. El secreto del cliente de Azure es el único
 se requiere el secreto de firma Windows; manténgalo fuera del historial de shell y de los registros de chat.
-Prefiera la futura vía de limpieza de licencia/Fundación SignPath antes de habilitar el pago
-Firma de Azure para lanzamientos públicos de rutina.
+La selección de proveedores y la implementación de la firma Windows siguen siendo decisiones de la hoja de ruta; el
+Las herramientas inactivas no describen la postura de distribución actual.
 
 Utilice estas comprobaciones antes de publicar cambios en la versión:
 

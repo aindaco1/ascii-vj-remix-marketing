@@ -59,7 +59,7 @@ Built-in visual families include extreme looks such as Neon Sledgehammer, Gamma 
 
 Traditional ASCII presets include Classic Camera ASCII, ANSI Newsprint, Terminal Mono, and Dense Typewriter.
 
-Version 0.9.5 added 23 credited ascii.today-inspired character presets, including Broadway KB, Computer, Doom, Ghost, Modular, Standard, Univers, and Doh.
+The current preset catalog includes 23 credited ascii.today-inspired character presets, including Broadway KB, Computer, Doom, Ghost, Modular, Standard, Univers, and Doh.
 
 User presets can be saved, duplicated, updated, deleted, imported, and exported. Presets preserve the active media source unless the user explicitly changes it.
 
@@ -99,7 +99,7 @@ Dense-mix dampening and noise-floor controls help busy tracks stay reactive with
 - The first hardware profile uses an Evolution/M-Audio UC-33e through both DIN directions of an iConnectivity mioXC.
 - Four channel-addressed pages cover Visual, Audio, Presets, and Fine/User control with soft takeover, MIDI Learn, stable numeric preset slots, and bounded SysEx capture/restore.
 - MIDI cannot change sources, Camera, Pop Out, output displays, files, updates, or crash-report settings.
-- Automated mapping, transport, safety, and scope tests pass; the full physical control sweep and end-to-end SysEx restore/verification remain incomplete, so the feature stays experimental.
+- Automated mapping, transport, safety, and scope tests pass. Physical validation currently covers macOS Apple Silicon with the UC-33e connected by DIN through a mioXC; direct UC-33e USB is unsupported, and Windows/Linux physical validation is incomplete.
 
 ## Pop Out and External Displays
 
@@ -112,7 +112,7 @@ The output window is presentation-focused and has a minimal command surface. Whe
 - Built with Tauri v2.
 - Production runtime is local-only by default.
 - GitHub Releases updater infrastructure is configured.
-- Public macOS release CI requires Developer ID signed and notarized artifacts.
+- Public 0.9.6 macOS artifacts are Developer ID signed, notarized, stapled, and Gatekeeper-validated.
 - The 0.9.6 macOS release path validates the DMG layout, Developer ID identity, updater archive identity, and application-driven updater replacement.
 - Current Windows artifacts remain unsigned preview builds.
 - Crash report submission is production-only, reviewed/sanitized, and routed through the Rust desktop layer to the Cloudflare Worker relay.
@@ -121,7 +121,7 @@ The output window is presentation-focused and has a minimal command surface. Whe
 
 - Legacy ASCILINE stream work and newer Rust/FFmpeg stream sessions exist but are hidden from the normal Source UI.
 - FFmpeg sidecar policy and codec support live in contributor/release work.
-- Experimental UC-33e/mioXC MIDI support is shipped; physical commissioning and broader platform validation remain follow-on work.
+- Experimental UC-33e/mioXC MIDI support is shipped with documented macOS Apple Silicon hardware validation.
 
 
 

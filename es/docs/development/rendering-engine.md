@@ -21,18 +21,17 @@ matriz de validación de versiones.
 - [Accesibilidad](/es/docs/operations/accessibility/) e [Internacionalización](/es/docs/operations/internationalization/) para
 Reglas de UX de la superficie de control que afectan los controles orientados al renderizador.
 
-## Objetivos
+## Propiedades de arquitectura
 
-- Preservar la salida WebGPU/WebGL de alta calidad adaptada de
-`ascii-point-and-click`.
-- Mantenga el lienzo rápido y el linaje de transmisión adaptable de ASCILINE disponibles como respaldo
-e infraestructura de desarrollo.
-- Mantenga el uso normal de la aplicación localmente primero y sin conexión.
-- Mantenga todos los controles en vivo encaminados a través de un modelo de parámetros canónicos.
-- Permitir que los ajustes preestablecidos, WTF mode, la reactividad de audio y el control MIDI compongan
-sin bifurcar el estado del renderizador.
-- Mantenga la salida de Pop Out lo más libre de latencia posible, especialmente para transmisiones en vivo.
-fuentes de la cámara.
+- La salida WebGPU/WebGL es el objetivo de calidad visual.
+- Las rutas de flujo adaptable y Canvas derivadas de ASCILINE permanecen disponibles como
+infraestructura de compatibilidad y desarrollo.
+- El uso normal de la aplicación es local primero y sin conexión.
+- Todos los controles en vivo se dirigen a través de un modelo de parámetro canónico.
+- Presets, WTF mode, reactividad de audio y control MIDI componen sin bifurcaciones
+estado del renderizador.
+- Pop Out utiliza rutas nativas del último fotograma cuando estén disponibles para minimizar la cámara en vivo
+latencia.
 
 ## Flujo de datos de alto nivel
 
@@ -60,9 +59,8 @@ Los elementos incorporados visibles son:
 - Imagen de demostración: `media/demo.svg`.
 - Vídeo de demostración: `media/demo-video-2.mp4`.
 
-Accesorios ocultos como `media/point-click-test.mp4` y
-`media/point-click-test-30s.mp4` permanecen para desarrollo, pruebas de paridad y
-Pruebas de humo de rendimiento.
+Los archivos multimedia adicionales incluidos permanecen ocultos como elementos de desarrollo para lograr la paridad
+pruebas y pruebas de humo de rendimiento.
 
 ### Archivos personalizados
 
@@ -133,7 +131,8 @@ marcos visuales.
 
 ### Sesiones de transmisión
 
-Las sesiones de transmisión son infraestructura de desarrollo/avanzada en 0.9.0.
+Las sesiones de transmisión son desarrollo e infraestructura avanzada. No son un
+fuente normal orientada al usuario.
 
 Camino heredado:
 
@@ -157,8 +156,8 @@ registered media id
   -> StreamRuntime
 ```
 
-La interfaz de usuario de origen normal oculta el modo de transmisión hasta que este flujo de trabajo esté listo para la normalidad.
-usuarios.
+La interfaz de usuario de origen normal oculta el modo de transmisión. El trabajo prospectivo de productización es
+rastreado en el [Roadmap](/es/docs/reference/roadmap/).
 
 ## Modelo de parámetros
 
@@ -190,7 +189,7 @@ Cambios `solidMode`, `glyphMode`, `pixel` o `backend`.
 
 ### Matemáticas de renderizado compartido
 
-La versión 0.9.2 comienza a reducir las matemáticas del renderizador duplicado sin cambiar lo visible
+Los ayudantes compartidos reducen las matemáticas duplicadas del renderizador sin cambiar lo establecido.
 Salida de lienzo o flujo.
 
 Los ayudantes compartidos de JavaScript viven en:
@@ -211,10 +210,9 @@ El módulo compartido posee actualmente:
 adaptaciones.
 - conjunto de caracteres compacto y ayudantes de luminancia a glifo.
 
-Las funciones heredadas de Canvas y Stream se nombran intencionalmente por separado de
-la función GPU. La cuantización del lienzo/transmisión y el comportamiento de combinación de fondo son
-conservado en 0.9.2 por lo que esta versión no introduce regresiones visuales mientras
-el contrato de sombreador/matemático se está consolidando.
+Las funciones Canvas y Stream se nombran intencionalmente por separado del GPU
+función. Su comportamiento establecido de cuantización y mezcla de fondo permanece
+distintos, mientras que los vectores compartidos protegen la compatibilidad.
 
 `npm run test:render-math` valida los ayudantes JavaScript contra compartidos
 vectores. Las pruebas de salida nativa Rust consumen el mismo archivo vectorial para el color GPU
@@ -222,7 +220,7 @@ paridad de procesamiento.
 
 ### Parámetros efectivos
 
-Algunas funciones deberían afectar la representación en vivo sin cambiar el estado guardado.
+Algunas funciones afectan la representación en vivo sin cambiar el estado guardado.
 
 La reactividad del audio es el ejemplo principal:
 
@@ -319,7 +317,7 @@ Estos caminos son importantes para:
 - probando la salida del códec adaptativo.
 - entornos donde falla la inicialización de GPU.
 
-El respaldo del lienzo debe seguir siendo funcional incluso cuando no sea de la más alta calidad.
+El respaldo de Canvas sigue siendo funcional aunque no sea de la más alta calidad
 camino.
 
 ## Tiempo de ejecución estático
@@ -373,8 +371,8 @@ apoya:
 - ZLIB adaptativo.
 - DELTA adaptativo.
 
-El modo de transmisión permanece oculto de la interfaz de usuario de origen normal en 0.9.0. se retiene
-para el desarrollo y la futura productización.
+El modo de transmisión está oculto en la interfaz de usuario de origen normal y se conserva como desarrollo.
+infraestructura.
 
 ## Códec adaptativo
 
@@ -430,9 +428,9 @@ Modos de preparación de fotogramas:
 - Modos de color 2 a 5: celdas `[char, R, G, B]` con niveles de color cuantificados.
 - Modo de píxel: celdas `[B, G, R]`.
 
-La ruta Rust no pretende reemplazar el renderizador estático WebGPU/WebGL. es
-la respuesta a largo plazo para la preparación de medios empaquetados estilo streaming y más amplia
-soporte de decodificación nativa.
+La ruta Rust complementa, en lugar de reemplazar, el renderizador estático WebGPU/WebGL.
+Proporciona preparación de medios empaquetada estilo streaming y decodificador nativo.
+integración.
 
 ## Representador de salida nativo
 
@@ -461,9 +459,9 @@ con los últimos parámetros visuales y audio-reactivos. Llamadores alternativos
 conservar las cargas incondicionales. Los registros exponen la carga de origen y los contadores de omisión.
 
 Para la salida de una sola cámara macOS, AVFoundation captura los últimos fotogramas directamente para
-el presentador nativo. Los ajustes preestablecidos de la cámara en vivo no deben usar el espejo del navegador
-transporte de forma predeterminada porque la lectura del lienzo y la transferencia de cuadros IPC también son
-caro para una producción sostenida.
+el presentador nativo. Los ajustes preestablecidos de la cámara en vivo no utilizan el transporte espejo del navegador mediante
+predeterminado porque la lectura del lienzo y la transferencia de cuadros IPC son demasiado costosas para
+producción sostenida.
 
 Para los ajustes preestablecidos de glifos de estilo Canvas2D, la salida nativa consume el mismo valor canónico.
 Parámetros `glyphMode` y `charset` como superficie de control. El `wgpu` nativo
@@ -484,8 +482,8 @@ renderizador principal a la salida nativa.
 
 Reglas de diseño de salida nativas:
 
-- La ventana de salida no debe poseer amplios permisos Tauri.
-- El presentador debe consumir los últimos parámetros en vivo.
+- La ventana de salida no posee amplios permisos Tauri.
+- El presentador consume los últimos parámetros en vivo.
 - Se prefiere la semántica del último fotograma al almacenamiento en búfer profundo.
 - El comportamiento del renderizador principal no debe retroceder cuando Pop Out está abierto.
 - el respaldo del navegador debe permanecer disponible.
@@ -544,7 +542,7 @@ Preajustes ASCII.
 - transiciones indefinidamente hasta que se detiene.
 - evita estados inseguros donde todo blanco/todo negro.
 
-MIDI experimental en 0.9.5:
+Experimental MIDI:
 
 ```text
 UC-33e DIN output
@@ -584,28 +582,15 @@ Los activos empaquetados incluyen:
 - fuentes.
 - medios de demostración incorporados.
 - Código nativo Tauri.
-- futuros sidecars FFmpeg revisados.
+- sidecares FFmpeg revisados.
 
 El CSP de producción bloquea el acceso remoto arbitrario al tiempo de ejecución HTTP(S). el activo
 El protocolo tiene un alcance limitado y una sesión local para los medios seleccionados por el usuario.
 
-## Estrategia de prueba
+## Validación
 
-Las pruebas relacionadas con el renderizador deben cubrir:
-
-- Inicio de fuente estática.
-- conmutación de fuente.
-- fuente de la cámara y rutas de dispositivos falsos.
-- aplicación preestablecida.
-- suavidad de transición.
-- WebGL2 y respaldos de Canvas.
-- Ubicación de la pantalla de salida.
-- rendimiento de salida nativa y análisis de registros.
-- vectores de códec adaptativos.
-- Rust/Paridad de preparación de fotogramas de Python.
-- FFmpeg/OpenCV decodifica/cambia el tamaño de la paridad limitada.
-
-Comandos útiles:
+La matriz de validación mantenida se encuentra en [Testing](/es/docs/operations/testing/). el primario
+Los comandos de renderizado, salida, códec y medios son:
 
 ```bash
 npm run smoke:static
@@ -619,20 +604,8 @@ npm run check:media
 npm run test:rust
 ```
 
-## Trabajo de ingeniería abierto
-
-- Consolide las matemáticas de colores duplicados en WebGPU, WebGL2, Canvas, stream y
-salida nativa.
-- Agregue rutas de cámara más directas para compartir texturas:
-  - AVFoundation/CVPixelBuffer/Metal en macOS.
-  - Media Foundation/D3D en Windows.
-  - PipeWire/V4L2/Vulkan o GLES en Linux.
-- Productice el modo de transmisión o manténgalo oculto.
-- Amplíe el sistema de perfil MIDI para dirigir USB UC-33e y hardware adicional
-después de que la ruta DIN mioXC se valide físicamente en más plataformas.
-- Mejore la captura de audio del sistema nativo a través de API de plataforma más estrechas.
-- Agregue pruebas de rendimiento que reproduzcan Pop Out/ventana principal informada por el usuario
-la contienda automáticamente.
+El trabajo potencial de renderizado, cámara, transmisión, audio y MIDI se rastrea solo en
+la [Hoja de ruta](/es/docs/reference/roadmap/).
 
 
 ## Material de origen

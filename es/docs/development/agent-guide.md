@@ -20,8 +20,7 @@ Léalos en orden antes de realizar cambios no triviales:
 Notas de instalación, requisitos del sistema, licencia/soporte/información de contacto.
 2. [Changelog](/es/docs/reference/changelog/): línea base de características de la versión actual y reciente
 expectativas de comportamiento.
-3. [Roadmap](/es/docs/reference/roadmap/): capacidades actuales, trabajo planificado, trabajo diferido y
-dirección del producto.
+3. [Roadmap](/es/docs/reference/roadmap/): solo trabajos potenciales.
 4. [Motor de renderizado](/es/docs/development/rendering-engine/): flujo de origen, backends del renderizador,
 arquitectura de salida nativa, motor multimedia, reactividad de audio y MIDI
 integración.
@@ -41,7 +40,6 @@ Para el trabajo de permisos o empaquetado de escritorio, inspeccione también:
 - [Tauri capacidades](https://github.com/aindaco1/ascii-vj-remix/blob/main/src-tauri/capabilities/default.json)
 - [macOS Información.plist](https://github.com/aindaco1/ascii-vj-remix/blob/main/src-tauri/Info.plist)
 - [macOS derechos](https://github.com/aindaco1/ascii-vj-remix/blob/main/src-tauri/Entitlements.plist)
-- [0.9.6 Plan de instalación macOS](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MACOS_INSTALL_0.9.6_PLAN.md)
 
 Para trabajos de renderizado o Pop Out, inspeccione también:
 
@@ -58,19 +56,10 @@ ASCII VJ Remix es un laboratorio de renderizado de escritorio nativo local para 
 y Linux. El producto previsto es la aplicación de escritorio Tauri, no una aplicación web alojada.
 o compilación solo para navegador.
 
-El proyecto combina tres linajes:
-
-- [ASCILINE](https://github.com/YusufB5/ASCILINE): vídeo ASCII de alto rendimiento
-streaming, codificación de fotogramas adaptativa, experimentos de Python/OpenCV, ideas de terminales,
-y linaje alternativo de Canvas.
-- `ascii-point-and-click`: salida visual WebGPU/WebGL de alta calidad y local
-Arquitectura de fuente de medios del navegador.
-- Trabajo de escritorio Tauri de este repositorio: empaquetado independiente, medios/audio nativos
-adaptadores, salida nativa Pop Out, infraestructura de lanzamiento/actualización local y el
-densa superficie de control de VJ.
-
-La interfaz de usuario del juego de apuntar y hacer clic está fuera de alcance. La aplicación es un control creativo.
-superficie para imágenes ASCII/celulares en vivo.
+El repositorio combina renderizado WebGPU/WebGL de alta calidad, Canvas
+rutas de compatibilidad, infraestructura de códec y transmisión derivada de ASCILINE, y
+Embalaje de escritorio Tauri. La aplicación es una superficie de control creativa para vivir.
+ASCII/visuales de celda.
 
 ## Restricciones no negociables
 
@@ -83,24 +72,22 @@ Envío de informes de fallos revisados/desinfectados solo para producción.
 - Conserve la dirección de la aplicación nativa para macOS, Windows y Linux.
 - No replantee el modo de navegador como el producto. Las rutas del navegador/Vite son útiles para
 desarrollo, pruebas de humo y portabilidad del renderizador.
-- Mantenga alta la calidad del renderizado. Salida WebGPU/WebGL desde el punto y hacer clic
-El linaje del renderizador es el objetivo de calidad visual.
+- Mantenga alta la calidad del renderizado. La salida WebGPU/WebGL es el objetivo de calidad visual.
 - Conserve las rutas alternativas a menos que se implemente y pruebe un reemplazo.
 - Trate el rendimiento y la latencia de Pop Out como un comportamiento crítico de cara al usuario.
 - Mantenga locales los medios locales seleccionados por el usuario. No cargue archivos ni datos de cámara/audio.
-- Mantenga la superposición de estadísticas como propiedad del usuario. Preajustes aleatorios, WTF mode y ajustes preestablecidos de audio
-No debe desactivarlo a menos que el usuario lo haga explícitamente.
-- La infraestructura de transmisión existe, pero aún no es un modo de fuente visible normal.
-La interfaz de usuario de transmisión oculta debe permanecer oculta hasta que se implemente el modo de transmisión.
-fin.
+- Mantenga la superposición de estadísticas como propiedad del usuario. Los ajustes preestablecidos aleatorios, WTF mode y los ajustes preestablecidos de audio no
+No lo desactive a menos que el usuario lo haga explícitamente.
+- La infraestructura de transmisión existe pero no es un modo de fuente visible normal. mantener
+su interfaz de usuario oculta; La productización prospectiva pertenece a la hoja de ruta.
 - Seguridad, rendimiento, accesibilidad y orientación i18n en vivo en una plataforma dedicada
 practicar documentos bajo `docs/`; actualizarlos cuando los supuestos arquitectónicos
 cambiar.
 
 ## Línea de base actual orientada al usuario
 
-Los documentos de desarrollo actuales describen la versión 0.9.6 además de la característica publicada 0.9.5.
-conjunto.
+La versión empaquetada actual y la última versión pública son 0.9.6. El registro de cambios
+es el único documento del estado actual que incluye cambios inéditos.
 
 Fuentes:
 
@@ -124,7 +111,7 @@ backends GPU correspondientes en Windows/Linux.
 Preajustes ASCII.
 - El catálogo de conjunto de caracteres compartido incluye 23 títulos ascii.today acreditados.
 rampas de luminancia y ajustes preestablecidos de solo lectura coincidentes.
-- La salida de glifos nativos debe seguir utilizando recursos de rampa/atlas fijos acotados;
+- La salida de glifos nativos utiliza recursos de rampa/atlas fijos limitados;
 `fontFamily` son metadatos de interfaz de usuario/vista previa, no un receptor de carga de fuentes nativo.
 - Reutilice recursos estables WebGPU/WebGL, mantenga las cargas de fuentes nativas vinculadas a
 versiones del marco fuente y no intercambian calidad/resolución por rendimiento.
@@ -132,8 +119,8 @@ versiones del marco fuente y no intercambian calidad/resolución por rendimiento
 Comportamiento en vivo:
 
 - Los ajustes preestablecidos son de solo lectura a menos que los cree el usuario.
-- Las transiciones preestablecidas deben ser fundidos cruzados suaves, no fundidos a negro.
-- Los ajustes preestablecidos deben conservar la fuente de medios activa a menos que se cambien explícitamente.
+- Las transiciones preestablecidas son fundidos cruzados suaves, no fundidos a negro.
+- Los ajustes preestablecidos conservan la fuente de medios activa a menos que se cambien explícitamente.
 - WTF mode se ejecuta indefinidamente mientras está activo y pasa a modo seguro en vivo.
 configuraciones aleatorias, incluidos anclajes de ajustes preestablecidos ASCII tradicionales.
 - La reactividad de audio está habilitada de forma predeterminada, comienza desde el micrófono/entrada de forma predeterminada y
@@ -141,10 +128,10 @@ Modula parámetros efectivos en vivo sin reescribir los ajustes preestablecidos 
 - La reactividad de audio utiliza vectores de características acotados, incluidos RMS, bandas,
 transitorio/flujo, presencia, brillo, densidad, pulso y fase. no
 envíe buffers de audio sin procesar a través de IPC o diagnósticos.
-- Las abrazaderas seguras deben evitar que las salidas de negro puro o blanco puro sean aleatorias o
+- Las abrazaderas seguras evitan que las salidas de negro puro o blanco puro sean aleatorias o
 estados controlados por audio.
-- El primer equipo experimental MIDI es el UC-33e en ambas direcciones DIN de
-un mioXC; Direct UC USB está fuera del alcance de 0.9.6.
+- El equipo experimental MIDI es el UC-33e a través de ambas direcciones DIN de un
+mioXC; No se admite UC USB directo.
 - MIDI utiliza cuatro páginas con dirección de canal, toma de control suave, ranuras numéricas preestablecidas,
 MIDI Aprenda anulaciones y captura/restauración SysEx de banco completo limitado.
 - MIDI apunta únicamente al comportamiento visual/audio/preestablecido/WTF. No agregue fuente, cámara,
@@ -251,14 +238,15 @@ npm run bundle:release
 
 Nota de compilación de lanzamiento local esperada:
 
-- La versión pública 0.9.3 CI requiere la certificación notarial del ID de desarrollador de Apple para macOS y
-publica Windows como una vista previa sin firmar. Uso normal de compilaciones locales
+- Los artefactos públicos 0.9.6 macOS están firmados con el ID del desarrollador, notariados, grapados y
+Validado por Gatekeeper. Los artefactos públicos 0.9.6 Windows son vistas previas sin firmar.
+Uso normal de compilaciones locales
 `ASCII VJ Remix Dev` / `com.asciline.remix.dev`; el lanzador local requiere un
 identidad estable antes de la prueba de permiso.
 - Si `TAURI_SIGNING_PRIVATE_KEY` o `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` es
 ausente mientras los artefactos del actualizador están habilitados, el paquete de versiones fallará en
-firma del actualizador. Utilice la clave/contraseña local anterior para la validación local y
-nunca confirme ninguno de los archivos.
+firma del actualizador. Las rutas de validación locales están documentadas en el colaborador.
+guía; nunca confirme ninguno de los archivos.
 
 ## Tauri y notas de embalaje
 
@@ -269,18 +257,18 @@ La identidad ad hoc macOS se utiliza únicamente en rutas de empaquetado explíc
 nombre de producción, identificador de paquete y actualizador.
 - `src-tauri/tauri.notarized.conf.json` es para ID de desarrollador notariado macOS
 versiones de lanzamiento.
-- `src-tauri/tauri.windows-signed.conf.json` se conserva para futuros firmados.
-Windows trabajo de lanzamiento. La ruta de versión activa 0.9.3 Windows utiliza el valor predeterminado
-configuración sin firmar.
+- `src-tauri/tauri.windows-signed.conf.json` y su asistente Authenticode existen
+pero están inactivos. La ruta de lanzamiento actual de Windows utiliza el archivo sin firmar predeterminado.
+configuración.
 - macOS se integra en los espacios de trabajo de iCloud Drive y redirige la salida de destino a
 `/private/tmp/ascii-vj-remix-tauri-target` a través de los scripts de ayuda para evitar
 Atributos extendidos de iCloud rompiendo el código.
 - Los artefactos del actualizador de versiones están firmados con una clave minisign. La clave pública es
 comprometido; la clave privada pertenece a los secretos de acciones GitHub.
 - Los sidecars FFmpeg deben ser revisados, locales y verificados por políticas. La aplicación empaquetada
-no debe descargar FFmpeg, códecs, recursos de renderizado o fuentes en tiempo de ejecución.
+no descarga FFmpeg, códecs, recursos de renderizado ni fuentes en tiempo de ejecución.
 
-Consulte la [Guía del colaborador: versión y actualización Work](/es/docs/development/contributing/#release-and-updater-work)
+Consulte la [Guía del colaborador: versión y actualización Work](/es/docs/development/contributing/#trabajo-de-lanzamiento-y-actualización)
 para conocer el procedimiento completo de lanzamiento/actualización.
 
 ## Modelo mental del renderizador
@@ -300,14 +288,14 @@ source selection
 
 Implicaciones importantes:
 
-- Los parámetros guardados y los parámetros efectivos son diferentes. La reactividad del audio debe
-modifica los parámetros efectivos, no las definiciones preestablecidas guardadas.
-- La identidad de la fuente importa. Las transiciones preestablecidas no deberían restablecer silenciosamente la fuente
-o reinicie la reproducción multimedia.
+- Los parámetros guardados y los parámetros efectivos son diferentes. Se modifica la reactividad del audio.
+parámetros efectivos, no definiciones preestablecidas guardadas.
+- La identidad de la fuente importa. Las transiciones preestablecidas no restablecen la fuente ni se reinician
+reproducción multimedia.
 - La salida nativa necesita nuevos parámetros y marcos. Si Pop Out parece obsoleto, inspeccione
 sincronización de salida nativa antes de agregar otro renderizador.
-- El trabajo de latencia de la cámara debe preferir la captura/presentación nativa del último fotograma
-rutas sobre rutas de decodificación almacenadas en búfer.
+- El trabajo de latencia de la cámara utiliza rutas nativas de captura/presentación del último fotograma donde
+implementado en lugar de rutas de decodificación almacenadas en búfer.
 - Las rutas alternativas son importantes para Windows/Linux y para entornos sin los mejores
 Servidor GPU.
 
@@ -318,8 +306,8 @@ Consulte [Motor de renderizado](/es/docs/development/rendering-engine/) para obt
 Cuando el comportamiento cambie, actualice el documento duradero más cercano:
 
 - Función de cara al usuario o comportamiento de instalación: [README](/es/docs/overview/ascii-vj-remix/).
-- Comportamiento de la versión actual: [Changelog](/es/docs/reference/changelog/).
-- Trabajo planificado/aplazado: [Roadmap](/es/docs/reference/roadmap/).
+- Comportamiento de versiones actuales e inéditas: [Changelog](/es/docs/reference/changelog/).
+- Solo trabajo prospectivo: [Roadmap](/es/docs/reference/roadmap/).
 - Arquitectura de renderizador, flujo de medios, salida nativa, modulación de audio, MIDI
 arquitectura: [Motor de renderizado](/es/docs/development/rendering-engine/).
 - Compilación, prueba, lanzamiento, FFmpeg, Podman o flujo de trabajo de colaborador:
@@ -335,23 +323,11 @@ capacidades: [Seguridad](/es/docs/operations/security/).
 [Internacionalización](/es/docs/operations/internationalization/).
 - Supuestos de incorporación de agentes: este archivo.
 
-Mantenga la atención en la aplicación nativa de Documentos. No agregue instrucciones de compilación basadas en navegador al
-LÉAME a menos que cambie la dirección del producto.
-
-## Trabajo futuro conocido a respetar
-
-La hoja de ruta rastrea el trabajo futuro. A alto nivel:
-
-- Productice el modo de transmisión local solo cuando el flujo de trabajo de origen independiente completo esté
-listo.
-- Extienda MIDI más allá del perfil DIN 0.9.6 UC-33e/mioXC solo después de su actual
-Se conservan el alcance, la semántica de mapeo, la seguridad de SysEx y la validación de la plataforma.
-- Continúe mejorando la salida nativa de GPU y las rutas de captura nativas de la plataforma.
-- Continuar mejorando la validación de reputación y real de Windows SmartScreen
-Pruebas de instalación/actualización-salto en máquinas Windows/Linux.
-
-Antes de implementar cualquiera de estos, lea [Roadmap](/es/docs/reference/roadmap/) y
-[Motor de renderizado](/es/docs/development/rendering-engine/), luego inspeccione las rutas de código actuales.
+Mantenga la atención en la aplicación nativa de Documentos. Los documentos sobre el estado actual utilizan el tiempo presente y describen
+comportamiento verificado. No poner propuestas, futuros candidatos, trabajos aplazados, o
+planes de lanzamiento completos en esos documentos. Poner el trabajo potencial en el
+[Roadmap](/es/docs/reference/roadmap/) y mantenga el historial de versiones en el
+[Registro de cambios](/es/docs/reference/changelog/).
 
 
 ## Material de origen

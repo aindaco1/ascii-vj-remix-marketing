@@ -20,15 +20,15 @@ Current source docs describe the **0.9.6** feature set.
 - Runtime is local-first and offline by default.
 - User-selected media, camera frames, and audio remain local.
 - Intentional online paths are limited to the GitHub Releases updater and production-only reviewed/sanitized crash report submission.
-- Stream infrastructure exists, but the normal Source UI hides stream mode until it is ready as a standalone user feature.
-- Experimental native MIDI control is available for the documented UC-33e/mioXC DIN rig. It is intentionally limited to visual, audio-reactive, preset, and WTF controls while physical commissioning remains incomplete.
+- Stream infrastructure is development-only and is not exposed in the normal Source UI.
+- Experimental native MIDI control is available for the documented UC-33e/mioXC DIN rig. It is intentionally limited to visual, audio-reactive, preset, and WTF controls. Current physical validation covers macOS Apple Silicon; direct UC-33e USB is unsupported, and Windows/Linux physical validation is incomplete.
 
 ## Project Lineage
 
-ASCII VJ Remix combines three source lineages:
+ASCII VJ Remix combines three engineering strands:
 
 - **ASCILINE**: high-performance ASCII video streaming, adaptive frame encoding, Python/OpenCV experiments, terminal ideas, and Canvas fallback lineage.
-- **ascii-point-and-click**: high-quality WebGPU/WebGL visual output and local browser media-source architecture.
+- **GPU rendering**: high-quality WebGPU/WebGL visual output and local browser media-source architecture.
 - **ASCII VJ Remix desktop work**: Tauri packaging, native media/audio adapters, native Pop Out output, local release/update infrastructure, crash reporting, and the dense VJ control surface.
 
 ## System Requirements
@@ -39,18 +39,18 @@ ASCII VJ Remix combines three source lineages:
 - Optimal: M1 Pro/Max, M2 Pro/Max, M3 Pro/Max, or newer; 16 GB RAM or more; macOS 14 Sonoma, macOS 15 Sequoia, or newer; external display/projector for Pop Out.
 - Intel Mac support is not the current release target.
 - Camera, microphone, and audio capture require explicit macOS privacy grants.
-- Public macOS release builds should be Developer ID signed and notarized.
+- Public 0.9.6 macOS artifacts are Developer ID signed, notarized, stapled, and Gatekeeper-validated.
 
 ### Windows
 
 - Minimum: Windows 10 22H2 or Windows 11, x64 CPU, WebView2 runtime, D3D12 or WebGL2-capable GPU, 8 GB RAM, and about 2 GB free disk space.
 - Optimal: Windows 11, recent Intel/AMD/NVIDIA GPU with current drivers, 16 GB RAM or more, hardware media decode, and dedicated output display.
-- Current Windows artifacts are published as unsigned previews until a signing backend is proven.
+- Public 0.9.6 Windows artifacts are unsigned previews.
 
 ### Linux
 
 - Minimum: modern x86_64 Linux distribution, WebKitGTK 4.1 runtime, Mesa or vendor GPU drivers with WebGL2, 8 GB RAM, and about 2 GB free disk space.
-- Optimal: Ubuntu 24.04, Fedora 40, Arch, or comparable current distro; Wayland or well-configured X11; recent Mesa/NVIDIA drivers; Vulkan-capable GPU; PipeWire for future capture work.
+- Optimal: Ubuntu 24.04, Fedora 40, Arch, or comparable current distro; Wayland or well-configured X11; recent Mesa/NVIDIA drivers; Vulkan-capable GPU.
 - GPU behavior varies by distro, WebKitGTK version, and graphics driver.
 
 ## Practical Hardware Guidance

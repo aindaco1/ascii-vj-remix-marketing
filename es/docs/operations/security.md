@@ -29,8 +29,8 @@ sólo rutas de ejecución en línea intencionales.
 controlador.
 - Mantenga los secretos de firma de lanzamiento, firma de actualizador y certificación notarial fuera del alcance de
 repositorio.
-- Conserve el identificador de paquete `com.asciline.remix` a menos que haya una
-migración para concesiones de privacidad macOS existentes.
+- El identificador del paquete de producción es `com.asciline.remix`; cambiarlo crea
+una migración de concesión de privacidad macOS.
 - Mantener el desarrollo local en `com.asciline.remix.dev`; nunca firme ni instale un
 compilación de desarrollo ad-hoc bajo el identificador de producción.
 
@@ -38,38 +38,38 @@ compilación de desarrollo ad-hoc bajo el identificador de producción.
 
 |Superficie|Límite actual|Nivel de riesgo|Notas|
 | --- | --- | --- | --- |
-|Archivos de imagen/vídeo locales|API de archivos del navegador o cuadro de diálogo Tauri más registro de medios local de sesión|Medio|Los archivos se seleccionan explícitamente y no deben otorgar acceso amplio al sistema de archivos.|
+|Archivos de imagen/vídeo locales|API de archivos del navegador o cuadro de diálogo Tauri más registro de medios local de sesión|Medio|Los archivos se seleccionan explícitamente sin acceso amplio al sistema de archivos.|
 |Medios de demostración incorporados|Incluido en `media/` y copiado en los recursos de la aplicación|Bajo|Los medios de demostración son locales y versionados.|
 |Entrada de cámara|Navegador `getUserMedia`; macOS ruta nativa AVFoundation para Pop Out|Medio|Requiere permiso de privacidad del sistema operativo. Los marcos permanecen locales.|
-|Audio de micrófono/entrada|Proveedores de audio web y Tauri nativos|Medio|Requiere permiso de privacidad del sistema operativo. Las características de análisis deben estar limitadas.|
+|Audio de micrófono/entrada|Proveedores de audio web y Tauri nativos|Medio|Requiere permiso de privacidad del sistema operativo. Las funciones de análisis están limitadas.|
 |Audio del sistema/pantalla|El navegador muestra audio cuando está presente; proveedores de escritorio nativos donde estén disponibles|Medio|Los permisos de la plataforma varían. No amplíe la captura más allá de las necesidades de funciones.|
 |Preajustes/configuraciones|Almacenamiento del navegador local, IndexedDB, JSON importado/exportado|Bajo a Medio|Datos escritos por el usuario. Validar las importaciones antes de aplicar.|
 |Ventana de salida|Ventana de salida Tauri con permisos mínimos|Medio|No debe exponer la selección de medios, el sistema de archivos, el actualizador ni las API de comandos amplios.|
 |Comandos Tauri|`src-tauri/src/lib.rs` más archivos de capacidad|Alto|Trate cada comando como un límite de seguridad. Validar entradas en Rust.|
 |Protocolo de activos|Vacío de forma predeterminada, expandido solo para necesidades de sesión/medios seleccionados|Alto|Evite caminos amplios y persistentes.|
-|sidecares FFmpeg|Recursos agrupados con comprobaciones de políticas y metadatos de fuente/procedencia|Medio|Sin descargas de tiempo de ejecución. Los sidecars de lanzamiento deberían desactivar los protocolos de red.|
+|sidecares FFmpeg|Recursos agrupados con comprobaciones de políticas y metadatos de fuente/procedencia|Medio|Sin descargas de tiempo de ejecución. Los sidecars de liberación desactivan los protocolos de red.|
 |Actualizador|GitHub lanza punto final con paquetes de actualización firmados|Alto|La clave de firma privada es externa. La clave pública está comprometida.|
 |reportero de accidentes|POST solo de Rust a `https://crash.dustwave.xyz/v1/reports` en compilaciones de producción|Alto|Los informes están delimitados, desinfectados, configurables por el usuario y retransmitidos a los problemas de GitHub mediante un Cloudflare Worker.|
 |Experimental MIDI y UC-33e SysEx|Comandos Rust solo de la ventana principal, lista de puertos permitidos mioXC, colas acotadas y límites de paquetes|Medio|Los perfiles permanecen locales y no pueden apuntar a fuentes, cámaras, Pop Out ni pantallas de salida. La verificación de restauración física del banco completo sigue incompleta.|
 |Registros e informes de humo.|Artefactos de prueba/desarrollador local|Bajo a Medio|No registre rutas de archivos privados, audio sin formato ni valores ambientales confidenciales a menos que sea necesario para una depuración explícita.|
 
-## Notas de endurecimiento de liberación
+## Liberar la postura de seguridad
 
 La línea de lanzamiento actual incluye estas reglas de refuerzo de seguridad:
 
 - El CSP de producción solo permite el origen de la aplicación, Tauri IPC y el activo Tauri.
 protocolo necesario para los medios locales seleccionados. Puntos finales de localhost HTTP/WebSocket
-Pertenecen al CSP de desarrollo solo hasta que se produzca el modo de transmisión.
+existir sólo en el CSP de desarrollo; El modo streaming no es una fuente de producción.
 - El envío de informes de fallos se implementa en Rust, no en webview `fetch`, por lo que el
 El CSP de producción no obtiene acceso remoto arbitrario a `connect-src`.
 - GitHub Los secretos de firma del actualizador de acciones tienen como ámbito la verificación del secreto del actualizador.
 y pasos de empaquetado Tauri. No coloque `TAURI_SIGNING_PRIVATE_KEY`,
 `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`, valores de certificado de Apple o llavero
 contraseñas en bloques de entorno de flujo de trabajo a nivel de trabajo.
-- El CI de la versión pública 0.9.3 falla al cerrarse cuando se realiza la certificación de ID de desarrollador de Apple
-incompleto. Los artefactos Windows se publican como vistas previas sin firmar hasta
-SignPath Foundation, Azure Artifact Signing u otro backend de firma es
-probado.
+- El CI de la versión pública macOS falla al cerrarse cuando se firma el ID de desarrollador de Apple o
+la notarización está incompleta. Los artefactos públicos 0.9.6 macOS están firmados,
+notariado, engrapado y validado por Gatekeeper; Los artefactos Windows 0.9.6 son
+vistas previas sin firmar.
 - Los artefactos públicos macOS deben conservar el ID del equipo `PWT3Q52LZ2` y el establo.
 Requisito de identificador/equipo designado. CI valida tanto la aplicación creada como
 el archivo de actualización extraído y rechaza la identidad ad-hoc o de solo código hash.
@@ -79,21 +79,23 @@ ruta de la aplicación.
 - Acciones GitHub Los trabajos macOS están anclados a `macos-26` en lugar de
 `macos-latest`. La pila nativa `wgpu`/`apple-metal` necesita el macOS 26
 Metal SDK y el alias móvil `macos-latest` pueden seleccionar un SDK más antiguo.
-- Las rutas de medios locales seleccionadas no deben conservarse en el estado de la aplicación frontend después de
-la aplicación obtiene la URL de reproducción que necesita. Los diagnósticos deben redactar el archivo y
-URL de activos antes de escribir `/tmp/asciline-media-diagnostics.log`.
-- Las concesiones de activos Tauri locales de sesión deben revocarse cuando un medio seleccionado
-el registro se olvida y ningún otro registro sigue utilizando esa ruta.
+- El estado de la aplicación frontend conserva la URL de reproducción derivada o la identificación del medio en lugar de la
+ruta local seleccionada. Los diagnósticos redactan las URL de archivos y activos antes de escribir
+`/tmp/asciline-media-diagnostics.log`.
+- Los registros de medios y las concesiones de activos de Tauri son locales de sesión. El
+El comando `forget_media_file` revoca la concesión de una ruta después de su registro final
+se elimina; Los metadatos persistentes de origen personalizado no conservan el acceso a la ruta.
+en todos los reinicios de la aplicación.
 - Las importaciones preestablecidas deben estar limitadas, verificadas en el esquema y sujetas a través del espacio compartido.
 controlar los metadatos y eliminar los campos de fuente/medios antes de que puedan afectar
 estado del renderizador.
-- La salida nativa en modo glifo debe tratar `charset` como datos incluidos en la lista de permitidos. Resuelto
+- La salida nativa en modo glifo trata a `charset` como datos incluidos en la lista de permitidos. Resuelto
 Las rampas de catálogo personalizadas deben estar delimitadas, estar orientadas al espacio, ser únicas y restringidas.
 al atlas de glifos fijos. Mantenga `fontFamily` fuera de la carga de fuentes nativas o
 rutas de búsqueda de recursos.
-- Las auditorías de dependencia deben incluir npm y Rust. `cargo audit` advertencias de
+- Las auditorías de dependencia cubren npm y Rust. `cargo audit` advertencias de
 La pila transitiva GTK/WebKit actual de Tauri se rastrea como escritorio ascendente
-riesgo marco; Los avisos directos/transitivos procesables deben solucionarse antes
+riesgo marco; Los avisos directos/transitivos procesables deben solucionarse antes de
 lanzar cuando haya una actualización disponible.
 
 ## Política de tiempo de ejecución Tauri
@@ -103,8 +105,7 @@ El tiempo de ejecución de producción es intencionalmente limitado:
 - `src-tauri/tauri.conf.json` mantiene una producción restrictiva Seguridad de Contenidos
 Política.
 - El CSP de producción no permite puntos finales HTTP/WebSocket de host local arbitrarios;
-Los puntos finales de transmisión/desarrollo de localhost pertenecen solo a `devCsp` hasta que se active el modo de transmisión.
-Producido para usuarios normales.
+Los puntos finales de desarrollo/transmisión de localhost solo existen en `devCsp`.
 - `npm run check:tauri-policy` verifica la política de tiempo de ejecución solo local, la
 Excepción del punto final del actualizador GitHub y el comando de informe de fallos exclusivo de Rust
 límite.
@@ -112,7 +113,7 @@ límite.
 privilegios de ventana de salida.
 - La ventana principal posee selección de medios, administración de salida, proveedores de audio y
 trabajo de actualización/informe de fallos.
-- La ventana de salida solo debe escuchar mensajes de renderizado/salida y exponer
+- La ventana de salida solo escucha mensajes de renderizado/salida y expone
 el comportamiento mínimo de cierre/pantalla completa que necesita.
 
 Al agregar un comando Tauri:
@@ -186,17 +187,17 @@ para la sesión seleccionada.
 - No envíe rutas de medios a análisis o registros remotos.
 - Los archivos preestablecidos/perfiles importados deben analizarse y validarse como datos, no
 ejecutado.
-- Los paquetes preestablecidos futuros no deben incluir archivos multimedia privados ni medios absolutos.
-rutas a menos que el usuario exporte explícitamente esa información.
+- Las exportaciones preestablecidas actuales excluyen los campos de fuente y medios, incluidos los privados
+archivos multimedia y rutas multimedia absolutas.
 
 ## Cámara, micrófono y sistema de audio
 
-La cámara y la captura de audio son entradas locales sensibles. Sólo deben iniciarse
-del comportamiento explícito de la aplicación que el usuario pueda entender, como seleccionar
-Cámara o habilitando la reactividad de audio. La reactividad de audio es actualmente una intencional.
-modo predeterminado del producto, por lo que la aplicación puede solicitar permiso de micrófono/entrada durante
-inicio. La captura permanece local y controlada por el sistema operativo, y el usuario puede detenerla
-deshabilitar la reactividad de audio o cambiar la fuente de audio.
+La cámara y la captura de audio son entradas locales sensibles. La captura comienza desde visible
+comportamiento de la aplicación, como seleccionar Cámara o habilitar la Reactividad de Audio. Audio
+La reactividad es un modo predeterminado intencional, por lo que la aplicación puede solicitar
+Permiso de micrófono/entrada durante el inicio. La captura sigue siendo local y controlada por el sistema operativo,
+y el usuario puede detenerlo desactivando la reactividad de audio o cambiando el audio
+fuente.
 
 Identificador de paquete macOS actual:
 
@@ -224,7 +225,7 @@ uso.
 - Prefiere permisos de audio del sistema nativos más limitados cuando la plataforma expone
 ellos.
 - Mantenga los marcos de entidades delimitados. No envíe buffers de audio ilimitados sin procesar a través de
-IPC cuando los vectores de características son suficientes. La reactividad de audio debe utilizar derivada.
+IPC cuando los vectores de características son suficientes. Usos de reactividad de audio derivados.
 características como RMS, bandas, transitorio/flujo, presencia, brillo, densidad,
 latir pulso y fase.
 - Evite los bucles de reintento automático de captura que siguen solicitando o capturando después del usuario
@@ -256,12 +257,11 @@ Argumentos de línea de comando.
 - Los flujos de trabajo de lanzamiento deben limitar los secretos de firma del actualizador a los pasos de solo firma.
 nunca a todo el trabajo.
 
-La firma de ID de desarrollador de Apple agrega más secretos. Almacenar certificados, contraseñas, API
-claves y contraseñas de llavero CI en secretos GitHub únicamente y mantenga la prueba local
-credenciales fuera del repositorio. Se debe seguir la futura firma del código de autenticación Windows.
-la misma regla para los secretos del cliente de Azure, tokens de SignPath, certificados u otros
-credenciales de firma. Los ID de Azure no secretos para la firma de artefactos pueden residir en
-Variables del repositorio GitHub si Azure Artifact Signing se habilita más adelante.
+La firma de ID de desarrollador de Apple agrega más secretos. Certificados, contraseñas, claves API,
+y las contraseñas del llavero CI residen en secretos GitHub, mientras que las credenciales de prueba locales
+permanecer fuera del repositorio. La herramienta inactiva Windows Authenticode sigue el
+Mismo límite: los valores secretos permanecen en los secretos GitHub y se utilizan identificadores de Azure no secretos.
+Variables del repositorio GitHub cuando esa herramienta está habilitada explícitamente.
 
 ## FFmpeg y sidecars de códec
 
@@ -271,8 +271,8 @@ También es un importante límite entre la cadena de suministro y las licencias.
 Normas:
 
 - No descargue FFmpeg, códecs ni archivos binarios de ayuda multimedia en tiempo de ejecución.
-- Los sidecars de lanzamiento deben crearse a partir de una fuente oficial fijada.
-- Los protocolos de red deben permanecer deshabilitados para el lanzamiento de compilaciones FFmpeg a menos que
+- Los sidecars de lanzamiento se crean a partir de una fuente oficial fijada.
+- Los protocolos de red permanecen deshabilitados para las compilaciones de lanzamiento FFmpeg a menos que
 La función de transmisión en serie requiere explícitamente una excepción revisada.
 - Los sidecars necesitan versión, SHA-256, licencia, fuente y metadatos de AVISO.
 - No confirme los binarios secundarios generados a menos que cambie la política de lanzamiento.
@@ -285,7 +285,7 @@ npm run check:ffmpeg-resources
 npm run check:ffmpeg-release
 ```
 
-## Presets, MIDI y perfiles futuros
+## Preajustes y datos MIDI
 
 Los ajustes preestablecidos y los mapas MIDI son datos locales, pero aún pueden dañar la aplicación si
 la ruta de importación confía en ellos.
@@ -304,8 +304,8 @@ esa elección es intencional y la interfaz de usuario lo deja claro.
 
 ### MIDI y reglas SysEx
 
-- El primer adaptador nativo acepta sólo nombres de puertos de entrada/salida que contengan
-`mioXC`; El USB directo UC-33e no está habilitado en 0.9.5.
+- El adaptador nativo acepta sólo nombres de puertos de entrada/salida que contengan `mioXC`;
+No se admite USB UC-33e directo.
 - Los comandos MIDI pertenecen únicamente a la ventana de control principal. La ventana de salida debe
 nunca enumere dispositivos, lea eventos, capture volcados ni envíe SysEx.
 - Colas de eventos, lecturas de eventos, recuentos de asignaciones, recuentos de paquetes, bytes decodificados y
@@ -357,23 +357,22 @@ npm run test:ffmpeg-policy
 npm run check:ffmpeg-resources
 ```
 
-## Riesgos conocidos y endurecimiento diferido
+## Riesgos conocidos
 
 - Las indicaciones de privacidad de macOS siguen siendo sensibles a la ruta de la aplicación, el identificador del paquete y
 firma de identidad. Las identidades de producción y desarrollo están aisladas, pero una
 La construcción de desarrollo deliberadamente ad hoc todavía recibe subvenciones específicas para la construcción.
 - La firma ad hoc macOS solo es aceptable para compilaciones locales; los comunicados públicos son
 Identificación del desarrollador firmada, notariada, grapada y validada por Gatekeeper.
-- Los artefactos Windows 0.9.5 son vistas previas sin firmar y pueden activar Desconocido
-Advertencias de Publisher, SmartScreen o Defender. Futuros lanzamientos públicos de Windows
-debe estar firmado con Authenticode y tener una marca de tiempo antes de ser tratado como normal
-instaladores públicos.
+- Los artefactos Windows 0.9.6 son vistas previas sin firmar y pueden activar Desconocido
+Advertencias de Publisher, SmartScreen o Defender.
 - El comportamiento de medios/cámara/audio de Linux varía según la distribución, WebKitGTK, controladores,
 y configuración del portal.
-- El modo de transmisión existe en las rutas de desarrollo, pero está oculto de la interfaz de usuario normal hasta que
-está producido y revisado en cuanto a seguridad.
-- La exportación/importación de mapas MIDI aún necesita un formato de perfil que el usuario pueda compartir con
-la misma validación, alcances y límites de velocidad que las anulaciones locales de MIDI Learn.
+- El modo Stream existe en las rutas de desarrollo pero está oculto en la interfaz de usuario normal y
+excluidos de la producción de CSP.
+
+Fortalecimiento de seguridad prospectivo, firma Windows, exposición de transmisión y MIDI
+El trabajo del perfil se rastrea en [Roadmap](/es/docs/reference/roadmap/).
 
 ## Informar problemas de seguridad
 

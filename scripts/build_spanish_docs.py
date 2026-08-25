@@ -2,13 +2,15 @@
 
 from __future__ import annotations
 
-import re
 import os
+import re
 import sys
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from json import loads
+from json import dumps, loads
 from pathlib import Path
+from threading import Lock
+from urllib.error import HTTPError
 from urllib.parse import urlencode
 from urllib.request import urlopen
 
@@ -54,6 +56,10 @@ BODY_OVERRIDES = {
     "## Source Material": "## Material de origen",
 }
 
+ANCHOR_OVERRIDES = {
+    "#release-and-updater-work": "#trabajo-de-lanzamiento-y-actualización",
+}
+
 MONTH_OVERRIDES = {
     "January": "enero",
     "February": "febrero",
@@ -69,11 +75,41 @@ MONTH_OVERRIDES = {
     "December": "diciembre",
 }
 
-cache: dict[str, str] = {}
+CACHE_DIR = ROOT / ".translation-cache"
+CACHE_PATH = CACHE_DIR / "spanish-docs.json"
 TRANSLATE_SEPARATOR = "\nZXQZXQASCII_VJBREAKZXQZXQ\n"
 TRANSLATE_MAX_CHARS = int(os.environ.get("ASCII_VJ_TRANSLATE_MAX_CHARS", "1200"))
 TRANSLATE_TIMEOUT_SECONDS = float(os.environ.get("ASCII_VJ_TRANSLATE_TIMEOUT_SECONDS", "15"))
-TRANSLATE_RETRIES = int(os.environ.get("ASCII_VJ_TRANSLATE_RETRIES", "3"))
+TRANSLATE_RETRIES = int(os.environ.get("ASCII_VJ_TRANSLATE_RETRIES", "8"))
+TRANSLATE_REQUEST_DELAY_SECONDS = float(
+    os.environ.get("ASCII_VJ_TRANSLATE_REQUEST_DELAY_SECONDS", "1")
+)
+TRANSLATE_RETRY_MAX_DELAY_SECONDS = float(
+    os.environ.get("ASCII_VJ_TRANSLATE_RETRY_MAX_DELAY_SECONDS", "60")
+)
+cache_lock = Lock()
+
+
+def load_translation_cache() -> dict[str, str]:
+    if not CACHE_PATH.exists():
+        return {}
+    try:
+        value = loads(CACHE_PATH.read_text())
+    except (OSError, ValueError):
+        return {}
+    if not isinstance(value, dict):
+        return {}
+    return {str(key): str(item) for key, item in value.items()}
+
+
+def save_translation_cache_unlocked() -> None:
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    temporary = CACHE_PATH.with_suffix(".tmp")
+    temporary.write_text(dumps(cache, ensure_ascii=False, sort_keys=True))
+    temporary.replace(CACHE_PATH)
+
+
+cache: dict[str, str] = load_translation_cache()
 
 
 def protect_text(text: str) -> tuple[str, list[str]]:
@@ -187,8 +223,10 @@ def translate_texts(texts: list[str]) -> list[str]:
             translated[index] = SECTION_TITLES[stripped]
             continue
 
-        if stripped in cache:
-            translated[index] = cache[stripped]
+        with cache_lock:
+            cached = cache.get(stripped)
+        if cached is not None:
+            translated[index] = cached
             continue
 
         protected, placeholders = protect_text(stripped)
@@ -229,12 +267,22 @@ def translate_texts(texts: list[str]) -> list[str]:
                 try:
                     with urlopen(url, timeout=TRANSLATE_TIMEOUT_SECONDS) as response:
                         payload = loads(response.read().decode("utf-8"))
+                    if TRANSLATE_REQUEST_DELAY_SECONDS > 0:
+                        time.sleep(TRANSLATE_REQUEST_DELAY_SECONDS)
                     break
                 except Exception as error:  # noqa: BLE001
                     last_error = error
                     if attempt == TRANSLATE_RETRIES - 1:
                         raise
-                    time.sleep(min(2**attempt, 5))
+                    delay = min(2**attempt, TRANSLATE_RETRY_MAX_DELAY_SECONDS)
+                    if isinstance(error, HTTPError) and error.code == 429:
+                        retry_after = error.headers.get("Retry-After")
+                        if retry_after:
+                            try:
+                                delay = max(delay, float(retry_after))
+                            except ValueError:
+                                pass
+                    time.sleep(delay)
 
             if payload is None and last_error is not None:
                 raise last_error
@@ -245,10 +293,15 @@ def translate_texts(texts: list[str]) -> list[str]:
             if len(batch) != len(chunk_values):
                 raise RuntimeError("Spanish docs translation batch returned an unexpected segment count")
 
+            cache_updates: dict[str, str] = {}
             for (index, stripped, placeholders), value in zip(chunk_meta, batch):
                 restored = restore_text(value, placeholders)
                 translated[index] = restored
-                cache[stripped] = restored
+                cache_updates[stripped] = restored
+
+            with cache_lock:
+                cache.update(cache_updates)
+                save_translation_cache_unlocked()
 
             start = end
 
@@ -281,6 +334,8 @@ def rewrite_docs_links(text: str) -> str:
     text = text.replace('href="/docs/', 'href="/es/docs/')
     text = text.replace('"/docs/', '"/es/docs/')
     text = text.replace(" /docs/", " /es/docs/")
+    for source, target in ANCHOR_OVERRIDES.items():
+        text = text.replace(source, target)
     return text
 
 
@@ -474,7 +529,7 @@ def main() -> int:
         if value.strip()
     }
 
-    paths = sorted(SOURCE_DIR.rglob("*.md"))
+    paths = list(SOURCE_DIR.rglob("*.md"))
     if requested_files:
         paths = [
             path
@@ -482,6 +537,8 @@ def main() -> int:
             if str(path.relative_to(ROOT)) in requested_files
             or str(path.relative_to(SOURCE_DIR)) in requested_files
         ]
+
+    paths.sort(key=lambda path: (path.stat().st_size, str(path)))
 
     max_workers = max(1, int(os.environ.get("ASCII_VJ_TRANSLATION_WORKERS", "1")))
 

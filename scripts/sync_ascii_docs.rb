@@ -99,7 +99,10 @@ module SyncAsciiDocs
     scripts = package_json.scan(/"([^"]+)"\s*:\s*"([^"]+)"/)
     return [] if scripts.empty?
     scripts.select { |name, _| name.match?(/^(dev|build|preview|test|check|tauri|release|smoke|lint|format|podman|sync|verify)/) }
-           .map { |name, value| "| `npm run #{name}` | `#{value.gsub('|', '\\|')}` |" }
+           .map do |name, value|
+             public_value = value.gsub(%r{media/point-click-test(?:-30s)?\.mp4}, "media/<bundled-test-fixture>.mp4")
+             "| `npm run #{name}` | `#{public_value.gsub('|', '\\|')}` |"
+           end
   end
 
   def package_json
@@ -195,15 +198,15 @@ module SyncAsciiDocs
         - Runtime is local-first and offline by default.
         - User-selected media, camera frames, and audio remain local.
         - Intentional online paths are limited to the GitHub Releases updater and production-only reviewed/sanitized crash report submission.
-        - Stream infrastructure exists, but the normal Source UI hides stream mode until it is ready as a standalone user feature.
-        - Experimental native MIDI control is available for the documented UC-33e/mioXC DIN rig. It is intentionally limited to visual, audio-reactive, preset, and WTF controls while physical commissioning remains incomplete.
+        - Stream infrastructure is development-only and is not exposed in the normal Source UI.
+        - Experimental native MIDI control is available for the documented UC-33e/mioXC DIN rig. It is intentionally limited to visual, audio-reactive, preset, and WTF controls. Current physical validation covers macOS Apple Silicon; direct UC-33e USB is unsupported, and Windows/Linux physical validation is incomplete.
 
         ## Project Lineage
 
-        ASCII VJ Remix combines three source lineages:
+        ASCII VJ Remix combines three engineering strands:
 
         - **ASCILINE**: high-performance ASCII video streaming, adaptive frame encoding, Python/OpenCV experiments, terminal ideas, and Canvas fallback lineage.
-        - **ascii-point-and-click**: high-quality WebGPU/WebGL visual output and local browser media-source architecture.
+        - **GPU rendering**: high-quality WebGPU/WebGL visual output and local browser media-source architecture.
         - **ASCII VJ Remix desktop work**: Tauri packaging, native media/audio adapters, native Pop Out output, local release/update infrastructure, crash reporting, and the dense VJ control surface.
 
         ## System Requirements
@@ -214,18 +217,18 @@ module SyncAsciiDocs
         - Optimal: M1 Pro/Max, M2 Pro/Max, M3 Pro/Max, or newer; 16 GB RAM or more; macOS 14 Sonoma, macOS 15 Sequoia, or newer; external display/projector for Pop Out.
         - Intel Mac support is not the current release target.
         - Camera, microphone, and audio capture require explicit macOS privacy grants.
-        - Public macOS release builds should be Developer ID signed and notarized.
+        - Public 0.9.6 macOS artifacts are Developer ID signed, notarized, stapled, and Gatekeeper-validated.
 
         ### Windows
 
         - Minimum: Windows 10 22H2 or Windows 11, x64 CPU, WebView2 runtime, D3D12 or WebGL2-capable GPU, 8 GB RAM, and about 2 GB free disk space.
         - Optimal: Windows 11, recent Intel/AMD/NVIDIA GPU with current drivers, 16 GB RAM or more, hardware media decode, and dedicated output display.
-        - Current Windows artifacts are published as unsigned previews until a signing backend is proven.
+        - Public 0.9.6 Windows artifacts are unsigned previews.
 
         ### Linux
 
         - Minimum: modern x86_64 Linux distribution, WebKitGTK 4.1 runtime, Mesa or vendor GPU drivers with WebGL2, 8 GB RAM, and about 2 GB free disk space.
-        - Optimal: Ubuntu 24.04, Fedora 40, Arch, or comparable current distro; Wayland or well-configured X11; recent Mesa/NVIDIA drivers; Vulkan-capable GPU; PipeWire for future capture work.
+        - Optimal: Ubuntu 24.04, Fedora 40, Arch, or comparable current distro; Wayland or well-configured X11; recent Mesa/NVIDIA drivers; Vulkan-capable GPU.
         - GPU behavior varies by distro, WebKitGTK version, and graphics driver.
 
         ## Practical Hardware Guidance
@@ -291,7 +294,7 @@ module SyncAsciiDocs
 
         Traditional ASCII presets include Classic Camera ASCII, ANSI Newsprint, Terminal Mono, and Dense Typewriter.
 
-        Version 0.9.5 added 23 credited ascii.today-inspired character presets, including Broadway KB, Computer, Doom, Ghost, Modular, Standard, Univers, and Doh.
+        The current preset catalog includes 23 credited ascii.today-inspired character presets, including Broadway KB, Computer, Doom, Ghost, Modular, Standard, Univers, and Doh.
 
         User presets can be saved, duplicated, updated, deleted, imported, and exported. Presets preserve the active media source unless the user explicitly changes it.
 
@@ -331,7 +334,7 @@ module SyncAsciiDocs
         - The first hardware profile uses an Evolution/M-Audio UC-33e through both DIN directions of an iConnectivity mioXC.
         - Four channel-addressed pages cover Visual, Audio, Presets, and Fine/User control with soft takeover, MIDI Learn, stable numeric preset slots, and bounded SysEx capture/restore.
         - MIDI cannot change sources, Camera, Pop Out, output displays, files, updates, or crash-report settings.
-        - Automated mapping, transport, safety, and scope tests pass; the full physical control sweep and end-to-end SysEx restore/verification remain incomplete, so the feature stays experimental.
+        - Automated mapping, transport, safety, and scope tests pass. Physical validation currently covers macOS Apple Silicon with the UC-33e connected by DIN through a mioXC; direct UC-33e USB is unsupported, and Windows/Linux physical validation is incomplete.
 
         ## Pop Out and External Displays
 
@@ -344,7 +347,7 @@ module SyncAsciiDocs
         - Built with Tauri v2.
         - Production runtime is local-only by default.
         - GitHub Releases updater infrastructure is configured.
-        - Public macOS release CI requires Developer ID signed and notarized artifacts.
+        - Public 0.9.6 macOS artifacts are Developer ID signed, notarized, stapled, and Gatekeeper-validated.
         - The 0.9.6 macOS release path validates the DMG layout, Developer ID identity, updater archive identity, and application-driven updater replacement.
         - Current Windows artifacts remain unsigned preview builds.
         - Crash report submission is production-only, reviewed/sanitized, and routed through the Rust desktop layer to the Cloudflare Worker relay.
@@ -353,7 +356,7 @@ module SyncAsciiDocs
 
         - Legacy ASCILINE stream work and newer Rust/FFmpeg stream sessions exist but are hidden from the normal Source UI.
         - FFmpeg sidecar policy and codec support live in contributor/release work.
-        - Experimental UC-33e/mioXC MIDI support is shipped; physical commissioning and broader platform validation remain follow-on work.
+        - Experimental UC-33e/mioXC MIDI support is shipped with documented macOS Apple Silicon hardware validation.
 
         #{source_note(["README.md", "docs/RENDERING_ENGINE.md", "CHANGELOG.md"])}
       MD
@@ -431,7 +434,7 @@ module SyncAsciiDocs
 
         ## Development Boundary
 
-        Do not add hosted fonts, CDNs, online decoders, telemetry, or hosted runtime dependencies. Runtime assets should remain bundled locally, and selected user media should stay local.
+        Do not add hosted fonts, CDNs, online decoders, telemetry, or hosted runtime dependencies. Keep runtime assets bundled locally and selected user media local.
 
         #{source_note(["README.md", "docs/CONTRIBUTORS.md", "docs/AGENTS.md"])}
       MD
@@ -442,7 +445,7 @@ module SyncAsciiDocs
 
         ASCII VJ Remix is a Tauri v2 desktop app with a vanilla/Vite renderer UI, GPU/Canvas rendering paths, native output work, and local media/audio adapters.
 
-        The app should be understood as a desktop performer tool, not a hosted SaaS app. Browser mode helps development and portability, but the packaged desktop app is the product.
+        The app is a desktop performer tool, not a hosted SaaS app. Browser mode supports development and portability; the packaged desktop app is the product.
 
         ## High-Level Flow
 
@@ -513,18 +516,18 @@ module SyncAsciiDocs
         ## Current Release Posture
 
         - Current source docs describe the **#{version}** feature set.
-        - macOS public release builds require Developer ID signing and notarization.
-        - Current Windows artifacts remain unsigned previews until SignPath Foundation, Azure Artifact Signing, or another signing backend is proven.
+        - Public 0.9.6 macOS artifacts are Developer ID signed, notarized, stapled, and Gatekeeper-validated.
+        - Public 0.9.6 Windows artifacts are unsigned previews.
         - GitHub Releases updater infrastructure is configured.
         - Updater and release checks must not broaden runtime network capability.
 
         ## macOS
 
-        Public release CI treats macOS signing/notarization as fail-closed. Local or test builds may still require the normal macOS right-click Open or Open Anyway flow.
+        Public release CI treats macOS signing/notarization as fail-closed. The 0.9.6 artifacts passed signing, notarization, stapling, and Gatekeeper validation. Local or test builds may still require the normal macOS right-click Open or Open Anyway flow.
 
         ## Windows
 
-        Windows signing tooling exists for future signed release work, including Azure Artifact Signing, Tauri `signCommand`, and Authenticode verification helpers. The current release posture remains unsigned preview artifacts.
+        Inactive Windows signing configuration and Authenticode verification helpers remain in the source tree, but the 0.9.6 public release workflow does not use them. Its Windows artifacts are unsigned previews.
 
         ## Crash Reporting
 
@@ -550,6 +553,8 @@ module SyncAsciiDocs
         # Commands
 
         Commands are read from `package.json` when available. Use source scripts as the authority; these docs are regenerated by `scripts/sync_ascii_docs.rb`.
+
+        Bundled media fixture paths are generalized in this public reference. Use `package.json` when inspecting the exact script implementation.
 
         #{commands.empty? ? "No matching npm scripts were found in package.json." : "| Command | Source script |\n| --- | --- |\n" + commands.join("\n")}
 
@@ -581,7 +586,7 @@ module SyncAsciiDocs
         | `docs/TESTING.md` | Source-derived verification matrix. |
         | `docs/ACCESSIBILITY.md` | Control-surface accessibility rules. |
         | `docs/I18N.md` | Internationalization and localization expectations. |
-        | `docs/ROADMAP.md` | Planned, deferred, and current direction. |
+        | `docs/ROADMAP.md` | Prospective direction only. |
         | `package.json` | NPM command reference. |
 
         ## Regenerate Docs

@@ -21,7 +21,7 @@ The sync script uses the following source files from the ASCII VJ Remix reposito
 | `docs/TESTING.md` | Source-derived verification matrix. |
 | `docs/ACCESSIBILITY.md` | Control-surface accessibility rules. |
 | `docs/I18N.md` | Internationalization and localization expectations. |
-| `docs/ROADMAP.md` | Planned, deferred, and current direction. |
+| `docs/ROADMAP.md` | Prospective direction only. |
 | `package.json` | NPM command reference. |
 
 ## Regenerate Docs

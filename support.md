@@ -14,7 +14,7 @@ Your support helps fund the work that makes the app better for live sets: smooth
 
 ## Support options
 
-Stripe payment links will go here once they are configured.
+<p id="stripe-links-coming-soon">Stripe payment links will go here once they are configured.</p>
 
 <div class="support-actions" aria-label="Support options">
   <a class="support-button support-button--primary" href="#stripe-links-coming-soon">One-time support</a>

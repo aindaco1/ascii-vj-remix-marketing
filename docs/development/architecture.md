@@ -11,7 +11,7 @@ parent: "Development"
 
 ASCII VJ Remix is a Tauri v2 desktop app with a vanilla/Vite renderer UI, GPU/Canvas rendering paths, native output work, and local media/audio adapters.
 
-The app should be understood as a desktop performer tool, not a hosted SaaS app. Browser mode helps development and portability, but the packaged desktop app is the product.
+The app is a desktop performer tool, not a hosted SaaS app. Browser mode supports development and portability; the packaged desktop app is the product.
 
 ## High-Level Flow
 

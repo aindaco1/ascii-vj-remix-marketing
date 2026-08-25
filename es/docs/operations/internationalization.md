@@ -8,179 +8,106 @@ lang: es
 
 # Internacionalización
 
-Esta guía establece prácticas de internacionalización y localización para
-ASCII VJ Remix.
-
-El trabajo de localización aquí debería centrarse en las cadenas de aplicaciones incluidas, Tauri
-metadatos, descripciones de permisos, texto del instalador, documentos y ajustes preestablecidos/MIDI
-perfil UX.
+Esta guía documenta los límites actuales del idioma, la propiedad de las cadenas y
+reglas de localización segura para ASCII VJ Remix.
 
 ## Línea de base actual
 
-Estado actual:
-
-- El inglés es el único idioma admitido por la aplicación.
-- Aún no existe un catálogo de traducción formal.
-- La mayoría de las cadenas de UI se encuentran actualmente en `index.html`, `app.js` y relacionados.
-módulos frontales.
-- Los metadatos de la aplicación Tauri y las cadenas de uso de macOS están en inglés.
-- La documentación es inglesa.
-- Los nombres preestablecidos creados por el usuario y los nombres de archivos personalizados se muestran como creados.
-
-Esto es aceptable para 0.9.0, pero el trabajo futuro de la interfaz de usuario debería evitar hacer
-la localización es más difícil.
-
-## Principios
-
-- Mantenga las traducciones agrupadas localmente. No utilice servicios de traducción en línea en
+- El inglés es el único idioma admitido para la aplicación y la documentación.
+- La aplicación no tiene catálogo de traducción ni conmutador de configuración regional.
+- La mayoría de las cadenas de UI viven directamente en `index.html`, `app.js` y la interfaz relacionada.
+módulos.
+- Metadatos de Tauri, cuadros de diálogo de escritorio, mensajes de estado/error y uso de macOS
+Las descripciones están en inglés.
+- Los nombres de los ajustes preestablecidos del usuario, los nombres de los archivos y los nombres de los dispositivos de hardware se muestran como
+creado o reportado por el sistema operativo.
+- La aplicación no descarga traducciones ni otros recursos lingüísticos en
 tiempo de ejecución.
-- Mantenga los identificadores internos estables separados de las cadenas de visualización.
-- Trate el inglés como idioma de origen canónico hasta que exista un flujo de trabajo de traducción.
-existe.
-- No localice rutas de medios de usuario, nombres de archivos, nombres preestablecidos personalizados ni hardware
-nombres de dispositivos.
-- Localice etiquetas, texto de ayuda, mensajes de estado, errores, menús, copia del instalador,
-cadenas de uso de permisos y documentos cuando se admite una configuración regional.
-- Mantenga las unidades y el formato numérico conscientes de la configuración regional cuando sea práctico.
-- Mantenga las etiquetas de accesibilidad localizadas con etiquetas visibles.
 
-## Modelo de catálogo futuro
+El trabajo prospectivo de catálogo, configuración regional y flujo de trabajo de traducción se rastrea únicamente en
+la [Hoja de ruta](/es/docs/reference/roadmap/).
 
-Cuando comience la localización, prefiera una estructura de catálogo pequeña, como por ejemplo:
+## Propiedad actual de la cadena
 
-```text
-src/i18n/
-  en.json
-  es.json
-```
-
-o una estructura de módulo equivalente propiedad de la aplicación. Las limitaciones importantes son:
-
-- Los catálogos se envían dentro del paquete de aplicaciones.
-- Las claves que faltan vuelven al inglés.
-- Las claves son estables y descriptivas.
-- La copia visible no está duplicada en `index.html`, `app.js` y Tauri.
-diálogos.
-- Las pruebas pueden comprobar si faltan claves y si hay claves obsoletas.
-
-No agregue un CMS remoto, un catálogo alojado en CDN ni una dependencia de traducción de red.
-
-## Propiedad de la cadena
-
-|Tipo de cadena|propietario|Notas|
+|Tipo de cadena|Propietario actual|Comportamiento actual|
 | --- | --- | --- |
-|Etiquetas de control de aplicaciones|Catálogo incluido futuro|Fuente, Presets, Cuadrícula, Color, Muestreo, Audio, Salida.|
-|Mensajes de estado/error|Catálogo incluido futuro|Incluya errores de permisos, medios, backend, actualizador y fuente.|
-|ID preestablecidos|Código/datos|Estable, no localizado.|
-|Nombres para mostrar preestablecidos incorporados|Catálogo incluido futuro|El nombre para mostrar se puede localizar mientras que la identificación permanece estable.|
-|Nombres preestablecidos de usuario|Datos de usuario|Mostrar exactamente como fue creado.|
-|Nombres de dispositivos|SO/hardware|Visualización según lo dispuesto por la plataforma.|
-|Nombres de archivos|SO/datos de usuario|Visualización según lo dispuesto por la plataforma.|
-|Metadatos Tauri|Configuración/recursos de Tauri|El nombre del producto permanece `ASCII VJ Remix`; El texto del instalador se puede localizar más tarde.|
-|Cadenas de uso macOS|`src-tauri/Info.plist`|Debe ser preciso en cada lugar de envío.|
-|Documentación|Documentos de rebajas|Traducir sólo cuando haya una ruta de mantenimiento.|
+|Etiquetas de control de aplicaciones|`index.html`, `app.js` y módulos frontales|Literales en inglés.|
+|Mensajes de estado y error|Módulos frontend y comandos Rust/Tauri|Literales en inglés.|
+|ID preestablecidos|Código y datos preestablecidos|Estable e independiente del idioma.|
+|Nombres para mostrar preestablecidos incorporados|Datos preestablecidos|Nombres ingleses.|
+|Nombres preestablecidos de usuario|Datos de usuario|Se muestra exactamente como fue creado.|
+|Nombres de dispositivos|SO y hardware|Se muestra según lo dispuesto por la plataforma.|
+|Nombres de archivos|SO y datos de usuario|Se muestra según lo dispuesto por la plataforma.|
+|Metadatos del producto|Recursos de plataforma y configuración de Tauri|El nombre del producto sigue siendo `ASCII VJ Remix`.|
+|Cadenas de uso macOS|`src-tauri/Info.plist`|Descripciones en inglés de permisos activos.|
+|Documentación|Archivos de rebajas|Inglés.|
 
-## Reglas de la interfaz de usuario
+## Reglas para texto visible para el usuario
 
-Al agregar o cambiar texto visible para el usuario:
-
+- Mantenga las cadenas de tiempo de ejecución y los activos agrupados localmente.
+- Mantenga los identificadores internos estables separados de las cadenas de visualización.
+- No localice rutas de medios de usuario, nombres de archivos, nombres preestablecidos personalizados, hardware
+nombres de dispositivos, identificadores de backend, nombres de códecs, canales MIDI, números CC, SysEx
+bytes o extensiones de archivo.
 - Evite construir oraciones concatenando fragmentos.
 - Mantenga la pluralización y las unidades separables.
-- Evite el formato de fecha/hora/número codificado.
-- Deje espacio para cadenas traducidas más largas en paneles compactos.
-- No codifique la semántica solo en nombres preestablecidos o etiquetas de colores.
-- Mantenga las etiquetas cerca de los controles para que el texto traducido siga siendo comprensible.
+- Deje espacio para copias más largas en paneles de control compactos.
+- Mantenga las etiquetas cerca de sus controles y mantenga las etiquetas accesibles alineadas con
+etiquetas visibles.
 - Evite el texto integrado en imágenes.
-- Mantenga los atajos de teclado y las etiquetas MIDI separados de la prosa traducida.
+- Mantenga los atajos de teclado y los identificadores MIDI separados de la prosa.
+- Conserve el nombre del producto `ASCII VJ Remix` en los metadatos de la plataforma.
 
 ## Números, unidades y formatos
 
-Los controles actuales utilizan valores como:
+Los controles actuales muestran segundos, FPS, columnas/filas, ancho/alto, porcentajes,
+valores normalizados, nombres de dispositivos y nombres de archivos directamente desde la aplicación o plataforma
+estado. Las unidades técnicas y los identificadores permanecen estables en toda la interfaz.
 
-- artículos de segunda clase.
-- FPS.
-- columnas/filas.
-- ancho/alto.
-- porcentajes o valores del control deslizante normalizados.
-- nombres de dispositivos.
-- nombres de archivos.
-
-La localización futura debería:
-
-- formatear decimales de manera consistente.
-- preservar unidades técnicas como FPS donde se esperaba.
-- Evite traducir extensiones de archivos, identificadores de backend, nombres de códecs o nombres de dispositivos.
-- utilice el formato numérico que tenga en cuenta la configuración regional para los valores mostrados cuando no lo haga
-crear una agitación ruidosa en la interfaz de usuario.
+El código que agrega un valor formateado visible para el usuario mantiene el valor separado de su
+etiqueta y evita fragmentos de oraciones codificadas. Formato de números según la configuración regional
+Actualmente no está implementado.
 
 ## Presets, WTF, Audio y MIDI
 
-Los datos visuales preestablecidos deben mantener identificadores estables.
+- Los identificadores integrados y preestablecidos por el usuario permanecen estables.
+- Los nombres preestablecidos del usuario siguen siendo creados por el usuario.
+- Los datos preestablecidos importados y exportados no requieren una configuración regional para funcionar.
+- MIDI ID de destino, ID de página, canales, números CC, bytes SysEx y valores predeterminados almacenados
+Los identificadores siguen siendo independientes del idioma.
+- Los nombres de dispositivos y archivos siguen siendo datos de plataforma/usuario en lugar de una copia de la aplicación.
 
-Reglas de localización futuras:
+## Tauri y texto del instalador
 
-- Los nombres para mostrar preestablecidos incorporados pueden localizarse.
-- Los identificadores preestablecidos integrados no deben localizarse.
-- Los nombres preestablecidos del usuario deben seguir siendo creados por el usuario.
-- Los paquetes preestablecidos importados deben declarar su idioma solo para los metadatos de visualización.
-- Los ID de destino de mapeo MIDI no deben localizarse.
-- Las etiquetas de control MIDI que se muestran al usuario pueden localizarse.
-- Los perfiles exportados no deberían requerir una configuración regional para funcionar.
-- ID de página UC-33e, canales MIDI, números CC, bytes SysEx e ID preestablecidos almacenados
-debe permanecer independiente de la ubicación.
-- Conexión MIDI, aprendizaje, adquisición suave, captura, restauración, verificación y
-Las cadenas de advertencia de sobrescritura pertenecen a un futuro catálogo incluido.
+El texto de escritorio actualmente abarca:
 
-## Tauri y localización del instalador
+- Descripciones de uso de macOS en `src-tauri/Info.plist`;
+- Metadatos de los paquetes Windows y Linux;
+- Cuadro de diálogo Tauri y cadenas de error; y
+- mensajes de actualización.
 
-La localización de escritorio tiene piezas específicas de la plataforma:
+Estas cadenas están en inglés y deben seguir siendo precisas para el comportamiento y
+permisos presentes en la aplicación empaquetada.
 
-- Descripciones de uso de macOS en `src-tauri/Info.plist`.
-- Metadatos del instalador Windows y futura presentación firmada del editor.
-- Metadatos de escritorio Linux.
-- Tauri cadenas de diálogo/error.
-- Mensajes de actualización.
+## Validación actual
 
-Antes de enviar una nueva ubicación:
-
-1. Confirme que las cadenas de la interfaz de usuario de la aplicación estén traducidas.
-2. Confirme que las cadenas de uso de permisos estén traducidas o intencionalmente en inglés.
-3. Confirme que el texto del instalador/actualización esté traducido donde la plataforma lo admita.
-4. Confirme que el diseño aún se adapta a paneles compactos.
-5. Confirme que las etiquetas de accesibilidad coincidan con las etiquetas visibles.
-6. Confirme que los documentos indiquen a los usuarios qué idiomas son compatibles.
-
-## Expectativas de prueba
-
-Controles actuales:
+Las comprobaciones generales de construcción y humo estático utilizan la interfaz de usuario en inglés actual:
 
 ```bash
 npm run build
 npm run smoke:static
 ```
 
-Las comprobaciones futuras del i18n deberían incluir:
-
-- Detección de clave faltante.
-- Detección de claves no utilizadas.
-- prueba de humo en cada lugar admitido.
-- comprobaciones de captura de pantalla/diseño para paneles compactos con cadenas más largas.
-- verificaciones de permisos/mensajes de error.
-- comprobaciones de compatibilidad de importación/exportación entre configuraciones regionales.
+No hay ninguna clave faltante, clave no utilizada, diseño regional o configuración regional cruzada.
+suite de importación/exportación porque la aplicación no tiene catálogo ni soporte adicional
+local. Esta brecha se registra en [Testing](/es/docs/operations/testing/).
 
 ## Límites actuales
 
-Fuera de alcance hoy:
-
-- Tubería de traducción automática.
-- Descarga en tiempo de ejecución de catálogos de traducción.
-- Sitio de documentación localizada.
-- Soporte de diseño de derecha a izquierda.
-- Ajustes preestablecidos específicos de la configuración regional o valores predeterminados visuales específicos de la cultura.
-- Localización de nombres de dispositivos de hardware o contenido escrito por el usuario.
-
-Estos se pueden revisar después de la aplicación de escritorio principal, el proceso de lanzamiento y
-el comportamiento del renderizador se estabiliza.
+El producto actual no incluye traducción automática ni catálogo en tiempo de ejecución.
+descargas, documentación traducida, diseño de derecha a izquierda, específico de la configuración regional
+ajustes preestablecidos o localización de hardware/datos creados por el usuario. Esas son la hoja de ruta
+decisiones en lugar de capacidades actuales indocumentadas.
 
 
 ## Material de origen

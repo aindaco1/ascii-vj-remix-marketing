@@ -44,7 +44,7 @@ Para trabajo de escritorio, instale los requisitos previos Tauri para el sistema
 |`npm run check:ffmpeg-release`|`node scripts/check_ffmpeg_resources.mjs --require-current-platform`|
 |`npm run check:macos-notarization`|`node scripts/check_macos_notarization.mjs --profile release`|
 |`npm run check:windows-authenticode`|`node scripts/check_windows_authenticode.mjs --profile release`|
-|`npm run check:media`|`npm run test:frame-prep && npm run test:decode-resize && npm run media:pipeline-preview -- media/point-click-test.mp4 96 54 12 5 false && npm run media:pipeline-preview -- media/point-click-test.mp4 96 54 12 5 true && npm run media:native-session-preview -- media/point-click-test.mp4 96 54 12 5 false 4 && npm run media:native-session-preview -- media/point-click-test.mp4 96 54 12 5 true 4`|
+|`npm run check:media`|`npm run test:frame-prep && npm run test:decode-resize && npm run media:pipeline-preview -- media/<bundled-test-fixture>.mp4 96 54 12 5 false && npm run media:pipeline-preview -- media/<bundled-test-fixture>.mp4 96 54 12 5 true && npm run media:native-session-preview -- media/<bundled-test-fixture>.mp4 96 54 12 5 false 4 && npm run media:native-session-preview -- media/<bundled-test-fixture>.mp4 96 54 12 5 true 4`|
 |`npm run check:tauri-policy`|`node scripts/check_tauri_policy.mjs`|
 |`npm run release:version:check`|`node scripts/check_release_version.mjs`|
 |`npm run release:secrets:check`|`node scripts/check_github_release_secrets.mjs`|
@@ -89,7 +89,7 @@ Para trabajo de escritorio, instale los requisitos previos Tauri para el sistema
 
 ## Límite de desarrollo
 
-No agregue fuentes alojadas, CDN, descodificadores en línea, telemetría ni dependencias de tiempo de ejecución alojadas. Los recursos en tiempo de ejecución deben permanecer agrupados localmente y los medios de usuario seleccionados deben permanecer locales.
+No agregue fuentes alojadas, CDN, descodificadores en línea, telemetría ni dependencias de tiempo de ejecución alojadas. Mantenga los activos de tiempo de ejecución agrupados localmente y los medios de usuario seleccionados localmente.
 
 
 

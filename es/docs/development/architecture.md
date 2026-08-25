@@ -10,9 +10,9 @@ lang: es
 
 ## Forma del producto
 
-ASCII VJ Remix es una aplicación de escritorio Tauri v2 con una interfaz de usuario de renderizado básica/Vite, rutas de renderizado GPU/Canvas, trabajo de salida nativo y adaptadores de audio/medios locales.
+ASCII VJ Remix es una aplicación de escritorio Tauri v2 con una interfaz de usuario de renderizado estándar/Vite, rutas de renderizado GPU/Canvas, trabajo de salida nativo y adaptadores de audio/medios locales.
 
-La aplicación debe entenderse como una herramienta de escritorio, no como una aplicación SaaS alojada. El modo de navegador ayuda al desarrollo y la portabilidad, pero la aplicación de escritorio empaquetada es el producto.
+La aplicación es una herramienta de escritorio, no una aplicación SaaS alojada. El modo de navegador admite desarrollo y portabilidad; la aplicación de escritorio empaquetada es el producto.
 
 ## Flujo de alto nivel
 

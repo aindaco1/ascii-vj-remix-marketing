@@ -11,18 +11,18 @@ lang: es
 ## Postura de liberación actual
 
 - Los documentos fuente actuales describen el conjunto de características **0.9.6**.
-- Las compilaciones de lanzamiento público de macOS requieren la firma y certificación notarial del ID del desarrollador.
-- Los artefactos Windows actuales siguen siendo vistas previas sin firmar hasta que se pruebe SignPath Foundation, Azure Artifact Signing u otro backend de firma.
+- Los artefactos públicos 0.9.6 macOS están firmados con el ID del desarrollador, notariados, engrapados y validados por Gatekeeper.
+- Los artefactos públicos 0.9.6 Windows son vistas previas sin firmar.
 - GitHub La infraestructura del actualizador de versiones está configurada.
 - Las comprobaciones de actualizaciones y versiones no deben ampliar la capacidad de la red en tiempo de ejecución.
 
 ## macOS
 
-El CI de publicación pública trata la firma o notarización de macOS como un proceso cerrado ante fallas. Es posible que las compilaciones locales o de prueba aún requieran el flujo normal de clic derecho del botón Abrir o Abrir de todos modos con macOS.
+El CI de publicación pública trata la firma o notarización de macOS como un proceso cerrado ante fallas. Los artefactos 0.9.6 pasaron la firma, certificación notarial, grapado y validación Gatekeeper. Es posible que las compilaciones locales o de prueba aún requieran el flujo normal de clic derecho del botón Abrir o Abrir de todos modos con macOS.
 
 ## Windows
 
-Las herramientas de firma Windows existen para futuros trabajos de versión firmada, incluidos Azure Artifact Signing, Tauri `signCommand` y los asistentes de verificación de Authenticode. La postura de lanzamiento actual sigue siendo artefactos de vista previa sin firmar.
+La configuración de firma Windows inactiva y los asistentes de verificación de Authenticode permanecen en el árbol de fuentes, pero el flujo de trabajo de la versión pública 0.9.6 no los utiliza. Sus artefactos Windows son vistas previas sin firmar.
 
 ## Informe de fallos
 

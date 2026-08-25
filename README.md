@@ -17,6 +17,8 @@ bundle exec jekyll serve
 
 ```bash
 bundle exec jekyll build --trace
+python3 scripts/audit_docs_current_state.py
+python3 scripts/audit_links.py
 python3 scripts/audit_seo.py
 python3 scripts/audit_performance.py
 ```
@@ -34,6 +36,8 @@ VJ Remix checkout:
 ruby scripts/sync_ascii_docs.rb
 python3 scripts/build_spanish_docs.py
 bundle exec jekyll build --trace
+python3 scripts/audit_docs_current_state.py
+python3 scripts/audit_links.py
 python3 scripts/audit_seo.py
 python3 scripts/audit_performance.py
 ```

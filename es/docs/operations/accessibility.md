@@ -8,12 +8,12 @@ lang: es
 
 # Accesibilidad
 
-Esta guía establece las mejores prácticas de accesibilidad para ASCII VJ Remix y
-rastrea la línea de base actual.
+Esta guía documenta la línea base de accesibilidad actual y las reglas aplicadas.
+para controlar los cambios de superficie.
 
-Los controles aún deben ser accesibles, pero la salida del renderizador en sí es
-medios creativos que pueden ser intencionalmente de alto contraste, animados, nerviosos y
-visualmente intenso.
+La interfaz de usuario de control permanece sujeta al teclado, el etiquetado, el contraste y el enfoque.
+requisitos. El resultado renderizado son medios creativos que pueden ser intencionalmente
+Alto contraste, animado, nervioso y visualmente intenso.
 
 ## Línea de base actual
 
@@ -30,7 +30,7 @@ Limitaciones conocidas:
 
 - No se ha completado ninguna auditoría integral solo del teclado.
 - No se ha completado ningún pase de lector de pantalla.
-- Aún no existe ningún conjunto de instantáneas automatizadas de axe/ARIA.
+- No existe ningún conjunto de instantáneas automatizadas de Axe/ARIA.
 - La densa superficie de control de VJ tiene muchos controles deslizantes y botones que necesitan más fuerza.
 enfoque y etiquetado de cobertura a lo largo del tiempo.
 - La salida visual puede incluir movimiento rápido, alto contraste, fluctuación y color.
@@ -75,14 +75,14 @@ Utilice estas reglas para el nuevo trabajo de UI:
 - Los botones de alternancia deben exponer el estado presionado/encendido.
 - Los controles deslizantes necesitan etiquetas visibles, etiquetas accesibles, valores mínimo/máximo/actual y
 soporte de teclado.
-- Las opciones mutuamente excluyentes deben utilizar botones de opción, una selección o un ARIA.
+- Las opciones mutuamente excluyentes utilizan botones de opción, una selección o un ARIA.
 patrón que se prueba con la entrada del teclado.
 - Los grupos de casillas de verificación necesitan una etiqueta de grupo.
-- Los controles del selector de archivos deben anunciar el nombre del archivo seleccionado/estado de presencia.
+- Los controles del selector de archivos anuncian el nombre del archivo seleccionado/estado de presencia.
 - Los menús y controles adicionales deben cerrarse con Escape y restaurar el foco.
-- El texto de estado/error debe aparecer cerca del control de activación y utilizar un
+- El texto de estado/error aparece cerca del control de activación y utiliza un
 estado apropiado o región de alerta cuando sea dinámico.
-- Los controles deshabilitados o irrelevantes deben ocultarse o deshabilitarse de manera consistente,
+- Los controles deshabilitados o irrelevantes están ocultos o deshabilitados consistentemente,
 que coincide con el modelo de perilla condicional.
 
 ## Expectativas del teclado
@@ -111,26 +111,17 @@ eliminar una anulación o restablecer el mapa integrado.
 
 ## Movimiento, parpadeo e intensidad visual
 
-ASCII VJ Remix está diseñado para imágenes extremas, pero la interfaz de usuario de control aún debería
-respetar las necesidades de accesibilidad.
+ASCII VJ Remix está diseñado para imágenes extremas, mientras que la interfaz de usuario de control permanece
+legible y operable.
 
 Regla actual:
 
 - La aplicación puede generar imágenes intensas cuando el usuario selecciona ajustes preestablecidos extremos o
 WTF mode, pero los controles deben permanecer legibles y operables.
 
-Futuros candidatos:
-
-- Una preferencia de movimiento reducido para las transiciones de la interfaz de usuario.
-- Una opción de seguridad de fotosensibilidad que limita el parpadeo/nerviosismo extremo en
-modos aleatorios.
-- Advertencias claras para el usuario para conjuntos de rendimiento que utilizan intencionalmente rapidez
-destellos o cambios de alto contraste.
-- Una forma de excluir ajustes preestablecidos específicos del modo WTF/aleatorio.
-
 ## Color y contraste
 
-El tema actual debería mantener:
+El tema actual utiliza:
 
 - Superficies negras/grafito para estructura.
 - el blanco como color principal activo/enfoque.
@@ -144,10 +135,9 @@ Normas:
 texto.
 - Los anillos de enfoque deben ser visibles contra los paneles negros y grises.
 - Los estados de error y advertencia necesitan diferencias de texto/icono/estado, no solo color.
-- El logotipo/color heredado azul claro no debe usarse como acento principal de la interfaz de usuario.
-a menos que el tema cambie intencionalmente.
+- El logotipo/color heredado azul claro no es el acento principal de la interfaz de usuario.
 
-## Objetivos de cobertura automatizados
+## Cobertura automatizada actual
 
 Los controles actuales son indirectos:
 
@@ -156,15 +146,10 @@ npm run build
 npm run smoke:static
 ```
 
-Comprobaciones de accesibilidad a corto plazo para agregar:
-
-- Humo de teclado de dramaturgo para fuente, ajustes preestablecidos, WTF, reactividad de audio y pop
-Fuera de los controles.
-- Ax busca la ventana de control principal.
-- Instantáneas de ARIA para paneles principales.
-- Afirmaciones de orden de enfoque para paneles compactos.
-- El comportamiento de movimiento reducido se comprueba una vez que existe la preferencia.
-- El contraste de color al pasar el cursor/enfoque comprueba el tema negro/neón.
+No hay teclado dedicado, hacha, instantánea ARIA, orden de enfoque, movimiento reducido,
+o conjunto de contraste automatizado. Esas lagunas también se resumen en
+[Prueba](/es/docs/operations/testing/); El futuro trabajo de accesibilidad vive en el
+[Hoja de ruta](/es/docs/reference/roadmap/).
 
 ## Lista de verificación de accesibilidad manual
 

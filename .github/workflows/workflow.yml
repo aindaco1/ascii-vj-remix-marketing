@@ -29,6 +29,8 @@ jobs:
           ruby-version: "3.3"
           bundler-cache: true
       - run: bundle exec jekyll build --trace
+      - run: python3 scripts/audit_docs_current_state.py
+      - run: python3 scripts/audit_links.py
       - run: python3 scripts/audit_seo.py
       - run: python3 scripts/audit_performance.py
       - uses: actions/upload-pages-artifact@v5

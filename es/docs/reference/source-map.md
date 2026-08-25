@@ -22,7 +22,7 @@ El script de sincronización utiliza los siguientes archivos fuente del reposito
 |`docs/TESTING.md`|Matriz de verificación derivada de la fuente.|
 |`docs/ACCESSIBILITY.md`|Reglas de accesibilidad de la superficie de control.|
 |`docs/I18N.md`|Expectativas de internacionalización y localización.|
-|`docs/ROADMAP.md`|Dirección planificada, diferida y actual.|
+|`docs/ROADMAP.md`|Sólo dirección prospectiva.|
 |`package.json`|Referencia del comando NPM.|
 
 ## Regenerar documentos

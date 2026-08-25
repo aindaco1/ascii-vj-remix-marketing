@@ -43,7 +43,7 @@ For desktop work, install the Tauri prerequisites for the target OS. Linux devel
 | `npm run check:ffmpeg-release` | `node scripts/check_ffmpeg_resources.mjs --require-current-platform` |
 | `npm run check:macos-notarization` | `node scripts/check_macos_notarization.mjs --profile release` |
 | `npm run check:windows-authenticode` | `node scripts/check_windows_authenticode.mjs --profile release` |
-| `npm run check:media` | `npm run test:frame-prep && npm run test:decode-resize && npm run media:pipeline-preview -- media/point-click-test.mp4 96 54 12 5 false && npm run media:pipeline-preview -- media/point-click-test.mp4 96 54 12 5 true && npm run media:native-session-preview -- media/point-click-test.mp4 96 54 12 5 false 4 && npm run media:native-session-preview -- media/point-click-test.mp4 96 54 12 5 true 4` |
+| `npm run check:media` | `npm run test:frame-prep && npm run test:decode-resize && npm run media:pipeline-preview -- media/<bundled-test-fixture>.mp4 96 54 12 5 false && npm run media:pipeline-preview -- media/<bundled-test-fixture>.mp4 96 54 12 5 true && npm run media:native-session-preview -- media/<bundled-test-fixture>.mp4 96 54 12 5 false 4 && npm run media:native-session-preview -- media/<bundled-test-fixture>.mp4 96 54 12 5 true 4` |
 | `npm run check:tauri-policy` | `node scripts/check_tauri_policy.mjs` |
 | `npm run release:version:check` | `node scripts/check_release_version.mjs` |
 | `npm run release:secrets:check` | `node scripts/check_github_release_secrets.mjs` |
@@ -88,7 +88,7 @@ For desktop work, install the Tauri prerequisites for the target OS. Linux devel
 
 ## Development Boundary
 
-Do not add hosted fonts, CDNs, online decoders, telemetry, or hosted runtime dependencies. Runtime assets should remain bundled locally, and selected user media should stay local.
+Do not add hosted fonts, CDNs, online decoders, telemetry, or hosted runtime dependencies. Keep runtime assets bundled locally and selected user media local.
 
 
 

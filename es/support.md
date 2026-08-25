@@ -15,7 +15,7 @@ Tu apoyo ayuda a financiar el trabajo que mejora la app para presentaciones en v
 
 ## Opciones de apoyo
 
-Los enlaces de pago de Stripe irán aquí cuando estén configurados.
+<p id="stripe-links-coming-soon">Los enlaces de pago de Stripe irán aquí cuando estén configurados.</p>
 
 <div class="support-actions" aria-label="Opciones de apoyo">
   <a class="support-button support-button--primary" href="#stripe-links-coming-soon">Apoyo único</a>
