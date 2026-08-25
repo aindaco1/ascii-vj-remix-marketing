@@ -8,11 +8,202 @@ lang: es
 
 # Registro de cambios
 
+El desarrollo de la versión 0.9.7 comienza con la resiliencia del transporte de lanzamiento. Versión
+0.9.6 continúa el trabajo de puesta en servicio experimental de MIDI, elimina
+Medición de la sobrecarga de ruta activa del renderizador/salida sin cambiar las matemáticas visuales ni
+calidad y refuerza la ruta de lanzamiento de arrastrar a Aplicaciones de macOS. Versión 0.9.5
+agrega 23 ajustes preestablecidos de caracteres inspirados en ascii.today acreditados y
+Control nativo experimental DIN MIDI para un Evolution/M-Audio UC-33e a través de un
+iConnectivity mioXC, que incluye cuatro páginas de controlador completas, adquisición suave,
+selección numérica preestablecida, aprendizaje MIDI y captura/restauración SysEx de banco completo.
 La versión 0.9.3 traslada las versiones de escritorio públicas a macOS firmada/notariada
 distribución, publica Windows como una vista previa sin firmar mientras se firma
 diferido y amplía la reactividad del audio con controles de mezcla densa que reducen
 reacción exagerada ante la música ocupada. La versión 0.9.0 sigue siendo la primera documentación.
 línea de base para el conjunto de características actual ASCII VJ Remix.
+
+## [0.9.7] - Inédito
+
+### Fijado
+
+- Las descargas de fuentes de lanzamiento ahora reintentan fallas de transporte transitorias limitadas y
+promover solo archivos tar FFmpeg completados antes de la verificación SHA-256 fijada.
+- El envío automático de lanzamiento de escritorio ahora reintenta fallas transitorias de la API GitHub
+con retroceso acotado.
+
+## [0.9.6] - 2026-08-17
+
+### Cambió
+
+- El macOS nativo Pop Out ahora convierte y carga solo un fotograma fuente RGB decodificado
+cuando cambia su versión del marco de origen. El enlace de visualización puede continuar presentando
+y aplicar parámetros visuales/audio en vivo al actualizar la pantalla sin cargar
+el mismo cuadro de video nuevamente.
+- WebGPU reutiliza almacenamiento de respaldo uniforme, vistas de textura y grupos de enlace estables;
+El enlace de textura externa de vídeo y navegador por fotograma permanece dinámico según sea necesario.
+- WebGL2 resuelve las ubicaciones uniformes del sombreador en la inicialización en lugar de mirar
+hasta las 18 ubicaciones en cada cuadro renderizado.
+- Las transiciones numéricas preestablecidas/WTF actualizan solo los controles cuyos valores están cambiando.
+Listas de fuentes, opciones de cámara, visibilidad, medidores y el resto del control.
+Las superficies se sincronizan una vez al finalizar en lugar de en cada animación.
+marco.
+- El humo de rendimiento de interfaz de usuario optimizado utiliza valores predeterminados limpios y no estructurales fijos
+objetivos de transición, registra P10/P50 así como el promedio FPS, informa el
+backends realmente visitados y acepta un paquete de aplicaciones exacto a través de
+`ASCILINE_SOURCE_APP` para comparaciones de versiones.
+- Avanzó la versión de escritorio/paquete a 0.9.6. MIDI sigue siendo experimental mientras
+Se completa la puesta en servicio física del UC-33e/mioXC.
+- Los comandos normales de desarrollo y paquete de depuración de Tauri ahora usan `ASCII VJ Remix
+Dev` with bundle identifier `com.asciline.remix.dev`. El nombre de la producción y
+El identificador `com.asciline.remix` sigue siendo exclusivo del embalaje de lanzamiento.
+- El macOS DMG mantiene Tauri como su único empaquetador, hace el estándar
+diseño de aplicación a aplicaciones explícito y documenta el DMG como el principal
+instalador manual. El `.app.tar.gz` sigue siendo un artefacto de actualización.
+
+### Fijado
+
+- Se corrigió la guía de puesta en servicio del UC-33e para usar el modo de botón extendido 146 para
+distintos valores de prensa/comunicados. Una asignación CC estándar simple alterna entre
+dos valores y no proporciona los bordes momentáneos esperados por la aplicación.
+- Se aclaró que Control Select es el único botón físico `SELECT` y se agregó
+programación exacta en el panel frontal, almacenamiento, captura/restauración SysEx y verificación
+pasos.
+
+### Rendimiento
+
+- En la versión de prueba optimizada de Apple Silicon macOS, se presentó un video de 24 FPS en
+60 FPS en Pop Out nativo con aproximadamente 23,8 cargas de origen y 36,3 omisiones de carga
+por segundo: aproximadamente el 60% del trabajo de conversión/carga duplicado anterior se
+eliminado mientras la presentación permaneció en 60.1 FPS.
+- Las fases constantes de construcción optimizada se mantuvieron en calidad equivalente y no retrocedieron:
+la referencia 0.9.5 publicada midió 35,8 FPS principal / 39,3 FPS con Pop Out,
+mientras que el candidato final 0.9.6 midió 38.6/39.0 FPS y sostuvo 35.9
+FPS durante su fase de transición numérica fija.
+- El arnés de humo estático ahora afirma que una transición numérica no realiza
+Más de dos sincronizaciones de control de fuente y una cámara/visual completo.
+sincronización, en lugar de repetir el trabajo completo de la interfaz de usuario durante toda la interpolación.
+- Código de sombreador de renderizador, muestreo, procesamiento de color, cálculo de glifos, salida
+La resolución, la fuente FPS y los controles de calidad no cambian.
+
+### Seguridad
+
+- Se eliminó la sincronización del corredor local en `/Applications/ASCII VJ Remix.app`.
+El corredor ahora acepta solo el identificador del paquete de desarrollo y lo rechaza.
+firma ad hoc de forma predeterminada, lo que evita que las reconstrucciones locales reemplacen el
+aplicación de producción o contaminar sus concesiones de privacidad macOS.
+- Las compilaciones de desarrollo deshabilitan los artefactos del actualizador y los puntos finales del actualizador de producción.
+- La validación de la versión macOS ahora requiere el identificador exacto del paquete de producción,
+ID de desarrollador ID de equipo `PWT3Q52LZ2`, tiempo de ejecución reforzado y un equipo estable
+requisito designado. Las identidades ad-hoc/solo hash de código fallan al cerrarse.
+- La validación de la versión extrae la carga útil real del actualizador `.app.tar.gz` y
+verifica que su identidad y el requisito designado coincidan con el documento notariado
+paquete de aplicaciones.
+- La validación de la versión verifica la integridad de DMG, monta la imagen como de solo lectura bajo un
+raíz temporal privada, acepta solo la aplicación, el enlace exacto `/Applications` y
+revisó los metadatos Tauri (el ícono de volumen requerido más un ícono regular opcional)
+`.DS_Store`), y aplica la estructura de la aplicación existente y la identidad de producción.
+cheques a la copia montada.
+- El humo de lanzamiento publicado ahora requiere y revalida el DMG descargado antes
+ejercitando el salto del actualizador. La editorial se niega a reemplazar el artefacto existente
+bytes para la misma etiqueta de lanzamiento.
+
+### Validación
+
+- Se agregó una prueba unitaria Rust para decisiones de carga de fuentes nativas versionadas.
+- Se agregó cobertura de humo del navegador para el trabajo de interfaz de usuario de transición numérica limitada.
+- Análisis extendido de registros de salida nativos con tasas de carga de origen y de omisión de carga.
+- Se agregó cobertura de unidad multiplataforma para el análisis de identidad de firma de código macOS y
+Rechazo de requisitos ad-hoc, identificadores incorrectos, equipos incorrectos y modificados.
+artefactos.
+- Se agregó diseño DMG multiplataforma, punto de montaje, descubrimiento de artefactos y montaje.
+pruebas de contrato de estructura de aplicación.
+- Se agregó un trabajo de humo de lanzamiento publicado macOS 26 que compara
+Requisitos de identificación del desarrollador, realiza un reemplazo del actualizador basado en la aplicación,
+y revalida la identidad del paquete actualizado.
+- Se validó la compilación optimizada de `.app` más renderizado estático, matemáticas del renderizador,
+reactividad de audio, los 188 enlaces predeterminados MIDI, la política Tauri y 47 Rust
+pruebas en macOS Apple Silicon.
+- Construyó y montó una aplicación local 0.9.6/canario DMG optimizada y aprobó el protocolo compartido.
+verificación de paquete/recurso/diseño. Este artefacto local está firmado ad hoc; la final
+Se requiere un canario firmado y certificado por notario con la identificación del desarrollador antes de la publicación.
+
+## [0.9.5] - 2026-08-04
+
+### Agregado
+
+- Se agregaron 23 ajustes preestablecidos de personajes inspirados en ascii.today de solo lectura, incluido Broadway.
+KB, Computadora, Doom, Ghost, Modular, Estándar, Univers y Doh.
+- Se agregó un catálogo de juego de caracteres delimitado compartido con metadatos de fuente/autor y
+entradas del menú Conjunto de caracteres coincidentes para cada nuevo ajuste preestablecido.
+- Se agregaron fuentes acreditadas y notas de adaptación en
+`docs/ASCII_TODAY_PRESETS.md`.
+- Se agregó entrada/salida experimental nativa multiplataforma MIDI a través de Rust
+`midir`, con CoreMIDI como backend principal de macOS Apple Silicon y
+Se conservan los backends Windows y Linux compatibles para CI y hardware futuro.
+validación.
+- Se agregó Evolution/M-Audio UC-33e a través de iConnectivity mioXC como el primero
+perfil de hardware experimental. La entrada USB directa del UC-33e permanece fuera del alcance.
+- Se agregaron cuatro páginas completas de 47 controles: Visual, Audio, Presets y Fine/User.
+- Se agregó adquisición suave, fusión de entradas, curvas, soporte de inversión/rango, MIDI.
+Aprenda anulaciones, monitoreo de puertos y reconexión automática de mioXC.
+- Se agregaron ranuras preestablecidas MIDI estables del 1 al 128 con entrada numérica, Enter,
+Acciones Anterior, Siguiente y Borrar.
+- Se agregó un panel de escritorio MIDI con estado de entrada/salida, página activa, último mensaje
+monitorear, restablecer mapeo, capturar perfil, instalar/restaurar y verificar acciones.
+- Se agregó captura SysEx de banco completo limitada y restauración de ritmo a través de mioXC.
+conexión DIN de retorno, además de un perfil opcional de garantía en la conexión.
+- Se agregó una sonda física de descubrimiento/conexión mioXC y una impresora completa
+mapa del controlador en `docs/MIDI_UC33E.md`.
+
+### Cambió
+
+- El glifo nativo Pop Out ahora consume la rampa de carácter compartido resuelta y
+lo acepta sólo cuando es líder en el espacio, único, acotado y completamente cubierto
+por el atlas de glifos agrupados fijos.
+- La puesta en marcha del hardware MIDI se pausa explícitamente después de confirmar la
+ID de controlador para el teclado C34–C43 y el transporte C44–C47. El software permanece
+implementado; Se registra el trabajo restante de restauración física y aceptación.
+en la Hoja de Ruta.
+- MIDI está etiquetado como experimental en la interfaz de usuario y en la documentación porque la versión completa
+barrido de control físico y lista de verificación de verificación/restauración SysEx de extremo a extremo
+permanecen incompletos. Asegúrese de que Perfil al conectarse permanezca deshabilitado de forma predeterminada.
+- Los controles de UI y MIDI ahora se dirigen a través de los mismos rangos de parámetros canónicos,
+sujeción, manejo de cambios estructurales, configuración de audio y transición preestablecida
+comportamiento.
+- Los cambios preestablecidos visuales rearman la toma de control suave para que los controles UC-33e no motorizados
+No se puede saltar el valor del software activo.
+- MIDI está restringido intencionalmente a parámetros visuales, configuraciones audio-reactivas,
+ajustes preestablecidos visuales y WTF mode. No puede cambiar fuentes, cámara, Pop Out o
+pantallas de salida.
+
+### Seguridad
+
+- Los comandos MIDI y SysEx se otorgan únicamente a la ventana de control principal. el
+La ventana de salida de solo presentación no recibe permisos MIDI.
+- El adaptador nativo inicial acepta solo puertos cuyos nombres contengan `mioXC`.
+- Colas MIDI, recuentos de paquetes SysEx, bytes decodificados, asignaciones almacenadas y ajustes preestablecidos.
+las ranuras están limitadas y validadas.
+- Los perfiles de controlador capturados permanecen locales y no contienen rutas de medios, marcos,
+audio, credenciales o datos de red.
+
+### Validación
+
+- Comprobaciones matemáticas de renderizado ampliadas para cubrir las 23 nuevas entradas del catálogo, incluidas
+identificaciones, límites, unicidad, glifos imprimibles, metadatos de atribución y Broadway
+Búsqueda de luminancia de KB.
+- Cobertura de humo estático extendida para requerir nombres ascii.today tanto en el
+Control de conjunto de caracteres y panel de ajustes preestablecidos incorporado.
+- Se agregó cobertura Rust para la aceptación y rechazo de la rampa de caracteres nativos.
+- Se agregó `npm run test:midi` para los 188 enlaces de hardware predeterminados, valor
+escalamiento, adquisición suave, márgenes de acción, fusión de eventos y exclusiones de alcance.
+- Se agregaron pruebas Rust para análisis MIDI, ensamblaje SysEx fragmentado y transferencia.
+validación y alcance de puerto exclusivo de mioXC.
+- Se agregaron `npm run midi:probe` y `npm run midi:probe -- --connect` para físicos.
+Puerto CoreMIDI y validación simultánea de entradas/salidas.
+- Cobertura de humo estático extendida para validar el objetivo canónico visual/audio MIDI
+enrutamiento y asegúrese de que el modo navegador mantenga oculto el panel MIDI solo de escritorio.
+- Se ampliaron las comprobaciones de la política Tauri para requerir permisos MIDI en la ventana principal
+y prohibirlos en la ventana de salida.
 
 ## [0.9.3] - 2026-06-26
 
@@ -67,7 +258,7 @@ variantes de celda sólida.
 
 ### Fijado
 
-- Se corrigió un modo WTF `ReferenceError` cuando los ajustes preestablecidos de sólidos/píxeles sesgaban el siguiente
+- Se corrigió un modo WTF `ReferenceError` cuando los ajustes preestablecidos de sólido/píxel sesgaban el siguiente
 objetivo aleatorio hacia los ajustes preestablecidos de anclaje ASCII tradicionales.
 - Se corrigieron los permisos de limpieza del detector de eventos Tauri para la ventana principal y se hicieron
 nativo Pop Out limpieza de escucha cercana rechazo seguro, evitando
@@ -157,11 +348,11 @@ comprobaciones matemáticas del renderizador.
   - Máquina de escribir densa.
 - Se agregó un conjunto de caracteres de cámara clásica inspirado en la pequeña rampa de luminancia utilizada.
 por `idevelop/ascii-camera`.
-- Se agregó representación de glifos nativos `wgpu` Pop Out para ajustes preestablecidos de `glyphMode`:
+- Se agregó representación de glifos nativos `wgpu` Pop Out para los ajustes preestablecidos de `glyphMode`:
   - La salida nativa ahora acepta `glyphMode` y `charset` del formato canónico.
 parámetros del renderizador.
   - La salida nativa de GPU utiliza un atlas de glifos de mapa de bits fijo y una rampa de juego de caracteres.
-  - La representación de prueba/retroceso del software nativo utiliza la misma lógica de rampa de glifos.
+  - La representación de prueba/respaldo del software nativo utiliza la misma lógica de rampa de glifos.
 - Se agregó cobertura Rust para análisis de metadatos de glifos nativos, diseño uniforme de representación,
 y salida de máscara de glifo.
 

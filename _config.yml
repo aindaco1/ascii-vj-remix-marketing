@@ -1,6 +1,6 @@
 title: ASCII VJ Remix
 description: ASCII VJ Remix is a desktop visualizer for DJs and VJs who want live ASCII video, camera, and audio-reactive visuals.
-url: "https://aindaco1.github.io/ascii-vj-remix-marketing"
+url: "https://asciivj.com"
 baseurl: ""
 repository: aindaco1/ascii-vj-remix-marketing
 logo: /assets/images/ascii-social-card.png
@@ -60,6 +60,7 @@ defaults:
 exclude:
   - .sass-cache/
   - .jekyll-cache/
+  - assets/css/home.scss
   - Gemfile.lock
   - scripts/
   - README-source-notes.md

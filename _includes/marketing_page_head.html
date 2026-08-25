@@ -2,5 +2,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{ page.title | default: site.title }}</title>
 {% seo title=false %}
-<link rel="stylesheet" href="{{ '/assets/css/home.css' | relative_url }}">
+{% assign display_font = '/assets/fonts/VCR_OSD_MONO_1.001.woff2' %}
+{% assign hero_poster = '/assets/images/ascii-demo.svg' %}
+<link rel="preload" href="{{ hero_poster | relative_url }}" as="image" type="image/svg+xml" fetchpriority="high">
+<link rel="preload" href="{{ display_font | relative_url }}" as="font" type="font/woff2" crossorigin>
+<style data-home-critical>{{ 'assets/css/home.scss' | inline_scss }}</style>
 {% include head_custom.html %}
+{% assign home_animation = '/assets/js/home-animation.js' %}
+<script defer src="{{ home_animation | relative_url }}?v={{ home_animation | asset_fingerprint }}"></script>

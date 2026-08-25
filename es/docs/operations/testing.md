@@ -24,6 +24,7 @@ npm run smoke:static             # Static UI/renderer smoke harness
 npm run check:tauri-policy       # Production CSP and local-only runtime policy
 npm run test:output-display      # Secondary-display placement simulation
 npm run test:updater-manifest    # Tauri latest.json/updater manifest tests
+npm run test:macos-identity      # macOS bundle/team/designated-requirement tests
 npm run test:macos-secret-args   # macOS notarization secret argument safety
 npm run test:ffmpeg-policy       # FFmpeg policy checks
 npm run check:ffmpeg-resources   # FFmpeg sidecar resource metadata checks
@@ -32,6 +33,8 @@ npm run test:decode-resize       # Decode/resize parity checks
 npm run check:media              # Media pipeline checks
 npm run test:render-math         # Shared renderer math vectors
 npm run test:audio-reactive      # Audio-reactive controls, clamps, dense-mix damping
+npm run test:midi                # UC-33e map, scaling, pickup, actions, coalescing
+npm run midi:probe -- --connect  # Physical mioXC input/output open test
 npm run test:crash-relay         # Cloudflare crash relay sanitizer/rate-limit tests
 npm run test:vectors             # Adaptive codec vector checks
 npm run test:rust                # Rust tests
@@ -60,15 +63,17 @@ git diff --check
 |Política Tauri|`npm run check:tauri-policy`|
 |Lógica de visualización de salida|`npm run test:output-display`|
 |Manifiestos del actualizador|`npm run test:updater-manifest`|
+|Identidad de la aplicación macOS|`npm run test:macos-identity`, libera inspección de artefactos en macOS|
 |Manejo de secretos macOS|`npm run test:macos-secret-args`|
 |FFmpeg política/recursos|`npm run test:ffmpeg-policy`, `npm run check:ffmpeg-resources`, `npm run check:ffmpeg-release`|
 |Preparación/decodificación de fotogramas multimedia|`npm run test:frame-prep`, `npm run test:decode-resize`, `npm run check:media`|
 |Paridad matemática del renderizador|Pruebas de vectores compartidos `npm run test:render-math`, Rust a través de `npm run test:rust`|
+|MIDI|`npm run test:midi`, Rust MIDI/Pruebas SysEx, `npm run midi:probe -- --connect`|
 |Relevo de choque|`npm run test:crash-relay`|
 |Vectores de códec adaptativos|`npm run test:vectors`|
 |Módulos Rust/Tauri|`npm run test:rust`|
 |Rendimiento de salida nativa|`npm run smoke:native-output`, `npm run test:native-output-log`|
-|Rendimiento de la interfaz de usuario|`npm run smoke:ui-perf`|
+|Rendimiento de la interfaz de usuario|`npm run smoke:ui-perf` con valores predeterminados/transiciones fijos y promedio/P10/P50/mínimo FPS|
 |Lanzamiento de instalación/actualización|`npm run smoke:release-install`|
 
 ## Conjuntos de cheques recomendados
@@ -110,9 +115,36 @@ npm run test:rust
 ```
 
 Utilice una compilación de aplicación optimizada antes de sacar conclusiones sobre el rendimiento.
+El humo del rendimiento de la interfaz de usuario comienza con valores predeterminados visuales canónicos, utiliza elementos fijos.
+transiciones numéricas no estructurales y registra cada backend visitado, así que repita
+las carreras son comparables. Seleccione un paquete exacto y una muestra más larga con:
+
+```bash
+ASCILINE_SOURCE_APP="/absolute/path/ASCII VJ Remix.app" \
+ASCILINE_UI_PERF_SMOKE_DURATION_MS=30000 \
+npm run smoke:ui-perf
+```
+
+El análisis de registros nativos informa tanto de las tasas de carga de origen como de tasas de omisión de carga. Un saludable
+24 FPS la fuente en una pantalla de 60 Hz debe cargar una velocidad cercana a la fuente y omitir el
+duplicar ticks de visualización mientras la presentación permanece cerca de la frecuencia de actualización.
 Para cambios en el modo de glifo, incluya al menos un ajuste preestablecido ASCII tradicional en el manual
 Pop Out comprueba y confirma que los cambios en el conjunto de caracteres/familia de fuentes no ocultan el
 Controles de glifo/celda.
+
+### Cambios en MIDI, UC-33e o SysEx
+
+```bash
+npm run test:midi
+npm run check:tauri-policy
+npm run test:rust
+npm run midi:probe -- --connect
+npm run smoke:static
+```
+
+La sonda física verifica que CoreMIDI pueda enumerar y abrir simultáneamente
+ambas direcciones del mioXC. No reemplaza el barrido de control y
+Lista de verificación de captura/restauración de banco completo en [MIDI_UC33E](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MIDI_UC33E.md).
 
 ### Tauri Comandos, permisos o capacidades
 
@@ -152,15 +184,25 @@ npm run check:ffmpeg-release
 npm run check:release
 npm run bundle:release
 npm run smoke:release-install
+npm run test:macos-dmg-layout
 ```
 
 Ejecute `npm run ffmpeg:build-sidecar` antes que `npm run check:release` en limpio
 clonar. `npm run bundle:release` ejecuta el paso de compilación del sidecar automáticamente.
 
 El humo de lanzamiento descarga artefactos del instalador de lanzamientos y comprobaciones GitHub.
-diseño, activos incluidos, paquetes de actualización firmados y comportamiento de `latest.json`.
+diseño, activos incluidos, paquetes de actualización firmados y comportamiento de `latest.json`. encendido
+macOS verifica el DMG descargado, lo monta como solo lectura en un temporal privado
+root, valida el diseño exacto de aplicación a aplicaciones e inspecciona el archivo montado
+aplicación antes del salto del actualizador.
 Updater-hop smoke usa `0.9.0` como la versión anterior mínima predeterminada porque
 Las versiones anteriores de `0.1.x` se firmaron con una clave de actualización diferente.
+
+En macOS, la liberación de humo extrae el `.app.tar.gz` actual y anterior.
+cargas útiles, requiere `com.asciline.remix`, ID de equipo `PWT3Q52LZ2`, tiempo de ejecución reforzado,
+La aceptación del gatekeeper y exactamente el mismo requisito designado, luego ejecuta el
+aplicación anterior a través del actualizador y revalida el paquete reemplazado. el
+La aprobación interactiva de TCC en sí sigue siendo una verificación manual.
 
 ## Lista de verificación manual de humo
 
@@ -198,7 +240,8 @@ Matrices manuales importantes:
 - macOS con sistema de captura de audio.
 - Windows con WebView2, D3D12/WebGL2, cámara, micrófono y ruta de instalación.
 - Linux con WebKitGTK, aceleración GPU, cámara, micrófono y ruta AppImage/deb.
-- Futuro equipo MIDI: Evolution/M-Audio UC33e a través de iConnectivity mioXC.
+- Equipo experimental macOS Apple Silicon MIDI: Evolution/M-Audio UC-33e hasta
+ambas direcciones DIN de un iConnectivity mioXC, alimentado por separado.
 
 Al informar los resultados del hardware, incluya:
 
@@ -235,22 +278,23 @@ La versión CI debe:
 - construir artefactos macOS, Windows y Linux.
 - verificar el comportamiento del paquete sin conexión.
 - verificar la política Tauri.
-- construir/comprobar sidecares FFmpeg.
+- construir/comprobar sidecars FFmpeg.
 - ejecute Rust y pruebas de medios.
 - generar fragmentos del manifiesto del actualizador.
 - fusionar fragmentos en `latest.json`.
 - cargue instaladores, paquetes de actualización, firmas y `latest.json`.
 - validar macOS Firma de ID de desarrollador, notarización, grapado y Gatekeeper
 aceptación antes de publicar artefactos macOS.
-- publicar artefactos Windows 0.9.3 como vistas previas sin firmar; futuro firmado Windows
+- publicar artefactos Windows 0.9.5 como vistas previas sin firmar; futuro firmado Windows
 Las versiones deben validar el firmante de Authenticode y el estado de la marca de tiempo antes de
 publicar artefactos Windows.
 - Ejecute instalar controles de humo después de la publicación.
+- ejecute el actualizador macOS de identidad/humo de reemplazo en `macos-26`.
 
 El endurecimiento de versiones futuras debería agregar:
 
 - real Windows y Linux instalan pruebas de humo en máquinas físicas o VM.
-- El actualizador de extremo a extremo salta de una aplicación instalada más antigua a una versión más nueva.
+- una verificación de retención de subvenciones de TCC manual o con máquina limpia a través de una actualización pública.
 - Windows Verificaciones de reputación de SmartScreen en máquinas limpias.
 
 ## Brechas conocidas
@@ -259,7 +303,9 @@ El endurecimiento de versiones futuras debería agregar:
 - Aún no hay un conjunto de pruebas completo de i18n/l10n.
 - Aún no hay un paquete de salida visual dorado para ajustes preestablecidos.
 - Aún no hay una prueba comparativa de latencia de cámara automatizada.
-- Aún no hay pruebas automatizadas de integración del controlador MIDI.
+- Se incluyen análisis, mapeo, eventos falsos y ensamblaje SysEx experimentales de MIDI.
+automatizado; Los barridos de control físico y la restauración del banco completo aún requieren la
+Equipo UC-33e/mioXC.
 - La cobertura de medios/cámaras/audio nativos de Linux necesita pruebas automáticas más amplias.
 
 

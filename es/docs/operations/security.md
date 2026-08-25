@@ -31,6 +31,8 @@ controlador.
 repositorio.
 - Conserve el identificador de paquete `com.asciline.remix` a menos que haya una
 migración para concesiones de privacidad macOS existentes.
+- Mantener el desarrollo local en `com.asciline.remix.dev`; nunca firme ni instale un
+compilación de desarrollo ad-hoc bajo el identificador de producción.
 
 ## Arquitectura de seguridad
 
@@ -48,6 +50,7 @@ migración para concesiones de privacidad macOS existentes.
 |sidecares FFmpeg|Recursos agrupados con comprobaciones de políticas y metadatos de fuente/procedencia|Medio|Sin descargas de tiempo de ejecución. Los sidecars de lanzamiento deberían desactivar los protocolos de red.|
 |Actualizador|GitHub lanza punto final con paquetes de actualización firmados|Alto|La clave de firma privada es externa. La clave pública está comprometida.|
 |reportero de accidentes|POST solo de Rust a `https://crash.dustwave.xyz/v1/reports` en compilaciones de producción|Alto|Los informes están delimitados, desinfectados, configurables por el usuario y retransmitidos a los problemas de GitHub mediante un Cloudflare Worker.|
+|Experimental MIDI y UC-33e SysEx|Comandos Rust solo de la ventana principal, lista de puertos permitidos mioXC, colas acotadas y límites de paquetes|Medio|Los perfiles permanecen locales y no pueden apuntar a fuentes, cámaras, Pop Out ni pantallas de salida. La verificación de restauración física del banco completo sigue incompleta.|
 |Registros e informes de humo.|Artefactos de prueba/desarrollador local|Bajo a Medio|No registre rutas de archivos privados, audio sin formato ni valores ambientales confidenciales a menos que sea necesario para una depuración explícita.|
 
 ## Notas de endurecimiento de liberación
@@ -67,6 +70,12 @@ contraseñas en bloques de entorno de flujo de trabajo a nivel de trabajo.
 incompleto. Los artefactos Windows se publican como vistas previas sin firmar hasta
 SignPath Foundation, Azure Artifact Signing u otro backend de firma es
 probado.
+- Los artefactos públicos macOS deben conservar el ID del equipo `PWT3Q52LZ2` y el establo.
+Requisito de identificador/equipo designado. CI valida tanto la aplicación creada como
+el archivo de actualización extraído y rechaza la identidad ad-hoc o de solo código hash.
+- Las herramientas de lanzamiento local requieren la identidad `ASCII VJ Remix Dev` separada y
+un certificado de firma local estable. Nunca se sincroniza con la producción.
+ruta de la aplicación.
 - Acciones GitHub Los trabajos macOS están anclados a `macos-26` en lugar de
 `macos-latest`. La pila nativa `wgpu`/`apple-metal` necesita el macOS 26
 Metal SDK y el alias móvil `macos-latest` pueden seleccionar un SDK más antiguo.
@@ -78,8 +87,10 @@ el registro se olvida y ningún otro registro sigue utilizando esa ruta.
 - Las importaciones preestablecidas deben estar limitadas, verificadas en el esquema y sujetas a través del espacio compartido.
 controlar los metadatos y eliminar los campos de fuente/medios antes de que puedan afectar
 estado del renderizador.
-- La salida nativa en modo glifo debe tratar `charset` como datos incluidos en la lista permitida y mantener
-`fontFamily` fuera de las rutas nativas de carga de fuentes/búsqueda de recursos.
+- La salida nativa en modo glifo debe tratar `charset` como datos incluidos en la lista de permitidos. Resuelto
+Las rampas de catálogo personalizadas deben estar delimitadas, estar orientadas al espacio, ser únicas y restringidas.
+al atlas de glifos fijos. Mantenga `fontFamily` fuera de la carga de fuentes nativas o
+rutas de búsqueda de recursos.
 - Las auditorías de dependencia deben incluir npm y Rust. `cargo audit` advertencias de
 La pila transitiva GTK/WebKit actual de Tauri se rastrea como escritorio ascendente
 riesgo marco; Los avisos directos/transitivos procesables deben solucionarse antes
@@ -193,6 +204,9 @@ Identificador de paquete macOS actual:
 com.asciline.remix
 ```
 
+Las compilaciones de desarrollo utilizan `com.asciline.remix.dev`. Restablecer las subvenciones para el desarrollo con
+ese identificador; no utilice un paquete ad hoc con nombre de producción para pruebas de medios.
+
 Ayudantes de restablecimiento de permisos:
 
 ```bash
@@ -258,10 +272,10 @@ Normas:
 
 - No descargue FFmpeg, códecs ni archivos binarios de ayuda multimedia en tiempo de ejecución.
 - Los sidecars de lanzamiento deben crearse a partir de una fuente oficial fijada.
-- Los protocolos de red deben permanecer deshabilitados para las compilaciones de lanzamiento FFmpeg a menos que
+- Los protocolos de red deben permanecer deshabilitados para el lanzamiento de compilaciones FFmpeg a menos que
 La función de transmisión en serie requiere explícitamente una excepción revisada.
 - Los sidecars necesitan versión, SHA-256, licencia, fuente y metadatos de AVISO.
-- No confirme los binarios sidecar generados a menos que cambie la política de lanzamiento.
+- No confirme los binarios secundarios generados a menos que cambie la política de lanzamiento.
 
 Validación:
 
@@ -273,7 +287,7 @@ npm run check:ffmpeg-release
 
 ## Presets, MIDI y perfiles futuros
 
-Los ajustes preestablecidos y los mapas MIDI futuros son datos locales, pero aún pueden dañar la aplicación si
+Los ajustes preestablecidos y los mapas MIDI son datos locales, pero aún pueden dañar la aplicación si
 la ruta de importación confía en ellos.
 
 Reglas de importación:
@@ -281,11 +295,32 @@ Reglas de importación:
 - Analizar solo como datos JSON.
 - Valide la versión del esquema y los campos admitidos.
 - Sujete los valores numéricos a través de los mismos metadatos de control en vivo utilizados por la interfaz de usuario.
-- Mantenga los conjuntos de caracteres en la lista permitida y delimitados antes de que alcancen la salida nativa.
+- Mantenga los identificadores de conjuntos de caracteres en la lista permitida. Cualquier rampa resuelta enviada a la salida nativa
+debe estar limitado y restringido al atlas de glifos agrupados fijos.
 - Rechace campos estructurales desconocidos en lugar de aplicarlos silenciosamente.
 - No permita que los ajustes preestablecidos importados desactiven la superposición de estadísticas a menos que el usuario haya importado
 esa elección es intencional y la interfaz de usuario lo deja claro.
 - No incluya rutas de medios absolutas privadas en los paquetes exportados de forma predeterminada.
+
+### MIDI y reglas SysEx
+
+- El primer adaptador nativo acepta sólo nombres de puertos de entrada/salida que contengan
+`mioXC`; El USB directo UC-33e no está habilitado en 0.9.5.
+- Los comandos MIDI pertenecen únicamente a la ventana de control principal. La ventana de salida debe
+nunca enumere dispositivos, lea eventos, capture volcados ni envíe SysEx.
+- Colas de eventos, lecturas de eventos, recuentos de asignaciones, recuentos de paquetes, bytes decodificados y
+La base64 almacenada debe permanecer limitada.
+- Cada paquete saliente debe comenzar con `F0`, terminar con `F7` y permanecer dentro del
+límite de bytes de transferencia completa.
+- La instalación del perfil debe ser explícita a menos que el usuario haya habilitado Garantizar
+Perfil en conexión.
+- Garantizar la conexión envía como máximo una vez por reconexión física y no debe realizar un bucle
+mientras la interfaz permanece conectada.
+- MIDI Los objetivos de aprendizaje deben provenir del objetivo visual, de audio o de acción incluido en la lista permitida.
+registro. No agregue fuente, cámara, Pop Out, pantalla de salida, actualizador, archivo,
+o objetivos de informes de fallos.
+- Los perfiles capturados y las asignaciones aprendidas permanecen locales y no deben contener medios.
+rutas, fotogramas, audio sin procesar, credenciales o datos de red.
 
 ## Validación de seguridad
 
@@ -297,6 +332,7 @@ General:
 git diff --check
 npm run check:offline
 npm run check:tauri-policy
+npm run test:midi
 ```
 
 Seguridad y embalaje de escritorio:
@@ -323,11 +359,12 @@ npm run check:ffmpeg-resources
 
 ## Riesgos conocidos y endurecimiento diferido
 
-- Las indicaciones de privacidad de macOS pueden ser sensibles a la ruta de la aplicación, el identificador del paquete y
-firma de identidad.
+- Las indicaciones de privacidad de macOS siguen siendo sensibles a la ruta de la aplicación, el identificador del paquete y
+firma de identidad. Las identidades de producción y desarrollo están aisladas, pero una
+La construcción de desarrollo deliberadamente ad hoc todavía recibe subvenciones específicas para la construcción.
 - La firma ad hoc macOS solo es aceptable para compilaciones locales; los comunicados públicos son
 Identificación del desarrollador firmada, notariada, grapada y validada por Gatekeeper.
-- Los artefactos Windows 0.9.3 son vistas previas sin firmar y pueden activar Desconocido
+- Los artefactos Windows 0.9.5 son vistas previas sin firmar y pueden activar Desconocido
 Advertencias de Publisher, SmartScreen o Defender. Futuros lanzamientos públicos de Windows
 debe estar firmado con Authenticode y tener una marca de tiempo antes de ser tratado como normal
 instaladores públicos.
@@ -335,8 +372,8 @@ instaladores públicos.
 y configuración del portal.
 - El modo de transmisión existe en las rutas de desarrollo, pero está oculto de la interfaz de usuario normal hasta que
 está producido y revisado en cuanto a seguridad.
-- Las asignaciones futuras de MIDI necesitan validación de importación, alcances de asignación y límites de velocidad
-antes de que sean tratados como paquetes de perfiles que el usuario puede compartir.
+- La exportación/importación de mapas MIDI aún necesita un formato de perfil que el usuario pueda compartir con
+la misma validación, alcances y límites de velocidad que las anulaciones locales de MIDI Learn.
 
 ## Informar problemas de seguridad
 

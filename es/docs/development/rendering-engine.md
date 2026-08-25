@@ -29,7 +29,7 @@ Reglas de UX de la superficie de control que afectan los controles orientados al
 e infraestructura de desarrollo.
 - Mantenga el uso normal de la aplicación localmente primero y sin conexión.
 - Mantenga todos los controles en vivo encaminados a través de un modelo de parámetros canónicos.
-- Permitir que los ajustes preestablecidos, WTF mode, la reactividad de audio y el control futuro de MIDI compongan
+- Permitir que los ajustes preestablecidos, WTF mode, la reactividad de audio y el control MIDI compongan
 sin bifurcar el estado del renderizador.
 - Mantenga la salida de Pop Out lo más libre de latencia posible, especialmente para transmisiones en vivo.
 fuentes de la cámara.
@@ -180,7 +180,7 @@ menús, intensidad mínima de glifos.
 - UI/rendimiento: superposición de estadísticas, segundos de transición.
 
 La superficie de control, ajustes preestablecidos, persistencia, cambios de fuente, WTF mode, audio
-reactividad, salida nativa y MIDI futuro, todos leen o escriben a través de este
+reactividad, salida nativa y MIDI leen o escriben a través de este
 modelo.
 
 Las transiciones estáticas entre renderizadores y familias mantienen la propiedad de los medios en `StaticRuntime`
@@ -196,6 +196,7 @@ Salida de lienzo o flujo.
 Los ayudantes compartidos de JavaScript viven en:
 
 ```text
+renderers/shared/character-sets.js
 renderers/shared/render-math.js
 renderers/shared/render-math-vectors.json
 ```
@@ -206,6 +207,8 @@ El módulo compartido posee actualmente:
 - Procesamiento de color Legacy Canvas.
 - Procesamiento de color de flujo heredado.
 - Ayudantes de hash de jitter estilo sombreador.
+- un catálogo limitado de conjuntos de caracteres canónicos, incluido ascii.today acreditado
+adaptaciones.
 - conjunto de caracteres compacto y ayudantes de luminancia a glifo.
 
 Las funciones heredadas de Canvas y Stream se nombran intencionalmente por separado de
@@ -281,6 +284,12 @@ El procesamiento del color incluye:
 Jitter utiliza un hash determinista sembrado por la posición y el tiempo de la celda, por lo que es estático
 las imágenes pueden animarse sin cambiar el medio de origen.
 
+Uniform ArrayBuffers/DataViews, vistas de texturas y grupos de enlaces cuyos recursos
+no cambiar se crean una vez y se reutilizan. El vídeo del navegador todavía importa un
+textura externa y crea su enlace de cálculo dependiente de la fuente por cuadro;
+ese recurso tiene un alcance de marco de WebGPU. Las reconstrucciones de cuadrícula/fuente crean una nueva
+renderizador y por lo tanto un nuevo conjunto completo de recursos.
+
 ## Renderizador WebGL2
 
 El backend WebGL2 refleja el modelo visual WebGPU lo más fielmente posible:
@@ -290,6 +299,8 @@ El backend WebGL2 refleja el modelo visual WebGPU lo más fielmente posible:
 - primero pase muestras de un color por celda a una textura de color de celda.
 - La segunda pasada expande la textura del color de la celda al lienzo visible.
 - Los uniformes de sombreado coinciden con el conjunto de parámetros WebGPU siempre que sea posible.
+- las 18 ubicaciones uniformes de sombreado se almacenan en caché después de vincular el programa en lugar de
+consultado nuevamente durante cada cuadro.
 
 WebGL2 es el navegador alternativo más importante porque está ampliamente disponible en
 máquinas que no exponen WebGPU.
@@ -337,6 +348,13 @@ old renderer stays visible
 ```
 
 Esto evita cuadros negros durante las transiciones preestablecidas.
+
+Para una interpolación numérica no estructural, solo se muestran los controles cuyos valores están cambiando.
+sincronizado durante los cuadros de animación. Listas de fuentes, opciones de dispositivos de cámara,
+visibilidad, metros, persistencia y la superficie de control completa se concilian
+en el límite estatal final. Esta es únicamente una optimización del trabajo de la interfaz de usuario; efectivo
+Los parámetros del renderizador y la sincronización nativa/Pop Out aún avanzan durante el proceso.
+entre.
 
 ## Tiempo de ejecución de la transmisión
 
@@ -436,6 +454,12 @@ Para imágenes/vídeos respaldados por archivos, Rust resuelve recursos empaquet
 ID de medios, decodifica fotogramas, carga el último fotograma en GPU, aplica la celda
 matemáticas de color y presentaciones a través de la cadena de intercambio nativa.
 
+En la ruta del enlace de visualización macOS, la versión decodificada del marco fuente se pasa a
+el presentador. Cuando esa versión y las dimensiones del marco no hayan cambiado, el
+El presentador reutiliza la textura fuente existente mientras aún codifica/presenta.
+con los últimos parámetros visuales y audio-reactivos. Llamadores alternativos no versionados
+conservar las cargas incondicionales. Los registros exponen la carga de origen y los contadores de omisión.
+
 Para la salida de una sola cámara macOS, AVFoundation captura los últimos fotogramas directamente para
 el presentador nativo. Los ajustes preestablecidos de la cámara en vivo no deben usar el espejo del navegador
 transporte de forma predeterminada porque la lectura del lienzo y la transferencia de cuadros IPC también son
@@ -448,6 +472,10 @@ Los ajustes preestablecidos tradicionales de ASCII permanecen como texto en Pop 
 celdas de color. Los ajustes preestablecidos de estilo WebGL/WebGPU desactivan el enmascaramiento de glifos nativos incluso cuando
 sus parámetros guardados todavía llevan `glyphMode`; su vista previa principal se muestra sólida
 GPU rectángulos de celda, por lo que Pop Out hace lo mismo.
+La interfaz resuelve la entrada de catálogo seleccionada en un `charsetRamp` limitado
+para salida nativa. Rust lo acepta sólo cuando comienza con un espacio, contiene
+glifos únicos del atlas fijo y se adapta a la textura de rampa nativa; de lo contrario
+Se utiliza la rampa incorporada permitida para `charset`.
 `fontFamily` sigue siendo un parámetro de superficie de control/previsualización; el camino nativo lo hace
 no cargue fuentes arbitrarias y en su lugar enmascare celdas a través del atlas/rampa fijo.
 
@@ -498,7 +526,7 @@ Los objetivos de modulación son controles visuales seguros para la vida:
 Controles estructurales como fuente, backend, asignación de cuadrícula y dispositivos de cámara.
 no se modulan por tiempo porque provocarían una rotación del renderizador.
 
-## Presets, modo WTF y futuro MIDI
+## Presets, modo WTF y MIDI
 
 Todas estas son capas de control sobre el mismo modelo de parámetros.
 
@@ -516,12 +544,33 @@ Preajustes ASCII.
 - transiciones indefinidamente hasta que se detiene.
 - evita estados inseguros donde todo blanco/todo negro.
 
-Futuro MIDI:
+MIDI experimental en 0.9.5:
 
-- debe utilizar un registro de destino de control compartido.
-- debería llamar a los mismos configuradores que los controles visibles de la interfaz de usuario.
-- debe respetar los metadatos de objetivos de vida segura frente a los estructurales.
-- no debe bifurcar el estado del renderizador.
+```text
+UC-33e DIN output
+  -> mioXC/CoreMIDI
+  -> bounded Rust event queue
+  -> frame-coalesced mapping engine
+  -> canonical visual/audio target
+  -> params/effective params
+  -> main preview and native Pop Out synchronization
+```
+
+- Utiliza los mismos rangos, abrazaderas, configuradores y metadatos estructurales que la interfaz de usuario visible
+controles.
+- Aplica configuraciones básicas visuales o audiorreactivas; no bifurca al renderizador
+estado o escribir parámetros efectivos derivados de audio nuevamente en ajustes preestablecidos.
+- Reinicia la adquisición suave después de cambios visuales preestablecidos.
+- Mantiene los bordes de los botones ordenados mientras fusiona cambios continuos de alta velocidad.
+- Restringe las acciones a parámetros visuales, configuraciones audio-reactivas, ajustes preestablecidos visuales,
+y WTF mode. Las fuentes, la cámara, Pop Out y las pantallas de salida no son objetivos.
+- Utiliza cuatro páginas UC-33e con dirección de canal y ranuras numéricas preestablecidas estables.
+- Captura/restaura paquetes SysEx opacos delimitados a través del mioXC seleccionado
+salida sin exponer los permisos MIDI a la ventana de salida.
+- Las capas de mapeo y transporte están cubiertas por pruebas automatizadas, pero físicas
+la restauración/verificación del banco completo sigue siendo una brecha de aceptación experimental.
+
+Consulte [UC-33e y mioXC MIDI Control](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MIDI_UC33E.md) para ver el mapa físico.
 
 ## Empaquetado y tiempo de ejecución sin conexión
 
@@ -579,7 +628,8 @@ salida nativa.
   - Media Foundation/D3D en Windows.
   - PipeWire/V4L2/Vulkan o GLES en Linux.
 - Productice el modo de transmisión o manténgalo oculto.
-- Agregue el registro de control MIDI y el adaptador nativo MIDI.
+- Amplíe el sistema de perfil MIDI para dirigir USB UC-33e y hardware adicional
+después de que la ruta DIN mioXC se valide físicamente en más plataformas.
 - Mejore la captura de audio del sistema nativo a través de API de plataforma más estrechas.
 - Agregue pruebas de rendimiento que reproduzcan Pop Out/ventana principal informada por el usuario
 la contienda automáticamente.

@@ -1,7 +1,10 @@
 ---
 ---
-@import "./color_schemes/dustwave";
-@import "./custom/custom";
+@font-face {
+  font-family: "VCR OSD Mono";
+  src: url("/assets/fonts/VCR_OSD_MONO_1.001.woff2") format("woff2");
+  font-display: swap;
+}
 
 .home-shell {
   position: relative;
@@ -17,18 +20,41 @@
   overflow-x: hidden;
 }
 
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: 1rem;
+  z-index: 1000;
+  padding: .65rem .85rem;
+  color: #040506;
+  background: #00e5ff;
+  font-weight: 800;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus { transform: translateY(0); }
+
+.home-shell a:focus-visible,
+.home-shell button:focus-visible,
+.home-shell select:focus-visible,
+.home-shell [tabindex]:focus-visible {
+  outline: 3px solid #00e5ff;
+  outline-offset: 3px;
+}
+
 .ascii-art-background {
   position: fixed;
   inset: -8vh -8vw;
   z-index: 0;
-  margin: 0;
+  width: 116vw;
+  height: 116vh;
   overflow: hidden;
   color: rgba(60, 255, 102, .14);
   background: transparent;
   font: 700 clamp(.62rem, .92vw, .95rem)/1.08 "VCR OSD Mono", "SFMono-Regular", Menlo, Consolas, monospace;
   letter-spacing: .08em;
   text-shadow: 0 0 12px rgba(60, 255, 102, .2);
-  white-space: pre;
+  filter: drop-shadow(0 0 6px rgba(60, 255, 102, .2));
   pointer-events: none;
   user-select: none;
   transform: rotate(-5deg);
@@ -66,7 +92,14 @@
 }
 
 .home-header a,
-.home-footer a { color: #fff; }
+.home-footer a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.home-header .brand { font-weight: 800; }
+.home-header a:hover,
+.home-header a:focus { color: #00e5ff; }
 
 .brand,
 .home-nav a,
@@ -146,6 +179,15 @@ a {
   text-transform: uppercase;
 }
 
+.release-status {
+  margin: 0;
+  color: #00e5ff;
+  font: 700 .78rem/1.4 "VCR OSD Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  text-shadow: var(--home-text-shadow);
+}
+
 .hero-action-band {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -213,7 +255,11 @@ a {
   object-fit: cover;
 }
 
-.section-band { padding: 2.5rem 0; }
+.section-band {
+  padding: 2.5rem 0;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 520px;
+}
 .section-band h2 { margin: 0 0 1rem; color: #fff; font-weight: 700; font-size: clamp(2rem, 4vw, 4rem); line-height: .95; text-transform: uppercase; }
 .section-intro { max-width: 52rem; color: #c6ccd8; font-size: 1.12rem; }
 .card-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin-top: 1.2rem; }
@@ -224,6 +270,8 @@ a {
 .card.pink h3, .card.pink a { color: #ff2bd6; }
 .stack-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
 .stack-list code { color: #fff; background: #101216; }
+.release-link { margin: 1.2rem 0 0; }
+.release-link a { color: #00e5ff; font-weight: 800; }
 
 @media (max-width: 900px) {
   .hero, .hero-action-band, .card-grid, .stack-list { grid-template-columns: 1fr; }
@@ -231,32 +279,4 @@ a {
   .demo-frame { min-height: 0; }
   .hero .demo-frame--video { height: auto; }
   .hero .demo-frame--video .hero-video { height: auto; aspect-ratio: 72 / 46; }
-}
-
-
-.support-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: .8rem;
-  margin: 1.5rem 0;
-}
-
-.support-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 44px;
-  padding: .75rem 1rem;
-  border: 1px solid var(--dw-border, #5d6573);
-  color: #fff;
-  background: var(--dw-panel-2, #101216);
-  font-weight: 800;
-  text-transform: uppercase;
-  text-decoration: none;
-}
-
-.support-button--primary {
-  color: #040506;
-  background: #00e5ff;
-  border-color: #00e5ff;
 }

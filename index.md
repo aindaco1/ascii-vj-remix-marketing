@@ -8,11 +8,15 @@ nav_exclude: true
 <section class="hero" aria-labelledby="home-title">
   <div class="hero-title-block">
     <h1 id="home-title">Simple visuals for DJs. Deep ASCII control for VJs.</h1>
+    <p class="release-status">Latest release: <strong>v{{ site.data.product.latest_release.version }}</strong></p>
   </div>
   <aside class="demo-frame demo-frame--video" aria-label="ASCII VJ Remix product preview">
-    <video class="hero-video" autoplay muted loop playsinline preload="metadata" poster="{{ '/assets/images/ascii-demo.svg' | relative_url }}" aria-label="ASCII VJ Remix live ASCII video preview">
-      <source src="{{ '/assets/videos/ascii-hero.webm' | relative_url }}" type="video/webm">
-      <img src="{{ '/assets/images/ascii-demo.svg' | relative_url }}" alt="ASCII VJ Remix preview graphic">
+    {% assign hero_webm = '/assets/videos/ascii-hero.webm' %}
+    {% assign hero_mp4 = '/assets/videos/ascii-hero.mp4' %}
+    <video class="hero-video" width="1200" height="766" autoplay muted loop playsinline preload="metadata" fetchpriority="high" poster="{{ '/assets/images/ascii-demo.svg' | relative_url }}" aria-label="ASCII VJ Remix live ASCII video preview">
+      <source src="{{ hero_webm | relative_url }}?v={{ hero_webm | asset_fingerprint }}" type="video/webm">
+      <source src="{{ hero_mp4 | relative_url }}?v={{ hero_mp4 | asset_fingerprint }}" type="video/mp4">
+      <img src="{{ '/assets/images/ascii-demo.svg' | relative_url }}" width="1200" height="766" alt="ASCII VJ Remix preview graphic" decoding="async">
     </video>
   </aside>
 </section>
@@ -20,7 +24,7 @@ nav_exclude: true
 <section class="hero-action-band" aria-label="ASCII VJ Remix summary and actions">
   <p class="hero-lede">ASCII VJ Remix turns video clips, cameras, and sound into live ASCII visuals. DJs can get a clean visualizer running fast. VJs can fine-tune the image, push the filters harder, and send the output to a screen.</p>
   <div class="cta-row">
-    <a class="btn btn-primary" href="https://github.com/aindaco1/ascii-vj-remix/releases">Download</a>
+    <a class="btn btn-primary" href="https://github.com/aindaco1/ascii-vj-remix/releases/latest">Download v{{ site.data.product.latest_release.version }}</a>
     <a class="btn" href="https://github.com/aindaco1/ascii-vj-remix">Github</a>
   </div>
 </section>
@@ -33,7 +37,7 @@ nav_exclude: true
     <article class="card pink">
       <h3>For DJs</h3>
       <p>Run a simple visual layer without building a full VJ rig. Load a clip, use a camera, or let audio drive the motion so the room has something alive on screen.</p>
-      <a href="https://github.com/aindaco1/ascii-vj-remix/releases">Get the app</a>
+      <a href="https://github.com/aindaco1/ascii-vj-remix/releases/latest">Get the app</a>
     </article>
     <article class="card">
       <h3>For VJs</h3>
@@ -57,6 +61,18 @@ nav_exclude: true
     <article class="card"><h3>Preset range</h3><p>Move quickly between clean ASCII, dense cell patterns, solid/pixel looks, high-jitter modes, and palette-heavy treatments.</p></article>
     <article class="card"><h3>Fine-tune control</h3><p>Adjust the filter until it fits the track, the room, and the screen — from legible ASCII texture to aggressive abstract output.</p></article>
   </div>
+</section>
+
+<section class="section-band" aria-labelledby="release-heading">
+  <p class="kicker">Latest release</p>
+  <h2 id="release-heading">What changed in v{{ site.data.product.latest_release.version }}.</h2>
+  <p class="section-intro">The current release keeps the same visual math and quality controls while doing less repeated work in the renderer and native output path.</p>
+  <div class="card-grid">
+    <article class="card pink"><h3>More ASCII looks</h3><p>Twenty-three credited ascii.today-inspired character presets join the traditional and extreme built-in looks introduced in the 0.9.5 release line.</p></article>
+    <article class="card"><h3>Experimental MIDI</h3><p>Native UC-33e control through a mioXC now covers visual, audio, preset, and WTF controls with soft takeover, MIDI Learn, numeric preset slots, and bounded SysEx tools.</p></article>
+    <article class="card pink"><h3>Faster output</h3><p>v0.9.6 reuses stable GPU resources, caches WebGL lookups, avoids duplicate native frame uploads, and limits transition-time UI work without reducing renderer quality.</p></article>
+  </div>
+  <p class="release-link"><a href="{{ '/docs/overview/changelog-baseline/' | relative_url }}">Read the v{{ site.data.product.latest_release.version }} release baseline</a></p>
 </section>
 
 <section class="section-band" aria-labelledby="workflow-heading">

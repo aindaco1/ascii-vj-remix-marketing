@@ -58,12 +58,13 @@ Las superficies de accesibilidad de mayor riesgo son:
 2. Lista de dispositivos de cámara y selección multicámara.
 3. Botones preestablecidos, acciones preestablecidas por el usuario y menú adicional de importación/exportación.
 4. Controles deslizantes y numéricos en cuadrícula, color, muestreo, reactividad de audio,
-y futuro MIDI.
+y MIDI.
 5. WTF mode estado activo/inactivo.
 6. Fuente de reactividad de audio/dispositivo/controles preestablecidos y estados de permiso.
 7. Pop Out y controles de pantalla completa/visualización de salida.
 8. Contenido de superposición de estadísticas.
 9. Recuperación de permisos y mensajes de error.
+10. Estado del dispositivo MIDI, estado de toma de control suave, acciones SysEx y aprendizaje MIDI.
 
 ## Reglas de control de la interfaz de usuario
 
@@ -97,11 +98,16 @@ Comportamiento mínimo del teclado:
 - Abrir y cerrar Pop Out no roba el foco permanentemente del principal
 controles.
 
-Para futuros cuadros de diálogo de aprendizaje y mapeo de MIDI:
+Para controles de aprendizaje y mapeo MIDI:
 
 - las asignaciones deben poder crearse sin entrada de puntero.
 - Se deben anunciar los estados en espera de entrada.
 - Las acciones de cancelar/borrar/restablecer deben ser accesibles mediante el teclado.
+- conexión, página activa, último mensaje, captura, restauración y verificación
+Los estados deben exponerse a través de un texto de estado en vivo legible.
+- La instalación/restauración debe identificar que se sobrescriben las 33 memorias del UC-33e.
+- No se debe requerir el uso del controlador físico para desconectar MIDI, cancelar el aprendizaje,
+eliminar una anulación o restablecer el mapa integrado.
 
 ## Movimiento, parpadeo e intensidad visual
 
@@ -165,7 +171,7 @@ Fuera de los controles.
 Antes de enviar cambios significativos en la interfaz de usuario:
 
 - Inicie la aplicación y use Tab en la barra lateral completa.
-- Las entradas de Confirmar origen se pueden seleccionar sin puntero.
+- Las entradas de Confirmar fuente se pueden seleccionar sin un puntero.
 - Confirme que los botones preestablecidos sean accesibles y tengan nombres útiles.
 - Confirme que el desbordamiento de Importación/Exportación se abre, cierra y restaura el foco.
 - Confirme que todos los controles deslizantes se puedan ajustar desde el teclado.
@@ -175,6 +181,8 @@ Antes de enviar cambios significativos en la interfaz de usuario:
 - Confirme que Pop Out se puede abrir y cerrar sin perder el control de la ventana principal.
 - Confirme que el texto flotante permanezca legible en las entradas de Fuente no seleccionadas.
 - Confirmar que la superposición de estadísticas no bloquea los controles esenciales.
+- Confirme que se puede acceder al panel MIDI mediante el teclado en la aplicación de escritorio, expone Learn
+estado presionado y cambiar las opciones de dispositivo/perfil no atrapa el foco.
 
 ## Límites aceptados
 

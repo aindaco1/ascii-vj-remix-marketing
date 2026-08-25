@@ -138,7 +138,10 @@ def protect_text(text: str) -> tuple[str, list[str]]:
 
 def restore_text(text: str, placeholders: list[str]) -> str:
     restored = text
-    for index, original in enumerate(placeholders):
+    # Link placeholders can contain earlier protected terms. Restore the outer
+    # placeholders first so nested tokens are present when their turn arrives.
+    for index in range(len(placeholders) - 1, -1, -1):
+        original = placeholders[index]
         restored = restored.replace(f"ZZTOKEN{index}ZZ", original)
     restored = restored.replace("Mezcla ASCII VJ", "ASCII VJ Remix")
     restored = restored.replace("Remix ASCII VJ", "ASCII VJ Remix")

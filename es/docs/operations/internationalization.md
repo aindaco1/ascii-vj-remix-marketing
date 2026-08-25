@@ -12,7 +12,7 @@ Esta guía establece prácticas de internacionalización y localización para
 ASCII VJ Remix.
 
 El trabajo de localización aquí debería centrarse en las cadenas de aplicaciones incluidas, Tauri
-metadatos, descripciones de permisos, texto del instalador, documentos y ajustes preestablecidos futuros/MIDI
+metadatos, descripciones de permisos, texto del instalador, documentos y ajustes preestablecidos/MIDI
 perfil UX.
 
 ## Línea de base actual
@@ -126,6 +126,10 @@ Reglas de localización futuras:
 - Los ID de destino de mapeo MIDI no deben localizarse.
 - Las etiquetas de control MIDI que se muestran al usuario pueden localizarse.
 - Los perfiles exportados no deberían requerir una configuración regional para funcionar.
+- ID de página UC-33e, canales MIDI, números CC, bytes SysEx e ID preestablecidos almacenados
+debe permanecer independiente de la ubicación.
+- Conexión MIDI, aprendizaje, adquisición suave, captura, restauración, verificación y
+Las cadenas de advertencia de sobrescritura pertenecen a un futuro catálogo incluido.
 
 ## Tauri y localización del instalador
 

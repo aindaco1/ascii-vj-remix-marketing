@@ -28,7 +28,7 @@ Related practice docs:
   and development infrastructure.
 - Keep normal app use local-first and offline.
 - Keep all live controls routed through one canonical parameter model.
-- Allow presets, WTF mode, audio reactivity, and future MIDI control to compose
+- Allow presets, WTF mode, audio reactivity, and MIDI control to compose
   without forking renderer state.
 - Keep Pop Out output as close to latency-free as possible, especially for live
   camera sources.
@@ -179,7 +179,7 @@ Major parameter groups:
 - UI/performance: stats overlay, transition seconds.
 
 The control surface, presets, persistence, source changes, WTF mode, audio
-reactivity, native output, and future MIDI all read from or write through this
+reactivity, native output, and MIDI all read from or write through this
 model.
 
 Static renderer-family transitions keep media ownership at the `StaticRuntime`
@@ -195,6 +195,7 @@ Canvas or stream output.
 Shared JavaScript helpers live in:
 
 ```text
+renderers/shared/character-sets.js
 renderers/shared/render-math.js
 renderers/shared/render-math-vectors.json
 ```
@@ -205,6 +206,8 @@ The shared module currently owns:
 - Legacy Canvas color processing.
 - Legacy stream color processing.
 - shader-style jitter hash helpers.
+- a bounded canonical character-set catalog, including credited ascii.today
+  adaptations.
 - compact charset and luminance-to-glyph helpers.
 
 The legacy Canvas and stream functions are intentionally named separately from
@@ -280,6 +283,12 @@ Color processing includes:
 Jitter uses a deterministic hash seeded by cell position and time, so static
 images can animate without changing source media.
 
+Uniform ArrayBuffers/DataViews, texture views, and bind groups whose resources
+do not change are created once and reused. Browser video still imports an
+external texture and creates its source-dependent compute binding per frame;
+that resource is frame-scoped by WebGPU. Grid/source rebuilds create a new
+renderer and therefore a new complete resource set.
+
 ## WebGL2 Renderer
 
 The WebGL2 backend mirrors the WebGPU visual model as closely as practical:
@@ -289,6 +298,8 @@ The WebGL2 backend mirrors the WebGPU visual model as closely as practical:
 - first pass samples one color per cell into a cell-color texture.
 - second pass expands the cell-color texture to the visible canvas.
 - shader uniforms match the WebGPU parameter set where possible.
+- all 18 shader uniform locations are cached after program linking rather than
+  queried again during each frame.
 
 WebGL2 is the most important browser fallback because it is widely available on
 machines that do not expose WebGPU.
@@ -336,6 +347,13 @@ old renderer stays visible
 ```
 
 This avoids black frames during preset transitions.
+
+For a non-structural numeric tween, only controls whose values are changing are
+synchronized during animation frames. Source lists, camera-device options,
+visibility, meters, persistence, and the complete control surface are reconciled
+at the final state boundary. This is a UI-work optimization only; effective
+renderer params and native/Pop Out synchronization still advance during the
+tween.
 
 ## Stream Runtime
 
@@ -435,6 +453,12 @@ For file-backed images/videos, Rust resolves bundled resources or registered
 media ids, decodes frames, uploads the latest frame to the GPU, applies cell
 color math, and presents through the native swapchain.
 
+On the macOS display-link path, the decoded source-frame version is passed to
+the presenter. When that version and the frame dimensions have not changed, the
+presenter reuses the existing source texture while still encoding/presenting
+with the latest visual and audio-reactive params. Unversioned fallback callers
+retain unconditional uploads. Logs expose source upload and skip counters.
+
 For macOS single-camera output, AVFoundation captures latest frames directly for
 the native presenter. Live camera presets should not use browser mirror
 transport by default because canvas readback and IPC frame transfer are too
@@ -447,6 +471,10 @@ traditional ASCII presets stay text-like in Pop Out instead of becoming solid
 color cells. WebGL/WebGPU-style presets disable native glyph masking even when
 their saved params still carry `glyphMode`; their main preview renders solid
 GPU cell rectangles, so Pop Out does the same.
+The frontend resolves the selected catalog entry into a bounded `charsetRamp`
+for native output. Rust accepts it only when it begins with a space, contains
+unique glyphs from the fixed atlas, and fits the native ramp texture; otherwise
+the allowlisted built-in ramp for `charset` is used.
 `fontFamily` remains a preview/control-surface parameter; the native path does
 not load arbitrary fonts and instead masks cells through the fixed atlas/ramp.
 
@@ -497,7 +525,7 @@ Modulation targets are live-safe visual controls:
 Structural controls such as source, backend, grid allocation, and camera devices
 are not modulated per beat because they would cause renderer churn.
 
-## Presets, WTF Mode, and Future MIDI
+## Presets, WTF Mode, and MIDI
 
 These are all control layers over the same parameter model.
 
@@ -515,12 +543,33 @@ WTF mode:
 - transitions indefinitely until stopped.
 - avoids unsafe all-white/all-black states.
 
-Future MIDI:
+Experimental MIDI in 0.9.5:
 
-- should use a shared control target registry.
-- should call the same setters as visible UI controls.
-- should respect live-safe vs structural target metadata.
-- should not fork renderer state.
+```text
+UC-33e DIN output
+  -> mioXC/CoreMIDI
+  -> bounded Rust event queue
+  -> frame-coalesced mapping engine
+  -> canonical visual/audio target
+  -> params/effective params
+  -> main preview and native Pop Out synchronization
+```
+
+- Uses the same ranges, clamps, setters, and structural metadata as visible UI
+  controls.
+- Applies base visual or audio-reactive settings; it does not fork renderer
+  state or write audio-derived effective params back into presets.
+- Re-arms soft takeover after visual preset changes.
+- Keeps button edges ordered while coalescing high-rate continuous changes.
+- Restricts actions to visual params, audio-reactive settings, visual presets,
+  and WTF mode. Sources, Camera, Pop Out, and output displays are not targets.
+- Uses four channel-addressed UC-33e pages and stable numeric preset slots.
+- Captures/restores bounded opaque SysEx packets through the selected mioXC
+  output without exposing MIDI permissions to the output window.
+- The mapping and transport layers are automated-test covered, but physical
+  full-bank restore/verification remains an experimental acceptance gap.
+
+See [UC-33e and mioXC MIDI Control](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MIDI_UC33E.md) for the physical map.
 
 ## Packaging and Offline Runtime
 
@@ -578,7 +627,8 @@ npm run test:rust
   - Media Foundation/D3D on Windows.
   - PipeWire/V4L2/Vulkan or GLES on Linux.
 - Productize stream mode or keep it hidden.
-- Add MIDI control registry and native MIDI adapter.
+- Extend the MIDI profile system to direct UC-33e USB and additional hardware
+  after the mioXC DIN path is physically validated on more platforms.
 - Improve native system audio capture through narrower platform APIs.
 - Add performance tests that reproduce user-reported Pop Out/main-window
   contention automatically.

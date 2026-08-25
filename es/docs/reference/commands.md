@@ -18,11 +18,11 @@ Los comandos se leen desde `package.json` cuando están disponibles. Utilice scr
 |`npm run preview`|`vite preview --host 127.0.0.1 --port 8010`|
 |`npm run check`|`npm run check:offline`|
 |`npm run check:offline`|`npm run build && node scripts/check_offline_bundle.mjs`|
-|`npm run check:desktop`|`npm run check:offline && npm run check:tauri-policy && npm run test:render-math && npm run test:audio-reactive && npm run test:crash-relay && npm run test:output-display && npm run test:updater-manifest && npm run test:macos-secret-args && npm run test:windows-secret-args && npm run test:ffmpeg-policy && npm run check:ffmpeg-resources && npm run test:rust && npm run tauri -- build --debug --no-bundle`|
-|`npm run check:release`|`npm run check:offline && npm run check:tauri-policy && npm run test:render-math && npm run test:audio-reactive && npm run test:crash-relay && npm run test:output-display && npm run test:updater-manifest && npm run test:macos-secret-args && npm run test:windows-secret-args && npm run test:ffmpeg-policy && npm run test:ffmpeg-source-build && npm run check:ffmpeg-release && npm run test:rust`|
+|`npm run check:desktop`|`npm run check:offline && npm run check:tauri-policy && npm run test:render-math && npm run test:audio-reactive && npm run test:midi && npm run test:crash-relay && npm run test:output-display && npm run test:updater-manifest && npm run test:macos-artifacts && npm run test:macos-secret-args && npm run test:windows-secret-args && npm run test:ffmpeg-policy && npm run check:ffmpeg-resources && npm run test:rust && npm run tauri:build:dev -- --debug --no-bundle`|
+|`npm run check:release`|`npm run check:offline && npm run check:tauri-policy && npm run test:render-math && npm run test:audio-reactive && npm run test:midi && npm run test:crash-relay && npm run test:output-display && npm run test:updater-manifest && npm run test:macos-artifacts && npm run test:macos-secret-args && npm run test:windows-secret-args && npm run test:ffmpeg-policy && npm run test:ffmpeg-source-build && npm run check:ffmpeg-release && npm run test:rust`|
 |`npm run check:bundle`|`node scripts/check_tauri_bundle.mjs`|
-|`npm run check:bundle:debug`|`node scripts/check_tauri_bundle.mjs --profile debug`|
-|`npm run check:bundle:release`|`node scripts/check_tauri_bundle.mjs --profile release`|
+|`npm run check:bundle:debug`|`node scripts/check_tauri_bundle.mjs --profile debug --expected-bundle-id com.asciline.remix.dev`|
+|`npm run check:bundle:release`|`node scripts/check_tauri_bundle.mjs --profile release --expected-bundle-id com.asciline.remix`|
 |`npm run check:ffmpeg-resources`|`node scripts/check_ffmpeg_resources.mjs`|
 |`npm run check:ffmpeg-release`|`node scripts/check_ffmpeg_resources.mjs --require-current-platform`|
 |`npm run check:macos-notarization`|`node scripts/check_macos_notarization.mjs --profile release`|
@@ -45,22 +45,27 @@ Los comandos se leen desde `package.json` cuando están disponibles. Utilice scr
 |`npm run test:frame-prep`|`node scripts/check_frame_prep_parity.mjs`|
 |`npm run test:output-display`|`node scripts/test_output_display_placement.mjs`|
 |`npm run test:updater-manifest`|`node scripts/test_tauri_update_manifest.mjs`|
+|`npm run test:macos-identity`|`node scripts/test_macos_app_identity.mjs`|
+|`npm run test:macos-dmg-layout`|`node scripts/test_macos_dmg_layout.mjs`|
+|`npm run test:macos-artifacts`|`npm run test:macos-identity && npm run test:macos-dmg-layout`|
 |`npm run test:macos-secret-args`|`node scripts/test_macos_notarization_secret_args.mjs`|
 |`npm run test:windows-secret-args`|`node scripts/test_windows_artifact_signing_secret_args.mjs`|
 |`npm run test:audio-reactive`|`node scripts/test_audio_reactive.mjs`|
+|`npm run test:midi`|`node scripts/test_midi_mapping.mjs`|
 |`npm run test:native-output-log`|`node scripts/analyze_native_output_log.mjs`|
 |`npm run test:render-math`|`node scripts/test_render_math.mjs`|
 |`npm run test:crash-relay`|`npm --prefix crash-relay test`|
 |`npm run test:vectors`|`node scripts/test_vectors.mjs`|
 |`npm run test:rust`|`node scripts/cargo_env.mjs test --manifest-path src-tauri/Cargo.toml`|
 |`npm run tauri`|`node scripts/tauri_env.mjs`|
-|`npm run tauri:dev`|`node scripts/tauri_env.mjs dev`|
+|`npm run tauri:dev`|`node scripts/tauri_env.mjs dev --config src-tauri/tauri.dev.conf.json`|
 |`npm run tauri:build`|`node scripts/tauri_env.mjs build`|
+|`npm run tauri:build:dev`|`node scripts/tauri_env.mjs build --config src-tauri/tauri.dev.conf.json`|
 
 ## Guía de comando
 
 - Utilice controles específicos antes de las puertas de lanzamiento amplias durante el desarrollo.
-- Ejecute comprobaciones del procesador después de cambiar las matemáticas compartidas, los ajustes preestablecidos, el comportamiento del backend, los adaptadores de origen, las transiciones, la modulación de audio o el comportamiento de Pop Out.
+- Ejecute comprobaciones del renderizador después de cambiar las matemáticas compartidas, los ajustes preestablecidos, el comportamiento del backend, los adaptadores de origen, las transiciones, la modulación de audio o el comportamiento de Pop Out.
 - Ejecute comprobaciones de escritorio/versión después de cambiar las capacidades de Tauri, la configuración del actualizador, la firma, los informes de fallos, la salida nativa o el empaquetado de la plataforma.
 - Mantenga los secretos y el material de firma fuera de fuentes comprometidas.
 

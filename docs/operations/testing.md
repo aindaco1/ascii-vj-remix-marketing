@@ -23,6 +23,7 @@ npm run smoke:static             # Static UI/renderer smoke harness
 npm run check:tauri-policy       # Production CSP and local-only runtime policy
 npm run test:output-display      # Secondary-display placement simulation
 npm run test:updater-manifest    # Tauri latest.json/updater manifest tests
+npm run test:macos-identity      # macOS bundle/team/designated-requirement tests
 npm run test:macos-secret-args   # macOS notarization secret argument safety
 npm run test:ffmpeg-policy       # FFmpeg policy checks
 npm run check:ffmpeg-resources   # FFmpeg sidecar resource metadata checks
@@ -31,6 +32,8 @@ npm run test:decode-resize       # Decode/resize parity checks
 npm run check:media              # Media pipeline checks
 npm run test:render-math         # Shared renderer math vectors
 npm run test:audio-reactive      # Audio-reactive controls, clamps, dense-mix damping
+npm run test:midi                # UC-33e map, scaling, pickup, actions, coalescing
+npm run midi:probe -- --connect  # Physical mioXC input/output open test
 npm run test:crash-relay         # Cloudflare crash relay sanitizer/rate-limit tests
 npm run test:vectors             # Adaptive codec vector checks
 npm run test:rust                # Rust tests
@@ -59,15 +62,17 @@ git diff --check
 | Tauri policy | `npm run check:tauri-policy` |
 | Output display logic | `npm run test:output-display` |
 | Updater manifests | `npm run test:updater-manifest` |
+| macOS app identity | `npm run test:macos-identity`, release artifact inspection on macOS |
 | macOS secret handling | `npm run test:macos-secret-args` |
 | FFmpeg policy/resources | `npm run test:ffmpeg-policy`, `npm run check:ffmpeg-resources`, `npm run check:ffmpeg-release` |
 | Media frame prep/decode | `npm run test:frame-prep`, `npm run test:decode-resize`, `npm run check:media` |
 | Renderer math parity | `npm run test:render-math`, Rust shared-vector tests through `npm run test:rust` |
+| MIDI | `npm run test:midi`, Rust MIDI/SysEx tests, `npm run midi:probe -- --connect` |
 | Crash relay | `npm run test:crash-relay` |
 | Adaptive codec vectors | `npm run test:vectors` |
 | Rust/Tauri modules | `npm run test:rust` |
 | Native output performance | `npm run smoke:native-output`, `npm run test:native-output-log` |
-| UI performance | `npm run smoke:ui-perf` |
+| UI performance | `npm run smoke:ui-perf` with fixed defaults/transitions and average/P10/P50/minimum FPS |
 | Release install/update | `npm run smoke:release-install` |
 
 ## Recommended Check Sets
@@ -109,9 +114,36 @@ npm run test:rust
 ```
 
 Use an optimized app build before making performance conclusions.
+The UI performance smoke starts from canonical visual defaults, uses fixed
+non-structural numeric transitions, and records each backend visited so repeat
+runs are comparable. Select an exact bundle and a longer sample with:
+
+```bash
+ASCILINE_SOURCE_APP="/absolute/path/ASCII VJ Remix.app" \
+ASCILINE_UI_PERF_SMOKE_DURATION_MS=30000 \
+npm run smoke:ui-perf
+```
+
+Native log analysis reports both source upload and upload-skip rates. A healthy
+24 FPS source on a 60 Hz display should upload near source rate and skip the
+duplicate display ticks while presentation remains near refresh rate.
 For glyph-mode changes, include at least one traditional ASCII preset in manual
 Pop Out checks and confirm Character Set/Font Family changes do not hide the
 Glyph/Cell controls.
+
+### MIDI, UC-33e, or SysEx Changes
+
+```bash
+npm run test:midi
+npm run check:tauri-policy
+npm run test:rust
+npm run midi:probe -- --connect
+npm run smoke:static
+```
+
+The physical probe verifies that CoreMIDI can enumerate and simultaneously open
+both directions of the mioXC. It does not replace the control sweep and
+full-bank capture/restore checklist in [MIDI_UC33E](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MIDI_UC33E.md).
 
 ### Tauri Commands, Permissions, or Capabilities
 
@@ -151,15 +183,25 @@ npm run check:ffmpeg-release
 npm run check:release
 npm run bundle:release
 npm run smoke:release-install
+npm run test:macos-dmg-layout
 ```
 
 Run `npm run ffmpeg:build-sidecar` before `npm run check:release` on a clean
 clone. `npm run bundle:release` runs the sidecar build step automatically.
 
 The release smoke downloads artifacts from GitHub Releases and checks installer
-layout, bundled assets, signed updater packages, and `latest.json` behavior.
+layout, bundled assets, signed updater packages, and `latest.json` behavior. On
+macOS it verifies the downloaded DMG, mounts it read-only in a private temporary
+root, validates the exact app-to-Applications layout, and inspects the mounted
+app before the updater hop.
 Updater-hop smoke uses `0.9.0` as the default minimum previous version because
 older `0.1.x` releases were signed with a different updater key.
+
+On macOS, release smoke extracts the current and previous `.app.tar.gz`
+payloads, requires `com.asciline.remix`, Team ID `PWT3Q52LZ2`, hardened runtime,
+Gatekeeper acceptance, and the exact same designated requirement, then runs the
+previous app through the updater and revalidates the replaced bundle. The
+interactive TCC approval itself remains a manual check.
 
 ## Manual Smoke Checklist
 
@@ -197,7 +239,8 @@ Important manual matrices:
 - macOS with system audio capture.
 - Windows with WebView2, D3D12/WebGL2, camera, mic, and installer path.
 - Linux with WebKitGTK, GPU acceleration, camera, mic, and AppImage/deb path.
-- Future MIDI rig: Evolution/M-Audio UC33e through iConnectivity mioXC.
+- Experimental macOS Apple Silicon MIDI rig: Evolution/M-Audio UC-33e through
+  both DIN directions of an iConnectivity mioXC, powered separately.
 
 When reporting hardware results, include:
 
@@ -241,15 +284,16 @@ Release CI should:
 - upload installers, updater packages, signatures, and `latest.json`.
 - validate macOS Developer ID signing, notarization, stapling, and Gatekeeper
   acceptance before publishing macOS artifacts.
-- publish Windows 0.9.3 artifacts as unsigned previews; future signed Windows
+- publish Windows 0.9.5 artifacts as unsigned previews; future signed Windows
   releases must validate Authenticode signer and timestamp state before
   publishing Windows artifacts.
 - run install smoke checks after publishing.
+- run macOS updater identity/replacement smoke on `macos-26`.
 
 Future release hardening should add:
 
 - real Windows and Linux install smoke tests on physical or VM machines.
-- end-to-end updater hop from an older installed app to a newer release.
+- a clean-machine/manual TCC grant-retention check across a public update.
 - Windows SmartScreen reputation checks on clean machines.
 
 ## Known Gaps
@@ -258,7 +302,9 @@ Future release hardening should add:
 - No full i18n/l10n test suite yet.
 - No golden visual output suite for presets yet.
 - No automated camera latency benchmark yet.
-- No automated MIDI controller integration tests yet.
+- Experimental MIDI parsing, mapping, fake events, and SysEx assembly are
+  automated; physical control sweeps and full-bank restore still require the
+  UC-33e/mioXC rig.
 - Linux native media/camera/audio coverage needs broader machine testing.
 
 

@@ -12,7 +12,7 @@ ASCII VJ Remix es un laboratorio de renderizado de escritorio nativo local para 
 
 Está diseñado para la experimentación al estilo VJ: elija una fuente, elija o cree un ajuste preestablecido, presione con fuerza el renderizador, muestre la salida en otra pantalla y siga ajustando la apariencia en vivo mientras los medios siguen ejecutándose.
 
-Los documentos fuente actuales describen el conjunto de características **0.9.3**.
+Los documentos fuente actuales describen el conjunto de características **0.9.6**.
 
 ## Límite del producto
 
@@ -22,7 +22,7 @@ Los documentos fuente actuales describen el conjunto de características **0.9.3
 - Los medios, los fotogramas de la cámara y el audio seleccionados por el usuario siguen siendo locales.
 - Las rutas en línea intencionales se limitan al actualizador de versiones GitHub y al envío de informes de fallas revisados/desinfectados solo de producción.
 - La infraestructura de transmisión existe, pero la interfaz de usuario de origen normal oculta el modo de transmisión hasta que esté listo como una función de usuario independiente.
-- El control de hardware MIDI está planificado, pero no forma parte del conjunto de funciones actual para el usuario normal.
+- El control experimental nativo MIDI está disponible para el equipo DIN UC-33e/mioXC documentado. Se limita intencionalmente a controles visuales, audiorreactivos, preestablecidos y WTF, mientras que la puesta en servicio física permanece incompleta.
 
 ## Linaje del proyecto
 
@@ -46,7 +46,7 @@ ASCII VJ Remix combina tres linajes de origen:
 
 - Mínimo: Windows 10 22H2 o Windows 11, x64 CPU, tiempo de ejecución WebView2, D3D12 o WebGL2 compatible con GPU, 8 GB de RAM y aproximadamente 2 GB de espacio libre en disco.
 - Óptimo: Windows 11, Intel/AMD/NVIDIA GPU reciente con controladores actuales, 16 GB de RAM o más, decodificación de medios de hardware y pantalla de salida dedicada.
-- Los artefactos Windows 0.9.3 se publican como vistas previas sin firmar hasta que se pruebe un backend de firma.
+- Los artefactos Windows actuales se publican como vistas previas sin firmar hasta que se pruebe un backend de firma.
 
 ### Linux
 
@@ -58,7 +58,7 @@ ASCII VJ Remix combina tres linajes de origen:
 
 El renderizador puede ser exigente. Los tamaños de cuadrícula más altos, las cámaras múltiples, la reactividad de audio y las ventanas de salida nativas aumentan la carga.
 
-Para el trabajo con cámara en vivo, las cámaras USB estables, los puertos USB directos o un concentrador con alimentación, una buena iluminación, alimentación de CA y una pantalla de salida dedicada a menudo son más importantes que CPU sin procesar por sí solo.
+Para el trabajo con cámara en vivo, las cámaras USB estables, los puertos USB directos o un concentrador con alimentación, una buena iluminación, alimentación de CA y una pantalla de salida dedicada a menudo son más importantes que CPU sin formato por sí solo.
 
 
 

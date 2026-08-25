@@ -22,7 +22,7 @@ Read these in order before making non-trivial changes:
 3. [Roadmap](/docs/reference/roadmap/): current capabilities, planned work, deferred work, and
    product direction.
 4. [Rendering Engine](/docs/development/rendering-engine/): source flow, renderer backends,
-   native output architecture, media engine, audio reactivity, and future MIDI
+   native output architecture, media engine, audio reactivity, and MIDI
    integration.
 5. [Contributor Guide](/docs/development/contributing/): development setup, test commands,
    release/updater notes, FFmpeg sidecar policy, and contribution workflow.
@@ -31,12 +31,16 @@ Read these in order before making non-trivial changes:
    [Testing](/docs/operations/testing/), [Accessibility](/docs/operations/accessibility/), and
    [Internationalization](/docs/operations/internationalization/).
 
+For MIDI, UC-33e mapping, or SysEx work, also read
+[UC-33e and mioXC MIDI Control](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MIDI_UC33E.md).
+
 For desktop packaging or permissions work, also inspect:
 
 - [Tauri config](https://github.com/aindaco1/ascii-vj-remix/blob/main/src-tauri/tauri.conf.json)
 - [Tauri capabilities](https://github.com/aindaco1/ascii-vj-remix/blob/main/src-tauri/capabilities/default.json)
 - [macOS Info.plist](https://github.com/aindaco1/ascii-vj-remix/blob/main/src-tauri/Info.plist)
 - [macOS entitlements](https://github.com/aindaco1/ascii-vj-remix/blob/main/src-tauri/Entitlements.plist)
+- [0.9.6 macOS installation plan](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MACOS_INSTALL_0.9.6_PLAN.md)
 
 For renderer or Pop Out work, also inspect:
 
@@ -94,7 +98,8 @@ surface for live ASCII/cell visuals.
 
 ## Current User-Facing Baseline
 
-Current docs describe the 0.9.3 feature set.
+Current development docs describe 0.9.6 on top of the released 0.9.5 feature
+set.
 
 Sources:
 
@@ -116,8 +121,12 @@ Rendering:
 - The active renderer is controlled by one canonical parameter model.
 - Native Pop Out preserves glyph-mode and character-set params for traditional
   ASCII presets.
+- The shared character-set catalog includes 23 credited ascii.today-derived
+  luminance ramps and matching read-only presets.
 - Native glyph output should keep using bounded fixed atlas/ramp resources;
   `fontFamily` is UI/preview metadata, not a native font-loading sink.
+- Reuse stable WebGPU/WebGL resources, keep native source uploads keyed to
+  source-frame versions, and do not trade quality/resolution for performance.
 
 Live behavior:
 
@@ -133,6 +142,13 @@ Live behavior:
   ship raw audio buffers through IPC or diagnostics.
 - Safe clamps should prevent pure black or pure white outputs from randomized or
   audio-driven states.
+- The first experimental MIDI rig is the UC-33e through both DIN directions of
+  a mioXC; direct UC USB is out of scope for 0.9.6.
+- MIDI uses four channel-addressed pages, soft takeover, numeric preset slots,
+  MIDI Learn overrides, and bounded full-bank SysEx capture/restore.
+- MIDI targets visual/audio/preset/WTF behavior only. Do not add source, Camera,
+  Pop Out, output-display, file, updater, or crash-report actions.
+- Read [MIDI_UC33E](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MIDI_UC33E.md) before changing mappings or hardware policy.
 
 UI:
 
@@ -150,8 +166,10 @@ Use this map to find the likely owner of a change:
 | --- | --- |
 | Main UI, params, presets, source controls, WTF, audio UI | [app.js](https://github.com/aindaco1/ascii-vj-remix/blob/main/app.js), [index.html](https://github.com/aindaco1/ascii-vj-remix/blob/main/index.html), [style.css](https://github.com/aindaco1/ascii-vj-remix/blob/main/style.css) |
 | GPU renderer and media source abstraction | [renderers/gpu/](https://github.com/aindaco1/ascii-vj-remix/tree/main/renderers/gpu) |
+| MIDI mapping, soft takeover, UC-33e profile | [midi-mapping.js](https://github.com/aindaco1/ascii-vj-remix/blob/main/renderers/shared/midi-mapping.js), [MIDI_UC33E](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MIDI_UC33E.md) |
 | Tauri adapter and output-display helpers | [renderers/desktop/](https://github.com/aindaco1/ascii-vj-remix/tree/main/renderers/desktop) |
 | Tauri shell, commands, permissions, updater, native audio, native output | [src-tauri/](https://github.com/aindaco1/ascii-vj-remix/tree/main/src-tauri) |
+| Native MIDI input/output and SysEx | [midi.rs](https://github.com/aindaco1/ascii-vj-remix/blob/main/src-tauri/src/midi.rs) |
 | Native Pop Out renderer | [native_output.rs](https://github.com/aindaco1/ascii-vj-remix/blob/main/src-tauri/src/native_output.rs), [gpu.rs](https://github.com/aindaco1/ascii-vj-remix/blob/main/src-tauri/src/native_output/gpu.rs) |
 | macOS native camera latency path | [native_camera.rs](https://github.com/aindaco1/ascii-vj-remix/blob/main/src-tauri/src/native_output/native_camera.rs) |
 | Rust media engine, codec, FFmpeg sessions | [src-tauri/src/media_engine/](https://github.com/aindaco1/ascii-vj-remix/tree/main/src-tauri/src/media_engine) |
@@ -208,10 +226,18 @@ npm run test:rust
 npm run check:desktop
 ```
 
+MIDI behavior:
+
+```bash
+npm run test:midi
+npm run midi:probe -- --connect
+npm run test:rust
+```
+
 Optimized macOS app build:
 
 ```bash
-TAURI_SIGNING_PRIVATE_KEY="$(cat /private/tmp/ascii-vj-remix-updater.key)" TAURI_SIGNING_PRIVATE_KEY_PASSWORD="$(cat /private/tmp/ascii-vj-remix-updater.password)" npm run tauri -- build --bundles app
+npm run tauri:build:dev -- --bundles app
 ```
 
 Release packaging:
@@ -225,8 +251,9 @@ npm run bundle:release
 Expected local release-build note:
 
 - Public 0.9.3 release CI requires Apple Developer ID notarization for macOS and
-  publishes Windows as an unsigned preview. Local development builds keep the
-  ad-hoc macOS signing fallback.
+  publishes Windows as an unsigned preview. Normal local builds use
+  `ASCII VJ Remix Dev` / `com.asciline.remix.dev`; the local launcher requires a
+  stable identity before permission testing.
 - If `TAURI_SIGNING_PRIVATE_KEY` or `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` is
   absent while updater artifacts are enabled, release bundling will fail at
   updater signing. Use the local key/password above for local validation, and
@@ -235,7 +262,10 @@ Expected local release-build note:
 ## Tauri and Packaging Notes
 
 - Tauri v2 is the desktop shell.
-- `src-tauri/tauri.conf.json` is the default local/ad-hoc signed config.
+- `src-tauri/tauri.conf.json` is the cross-platform production base config; its
+  macOS ad-hoc identity is used only by explicit non-notarized packaging paths.
+- `src-tauri/tauri.dev.conf.json` isolates normal local commands from the
+  production name, bundle identifier, and updater.
 - `src-tauri/tauri.notarized.conf.json` is for Developer ID notarized macOS
   release builds.
 - `src-tauri/tauri.windows-signed.conf.json` is retained for future signed
@@ -313,8 +343,8 @@ The roadmap tracks future work. At a high level:
 
 - Productize local stream mode only when the full standalone source workflow is
   ready.
-- Add MIDI control, initially targeting an Evolution/M-Audio UC33e through an
-  iConnectivity mioXC.
+- Extend MIDI beyond the 0.9.6 UC-33e/mioXC DIN profile only after its current
+  scope, mapping semantics, SysEx safety, and platform validation are preserved.
 - Continue improving native GPU output and platform-native capture paths.
 - Continue improving Windows SmartScreen reputation validation and real
   install/updater-hop tests on Windows/Linux machines.

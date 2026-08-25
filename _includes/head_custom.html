@@ -32,5 +32,10 @@
 <link rel="alternate" hreflang="en" href="{{ english_alt_url | absolute_url }}">
 <link rel="alternate" hreflang="es" href="{{ spanish_alt_url | absolute_url }}">
 <link rel="alternate" hreflang="x-default" href="{{ english_alt_url | absolute_url }}">
+{% unless page.layout == 'homepage' %}
+{% assign display_font = '/assets/fonts/VCR_OSD_MONO_1.001.woff2' %}
+<link rel="preload" href="{{ display_font | relative_url }}" as="font" type="font/woff2" crossorigin>
+{% endunless %}
 <script id="site-translations" type="application/json">{{ site.data.i18n | jsonify }}</script>
-<script defer src="{{ '/assets/js/site.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
+{% assign site_script = '/assets/js/site.js' %}
+<script defer src="{{ site_script | relative_url }}?v={{ site_script | asset_fingerprint }}"></script>

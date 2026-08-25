@@ -37,7 +37,7 @@ Los medios y marcos de cámara seleccionados permanecen locales. El renderizador
 
 ## Controles de renderizado en vivo
 
-La aplicación mantiene la selección de fuente, ajustes preestablecidos, WTF mode, modulación de audio, salida nativa y trabajo futuro de MIDI dirigidos a través de un modelo de parámetro canónico.
+La aplicación mantiene la selección de fuente, ajustes preestablecidos, WTF mode, modulación de audio, salida nativa y control experimental de MIDI dirigidos a través de un modelo de parámetro canónico.
 
 Los principales grupos de control incluyen:
 
@@ -59,6 +59,8 @@ ASCII VJ Remix incluye ajustes preestablecidos visuales integrados de solo lectu
 Las familias visuales integradas incluyen apariencias extremas como Neon Sledgehammer, Gamma Sinkhole, Chrome Wound, Candy Fragmenter, Paper Shredder, Cyberdelic Riot, Acid Snowstorm, Terminal Collapse y Neon Razorstorm.
 
 Los ajustes preestablecidos de ASCII tradicionales incluyen Classic Camera ASCII, ANSI Newsprint, Terminal Mono y Dense Typewriter.
+
+La versión 0.9.5 agregó 23 ajustes preestablecidos de personajes inspirados en ascii.today acreditados, incluidos Broadway KB, Computer, Doom, Ghost, Modular, Standard, Univers y Doh.
 
 Los ajustes preestablecidos del usuario se pueden guardar, duplicar, actualizar, eliminar, importar y exportar. Los ajustes preestablecidos conservan la fuente de medios activa a menos que el usuario la cambie explícitamente.
 
@@ -92,6 +94,14 @@ Analiza características limitadas en lugar de buffers de audio sin formato:
 
 Los controles de amortiguación de mezcla densa y ruido de fondo ayudan a que las pistas ocupadas se mantengan reactivas sin fijar la vibración y la respuesta de ritmo al máximo. La modulación de audio afecta los parámetros de renderizado efectivos en vivo sin reescribir los ajustes preestablecidos guardados.
 
+## Control experimental MIDI
+
+- La entrada/salida nativa multiplataforma MIDI se implementa a través de Rust `midir`.
+- El primer perfil de hardware utiliza un Evolution/M-Audio UC-33e a través de ambas direcciones DIN de un iConnectivity mioXC.
+- Cuatro páginas dirigidas a canales cubren control visual, de audio, preestablecido y fino/de usuario con toma de control suave, aprendizaje MIDI, ranuras preestablecidas numéricas estables y captura/restauración SysEx limitada.
+- MIDI no puede cambiar fuentes, cámara, Pop Out, pantallas de salida, archivos, actualizaciones o configuraciones de informes de fallas.
+- Pasan las pruebas automatizadas de mapeo, transporte, seguridad y alcance; el barrido de control físico completo y la restauración/verificación SysEx de extremo a extremo siguen incompletos, por lo que la función sigue siendo experimental.
+
 ## Pop Out y pantallas externas
 
 Pop Out crea una ventana de salida separada para un proyector, una tarjeta de captura o una pantalla secundaria. La ventana de control principal permanece disponible para la sintonización en vivo.
@@ -104,14 +114,15 @@ La ventana de salida está centrada en la presentación y tiene una superficie d
 - El tiempo de ejecución de producción es solo local de forma predeterminada.
 - GitHub La infraestructura del actualizador de versiones está configurada.
 - El CI de versión pública macOS requiere artefactos firmados y notariados con el ID del desarrollador.
-- Los artefactos Windows 0.9.3 son compilaciones de vista previa explícitamente sin firmar.
+- La ruta de lanzamiento 0.9.6 macOS valida el diseño de DMG, la identidad del ID del desarrollador, la identidad del archivo del actualizador y el reemplazo del actualizador basado en la aplicación.
+- Los artefactos Windows actuales siguen siendo versiones preliminares sin firmar.
 - El envío de informes de fallos es solo de producción, se revisa/desinfecta y se enruta a través de la capa de escritorio Rust al relé Cloudflare Worker.
 
 ## Rutas avanzadas
 
 - El trabajo de transmisión heredado ASCILINE y las sesiones de transmisión Rust/FFmpeg más nuevas existen, pero están ocultas de la interfaz de usuario de origen normal.
 - La política complementaria FFmpeg y la compatibilidad con códecs se encuentran en el trabajo del colaborador/lanzamiento.
-- Está previsto el control del hardware MIDI, con un Evolution/M-Audio UC33e a través de iConnectivity mioXC nombrado como primer objetivo de validación.
+- Se envía soporte experimental para UC-33e/mioXC MIDI; La puesta en servicio física y la validación más amplia de la plataforma siguen siendo trabajos de seguimiento.
 
 
 

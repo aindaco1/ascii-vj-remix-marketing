@@ -23,6 +23,7 @@ Se agrega la función solo de escritorio.
 |`index.html`, `style.css`, `app.js`|Interfaz de usuario del laboratorio de renderizado principal y lógica de control.|
 |`renderers/gpu/`|Renderizador GPU proporcionado/adaptado, abstracción de fuente de medios, backends WebGPU/WebGL2 y recursos de renderizado.|
 |`renderers/desktop/`|Adaptador Tauri y ayudantes de visualización de salida.|
+|`renderers/shared/midi-mapping.js`|Perfil UC-33e, validación de mapeo, escalado, adquisición suave y fusión de eventos.|
 |`src-tauri/`|Shell de escritorio Tauri v2, ventana de salida nativa, registro de medios, proveedores de audio, motor de medios FFmpeg, capacidades, íconos y configuración de empaquetado.|
 |`media/`|Imagen/vídeo de demostración integrados y accesorios de desarrollo ocultos.|
 |`experiments/`|Experimentos de secuencias y vectores de códecs heredados/adaptativos.|
@@ -115,6 +116,8 @@ Los atributos no interrumpen la firma de la aplicación. Puede anular el directo
 |`npm run test:output-display`|Simulación determinista de ubicación de pantalla secundaria.|
 |`npm run smoke:native-output`|Ayudante de humo con rendimiento de salida nativa.|
 |`npm run smoke:ui-perf`|Ayudante de humo para el rendimiento de la interfaz de usuario.|
+|`npm run test:midi`|MIDI pruebas de mapa, escalado, adquisición suave, acción y alcance.|
+|`npm run midi:probe`|Enumere las entradas/salidas físicas de MIDI; agregue `-- --connect` para abrir ambas direcciones mioXC.|
 
 ## Shell de desarrollo de Podman
 
@@ -205,7 +208,7 @@ Al agregar un control visible:
 2. Agregue metadatos de control.
 3. Agregue reglas de visibilidad condicional si no son válidas para todas las fuentes/backend.
 4. Enrute los cambios a través de la misma ruta de configuración que los controles deslizantes, ajustes preestablecidos, WTF mode y
-futuro MIDI.
+MIDI.
 5. Verifique que funcione en vivo sin reiniciar los medios a menos que sea explícitamente un
 renderizador estructural/cambio de fuente.
 
@@ -219,6 +222,20 @@ Mantenga las capacidades limitadas:
 - Ventana principal: selección de medios, gestión de salida, proveedores de audio, actualizador.
 - Ventana de salida: permisos mínimos de escucha/cierre/pantalla completa únicamente.
 
+La superficie de comando 0.9.5 MIDI también es solo para la ventana principal. El código nativo MIDI vive
+en `src-tauri/src/midi.rs`; El primer puerto admitido es el conectado DIN.
+mioXC. No otorgue comandos MIDI o SysEx a la ventana de salida. Ver
+[MIDI_UC33E](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MIDI_UC33E.md) antes de cambiar el perfil de hardware.
+
+MIDI comprueba:
+
+```bash
+npm run test:midi
+npm run midi:probe
+npm run midi:probe -- --connect
+npm run test:rust
+```
+
 El CSP de producción en `src-tauri/tauri.conf.json` bloquea intencionalmente
 conexiones HTTP(S) remotas arbitrarias. Si necesita un nuevo protocolo o recurso
 ruta, actualice la política deliberadamente y ejecute:
@@ -229,36 +246,43 @@ npm run check:tauri-policy
 
 ## Permisos macOS durante el desarrollo
 
-La aplicación utiliza un identificador de paquete:
+La producción y el desarrollo utilizan identidades de aplicaciones independientes:
 
 ```text
-com.asciline.remix
+ASCII VJ Remix      com.asciline.remix
+ASCII VJ Remix Dev  com.asciline.remix.dev
 ```
 
-Restablezca las concesiones de privacidad locales cuando sea necesario:
+`npm run tauri:dev`, `npm run bundle:debug` y
+`npm run tauri:build:dev` aplica automáticamente `src-tauri/tauri.dev.conf.json`.
+No utilice un paquete con nombre de producción para cámara, micrófono o sistema local
+Pruebas de audio.
 
-```bash
-tccutil reset Camera com.asciline.remix
-tccutil reset Microphone com.asciline.remix
-tccutil reset ScreenCapture com.asciline.remix
-tccutil reset AudioCapture com.asciline.remix
-```
-
-Para obtener permisos de medios locales estables en las reconstrucciones, cree una firma de código local
-identidad una vez:
+Cree la identidad de firma de código local estable una vez:
 
 ```bash
 npm run desktop:codesign:local
 ```
 
-Luego ejecuta:
+Luego cree, instale e inicie la aplicación de desarrollo:
 
 ```bash
-ASCILINE_CODESIGN_IDENTITY="ASCII VJ Remix Local Code Signing" npm run desktop:run-local
+npm run desktop:run-local -- --build
 ```
 
-Sin una identidad estable, macOS puede tratar las reconstrucciones como una aplicación diferente para
-fines de privacidad.
+El corredor local instala `~/Applications/ASCII VJ Remix Dev.app`, verifica
+`com.asciline.remix.dev` y rechaza la firma ad hoc de forma predeterminada. Para un desechable
+compilación que no recibirá concesiones de privacidad persistentes, opte explícitamente por
+`ASCILINE_ALLOW_ADHOC_LOCAL=1`.
+
+Restablecer las concesiones de privacidad de desarrollo cuando sea necesario:
+
+```bash
+tccutil reset Camera com.asciline.remix.dev
+tccutil reset Microphone com.asciline.remix.dev
+tccutil reset ScreenCapture com.asciline.remix.dev
+tccutil reset AudioCapture com.asciline.remix.dev
+```
 
 ## Trabajo de FFmpeg y Media Engine
 
@@ -356,30 +380,33 @@ El script secreto del actualizador pasa valores a `gh secret set` a través de l
 Argumentos de línea de comando. Utilice `-- --repo owner/repo` o `-- --key /path/to/key`
 después del script npm si los valores predeterminados son incorrectos.
 
-Para 0.9.3, `release:secrets:check:public` requiere la firma del actualizador y macOS
+Para 0.9.5, `release:secrets:check:public` requiere la firma del actualizador y macOS
 Preparación para la certificación notarial de identificación del desarrollador. Los artefactos Windows se publican como sin firmar.
 vistas previas y no requieren secretos de firma Windows.
 
-Para un paquete de depuración local con la clave de actualización generada:
+Para un paquete de desarrollo local con actualizador deshabilitado:
 
 ```bash
-TAURI_SIGNING_PRIVATE_KEY="$(cat /private/tmp/ascii-vj-remix-updater.key)" TAURI_SIGNING_PRIVATE_KEY_PASSWORD="$(cat /private/tmp/ascii-vj-remix-updater.password)" npm run bundle:debug
+npm run bundle:debug
 ```
 
-Las compilaciones locales/predeterminadas actuales de macOS están firmadas ad hoc por
-`bundle.macOS.signingIdentity = "-"` en `src-tauri/tauri.conf.json`. eso mantiene
-firma de código de paquetes locales válida pero no es certificación notarial de Apple. Público macOS
-las compilaciones de lanzamiento usan `src-tauri/tauri.notarized.conf.json` y fallan si el desarrollador
-Faltan las credenciales de firma de identificación y notarización.
+El paquete de lanzamiento con forma de producción aún requiere la clave de actualización y no debe
+instalarse como una compilación de prueba de permisos local.
 
-Las concesiones de privacidad de medios locales macOS pueden ser sensibles a la firma final de la aplicación.
-`scripts/run_local_desktop_app.sh` acepta
-`ASCILINE_CODESIGN_IDENTITY="<identity>"` para que las compilaciones de prueba locales se puedan volver a firmar
-con una identidad local estable/autofirmada en lugar de una firma ad hoc cambiante:
+La configuración base conserva `bundle.macOS.signingIdentity = "-"` para portátil
+Valores predeterminados de empaquetado, pero capa de comandos locales normales.
+`src-tauri/tauri.dev.conf.json` para cambiar el nombre y el identificador de la aplicación y desactivarla
+actualizaciones de producción. Uso de las compilaciones de la versión pública macOS
+`src-tauri/tauri.notarized.conf.json` y falla si la firma de ID del desarrollador y
+Faltan credenciales de notario.
+
+`scripts/run_local_desktop_app.sh` requiere la identidad local estable mediante
+predeterminado. Anule `ASCILINE_CODESIGN_IDENTITY` sólo cuando pruebe deliberadamente un
+identidad de firma estable diferente:
 
 ```bash
 npm run desktop:codesign:local
-ASCILINE_CODESIGN_IDENTITY="ASCII VJ Remix Local Code Signing" npm run desktop:run-local
+npm run desktop:run-local -- --build
 ```
 
 La firma de identificación de desarrollador y la certificación notarial requieren el Programa de Desarrolladores de Apple
@@ -416,7 +443,7 @@ Las futuras versiones firmadas de Windows pueden usar Azure Artifact Signing a t
 `src-tauri/tauri.windows-signed.conf.json`, que invoca
 `src-tauri/windows-artifact-sign.cmd`; ese envoltorio llama
 `scripts/windows_artifact_sign.ps1`. Esto firma artefactos Windows antes de Tauri
-crea firmas de actualización. La ruta de versión activa 0.9.3 Windows no utiliza
+crea firmas de actualización. La ruta de versión activa 0.9.5 Windows no utiliza
 esta configuración y publica artefactos de vista previa sin firmar. Configurar los valores de Azure
 solo si Azure se convierte en el backend de firma Windows elegido:
 
@@ -453,17 +480,25 @@ rompiendo `codesign`. Se siguen utilizando espacios de trabajo normales de CI y 
 
 Las versiones de lanzamiento ejecutan `npm run ffmpeg:build-sidecar` antes
 `npm run check:release`. Eso se basa en el FFmpeg 8.1.2 oficial fijado
-tarball de origen, verifica el SHA-256 de origen, deshabilita los protocolos de red FFmpeg,
-y organiza binarios FFmpeg/ffprobe compatibles con LGPL como recursos locales Tauri.
-Las compilaciones en tiempo de ejecución permanecen fuera de línea; CI puede descargar la fuente oficial durante el lanzamiento
-compila, pero la aplicación empaquetada nunca descarga FFmpeg, códecs o recursos de renderizado
-en tiempo de ejecución.
+tarball de origen, reintenta fallos de transporte transitorios limitados, promueve sólo un
+descarga completa, verifica la fuente SHA-256, desactiva la red FFmpeg
+protocolos y etapas de binarios FFmpeg/ffprobe compatibles con LGPL como Tauri local
+recursos. Las compilaciones en tiempo de ejecución permanecen fuera de línea; CI puede descargar la fuente oficial durante
+lanza compilaciones, pero la aplicación empaquetada nunca descarga FFmpeg, códecs o renderizador
+activos en tiempo de ejecución.
 
-El flujo de trabajo de lanzamiento también ejecuta `scripts/smoke_tauri_release_install.mjs` después
-publicación. Descarga artefactos de versiones GitHub en lugar de reutilizar locales
-crear directorios, detectar activos faltantes, URL `latest.json` incorrectas, instalador
-problemas de diseño y descargas rotas de actualizadores firmados. Los ganchos para humo exclusivos de CI están
-inactivo a menos que se establezcan estas variables de entorno:
+El flujo de trabajo de lanzamiento también ejecuta `scripts/smoke_tauri_release_install.mjs` en
+macOS, Windows y Linux después de la publicación. Descarga artefactos de GitHub
+Lanzamientos en lugar de reutilizar directorios de compilación locales, detectando activos faltantes,
+URL `latest.json` incorrectas, problemas con el diseño del instalador y actualizador firmado roto
+descargas. macOS extrae adicionalmente archivos de actualización consecutivos, requiere
+el DMG debe contener la aplicación real, el enlace `/Applications` exacto y el Tauri revisado
+Metadatos del buscador; valida el DMG descargado y la aplicación montada; extractos
+archivos de actualización consecutivos; requiere la producción estable designada
+requisito; realiza un verdadero auto-reemplazo del actualizador; y valida la
+identidad de la aplicación resultante. La carga de la versión no reemplaza la ya publicada
+bytes de artefacto para la misma etiqueta. Los ganchos de humo exclusivos de CI están inactivos a menos que estos
+Se establecen variables de entorno:
 
 El humo del salto del actualizador tiene por defecto `ASCILINE_UPDATER_SMOKE_MIN_VERSION=0.9.0`.
 Las versiones anteriores de `0.1.x` utilizaban una clave de firma de actualizador incompatible, por lo que pueden
@@ -519,6 +554,7 @@ Embalaje de lanzamiento:
 ```bash
 npm run check:release
 npm run bundle:release
+npm run test:macos-dmg-layout
 ```
 
 ## Flujo de contribución

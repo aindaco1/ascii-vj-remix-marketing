@@ -36,7 +36,7 @@ Selected media and camera frames stay local. The renderer receives playable medi
 
 ## Live Renderer Controls
 
-The app keeps source selection, presets, WTF mode, audio modulation, native output, and future MIDI work routed through one canonical parameter model.
+The app keeps source selection, presets, WTF mode, audio modulation, native output, and experimental MIDI control routed through one canonical parameter model.
 
 Major control groups include:
 
@@ -58,6 +58,8 @@ ASCII VJ Remix includes read-only built-in visual presets and user-managed prese
 Built-in visual families include extreme looks such as Neon Sledgehammer, Gamma Sinkhole, Chrome Wound, Candy Fragmenter, Paper Shredder, Cyberdelic Riot, Acid Snowstorm, Terminal Collapse, and Neon Razorstorm.
 
 Traditional ASCII presets include Classic Camera ASCII, ANSI Newsprint, Terminal Mono, and Dense Typewriter.
+
+Version 0.9.5 added 23 credited ascii.today-inspired character presets, including Broadway KB, Computer, Doom, Ghost, Modular, Standard, Univers, and Doh.
 
 User presets can be saved, duplicated, updated, deleted, imported, and exported. Presets preserve the active media source unless the user explicitly changes it.
 
@@ -91,6 +93,14 @@ It analyzes bounded features rather than raw audio buffers:
 
 Dense-mix dampening and noise-floor controls help busy tracks stay reactive without pinning jitter and beat response at maximum. Audio modulation affects live effective render params without rewriting saved presets.
 
+## Experimental MIDI Control
+
+- Native cross-platform MIDI input/output is implemented through Rust `midir`.
+- The first hardware profile uses an Evolution/M-Audio UC-33e through both DIN directions of an iConnectivity mioXC.
+- Four channel-addressed pages cover Visual, Audio, Presets, and Fine/User control with soft takeover, MIDI Learn, stable numeric preset slots, and bounded SysEx capture/restore.
+- MIDI cannot change sources, Camera, Pop Out, output displays, files, updates, or crash-report settings.
+- Automated mapping, transport, safety, and scope tests pass; the full physical control sweep and end-to-end SysEx restore/verification remain incomplete, so the feature stays experimental.
+
 ## Pop Out and External Displays
 
 Pop Out creates a separate output window for a projector, capture card, or secondary display. The main control window remains available for live tuning.
@@ -103,14 +113,15 @@ The output window is presentation-focused and has a minimal command surface. Whe
 - Production runtime is local-only by default.
 - GitHub Releases updater infrastructure is configured.
 - Public macOS release CI requires Developer ID signed and notarized artifacts.
-- Windows 0.9.3 artifacts are explicitly unsigned preview builds.
+- The 0.9.6 macOS release path validates the DMG layout, Developer ID identity, updater archive identity, and application-driven updater replacement.
+- Current Windows artifacts remain unsigned preview builds.
 - Crash report submission is production-only, reviewed/sanitized, and routed through the Rust desktop layer to the Cloudflare Worker relay.
 
 ## Advanced Paths
 
 - Legacy ASCILINE stream work and newer Rust/FFmpeg stream sessions exist but are hidden from the normal Source UI.
 - FFmpeg sidecar policy and codec support live in contributor/release work.
-- MIDI hardware control is planned, with an Evolution/M-Audio UC33e through iConnectivity mioXC named as the first validation target.
+- Experimental UC-33e/mioXC MIDI support is shipped; physical commissioning and broader platform validation remain follow-on work.
 
 
 

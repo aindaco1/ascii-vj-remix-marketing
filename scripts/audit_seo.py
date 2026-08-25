@@ -10,7 +10,7 @@ from urllib.parse import urlparse
 
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / "_site"
-SITE_ORIGIN = "https://aindaco1.github.io/ascii-vj-remix-marketing"
+SITE_ORIGIN = "https://asciivj.com"
 REQUIRED_PAGES = [
     "index.html",
     "es/index.html",

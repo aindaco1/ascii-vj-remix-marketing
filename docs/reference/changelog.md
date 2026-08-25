@@ -7,11 +7,202 @@ parent: "Reference"
 
 # Changelog
 
+Version 0.9.7 development begins with release transport resilience. Version
+0.9.6 continues the experimental MIDI commissioning work, removes
+measured renderer/output hot-path overhead without changing visual math or
+quality, and hardens the macOS drag-to-Applications release path. Version 0.9.5
+adds 23 credited ascii.today-inspired character presets and
+experimental native DIN MIDI control for an Evolution/M-Audio UC-33e through an
+iConnectivity mioXC, including four complete controller pages, soft takeover,
+numeric preset selection, MIDI Learn, and full-bank SysEx capture/restore.
 Version 0.9.3 moves public desktop releases to signed/notarized macOS
 distribution, publishes Windows as an unsigned preview while signing is
 deferred, and expands audio reactivity with dense-mix controls that reduce
 overreaction on busy music. Version 0.9.0 remains the first documentation
 baseline for the current ASCII VJ Remix feature set.
+
+## [0.9.7] - Unreleased
+
+### Fixed
+
+- Release source downloads now retry bounded transient transport failures and
+  promote only completed FFmpeg tarballs before the pinned SHA-256 check.
+- Automatic desktop-release dispatch now retries transient GitHub API failures
+  with bounded backoff.
+
+## [0.9.6] - 2026-08-17
+
+### Changed
+
+- Native macOS Pop Out now converts and uploads a decoded RGB source frame only
+  when its source-frame version changes. The display link can continue presenting
+  and applying live visual/audio parameters at display refresh without uploading
+  the same video frame again.
+- WebGPU reuses uniform backing storage, texture views, and stable bind groups;
+  per-frame browser-video external-texture binding remains dynamic as required.
+- WebGL2 resolves shader uniform locations at initialization instead of looking
+  up all 18 locations on every rendered frame.
+- Numeric preset/WTF transitions update only controls whose values are changing.
+  Source lists, camera choices, visibility, meters, and the rest of the control
+  surface are synchronized once at completion rather than on every animation
+  frame.
+- Optimized UI performance smoke uses clean defaults and fixed non-structural
+  transition targets, records P10/P50 as well as average FPS, reports the
+  backends actually visited, and accepts an exact app bundle through
+  `ASCILINE_SOURCE_APP` for release comparisons.
+- Advanced the desktop/package version to 0.9.6. MIDI remains experimental while
+  physical UC-33e/mioXC commissioning is completed.
+- Normal Tauri development and debug-bundle commands now use `ASCII VJ Remix
+  Dev` with bundle identifier `com.asciline.remix.dev`. The production name and
+  `com.asciline.remix` identifier remain exclusive to release packaging.
+- The macOS DMG keeps Tauri as its single packager, makes the standard
+  app-to-Applications layout explicit, and documents the DMG as the primary
+  manual installer. The `.app.tar.gz` remains an updater artifact.
+
+### Fixed
+
+- Corrected the UC-33e commissioning guide to use extended button mode 146 for
+  distinct press/release values. A plain standard-CC assignment toggles between
+  two values and does not provide the momentary edges expected by the app.
+- Clarified that Control Select is the single physical `SELECT` button and added
+  exact front-panel programming, store, SysEx capture/restore, and verification
+  steps.
+
+### Performance
+
+- On the optimized macOS Apple Silicon test build, a 24 FPS video presented at
+  60 FPS in native Pop Out with about 23.8 source uploads and 36.3 upload skips
+  per second: roughly 60% of the former duplicate conversion/upload work was
+  removed while presentation stayed at 60.1 FPS.
+- Steady optimized-build phases remained quality-equivalent and non-regressed:
+  the published 0.9.5 reference measured 35.8 FPS main / 39.3 FPS with Pop Out,
+  while the final 0.9.6 candidate measured 38.6 / 39.0 FPS and sustained 35.9
+  FPS during its fixed numeric-transition phase.
+- The static smoke harness now asserts that a numeric transition performs no
+  more than two source-control synchronizations and one camera/full-visual
+  synchronization, instead of repeating full UI work throughout the tween.
+- Renderer shader code, sampling, color processing, glyph math, output
+  resolution, source FPS, and quality controls are unchanged.
+
+### Security
+
+- Removed local-runner synchronization into `/Applications/ASCII VJ Remix.app`.
+  The runner now accepts only the development bundle identifier and refuses
+  ad-hoc signing by default, preventing local rebuilds from replacing the
+  production app or contaminating its macOS privacy grants.
+- Development builds disable updater artifacts and production updater endpoints.
+- macOS release validation now requires the exact production bundle identifier,
+  Developer ID Team ID `PWT3Q52LZ2`, hardened runtime, and a stable team-based
+  designated requirement. Code-hash-only/ad-hoc identities fail closed.
+- Release validation extracts the actual `.app.tar.gz` updater payload and
+  verifies that its identity and designated requirement match the notarized
+  application bundle.
+- Release validation verifies DMG integrity, mounts the image read-only under a
+  private temporary root, accepts only the app, exact `/Applications` link, and
+  reviewed Tauri metadata (the required volume icon plus an optional regular
+  `.DS_Store`), and applies the existing app structure and production identity
+  checks to the mounted copy.
+- Published-release smoke now requires and revalidates the downloaded DMG before
+  exercising the updater hop. Publishing refuses to replace existing artifact
+  bytes for the same release tag.
+
+### Validation
+
+- Added a Rust unit test for versioned native source-upload decisions.
+- Added browser smoke coverage for bounded numeric-transition UI work.
+- Extended native output log analysis with source upload and upload-skip rates.
+- Added cross-platform unit coverage for macOS code-signing identity parsing and
+  rejection of ad-hoc, wrong-identifier, wrong-team, and changed-requirement
+  artifacts.
+- Added cross-platform DMG layout, mount-point, artifact-discovery, and mounted
+  app-structure contract tests.
+- Added a macOS 26 published-release smoke job that compares consecutive
+  Developer ID requirements, performs an application-driven updater replacement,
+  and revalidates the updated bundle's identity.
+- Validated the optimized `.app` build plus static rendering, renderer math,
+  audio reactivity, all 188 default MIDI bindings, Tauri policy, and 47 Rust
+  tests on macOS Apple Silicon.
+- Built and mounted an optimized local 0.9.6 app/DMG canary and passed the shared
+  bundle/resource/layout check. This local artifact is ad-hoc signed; the final
+  Developer ID signed and notarized canary remains required before publication.
+
+## [0.9.5] - 2026-08-04
+
+### Added
+
+- Added 23 read-only ascii.today-inspired character presets, including Broadway
+  KB, Computer, Doom, Ghost, Modular, Standard, Univers, and Doh.
+- Added a shared bounded character-set catalog with source/author metadata and
+  matching Character Set menu entries for every new preset.
+- Added credited source and adaptation notes in
+  `docs/ASCII_TODAY_PRESETS.md`.
+- Added experimental native cross-platform MIDI input/output through Rust
+  `midir`, with CoreMIDI as the primary macOS Apple Silicon backend and
+  compatible Windows and Linux backends retained for CI and future hardware
+  validation.
+- Added the Evolution/M-Audio UC-33e through iConnectivity mioXC as the first
+  experimental hardware profile. Direct UC-33e USB input remains out of scope.
+- Added four complete 47-control pages: Visual, Audio, Presets, and Fine/User.
+- Added soft takeover, input coalescing, curves, inversion/range support, MIDI
+  Learn overrides, port monitoring, and automatic mioXC reconnection.
+- Added stable MIDI preset slots from 1 through 128 with numeric entry, Enter,
+  Previous, Next, and Clear actions.
+- Added a desktop MIDI panel with input/output status, active page, last-message
+  monitor, mapping reset, profile capture, Install/Restore, and Verify actions.
+- Added bounded full-bank SysEx capture and paced restore through the mioXC
+  return DIN connection, plus optional Ensure Profile on Connection.
+- Added a physical mioXC discovery/connection probe and a complete printable
+  controller map in `docs/MIDI_UC33E.md`.
+
+### Changed
+
+- Native glyph Pop Out now consumes the resolved shared character ramp and
+  accepts it only when it is space-leading, unique, bounded, and fully covered
+  by the fixed bundled glyph atlas.
+- MIDI hardware commissioning is explicitly paused after confirming the
+  controller ids for keypad C34–C43 and transport C44–C47. The software remains
+  implemented; the remaining physical restore and acceptance work is recorded
+  in the Roadmap.
+- MIDI is labeled experimental in the UI and documentation because the full
+  physical control sweep and end-to-end SysEx restore/verification checklist
+  remain incomplete. Ensure Profile on Connection stays disabled by default.
+- UI controls and MIDI now route through the same canonical parameter ranges,
+  clamping, structural-change handling, audio settings, and preset transition
+  behavior.
+- Visual preset changes re-arm soft takeover so non-motorized UC-33e controls
+  cannot jump across the active software value.
+- MIDI is intentionally restricted to visual params, audio-reactive settings,
+  visual presets, and WTF mode. It cannot change sources, Camera, Pop Out, or
+  output displays.
+
+### Security
+
+- MIDI and SysEx commands are granted only to the main control window. The
+  presentation-only output window receives no MIDI permissions.
+- The initial native adapter accepts only ports whose names contain `mioXC`.
+- MIDI queues, SysEx packet counts, decoded bytes, stored mappings, and preset
+  slots are bounded and validated.
+- Captured controller profiles remain local and contain no media paths, frames,
+  audio, credentials, or network data.
+
+### Validation
+
+- Extended renderer-math checks to cover all 23 new catalog entries, including
+  ids, bounds, uniqueness, printable glyphs, attribution metadata, and Broadway
+  KB luminance lookup.
+- Extended static smoke coverage to require ascii.today names in both the
+  Character Set control and built-in Presets panel.
+- Added Rust coverage for native character-ramp acceptance and rejection.
+- Added `npm run test:midi` for the 188 default hardware bindings, value
+  scaling, soft takeover, action edges, event coalescing, and scope exclusions.
+- Added Rust tests for MIDI parsing, fragmented SysEx assembly, transfer
+  validation, and mioXC-only port scoping.
+- Added `npm run midi:probe` and `npm run midi:probe -- --connect` for physical
+  CoreMIDI port and simultaneous input/output validation.
+- Extended static smoke coverage to validate canonical visual/audio MIDI target
+  routing and ensure browser mode keeps the desktop-only MIDI panel hidden.
+- Extended Tauri policy checks to require MIDI permissions on the main window
+  and forbid them on the output window.
 
 ## [0.9.3] - 2026-06-26
 

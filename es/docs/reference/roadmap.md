@@ -8,9 +8,74 @@ lang: es
 
 # Hoja de ruta
 
-Esta hoja de ruta separa la línea base de características actual 0.9.3 del trabajo planificado.
+Esta hoja de ruta separa la línea base de características lanzadas 0.9.5, el trabajo activo 0.9.6,
+y el trabajo de seguimiento planificado.
 Su objetivo es guiar el producto, el renderizador, el empaquetado de escritorio y la contribución.
 decisiones.
+
+## Trabajo de lanzamiento activo: 0.9.6
+
+### Rendimiento sin reducción de calidad
+
+- Reutilice el almacenamiento uniforme, las vistas de texturas y los grupos de vinculación estables de WebGPU.
+de recrearlos por fotograma.
+- Almacenar en caché las ubicaciones uniformes de WebGL2 después de vincular el programa.
+- Mantenga los marcos de transición numéricos en la ruta de actualización de valores/controles pequeños; correr
+Actualizaciones de fuente, cámara, visibilidad, medidor y superficie de control completa únicamente
+en el límite estatal final.
+- Versión nativa de los marcos fuente Pop Out para actualizar la presentación y la visualización en vivo.
+La modulación de parámetros no convierte repetidamente y carga un 24 FPS sin cambios.
+fotograma de vídeo en 60 FPS.
+- Preservar el código del sombreador, las matemáticas del renderizador, la resolución de fuente/salida, la calidad de los glifos,
+y todos los controles de calidad visibles.
+- Mantenga la medición de construcción optimizada repetible con valores predeterminados limpios y fijos
+objetivos de transición no estructurales, métricas P10/P50, selección exacta de paquetes,
+y contadores nativos de carga/salto.
+
+### MIDI Se reanudó la puesta en servicio
+
+- Mantenga MIDI etiquetado como experimental y mantenga desactivado Garantizar perfil en conexión
+hasta que la restauración manual y la verificación byte por byte se realicen correctamente.
+- Programe los atenuadores/rotativos como CC 1-33 correspondientes en el canal individual 00.
+- Programe C34-C47 con modo extendido 146, coincidiendo con CC 34-47, presione 127,
+liberación 0 y canal individual 00. El modo de botón CC estándar simple es un
+alternar y no es aceptable.
+- Almacenar la superficie común en las memorias 01-04 con los canales globales 1-4.
+- Captura completa del banco, restauración explícita, recuperación, verificación, física
+barrido, reconexión, control suave, ranuras numéricas y controles de acción prohibida en
+macOS Manzana Silicio.
+- Conserve la validación directa del USB UC-33e y física Windows/Linux como continuación
+trabajo.
+
+### macOS Protección de identidad de permisos
+
+- Mantenga los lanzamientos públicos en `ASCII VJ Remix` / `com.asciline.remix` y normal
+desarrollo en `ASCII VJ Remix Dev` / `com.asciline.remix.dev`.
+- Requerir una identidad de firma local estable antes de lanzar un paquete de desarrollo
+que solicitará acceso a la cámara, el micrófono o el audio del sistema.
+- Evite que las herramientas locales copien o vuelvan a firmar la aplicación de producción.
+- Requerir archivos de actualización públicos para conservar el ID del desarrollador ID del equipo `PWT3Q52LZ2`,
+tiempo de ejecución reforzado y el mismo requisito designado basado en equipo en todo
+lanzamientos.
+- Ejecute un reemplazo del actualizador macOS basado en la aplicación después de la publicación y
+revalidar la identidad de la aplicación resultante.
+
+### Endurecimiento de instalación macOS DMG
+
+- Tauri sigue siendo el único propietario de la creación de DMG, con su aplicación a aplicaciones
+diseño explícito en la configuración comprometida.
+- El contrato de imagen montada compartida verifica la integridad, el paquete de aplicación real,
+`Applications -> /Applications` y revisó los metadatos de Tauri.
+- Reutilice la identidad, la firma, el grapado, el Gatekeeper y el actualizador de la aplicación existente
+verificaciones de archivo con la aplicación montada desde el DMG final notariado.
+- El humo de liberación publicada requiere el DMG descargado antes de ejercer el
+salto de actualización existente.
+- Mantenga como opcionales EasyDMG y manipuladores cautelosos similares; no agregues un automatico
+dependencia del instalador o del tiempo de ejecución.
+- La aplicación local optimizada/canario DMG pasa la verificación del paquete montado compartido. un
+La identificación del desarrollador firmada/notarizada por un canario de DMG sigue siendo necesaria antes de realizar la reclamación.
+el trabajo de instalación de 0.9.6 está listo para su lanzamiento. Ver
+[Plan de refuerzo de instalación macOS para 0.9.6](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MACOS_INSTALL_0.9.6_PLAN.md).
 
 ## Dirección de producto
 
@@ -26,10 +91,10 @@ salida y arquitectura de fuente de medios nativa del navegador.
 utilizable para flujos de trabajo de salida en vivo.
 
 El proyecto no adopta la interfaz de usuario del juego de apuntar y hacer clic. El objetivo es una densa
-Superficie de control creativo para vídeo, imagen, cámara, audio-reactivo y futuro.
+superficie de control creativo para video, imagen, cámara, audio-reactivo y
 Imágenes ASCII basadas en MIDI.
 
-## Línea base de características actuales: 0.9.3
+## Línea base de características actuales: 0.9.5
 
 ### Aplicación de escritorio local con arnés Vite
 
@@ -137,6 +202,9 @@ sin cambios.
   - Papel periódico ANSI.
   - Terminal mono.
   - Máquina de escribir densa.
+  - Veintitrés adaptaciones de personajes de ascii.today acreditadas, de Broadway
+KB a Doh; ver
+[ascii.today Ajustes preestablecidos de caracteres](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/ASCII_TODAY_PRESETS.md).
   - Martillo de neón.
   - Lluvia arcade.
   - Sumidero Gamma.
@@ -220,6 +288,49 @@ latencia de la cámara.
 - La selección de visualización de salida persiste cuando la enumeración de monitores está disponible.
 - La ubicación de la pantalla secundaria está cubierta por pruebas de simulación deterministas.
 
+### Control de hardware nativo experimental MIDI (0.9.5)
+
+- El equipo experimental inicial es un Evolution/M-Audio UC-33e conectado por DIN
+en ambas direcciones a través de un iConnectivity mioXC.
+- Rust `midir` proporciona entrada/salida nativa con CoreMIDI como principal probado
+backend y backends Windows/Linux retenidos para su validación.
+- Cuatro memorias UC proporcionan páginas visuales, de audio, preestablecidas y finas/de usuario.
+- Los 47 controles asignables tienen asignaciones predeterminadas en cada página.
+- Adquisición suave, fusión, aprendizaje MIDI, espacios preestablecidos estables y reconexión
+Se implementan monitoreos.
+- SysEx de banco completo se puede capturar, restaurar explícitamente y verificar. Opcional
+Asegúrese de que Perfil al conectarse esté desactivado de forma predeterminada.
+- MIDI no puede cambiar las fuentes de medios, la cámara, Pop Out ni las pantallas de salida.
+- El mapa completo del controlador y el procedimiento de hardware se encuentran en
+[MIDI_UC33E](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MIDI_UC33E.md).
+
+#### Estado de puesta en servicio del hardware: reanudando en 0.9.6
+
+MIDI sigue siendo experimental en el estado implementado y de aprobación de pruebas automatizadas. la sesion fisica
+confirmó que este UC-33e identifica el teclado numérico como C34–C43 y el
+Botones de transporte Detener, Reproducir, Rebobinar y Avanzar rápido como C44–C47. esas identificaciones
+son ahora el mapeo canónico.
+
+Lista de verificación del currículum:
+
+1. Programa C34–C47 con botón extendido UC-33e modo 146 como control momentáneo
+Cambiar mensajes cuyo número CC coincida con la identificación del controlador, con liberación
+valor 0 y presione el valor 127.
+2. Almacene las memorias UC 01–04 con los canales globales MIDI 1–4 y el documentado
+Mapas visuales, de audio, preestablecidos y finos/de usuario.
+3. Capture un volcado SysEx de banco completo verificado desde el dispositivo bidireccional
+equipo UC-33e/mioXC conectado.
+4. Ejercite Instalar/Restaurar y Verificar con ese perfil capturado.
+5. Habilite y valide el perfil opcional Garantizar al conectarse solo después del manual
+la restauración tiene éxito.
+6. Complete el barrido de control físico, la prueba de reconexión, la prueba de toma de control suave y
+verificación de aceptación de acciones prohibidas en macOS Apple Silicon.
+7. Realice la validación física de Windows y Linux más tarde; estancias USB directas UC-33e
+diferido.
+
+Durante la puesta en servicio no está previsto ningún nuevo alcance MIDI; las fallas deben corregirse
+dentro del límite de seguridad visual/audio existente.
+
 ### Embalaje y seguridad de escritorio
 
 - Tauri v2 es el shell del escritorio.
@@ -232,8 +343,9 @@ acciones del actualizador.
 - La ventana de salida tiene permisos mínimos de escucha/cierre/pantalla completa.
 - Las cadenas de uso de cámara, micrófono, captura de pantalla y captura de audio macOS están
 presente.
-- Las compilaciones locales macOS están autofirmadas ad hoc de forma predeterminada; CI de lanzamiento público
-requiere firma y certificación notarial del ID del desarrollador.
+- Las compilaciones de desarrollo normales de macOS utilizan una identidad de paquete `.dev` separada y el
+El iniciador local requiere una firma estable. La CI de lanzamiento público requiere desarrollador
+Firma de DNI y certificación notarial bajo la identidad de producción.
 - La versión Windows 0.9.3 CI publica artefactos de vista previa sin firmar. Firmado Windows
 la distribución pública se difiere hasta SignPath Foundation, Azure Artifact
 Se prueba la firma u otro backend de firma.
@@ -279,29 +391,22 @@ El modelo de seguridad en tiempo de ejecución reside en [Security](/es/docs/ope
 
 ## Funciones futuras
 
-### Control de hardware nativo MIDI
+### MIDI Trabajo de seguimiento
 
-Construya la capa de control MIDI alrededor de un registro de destino de control genérico, con el
-Evolution/M-Audio UC33e a través de iConnectivity mioXC como primer equipo de validación.
+La base nativa MIDI y el perfil UC-33e/mioXC se enviaron como experimentales en
+0.9.5 y la puesta en servicio continúa en 0.9.6. Trabajo de seguimiento después de eso:
 
-Alcance:
+- Compatibilidad directa con USB UC-33e después de que la ruta DIN/mioXC sea estable.
+- Validación física de Windows y Linux más allá de compilaciones de CI y pruebas de eventos falsos.
+- Importación/exportación de perfiles de mapeo más allá de las anulaciones de aprendizaje MIDI persistentes localmente.
+- Perfiles de controlador adicionales.
+- Controles opcionales de suavizado de banda muerta y por enlace en la interfaz de usuario de mapeo.
+- Construcción/edición automática de SysEx propietario UC-33e sin primero
+capturando un volcado de hardware de banco completo verificado.
 
-- Adaptador nativo Tauri MIDI que utiliza un backend multiplataforma Rust MIDI.
-- MIDI enumeración de entradas, estado de conexión y monitor de último mensaje.
-- MIDI Modo de aprendizaje.
-- Persistencia de mapeo separada de los ajustes preestablecidos visuales.
-- Importación/exportación de mapeos.
-- Toma/captación suave para atenuadores y perillas.
-- Configuración de valores: mínimo/máximo, inversión, banda muerta, suavizado, lineal/exponencial/log
-curvas.
-- Modos de botón: disparador, alternar, momentáneo, preestablecer siguiente/anterior, alternar WTF,
-alternancia de audio, acciones emergentes donde sea seguro.
-- Perfil de inicio UC33e después de capturar mensajes de hardware reales.
-- Inyección de evento MIDI falso para CI.
-
-Regla de regresión: MIDI debe enrutarse a través de las mismas rutas de control en vivo que la interfaz de usuario.
-No debe reiniciar los medios ni omitir la semántica preestablecida/audio/WTF a menos que el mapeado
-El objetivo es explícitamente estructural.
+Regla de regresión: MIDI debe seguir usando las mismas rutas de control en vivo que la interfaz de usuario y
+no debe obtener acciones de fuente, cámara, Pop Out o visualización de salida sin una nueva
+Decisión de producto y revisión de seguridad.
 
 ### Modo de transmisión productizado
 
@@ -400,7 +505,14 @@ y verifica el diseño del código, el tiempo de ejecución reforzado, la aceptac
 Estado de notarización antes de su publicación.
 - Windows 0.9.3 versión CI publica artefactos de vista previa sin firmar en lugar de
 bloqueo de la firma de artefactos de Azure de pago.
-- El desarrollo local mantiene rutas de firma ad hoc/predeterminadas.
+- El desarrollo local mantiene un ad-hoc explícitamente aceptado y disponible con permiso
+respaldo; Las pruebas de permisos normales requieren una firma estable.
+- Los comandos locales normales aíslan la identidad del paquete/producto de desarrollo, desactivan el
+actualizador de producción y requiere una firma estable antes de probar el permiso.
+- Las puertas de liberación macOS verifican la identificación exacta del equipo de producción y la designación.
+requisito tanto en la aplicación como en el archivo de actualización extraído.
+- El CI de versión publicada realiza un reemplazo real del actualizador macOS desde el
+liberación elegible anterior y revalida la identidad resultante.
 - El comportamiento de instalación real de la máquina limpia Windows sigue siendo una verificación de versión manual para
 vista previa de los artefactos y un punto de validación requerido una vez que se realiza la firma Windows
 habilitado.
@@ -416,7 +528,8 @@ Secretos de acciones.
   - boletos de notarización básicos para los artefactos enviados.
   - validar artefactos finales con `codesign --verify`, inspección de derechos,
 `spctl -a -vv` y una primera prueba de humo abierta en una máquina macOS limpia.
-  - mantener la firma ad hoc como respaldo del desarrollo local.
+  - mantenga la firma ad-hoc solo como un desarrollo explícito que requiere permiso
+respaldo.
 - Windows Mitigación de pantalla inteligente:
   - firmar instaladores y ejecutables Windows con una firma de código Authenticode
 certificado.
@@ -458,7 +571,8 @@ Firmas de autenticado y firmas de actualizador antes de la publicación.
 respaldo hasta que se demuestre la aceptación de SignPath y la liberación de CI.
 - Pruebas de humo del instalador Windows en máquinas reales más allá de CI.
 - Linux Validación de AppImage/deb en distribuciones comunes.
-- El actualizador de extremo a extremo prueba el salto de una versión instalada anterior a una más nueva.
+- Confirmación manual con máquina limpia de que las subvenciones de TCC permanecen presentes en todo el país.
+salto de actualización automatizado y con identidad estable.
 - Se corrigió la estrategia de tiempo de ejecución de WebView2 si la aplicación Windows debe instalarse sin
 requisitos previos en línea.
 
@@ -473,7 +587,7 @@ Alcance:
 - Pruebas de latencia de cámara con fotogramas sintéticos o con marca de tiempo.
 - Comprobaciones de suavidad de transición preestablecidas.
 - Comprobaciones del tiempo de respuesta de la audiorreactividad.
-- Registros de salida nativos con contadores para fotogramas adquiridos, fotogramas presentados y parámetros.
+- Registros de salida nativos con contadores para fotogramas adquiridos, fotogramas presentados, parámetros
 versión, versión fuente y ritmo de visualización.
 
 ### Documentación y ejemplos
@@ -491,7 +605,7 @@ Alcance:
 - Agregue capturas de pantalla del tema negro de la interfaz de usuario para la configuración normal del usuario, Pop Out y
 flujos de trabajo de permisos.
 - Agregue guías de configuración de hardware para cámaras, interfaces de audio, proyectores y el
-Equipo UC33e/mioXC.
+Equipo UC-33e/mioXC.
 - Agregue una matriz de solución de problemas para permisos, reserva GPU y ventana de salida
 problemas.
 - Agregue comprobaciones de accesibilidad automatizadas para el comportamiento del teclado/enfoque/ARIA.
@@ -503,12 +617,14 @@ problemas.
 - El soporte de Linux WebGPU puede permanecer inconsistente por un tiempo.
 - La captura multicámara depende del sistema operativo, el firmware de la cámara, la topología USB y el navegador.
 comportamiento.
-- Las indicaciones de privacidad de macOS pueden ser sensibles al identificador del paquete y a la firma
-identidad.
+- Las indicaciones de privacidad de macOS siguen siendo sensibles al identificador del paquete y a la firma
+identidad; El aislamiento de producción/desarrollo evita que las compilaciones locales normales
+contaminando las subvenciones públicas.
 - La licencia FFmpeg debe seguir siendo una puerta de liberación explícita.
 - La decodificación de medios nativos y la interoperabilidad de GPU difieren significativamente según la plataforma.
-- Los eventos MIDI futuros de alta tasa podrían causar abandono de la interfaz de usuario sin cuadro de animación
-fusionándose.
+- Los eventos MIDI de alta tasa aún pueden causar abandono del renderizador cuando los usuarios asignan muchos
+controles estructurales simultáneamente; Los eventos continuos se fusionan y
+Los cambios estructurales siguen teniendo un ritmo limitado.
 - La transmisión no debe volver a la interfaz de usuario normal hasta que sea lo suficientemente confiable para
 usuarios no desarrolladores.
 
@@ -521,7 +637,7 @@ usuarios no desarrolladores.
 - Los ajustes preestablecidos, WTF, reactividad de audio y controles en vivo no reinician los medios a menos que
 el usuario cambia de fuente o es inevitable una reconstrucción estructural.
 - El modo de transmisión está desarrollado o claramente ausente en la interfaz de usuario del usuario normal.
-- La compatibilidad con el controlador MIDI se implementa o se aplaza explícitamente desde 1.0.
+- La compatibilidad con el controlador MIDI permanece estable en el equipo UC-33e/mioXC documentado.
 - Los artefactos de la versión macOS están firmados con el ID del desarrollador, notariados, grapados y
 Validado por Gatekeeper para distribución pública, o el lanzamiento es explícitamente
 marcado como una compilación local/de prueba.

@@ -9,9 +9,9 @@ parent: "Operations"
 
 ## Current Release Posture
 
-- Current source docs describe the **0.9.3** feature set.
+- Current source docs describe the **0.9.6** feature set.
 - macOS public release builds require Developer ID signing and notarization.
-- Windows 0.9.3 artifacts are unsigned previews until SignPath Foundation, Azure Artifact Signing, or another signing backend is proven.
+- Current Windows artifacts remain unsigned previews until SignPath Foundation, Azure Artifact Signing, or another signing backend is proven.
 - GitHub Releases updater infrastructure is configured.
 - Updater and release checks must not broaden runtime network capability.
 
@@ -21,7 +21,7 @@ Public release CI treats macOS signing/notarization as fail-closed. Local or tes
 
 ## Windows
 
-Windows signing tooling exists for future signed release work, including Azure Artifact Signing, Tauri `signCommand`, and Authenticode verification helpers. The active 0.9.3 release posture remains unsigned preview artifacts.
+Windows signing tooling exists for future signed release work, including Azure Artifact Signing, Tauri `signCommand`, and Authenticode verification helpers. The current release posture remains unsigned preview artifacts.
 
 ## Crash Reporting
 

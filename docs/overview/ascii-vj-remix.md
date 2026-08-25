@@ -11,7 +11,7 @@ ASCII VJ Remix is a local-first native desktop renderer lab for turning images, 
 
 It is built for VJ-style experimentation: pick a source, choose or build a preset, push the renderer hard, pop output onto another display, and keep tuning the look live while media keeps running.
 
-Current source docs describe the **0.9.3** feature set.
+Current source docs describe the **0.9.6** feature set.
 
 ## Product Boundary
 
@@ -21,7 +21,7 @@ Current source docs describe the **0.9.3** feature set.
 - User-selected media, camera frames, and audio remain local.
 - Intentional online paths are limited to the GitHub Releases updater and production-only reviewed/sanitized crash report submission.
 - Stream infrastructure exists, but the normal Source UI hides stream mode until it is ready as a standalone user feature.
-- MIDI hardware control is planned, but is not part of the current normal-user feature set.
+- Experimental native MIDI control is available for the documented UC-33e/mioXC DIN rig. It is intentionally limited to visual, audio-reactive, preset, and WTF controls while physical commissioning remains incomplete.
 
 ## Project Lineage
 
@@ -45,7 +45,7 @@ ASCII VJ Remix combines three source lineages:
 
 - Minimum: Windows 10 22H2 or Windows 11, x64 CPU, WebView2 runtime, D3D12 or WebGL2-capable GPU, 8 GB RAM, and about 2 GB free disk space.
 - Optimal: Windows 11, recent Intel/AMD/NVIDIA GPU with current drivers, 16 GB RAM or more, hardware media decode, and dedicated output display.
-- Windows 0.9.3 artifacts are published as unsigned previews until a signing backend is proven.
+- Current Windows artifacts are published as unsigned previews until a signing backend is proven.
 
 ### Linux
 

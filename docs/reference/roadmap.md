@@ -7,9 +7,74 @@ parent: "Reference"
 
 # Roadmap
 
-This roadmap separates the current 0.9.3 feature baseline from planned work.
+This roadmap separates the released 0.9.5 feature baseline, active 0.9.6 work,
+and planned follow-on work.
 It is meant to guide product, renderer, desktop packaging, and contribution
 decisions.
+
+## Active Release Work: 0.9.6
+
+### Performance Without Quality Reduction
+
+- Reuse WebGPU uniform storage, texture views, and stable bind groups instead
+  of recreating them per frame.
+- Cache WebGL2 uniform locations after program linking.
+- Keep numeric transition frames on the small control/value update path; run
+  source, camera, visibility, meter, and complete control-surface refreshes only
+  at the final state boundary.
+- Version native Pop Out source frames so display-refresh presentation and live
+  param modulation do not repeatedly convert and upload an unchanged 24 FPS
+  video frame at 60 FPS.
+- Preserve shader code, renderer math, source/output resolution, glyph quality,
+  and every visible quality control.
+- Keep optimized-build measurement repeatable with clean defaults, fixed
+  non-structural transition targets, P10/P50 metrics, exact bundle selection,
+  and native upload/skip counters.
+
+### MIDI Commissioning Resumed
+
+- Keep MIDI labeled experimental and keep Ensure Profile on Connection off
+  until manual restore and byte-for-byte verification succeed.
+- Program faders/rotaries as matching CC 1-33 on individual channel 00.
+- Program C34-C47 with extended mode 146, matching CC 34-47, press 127,
+  release 0, and individual channel 00. Plain standard-CC button mode is a
+  toggle and is not acceptable.
+- Store the common surface in memories 01-04 with global channels 1-4.
+- Complete full-bank capture, explicit restore, recall, verification, physical
+  sweep, reconnect, soft-takeover, numeric-slot, and forbidden-action checks on
+  macOS Apple Silicon.
+- Retain direct UC-33e USB and physical Windows/Linux validation as follow-on
+  work.
+
+### macOS Permission Identity Safeguards
+
+- Keep public releases on `ASCII VJ Remix` / `com.asciline.remix` and normal
+  development on `ASCII VJ Remix Dev` / `com.asciline.remix.dev`.
+- Require a stable local signing identity before launching a development bundle
+  that will request Camera, Microphone, or System Audio access.
+- Prevent local tooling from copying or re-signing the production app.
+- Require public updater archives to retain Developer ID Team ID `PWT3Q52LZ2`,
+  hardened runtime, and the same team-based designated requirement across
+  releases.
+- Run an application-driven macOS updater replacement after publication and
+  revalidate the resulting app identity.
+
+### macOS DMG Installation Hardening
+
+- Tauri remains the single owner of DMG creation, with its app-to-Applications
+  layout explicit in the committed configuration.
+- The shared mounted-image contract verifies integrity, the real app bundle,
+  `Applications -> /Applications`, and reviewed Tauri metadata.
+- Reuse the existing app identity, signing, stapling, Gatekeeper, and updater
+  archive checks against the app mounted from the final notarized DMG.
+- Published-release smoke requires the downloaded DMG before exercising the
+  existing updater hop.
+- Keep EasyDMG and similar cautious handlers optional; do not add an automatic
+  installer or runtime dependency.
+- The optimized local app/DMG canary passes the shared mounted bundle check. A
+  Developer ID signed/notarized one-DMG canary remains required before claiming
+  the 0.9.6 install work is release-ready. See
+  [macOS Installation Hardening Plan for 0.9.6](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MACOS_INSTALL_0.9.6_PLAN.md).
 
 ## Product Direction
 
@@ -25,10 +90,10 @@ visuals. It combines:
   usable for live output workflows.
 
 The project is not adopting the point-and-click game UI. The target is a dense
-creative control surface for video, image, camera, audio-reactive, and future
+creative control surface for video, image, camera, audio-reactive, and
 MIDI-driven ASCII visuals.
 
-## Current Feature Baseline: 0.9.3
+## Current Feature Baseline: 0.9.5
 
 ### Local-First Desktop App With Vite Harness
 
@@ -136,6 +201,9 @@ source/backend.
   - ANSI Newsprint.
   - Terminal Mono.
   - Dense Typewriter.
+  - Twenty-three credited ascii.today character-set adaptations, from Broadway
+    KB through Doh; see
+    [ascii.today Character Presets](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/ASCII_TODAY_PRESETS.md).
   - Neon Sledgehammer.
   - Arcade Rain.
   - Gamma Sinkhole.
@@ -219,6 +287,49 @@ source/backend.
 - Output display selection is persisted when monitor enumeration is available.
 - Secondary-display placement is covered by deterministic simulation tests.
 
+### Experimental Native MIDI Hardware Control (0.9.5)
+
+- The initial experimental rig is an Evolution/M-Audio UC-33e connected by DIN
+  in both directions through an iConnectivity mioXC.
+- Rust `midir` provides native input/output with CoreMIDI as the primary tested
+  backend and Windows/Linux backends retained for validation.
+- Four UC memories provide Visual, Audio, Presets, and Fine/User pages.
+- All 47 assignable controls have default mappings on every page.
+- Soft takeover, coalescing, MIDI Learn, stable preset slots, and reconnect
+  monitoring are implemented.
+- Full-bank SysEx can be captured, explicitly restored, and verified. Optional
+  Ensure Profile on Connection is off by default.
+- MIDI cannot change media sources, Camera, Pop Out, or output displays.
+- The full controller map and hardware procedure live in
+  [MIDI_UC33E](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MIDI_UC33E.md).
+
+#### Hardware Commissioning Status: Resuming in 0.9.6
+
+MIDI remains experimental at the implemented and automated-test-passing state. The physical session
+confirmed that this UC-33e identifies the numeric keypad as C34–C43 and the
+Stop, Play, Rewind, and Fast-forward transport buttons as C44–C47. Those ids
+are now the canonical Page 3 mapping.
+
+Resume checklist:
+
+1. Program C34–C47 with UC-33e extended button mode 146 as momentary Control
+   Change messages whose CC number matches the controller id, with release
+   value 0 and press value 127.
+2. Store UC memories 01–04 with global MIDI channels 1–4 and the documented
+   Visual, Audio, Presets, and Fine/User maps.
+3. Capture a verified full-bank SysEx dump from the powered, bidirectionally
+   connected UC-33e/mioXC rig.
+4. Exercise Install/Restore and Verify against that captured profile.
+5. Enable and validate optional Ensure Profile on Connection only after manual
+   restore succeeds.
+6. Complete the physical control sweep, reconnect test, soft-takeover test, and
+   forbidden-action acceptance check on macOS Apple Silicon.
+7. Perform physical Windows and Linux validation later; direct UC-33e USB stays
+   deferred.
+
+No new MIDI scope is planned during commissioning; failures should be fixed
+within the existing visual/audio-only security boundary.
+
 ### Desktop Security and Packaging
 
 - Tauri v2 is the desktop shell.
@@ -231,8 +342,9 @@ source/backend.
 - Output window has minimal listen/close/fullscreen permissions.
 - macOS camera, microphone, screen capture, and audio capture usage strings are
   present.
-- macOS local builds are ad-hoc self-signed by default; public release CI
-  requires Developer ID signing and notarization.
+- Normal macOS development builds use a separate `.dev` bundle identity and the
+  local launcher requires stable signing. Public release CI requires Developer
+  ID signing and notarization under the production identity.
 - Windows 0.9.3 release CI publishes unsigned preview artifacts. Signed Windows
   public distribution is deferred until SignPath Foundation, Azure Artifact
   Signing, or another signing backend is proven.
@@ -278,29 +390,22 @@ runtime security model lives in [Security](/docs/operations/security/).
 
 ## Future Features
 
-### Native MIDI Hardware Control
+### MIDI Follow-On Work
 
-Build the MIDI control layer around a generic control target registry, with the
-Evolution/M-Audio UC33e through iConnectivity mioXC as the first validation rig.
+The native MIDI foundation and UC-33e/mioXC profile shipped as experimental in
+0.9.5 and commissioning continues in 0.9.6. Follow-on work after that:
 
-Scope:
+- Direct UC-33e USB support after the DIN/mioXC path is stable.
+- Physical Windows and Linux validation beyond CI builds and fake event tests.
+- Mapping profile import/export beyond locally persisted MIDI Learn overrides.
+- Additional controller profiles.
+- Optional deadband and per-binding smoothing controls in the mapping UI.
+- Automatic construction/editing of proprietary UC-33e SysEx without first
+  capturing a verified full-bank hardware dump.
 
-- Native Tauri MIDI adapter using a cross-platform Rust MIDI backend.
-- MIDI input enumeration, connection status, and last-message monitor.
-- MIDI Learn mode.
-- Mapping persistence separate from visual presets.
-- Mapping import/export.
-- Soft takeover/pickup for faders and knobs.
-- Value shaping: min/max, invert, deadband, smoothing, linear/exponential/log
-  curves.
-- Button modes: trigger, toggle, momentary, preset next/previous, WTF toggle,
-  audio toggle, pop-out actions where safe.
-- UC33e starter profile after real hardware messages are captured.
-- Fake MIDI event injection for CI.
-
-Regression rule: MIDI must route through the same live-control paths as the UI.
-It must not restart media or bypass preset/audio/WTF semantics unless the mapped
-target is explicitly structural.
+Regression rule: MIDI must keep using the same live-control paths as the UI and
+must not gain source, Camera, Pop Out, or output-display actions without a new
+product decision and security review.
 
 ### Productized Stream Mode
 
@@ -399,7 +504,14 @@ Move from local/self-signed packages to a smoother public distribution path.
   notarization state before publishing.
 - Windows 0.9.3 release CI publishes unsigned preview artifacts instead of
   blocking on paid Azure Artifact Signing.
-- Local development keeps ad-hoc/default signing paths.
+- Local development keeps an explicitly opted-in, permission-disposable ad-hoc
+  fallback; normal permission testing requires stable signing.
+- Normal local commands isolate the dev product/bundle identity, disable the
+  production updater, and require stable signing before permission testing.
+- macOS release gates verify the exact production Team ID and designated
+  requirement in both the app and extracted updater archive.
+- Published-release CI performs a real macOS updater replacement from the
+  preceding eligible release and revalidates the resulting identity.
 - Real clean-machine Windows install behavior remains a manual release check for
   preview artifacts and a required validation point once Windows signing is
   enabled.
@@ -415,7 +527,8 @@ Scope:
   - staple notarization tickets to shipped artifacts.
   - validate final artifacts with `codesign --verify`, entitlement inspection,
     `spctl -a -vv`, and a first-open smoke test on a clean macOS machine.
-  - keep ad-hoc signing as the local development fallback.
+  - keep ad-hoc signing only as an explicit permission-disposable development
+    fallback.
 - Windows SmartScreen mitigation:
   - sign Windows installers and executables with an Authenticode code-signing
     certificate.
@@ -457,7 +570,8 @@ Scope:
     fallback until SignPath acceptance and release CI are proven.
 - Windows installer smoke tests on real machines beyond CI.
 - Linux AppImage/deb validation across common distributions.
-- End-to-end updater hop tests from an older installed release to a newer one.
+- Manual clean-machine confirmation that TCC grants remain present across the
+  automated, identity-stable updater hop.
 - Fixed WebView2 runtime strategy if the Windows app must install without
   online prerequisites.
 
@@ -490,7 +604,7 @@ Scope:
 - Add screenshots of the black UI theme for normal user setup, Pop Out, and
   permissions workflows.
 - Add hardware setup guides for cameras, audio interfaces, projectors, and the
-  UC33e/mioXC rig.
+  UC-33e/mioXC rig.
 - Add a troubleshooting matrix for permissions, GPU fallback, and output-window
   issues.
 - Add automated accessibility checks for keyboard/focus/ARIA behavior.
@@ -502,12 +616,14 @@ Scope:
 - Linux WebGPU support may remain inconsistent for a while.
 - Multi-camera capture depends on OS, camera firmware, USB topology, and browser
   behavior.
-- macOS privacy prompts can be sensitive to bundle identifier and signing
-  identity.
+- macOS privacy prompts remain sensitive to bundle identifier and signing
+  identity; production/dev isolation prevents normal local builds from
+  contaminating public grants.
 - FFmpeg licensing must remain an explicit release gate.
 - Native media decode and GPU interop differ significantly by platform.
-- High-rate future MIDI events could cause UI churn without animation-frame
-  coalescing.
+- High-rate MIDI events can still cause renderer churn when users map many
+  structural controls simultaneously; continuous events are coalesced and
+  structural changes remain rate-limited.
 - Streaming must not return to the normal UI until it is reliable enough for
   non-developer users.
 
@@ -520,7 +636,7 @@ Scope:
 - Presets, WTF, audio reactivity, and live controls do not restart media unless
   the user changes source or a structural rebuild is unavoidable.
 - Stream mode is either productized or clearly absent from normal-user UI.
-- MIDI controller support is implemented or explicitly deferred from 1.0.
+- MIDI controller support remains stable on the documented UC-33e/mioXC rig.
 - macOS release artifacts are Developer ID signed, notarized, stapled, and
   Gatekeeper-validated for public distribution, or the release is explicitly
   marked as a local/test build.

@@ -47,6 +47,7 @@ These are practical targets, not hard guarantees across all hardware.
 | Audio reactivity | Visual response should feel immediate while preserving stable RMS/band/beat analysis. |
 | Source switching | Built-in image/video switches should be bounded and should not leave the renderer stuck. |
 | Control UI | Sliders, preset buttons, source selection, and WTF toggle should remain interactive under render load. |
+| MIDI | Continuous controls should feel frame-immediate without creating one IPC/render update per raw hardware message. |
 
 ## Renderer Performance Model
 
@@ -67,13 +68,45 @@ Performance regressions often happen when one layer bypasses this model.
 Rules:
 
 - Use the canonical parameter model for UI controls, presets, WTF mode, audio
-  modulation, native output sync, and future MIDI.
+  modulation, native output sync, and MIDI.
 - Batch high-frequency control changes to animation frames where possible.
 - Do not rebuild renderer resources for numeric control changes that can be
   updated as uniforms/params.
 - Separate source changes from visual param changes.
 - Preserve active media playback time when visual presets change.
 - Keep discrete changes controlled and predictable during transitions.
+
+## 0.9.6 Measured Optimization Pass
+
+The 0.9.6 pass removes repeated setup/copy work from measured hot paths without
+changing shaders, sampling, color math, glyph selection, source/output
+resolution, or quality controls.
+
+| Path | Before | 0.9.6 behavior |
+| --- | --- | --- |
+| Native macOS video Pop Out | RGB-to-RGBA conversion and texture upload on every display-link presentation | Upload only when the decoded source-frame version changes; continue presenting and applying params every display tick |
+| WebGPU | New uniform backing storage, texture views, and stable bind groups assembled per frame | Reuse uniform storage, texture views, and stable bind groups; external video texture binding remains per frame |
+| WebGL2 | 18 `getUniformLocation` calls per frame | Resolve the 18 locations once after linking |
+| Numeric transitions | Full source, camera, visibility, meter, and control-surface sync on every tween frame | Sync changing values during the tween and perform the complete final-state refresh once |
+
+On the optimized macOS Apple Silicon test build, Demo Video decoded at about
+23.8 FPS while native Pop Out presented at 60.1 FPS. Source-version caching
+performed 23.8 uploads and skipped 36.3 duplicate uploads per second, removing
+about 60% of the previous RGB conversion/texture-upload frequency. A benchmark
+run can still be affected by machine load; compare the same fixed transition
+targets, backend, duration, build type, and phase percentiles rather than a
+single minimum.
+
+On the same host, the optimized published 0.9.5 reference measured 35.8 FPS in
+the main phase and 39.3 FPS after opening Pop Out. The final optimized 0.9.6
+candidate measured 38.6 and 39.0 FPS respectively, then 35.9 FPS during fixed
+numeric-transition churn. The older harness used a random third phase, so only
+the steady main/Pop Out phases are used for that release comparison.
+
+The browser smoke harness also instruments a 250 ms numeric transition. It
+requires source-control synchronization to remain at no more than two calls and
+camera/full-visual synchronization at no more than one call while value updates
+continue throughout the tween.
 
 ## Backend Notes
 
@@ -126,6 +159,8 @@ Rules:
   small glyph ramp/params, not trigger unbounded font loading or large dynamic
   atlas allocation.
 - Avoid blocking the main UI while the output window presents.
+- Upload source textures on source-frame version changes rather than display
+  refresh; unversioned fallback callers must continue to upload.
 - Keep counters/logs available for frame acquisition, presentation, param
   version, source version, and pacing regressions.
 
@@ -194,6 +229,20 @@ Rules:
   sources, opening Pop Out, or applying live controls.
 - In debug/dev builds, capture locally but refuse network submission.
 
+### Experimental MIDI Control
+
+- Rust keeps a bounded event queue and drops the oldest event when full.
+- JavaScript preserves ordered button edges but coalesces continuous events by
+  message/channel/controller before applying a frame.
+- Live-safe params update through existing renderer setters.
+- Structural params keep the existing delayed rebuild path rather than
+  rebuilding for every 7-bit increment.
+- Soft takeover avoids disruptive jumps after preset changes without adding a
+  polling loop per binding.
+- Port monitoring runs at a low fixed cadence; normal event reads are bounded.
+- SysEx capture/restore is an explicit setup operation and never runs on the
+  render thread. Packet restore is paced for older hardware.
+
 ## Battery and Thermal Guidance
 
 The app can be heavy by design.
@@ -229,6 +278,21 @@ npm run smoke:ui-perf
 npm run test:native-output-log
 ```
 
+`smoke:ui-perf` starts from canonical defaults and uses two fixed,
+non-structural numeric transition targets. It records average, P10, P50, and
+minimum preview FPS plus native output rates and the renderer backends actually
+visited. To compare an exact installed or archived application bundle:
+
+```bash
+ASCILINE_SOURCE_APP="/absolute/path/ASCII VJ Remix Dev.app" \
+ASCILINE_UI_PERF_SMOKE_DURATION_MS=30000 \
+npm run smoke:ui-perf
+```
+
+Native display-link logs include `sourceUploads` and `sourceUploadSkips`. For a
+24 FPS video on a 60 Hz output, the expected healthy shape is about 24 uploads
+and 36 skips per second while presentation remains near 60 FPS.
+
 Desktop and release gates:
 
 ```bash
@@ -247,6 +311,7 @@ Secondary-display simulation:
 
 ```bash
 npm run test:output-display
+npm run test:midi
 ```
 
 ## Manual Performance Checks

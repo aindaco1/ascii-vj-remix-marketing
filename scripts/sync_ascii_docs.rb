@@ -87,8 +87,12 @@ module SyncAsciiDocs
     match ? match[:body].strip : ""
   end
 
-  def changelog_version(markdown)
-    markdown[/^##\s+\[([^\]]+)\]/, 1] || "current"
+  def released_version(markdown)
+    markdown[/^##\s+\[([^\]]+)\]\s+-\s+(?!Unreleased\b)/, 1] || "current"
+  end
+
+  def released_date(markdown, version)
+    markdown[/^##\s+\[#{Regexp.escape(version)}\]\s+-\s+(\d{4}-\d{2}-\d{2})\s*$/, 1] || ""
   end
 
   def command_rows(package_json)
@@ -128,7 +132,7 @@ module SyncAsciiDocs
   def pages
     readme = read_source("README.md")
     changelog = read_source("CHANGELOG.md")
-    version = changelog_version(changelog)
+    version = released_version(changelog)
     pkg = package_json
     commands = command_rows(pkg)
 
@@ -192,7 +196,7 @@ module SyncAsciiDocs
         - User-selected media, camera frames, and audio remain local.
         - Intentional online paths are limited to the GitHub Releases updater and production-only reviewed/sanitized crash report submission.
         - Stream infrastructure exists, but the normal Source UI hides stream mode until it is ready as a standalone user feature.
-        - MIDI hardware control is planned, but is not part of the current normal-user feature set.
+        - Experimental native MIDI control is available for the documented UC-33e/mioXC DIN rig. It is intentionally limited to visual, audio-reactive, preset, and WTF controls while physical commissioning remains incomplete.
 
         ## Project Lineage
 
@@ -216,7 +220,7 @@ module SyncAsciiDocs
 
         - Minimum: Windows 10 22H2 or Windows 11, x64 CPU, WebView2 runtime, D3D12 or WebGL2-capable GPU, 8 GB RAM, and about 2 GB free disk space.
         - Optimal: Windows 11, recent Intel/AMD/NVIDIA GPU with current drivers, 16 GB RAM or more, hardware media decode, and dedicated output display.
-        - Windows 0.9.3 artifacts are published as unsigned previews until a signing backend is proven.
+        - Current Windows artifacts are published as unsigned previews until a signing backend is proven.
 
         ### Linux
 
@@ -264,7 +268,7 @@ module SyncAsciiDocs
 
         ## Live Renderer Controls
 
-        The app keeps source selection, presets, WTF mode, audio modulation, native output, and future MIDI work routed through one canonical parameter model.
+        The app keeps source selection, presets, WTF mode, audio modulation, native output, and experimental MIDI control routed through one canonical parameter model.
 
         Major control groups include:
 
@@ -286,6 +290,8 @@ module SyncAsciiDocs
         Built-in visual families include extreme looks such as Neon Sledgehammer, Gamma Sinkhole, Chrome Wound, Candy Fragmenter, Paper Shredder, Cyberdelic Riot, Acid Snowstorm, Terminal Collapse, and Neon Razorstorm.
 
         Traditional ASCII presets include Classic Camera ASCII, ANSI Newsprint, Terminal Mono, and Dense Typewriter.
+
+        Version 0.9.5 added 23 credited ascii.today-inspired character presets, including Broadway KB, Computer, Doom, Ghost, Modular, Standard, Univers, and Doh.
 
         User presets can be saved, duplicated, updated, deleted, imported, and exported. Presets preserve the active media source unless the user explicitly changes it.
 
@@ -319,6 +325,14 @@ module SyncAsciiDocs
 
         Dense-mix dampening and noise-floor controls help busy tracks stay reactive without pinning jitter and beat response at maximum. Audio modulation affects live effective render params without rewriting saved presets.
 
+        ## Experimental MIDI Control
+
+        - Native cross-platform MIDI input/output is implemented through Rust `midir`.
+        - The first hardware profile uses an Evolution/M-Audio UC-33e through both DIN directions of an iConnectivity mioXC.
+        - Four channel-addressed pages cover Visual, Audio, Presets, and Fine/User control with soft takeover, MIDI Learn, stable numeric preset slots, and bounded SysEx capture/restore.
+        - MIDI cannot change sources, Camera, Pop Out, output displays, files, updates, or crash-report settings.
+        - Automated mapping, transport, safety, and scope tests pass; the full physical control sweep and end-to-end SysEx restore/verification remain incomplete, so the feature stays experimental.
+
         ## Pop Out and External Displays
 
         Pop Out creates a separate output window for a projector, capture card, or secondary display. The main control window remains available for live tuning.
@@ -331,14 +345,15 @@ module SyncAsciiDocs
         - Production runtime is local-only by default.
         - GitHub Releases updater infrastructure is configured.
         - Public macOS release CI requires Developer ID signed and notarized artifacts.
-        - Windows 0.9.3 artifacts are explicitly unsigned preview builds.
+        - The 0.9.6 macOS release path validates the DMG layout, Developer ID identity, updater archive identity, and application-driven updater replacement.
+        - Current Windows artifacts remain unsigned preview builds.
         - Crash report submission is production-only, reviewed/sanitized, and routed through the Rust desktop layer to the Cloudflare Worker relay.
 
         ## Advanced Paths
 
         - Legacy ASCILINE stream work and newer Rust/FFmpeg stream sessions exist but are hidden from the normal Source UI.
         - FFmpeg sidecar policy and codec support live in contributor/release work.
-        - MIDI hardware control is planned, with an Evolution/M-Audio UC33e through iConnectivity mioXC named as the first validation target.
+        - Experimental UC-33e/mioXC MIDI support is shipped; physical commissioning and broader platform validation remain follow-on work.
 
         #{source_note(["README.md", "docs/RENDERING_ENGINE.md", "CHANGELOG.md"])}
       MD
@@ -347,26 +362,25 @@ module SyncAsciiDocs
 
         Current docs describe the **#{version}** feature set.
 
-        ## 0.9.3 Highlights
+        ## #{version} Highlights
 
-        - Public macOS release builds require Developer ID signing and notarization.
-        - Windows release artifacts are published as unsigned previews until a signing backend is proven.
-        - Audio reactivity has shared defaults, control metadata, presets, feature normalization, dense-mix dampening, and render-parameter modulation.
-        - New audio-reactive controls cover transient/flux amount, presence amount, density dampening, and noise floor.
-        - Flux and density meters are available alongside a Dense Mix Control audio-reactive preset.
-        - Browser preview, Pop Out, stream paths, and native output consume shared audio-reactive modulation rules.
-        - Static video/camera transitions crossfade between renderer families without destroying the shared media source.
-        - Traditional Canvas2D ASCII presets default to visible static-image jitter.
+        - Native macOS Pop Out uploads decoded source frames only when their source-frame version changes while presentation and live parameters continue at display refresh.
+        - WebGPU reuses uniform backing storage, texture views, and stable bind groups; WebGL2 caches its 18 shader uniform locations after linking.
+        - Numeric preset and WTF transitions update changing controls during the tween, then synchronize the complete source/camera/control surface once at completion.
+        - The measured macOS test path removed about 60% of duplicate RGB conversion and texture-upload work for a 24 FPS source presented near 60 FPS without changing renderer math, source/output resolution, shader behavior, or quality controls.
+        - Version 0.9.5 added 23 credited ascii.today-inspired character presets and experimental native UC-33e/mioXC MIDI with four pages, soft takeover, MIDI Learn, numeric preset selection, and bounded SysEx capture/restore.
+        - Normal development bundles now use the separate `ASCII VJ Remix Dev` name and `com.asciline.remix.dev` identifier.
+        - The macOS DMG and updater path validate the drag-to-Applications layout, production identity, signed updater payload, and real application-driven replacement.
 
         ## Security Baseline
 
-        - Future Windows signing uses environment-scoped signing credentials and does not commit certificate files, client secrets, or private signing material.
-        - Audio reactivity sends bounded feature vectors through IPC; raw audio, frames, media files, and paths remain local.
-        - Release signing and updater signing checks treat macOS public distribution as fail-closed.
+        - MIDI permissions remain confined to the main control window and the first native adapter accepts only mioXC-named ports.
+        - Development builds cannot replace the production app or inherit its macOS privacy grants.
+        - Public macOS artifacts must retain the production bundle identifier, Developer ID team, hardened runtime, and stable designated requirement across updates.
 
         ## Validation Baseline
 
-        The changelog records checks for audio reactivity, Windows Authenticode preparation, desktop/release gates, camera Pop Out behavior, native glyph masking, live renderer transitions, WTF mode, traditional ASCII jitter, and Tauri policy permissions.
+        The 0.9.6 changelog records optimized app validation, renderer/static/audio/MIDI/Tauri checks, 47 Rust tests, source-upload counters, bounded transition UI work, DMG layout tests, app-identity tests, and published-release updater smoke.
 
         #{source_note(["CHANGELOG.md"])}
       MD
@@ -500,7 +514,7 @@ module SyncAsciiDocs
 
         - Current source docs describe the **#{version}** feature set.
         - macOS public release builds require Developer ID signing and notarization.
-        - Windows 0.9.3 artifacts are unsigned previews until SignPath Foundation, Azure Artifact Signing, or another signing backend is proven.
+        - Current Windows artifacts remain unsigned previews until SignPath Foundation, Azure Artifact Signing, or another signing backend is proven.
         - GitHub Releases updater infrastructure is configured.
         - Updater and release checks must not broaden runtime network capability.
 
@@ -510,7 +524,7 @@ module SyncAsciiDocs
 
         ## Windows
 
-        Windows signing tooling exists for future signed release work, including Azure Artifact Signing, Tauri `signCommand`, and Authenticode verification helpers. The active 0.9.3 release posture remains unsigned preview artifacts.
+        Windows signing tooling exists for future signed release work, including Azure Artifact Signing, Tauri `signCommand`, and Authenticode verification helpers. The current release posture remains unsigned preview artifacts.
 
         ## Crash Reporting
 
@@ -588,14 +602,8 @@ module SyncAsciiDocs
   def copied_page(title, source, parent, nav_order)
     content = read_source(source)
     content = content.sub(/\A#\s+.*\n+/, "# #{title}\n\n")
-    content = normalize_roadmap_version(content) if source == "docs/ROADMAP.md"
     content = rewrite_links(content, source)
     content + source_note([source])
-  end
-
-  def normalize_roadmap_version(content)
-    content.gsub("current 0.9.0 feature baseline", "current 0.9.3 feature baseline")
-           .gsub("Current Feature Baseline: 0.9.0", "Current Feature Baseline: 0.9.3")
   end
 
   def rewrite_links(content, current_src)
@@ -614,7 +622,11 @@ module SyncAsciiDocs
   def run
     raise "Source repo not found: #{SOURCE_ROOT}" unless SOURCE_ROOT.directory?
     SOURCE_FILES.each_value { |file| read_source(file) }
-    ROOT.join("docs").rmtree if ROOT.join("docs").directory?
+    changelog = read_source("CHANGELOG.md")
+    version = released_version(changelog)
+    product_data = ROOT.join("_data/product.yml")
+    product_data.dirname.mkpath
+    product_data.write("latest_release:\n  version: #{version.inspect}\n  date: #{released_date(changelog, version).inspect}\n")
     DOCS.each do |path, title, parent, nav_order, key|
       write_page(path, title, parent, nav_order, pages.fetch(key))
     end
