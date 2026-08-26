@@ -38,6 +38,8 @@ font/video size budgets.
 SUPPORT_ALLOW_TEST_LINKS=1 python3 scripts/audit_support.py
 ```
 
+The homepage's single latest-download action is rendered by `_includes/download-latest-button.html`. It derives the macOS DMG, Windows installer, and Linux AppImage URLs from `_data/product.yml`, then `assets/js/site.js` chooses the visitor's desktop platform. Mobile and unknown platforms keep the GitHub latest-release page as a safe fallback. The committed performance audit checks both localized pages and every generated artifact URL.
+
 When checkout resources change, create and verify the replacement Product, Prices, and localized Payment Links first; then update `_data/support.yml` in a coordinated release. Do not archive an old recurring Price or Product while existing subscriptions still depend on it.
 
 ## Refresh from the source project

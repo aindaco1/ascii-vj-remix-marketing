@@ -31,11 +31,12 @@
     </script>
   {% endif %}
 
-  {% if site.search_enabled != false and page.hide_search != true %}
-    <script src="{{ '/assets/js/vendor/lunr.min.js' | relative_url }}"></script>
+  {% if page.hide_search != true %}
+    {% if site.search_enabled != false %}
+      <script src="{{ '/assets/js/vendor/lunr.min.js' | relative_url }}"></script>
+    {% endif %}
+    <script src="{{ '/assets/js/just-the-docs.js' | relative_url }}"></script>
   {% endif %}
-
-  <script src="{{ '/assets/js/just-the-docs.js' | relative_url }}"></script>
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
