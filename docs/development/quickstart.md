@@ -34,13 +34,14 @@ For desktop work, install the Tauri prerequisites for the target OS. Linux devel
 | `npm run preview` | `vite preview --host 127.0.0.1 --port 8010` |
 | `npm run check` | `npm run check:offline` |
 | `npm run check:offline` | `npm run build && node scripts/check_offline_bundle.mjs` |
-| `npm run check:desktop` | `npm run check:offline && npm run check:tauri-policy && npm run test:render-math && npm run test:audio-reactive && npm run test:midi && npm run test:crash-relay && npm run test:output-display && npm run test:updater-manifest && npm run test:macos-artifacts && npm run test:macos-secret-args && npm run test:windows-secret-args && npm run test:ffmpeg-policy && npm run check:ffmpeg-resources && npm run test:rust && npm run tauri:build:dev -- --debug --no-bundle` |
-| `npm run check:release` | `npm run check:offline && npm run check:tauri-policy && npm run test:render-math && npm run test:audio-reactive && npm run test:midi && npm run test:crash-relay && npm run test:output-display && npm run test:updater-manifest && npm run test:macos-artifacts && npm run test:macos-secret-args && npm run test:windows-secret-args && npm run test:ffmpeg-policy && npm run test:ffmpeg-source-build && npm run check:ffmpeg-release && npm run test:rust` |
+| `npm run check:desktop` | `npm run check:offline && npm run check:tauri-policy && npm run test:release-build-reuse && npm run test:render-math && npm run test:audio-reactive && npm run test:midi && npm run test:crash-report-ui && npm run test:crash-relay && npm run test:output-display && npm run test:desktop-updater && npm run test:updater-manifest && npm run test:macos-artifacts && npm run test:macos-secret-args && npm run test:windows-secret-args && npm run test:ffmpeg-policy && npm run check:ffmpeg-resources && npm run test:rust && npm run tauri:build:dev -- --debug --no-bundle` |
+| `npm run check:release` | `npm run check:offline && npm run check:tauri-policy && npm run test:release-build-reuse && npm run test:render-math && npm run test:audio-reactive && npm run test:midi && npm run test:crash-report-ui && npm run test:crash-relay && npm run test:output-display && npm run test:desktop-updater && npm run test:updater-manifest && npm run test:macos-artifacts && npm run test:macos-secret-args && npm run test:windows-secret-args && npm run test:ffmpeg-policy && npm run check:release-runtime && npm run test:rust` |
 | `npm run check:bundle` | `node scripts/check_tauri_bundle.mjs` |
 | `npm run check:bundle:debug` | `node scripts/check_tauri_bundle.mjs --profile debug --expected-bundle-id com.asciline.remix.dev` |
 | `npm run check:bundle:release` | `node scripts/check_tauri_bundle.mjs --profile release --expected-bundle-id com.asciline.remix` |
 | `npm run check:ffmpeg-resources` | `node scripts/check_ffmpeg_resources.mjs` |
 | `npm run check:ffmpeg-release` | `node scripts/check_ffmpeg_resources.mjs --require-current-platform` |
+| `npm run check:release-runtime` | `npm run test:ffmpeg-source-build && npm run check:ffmpeg-release` |
 | `npm run check:macos-notarization` | `node scripts/check_macos_notarization.mjs --profile release` |
 | `npm run check:windows-authenticode` | `node scripts/check_windows_authenticode.mjs --profile release` |
 | `npm run check:media` | `npm run test:frame-prep && npm run test:decode-resize && npm run media:pipeline-preview -- media/<bundled-test-fixture>.mp4 96 54 12 5 false && npm run media:pipeline-preview -- media/<bundled-test-fixture>.mp4 96 54 12 5 true && npm run media:native-session-preview -- media/<bundled-test-fixture>.mp4 96 54 12 5 false 4 && npm run media:native-session-preview -- media/<bundled-test-fixture>.mp4 96 54 12 5 true 4` |
@@ -56,6 +57,7 @@ For desktop work, install the Tauri prerequisites for the target OS. Linux devel
 | `npm run smoke:ui-perf` | `node scripts/smoke_ui_perf.mjs` |
 | `npm run smoke:release-install` | `node scripts/smoke_tauri_release_install.mjs` |
 | `npm run test:decode-resize` | `node scripts/check_decode_resize_parity.mjs` |
+| `npm run test:desktop-updater` | `node scripts/test_desktop_updater.mjs` |
 | `npm run test:ffmpeg-policy` | `node scripts/test_ffmpeg_resource_policy.mjs` |
 | `npm run test:ffmpeg-source-build` | `node scripts/test_ffmpeg_source_build_config.mjs` |
 | `npm run test:frame-prep` | `node scripts/check_frame_prep_parity.mjs` |
@@ -70,6 +72,8 @@ For desktop work, install the Tauri prerequisites for the target OS. Linux devel
 | `npm run test:midi` | `node scripts/test_midi_mapping.mjs` |
 | `npm run test:native-output-log` | `node scripts/analyze_native_output_log.mjs` |
 | `npm run test:render-math` | `node scripts/test_render_math.mjs` |
+| `npm run test:release-build-reuse` | `node scripts/test_release_build_reuse.mjs` |
+| `npm run test:crash-report-ui` | `node scripts/test_crash_report_ui.mjs` |
 | `npm run test:crash-relay` | `npm --prefix crash-relay test` |
 | `npm run test:vectors` | `node scripts/test_vectors.mjs` |
 | `npm run test:rust` | `node scripts/cargo_env.mjs test --manifest-path src-tauri/Cargo.toml` |

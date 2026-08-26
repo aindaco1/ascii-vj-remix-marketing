@@ -66,8 +66,10 @@ ASCII/visuales de celda.
 - El tiempo de ejecución debe ser local primero y sin conexión de forma predeterminada.
 - No agregue CDN, fuentes alojadas, descodificadores alojados, telemetría ni tiempo de ejecución en línea
 dependencias.
-- Las rutas de ejecución en línea intencionales se limitan al actualizador de versiones GitHub y
-Envío de informes de fallos revisados/desinfectados solo para producción.
+- Las rutas de ejecución en línea intencionales se limitan a los límites de la aplicación de producción.
+Comprobación de metadatos de lanzamiento para artefactos de actualización firmados en el lanzamiento, explícito
+acciones de descarga/instalación del actualizador y revisión/desinfección solo de producción
+envío de informes de fallos.
 - Conserve el nombre de la aplicación: ASCII VJ Remix.
 - Conserve la dirección de la aplicación nativa para macOS, Windows y Linux.
 - No replantee el modo de navegador como el producto. Las rutas del navegador/Vite son útiles para
@@ -86,7 +88,7 @@ cambiar.
 
 ## Línea de base actual orientada al usuario
 
-La versión empaquetada actual y la última versión pública son 0.9.6. El registro de cambios
+La versión empaquetada actual y la última versión pública son 0.9.9. El registro de cambios
 es el único documento del estado actual que incluye cambios inéditos.
 
 Fuentes:
@@ -145,6 +147,10 @@ acentos estatales.
 - El diseño es intencionadamente denso.
 - No reduzca la densidad de control al cambiar el estilo visual.
 - Evite agregar texto de marketing explicativo dentro de la interfaz de usuario de la aplicación.
+- Mantenga accesible el control de Informes de la barra superior con una cola vacía; estado pendiente
+es aditivo. No adjunte diagnósticos de medios locales ni registros arbitrarios.
+- Mantenga la selección de backend en el control central. Diagnóstico de backend resuelto
+pertenecen a la superposición de estadísticas propiedad del usuario, no a una lectura duplicada de la barra superior.
 
 ## Mapa de propiedad del repositorio
 
@@ -238,8 +244,8 @@ npm run bundle:release
 
 Nota de compilación de lanzamiento local esperada:
 
-- Los artefactos públicos 0.9.6 macOS están firmados con el ID del desarrollador, notariados, grapados y
-Validado por Gatekeeper. Los artefactos públicos 0.9.6 Windows son vistas previas sin firmar.
+- Los artefactos públicos 0.9.9 macOS están firmados con el ID del desarrollador, notariados, grapados y
+Validado por Gatekeeper. Los artefactos públicos 0.9.9 Windows son vistas previas sin firmar.
 Uso normal de compilaciones locales
 `ASCII VJ Remix Dev` / `com.asciline.remix.dev`; el lanzador local requiere un
 identidad estable antes de la prueba de permiso.
@@ -251,6 +257,9 @@ guía; nunca confirme ninguno de los archivos.
 ## Tauri y notas de embalaje
 
 - Tauri v2 es el shell del escritorio.
+- Las compilaciones de producción realizan una verificación de actualización sin bloqueo por lanzamiento. un
+la verificación de antecedentes actual o fallida permanece en silencio; descargar/instalar sigue siendo una
+acción explícita del usuario a través del control de actualización existente.
 - `src-tauri/tauri.conf.json` es la configuración base de producción multiplataforma; es
 La identidad ad hoc macOS se utiliza únicamente en rutas de empaquetado explícitas y no certificadas por notario.
 - `src-tauri/tauri.dev.conf.json` aísla los comandos locales normales del

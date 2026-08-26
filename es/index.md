@@ -66,12 +66,13 @@ nav_exclude: true
 <section class="section-band" aria-labelledby="release-heading">
   <p class="kicker">Última versión</p>
   <h2 id="release-heading">Qué cambió en v{{ site.data.product.latest_release.version }}.</h2>
-  <p class="section-intro">La versión actual conserva las mismas matemáticas visuales y controles de calidad mientras reduce trabajo repetido en el renderizador y la salida nativa.</p>
+  <p class="section-intro">La versión actual mantiene accesibles las preferencias de informes de fallos, simplifica la barra superior y amplía las comprobaciones de la interfaz empaquetada.</p>
   <div class="card-grid">
-    <article class="card pink"><h3>Más looks ASCII</h3><p>Veintitrés presets de caracteres inspirados en ascii.today y con créditos se suman a los looks tradicionales y extremos incorporados en la línea 0.9.5.</p></article>
-    <article class="card"><h3>MIDI experimental</h3><p>El control nativo del UC-33e mediante mioXC cubre visuales, audio, presets y WTF con soft takeover, MIDI Learn, slots numéricos de presets y herramientas SysEx limitadas.</p></article>
-    <article class="card pink"><h3>Salida más rápida</h3><p>v0.9.6 reutiliza recursos estables de GPU, guarda búsquedas de WebGL, evita cargas duplicadas de frames nativos y limita el trabajo de UI durante transiciones sin reducir la calidad.</p></article>
+    <article class="card pink"><h3>Informes siempre accesibles</h3><p>El control Informes permanece visible aunque la cola esté vacía, para que puedas revisar Preguntar, Siempre o Desactivado antes de que ocurra un fallo.</p></article>
+    <article class="card"><h3>Un solo control de backend</h3><p>Se eliminó la lectura duplicada del lado derecho. El selector central sigue siendo el único lugar para elegir y detener el renderizador.</p></article>
+    <article class="card pink"><h3>Mejores comprobaciones de interfaz</h3><p>Las apps empaquetadas para macOS, Windows y Linux deben conservar Actualizar e Informes y no mostrar la lectura duplicada del backend.</p></article>
   </div>
+  <p class="section-intro"><strong>¿Ya usas v0.9.6 o v0.9.7 en macOS?</strong> Instala la versión actual una vez desde el DMG notarizado; esas dos versiones no pueden mostrar la actualización dentro de la app. Los usuarios de v0.9.8 pueden actualizar dentro de la app.</p>
   <p class="release-link"><a href="{{ '/es/docs/overview/changelog-baseline/' | relative_url }}">Leer la base de la versión v{{ site.data.product.latest_release.version }}</a></p>
 </section>
 

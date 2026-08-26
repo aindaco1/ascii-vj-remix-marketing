@@ -48,7 +48,7 @@ compilación de desarrollo ad-hoc bajo el identificador de producción.
 |Comandos Tauri|`src-tauri/src/lib.rs` más archivos de capacidad|Alto|Trate cada comando como un límite de seguridad. Validar entradas en Rust.|
 |Protocolo de activos|Vacío de forma predeterminada, expandido solo para necesidades de sesión/medios seleccionados|Alto|Evite caminos amplios y persistentes.|
 |sidecares FFmpeg|Recursos agrupados con comprobaciones de políticas y metadatos de fuente/procedencia|Medio|Sin descargas de tiempo de ejecución. Los sidecars de liberación desactivan los protocolos de red.|
-|Actualizador|GitHub lanza punto final con paquetes de actualización firmados|Alto|La clave de firma privada es externa. La clave pública está comprometida.|
+|Actualizador|Una verificación de inicio de producción más acciones explícitas de manual/descarga/instalación contra el punto final de versiones GitHub con paquetes firmados|Alto|Los controles de lanzamiento no envían datos del producto. La clave de firma privada es externa; La clave pública está comprometida.|
 |reportero de accidentes|POST solo de Rust a `https://crash.dustwave.xyz/v1/reports` en compilaciones de producción|Alto|Los informes están delimitados, desinfectados, configurables por el usuario y retransmitidos a los problemas de GitHub mediante un Cloudflare Worker.|
 |Experimental MIDI y UC-33e SysEx|Comandos Rust solo de la ventana principal, lista de puertos permitidos mioXC, colas acotadas y límites de paquetes|Medio|Los perfiles permanecen locales y no pueden apuntar a fuentes, cámaras, Pop Out ni pantallas de salida. La verificación de restauración física del banco completo sigue incompleta.|
 |Registros e informes de humo.|Artefactos de prueba/desarrollador local|Bajo a Medio|No registre rutas de archivos privados, audio sin formato ni valores ambientales confidenciales a menos que sea necesario para una depuración explícita.|
@@ -67,8 +67,8 @@ y pasos de empaquetado Tauri. No coloque `TAURI_SIGNING_PRIVATE_KEY`,
 `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`, valores de certificado de Apple o llavero
 contraseñas en bloques de entorno de flujo de trabajo a nivel de trabajo.
 - El CI de la versión pública macOS falla al cerrarse cuando se firma el ID de desarrollador de Apple o
-la notarización está incompleta. Los artefactos públicos 0.9.6 macOS están firmados,
-notariado, engrapado y validado por Gatekeeper; Los artefactos Windows 0.9.6 son
+la notarización está incompleta. Los artefactos públicos 0.9.9 macOS están firmados,
+notariado, engrapado y validado por Gatekeeper; Los artefactos Windows 0.9.9 son
 vistas previas sin firmar.
 - Los artefactos públicos macOS deben conservar el ID del equipo `PWT3Q52LZ2` y el establo.
 Requisito de identificador/equipo designado. CI valida tanto la aplicación creada como
@@ -148,6 +148,9 @@ contraseñas y claves de contexto similares a las de autenticación.
 audio, volcados de almacenamiento local, volcados de entorno o registros arbitrarios.
 - La aplicación almacena como máximo una pequeña cola local y permite al usuario elegir `ask`,
 `always` o `off`.
+- El control Informes permanece accesible con una cola vacía, por lo que la preferencia
+Se puede revisar antes de que ocurra un error. El estado vacío no crea ni envía
+un informe.
 - El envío utiliza únicamente la superficie de comando Rust. La ventana de salida no debe tener
 Permisos de informe de fallos.
 - Las credenciales GitHub no deben estar presentes en la aplicación de escritorio, configuración del repositorio,
@@ -172,6 +175,10 @@ tipo, superficie, plataforma, modo comando/backend/fuente, estado de salida nati
 campos de código de error explícitos; El marco de pila normalizado o el mensaje son alternativas.
 Los organismos emisores mantienen un estado agregado acotado en lugar de concatenar cada
 informe.
+
+El canario de aceptación de producción opcional está codificado y se niega a ejecutarse cuando
+El informe del usuario ya está pendiente o la preferencia es `off`. nunca debe ser
+ampliado a una ruta general de carga de registros.
 
 ## Acceso a archivos y medios locales
 
@@ -238,6 +245,15 @@ El actualizador es la ruta en línea intencional. Dice:
 ```text
 https://github.com/aindaco1/ascii-vj-remix/releases/latest/download/latest.json
 ```
+
+La aplicación de producción verifica esos metadatos una vez por lanzamiento sin bloquearlos.
+inicio del renderizador. Los resultados de la versión actual y de los fallos de la red permanecen silenciosos;
+cuando existe una versión firmada más reciente, el control de Actualización existente la muestra.
+La descarga, instalación y reinicio requieren una acción explícita del usuario. el
+La solicitud no contiene medios, fotogramas, datos de cámara o audio, ajustes preestablecidos, estado MIDI,
+informes de fallos, rutas locales, credenciales o identificadores de análisis. Desarrollo
+las compilaciones no reciben el punto final de producción. La solicitud de lanzamiento necesariamente
+expone metadatos de conexión ordinarios a GitHub y la red circundante.
 
 Requisitos de seguridad:
 
@@ -346,6 +362,7 @@ npm run release:secrets:check
 Actualizador:
 
 ```bash
+npm run test:desktop-updater
 npm run test:updater-manifest
 npm run updater:secret:check
 ```
@@ -364,7 +381,7 @@ firma de identidad. Las identidades de producción y desarrollo están aisladas,
 La construcción de desarrollo deliberadamente ad hoc todavía recibe subvenciones específicas para la construcción.
 - La firma ad hoc macOS solo es aceptable para compilaciones locales; los comunicados públicos son
 Identificación del desarrollador firmada, notariada, grapada y validada por Gatekeeper.
-- Los artefactos Windows 0.9.6 son vistas previas sin firmar y pueden activar Desconocido
+- Los artefactos Windows 0.9.9 son vistas previas sin firmar y pueden activar Desconocido
 Advertencias de Publisher, SmartScreen o Defender.
 - El comportamiento de medios/cámara/audio de Linux varía según la distribución, WebKitGTK, controladores,
 y configuración del portal.

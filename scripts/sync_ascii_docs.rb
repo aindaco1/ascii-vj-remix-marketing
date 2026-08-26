@@ -171,17 +171,6 @@ module SyncAsciiDocs
 
         #{source_note(SOURCE_FILES.values)}
       MD
-      overview_index: <<~MD,
-        # Overview
-
-        ASCII VJ Remix is a local-first desktop visualizer and renderer workbench. For users, it exists to give DJs a manageable visualizer and VJs fine-grained ASCII/video filter control. For developers, it is a Tauri desktop application with a dense renderer/control surface, native output path, local media adapters, audio-reactive modulation, and release/update infrastructure.
-
-        ## Overview Pages
-
-        - [ASCII VJ Remix](/docs/overview/ascii-vj-remix/) — scope, lineage, release baseline, platform requirements, and project boundary.
-        - [Feature Set](/docs/overview/features/) — comprehensive map of sources, rendering, presets, live controls, audio reactivity, Pop Out, packaging, security, and advanced paths.
-        - [Release Baseline](/docs/overview/changelog-baseline/) — current release line and recent behavior changes from the changelog.
-      MD
       product_overview: <<~MD,
         # ASCII VJ Remix
 
@@ -197,7 +186,7 @@ module SyncAsciiDocs
         - Browser/Vite mode is useful for development, smoke tests, and renderer portability, but it is not the main product framing.
         - Runtime is local-first and offline by default.
         - User-selected media, camera frames, and audio remain local.
-        - Intentional online paths are limited to the GitHub Releases updater and production-only reviewed/sanitized crash report submission.
+        - Intentional online paths are limited to one bounded release-metadata check at production launch, explicit updater download/install actions, and production-only reviewed/sanitized crash report submission.
         - Stream infrastructure is development-only and is not exposed in the normal Source UI.
         - Experimental native MIDI control is available for the documented UC-33e/mioXC DIN rig. It is intentionally limited to visual, audio-reactive, preset, and WTF controls. Current physical validation covers macOS Apple Silicon; direct UC-33e USB is unsupported, and Windows/Linux physical validation is incomplete.
 
@@ -217,13 +206,13 @@ module SyncAsciiDocs
         - Optimal: M1 Pro/Max, M2 Pro/Max, M3 Pro/Max, or newer; 16 GB RAM or more; macOS 14 Sonoma, macOS 15 Sequoia, or newer; external display/projector for Pop Out.
         - Intel Mac support is not the current release target.
         - Camera, microphone, and audio capture require explicit macOS privacy grants.
-        - Public 0.9.6 macOS artifacts are Developer ID signed, notarized, stapled, and Gatekeeper-validated.
+        - Public #{version} macOS artifacts are Developer ID signed, notarized, stapled, and Gatekeeper-validated.
 
         ### Windows
 
         - Minimum: Windows 10 22H2 or Windows 11, x64 CPU, WebView2 runtime, D3D12 or WebGL2-capable GPU, 8 GB RAM, and about 2 GB free disk space.
         - Optimal: Windows 11, recent Intel/AMD/NVIDIA GPU with current drivers, 16 GB RAM or more, hardware media decode, and dedicated output display.
-        - Public 0.9.6 Windows artifacts are unsigned previews.
+        - Public #{version} Windows artifacts are unsigned previews.
 
         ### Linux
 
@@ -346,9 +335,12 @@ module SyncAsciiDocs
 
         - Built with Tauri v2.
         - Production runtime is local-only by default.
-        - GitHub Releases updater infrastructure is configured.
-        - Public 0.9.6 macOS artifacts are Developer ID signed, notarized, stapled, and Gatekeeper-validated.
-        - The 0.9.6 macOS release path validates the DMG layout, Developer ID identity, updater archive identity, and application-driven updater replacement.
+        - The production app performs one non-blocking GitHub Releases metadata check per launch. Current/offline results stay silent; download, installation, and relaunch remain explicit user actions through the Update control.
+        - Versions 0.9.6 and 0.9.7 require a one-time manual DMG upgrade to #{version} because their production capability set hid the Update control.
+        - The Reports control remains visible with an empty queue so users can review crash-report preferences before an error occurs; empty state does not create or submit a report.
+        - The center Backend selector is the single top-bar backend control. Resolved runtime diagnostics remain available in the user-controlled Stats Overlay.
+        - Public #{version} macOS artifacts are Developer ID signed, notarized, stapled, and Gatekeeper-validated.
+        - The #{version} release path validates DMG layout, Developer ID and updater archive identity, application-driven replacement, visible Update and Reports controls, and the absence of a duplicate backend readout on packaged macOS, Windows, and Linux builds.
         - Current Windows artifacts remain unsigned preview builds.
         - Crash report submission is production-only, reviewed/sanitized, and routed through the Rust desktop layer to the Cloudflare Worker relay.
 
@@ -367,23 +359,24 @@ module SyncAsciiDocs
 
         ## #{version} Highlights
 
-        - Native macOS Pop Out uploads decoded source frames only when their source-frame version changes while presentation and live parameters continue at display refresh.
-        - WebGPU reuses uniform backing storage, texture views, and stable bind groups; WebGL2 caches its 18 shader uniform locations after linking.
-        - Numeric preset and WTF transitions update changing controls during the tween, then synchronize the complete source/camera/control surface once at completion.
-        - The measured macOS test path removed about 60% of duplicate RGB conversion and texture-upload work for a 24 FPS source presented near 60 FPS without changing renderer math, source/output resolution, shader behavior, or quality controls.
-        - Version 0.9.5 added 23 credited ascii.today-inspired character presets and experimental native UC-33e/mioXC MIDI with four pages, soft takeover, MIDI Learn, numeric preset selection, and bounded SysEx capture/restore.
-        - Normal development bundles now use the separate `ASCII VJ Remix Dev` name and `com.asciline.remix.dev` identifier.
-        - The macOS DMG and updater path validate the drag-to-Applications layout, production identity, signed updater payload, and real application-driven replacement.
+        - The Reports control remains visible with an empty queue so users can review the existing `ask`, `always`, and `off` preference before an error occurs. Pending reports still add a count and warning state.
+        - The duplicate right-side backend readout is removed. The center Backend selector remains the canonical control, and the user-owned Stats Overlay retains resolved runtime diagnostics.
+        - Packaged updater UI smoke listeners bind before device initialization so camera or audio startup cannot race an early smoke request.
+        - Published-release smoke launches packaged macOS, Windows, and Linux builds, requires Update and Reports to remain visible, and requires the duplicate backend readout to stay absent.
+        - The recent release line also includes the 0.9.8 updater and release-pipeline fixes, the 0.9.6 renderer and native-output optimizations, and the presets and experimental UC-33e/mioXC MIDI introduced in 0.9.5.
 
         ## Security Baseline
 
-        - MIDI permissions remain confined to the main control window and the first native adapter accepts only mioXC-named ports.
-        - Development builds cannot replace the production app or inherit its macOS privacy grants.
-        - Public macOS artifacts must retain the production bundle identifier, Developer ID team, hardened runtime, and stable designated requirement across updates.
+        - Reports continue to contain only bounded, sanitized crash data. Local media diagnostics and arbitrary logs are not attached or submitted.
+        - The opt-in production acceptance canary refuses to run when a user report is already pending and submits only a hard-coded synthetic payload.
+        - The launch update check sends no media, camera, audio, preset, MIDI, crash-report, or local-path data and does not block app startup when the network is unavailable.
+        - Updater packages remain signed, and installation never starts without a user action.
+        - Development builds cannot replace the production app, inherit its macOS privacy grants, or use the production updater endpoint.
+        - Public macOS artifacts must retain the production bundle identifier, Developer ID team, hardened runtime, and stable designated requirement across updates; current Windows artifacts remain unsigned previews.
 
         ## Validation Baseline
 
-        The 0.9.6 changelog records optimized app validation, renderer/static/audio/MIDI/Tauri checks, 47 Rust tests, source-upload counters, bounded transition UI work, DMG layout tests, app-identity tests, and published-release updater smoke.
+        The #{version} changelog records deterministic crash-report UI state tests plus packaged checks for Update, Reports, and the single backend control on macOS, Windows, and Linux. The broader release gate retains renderer, audio, MIDI, Tauri policy, signing, notarization, installer, and updater replacement checks.
 
         #{source_note(["CHANGELOG.md"])}
       MD
@@ -516,26 +509,27 @@ module SyncAsciiDocs
         ## Current Release Posture
 
         - Current source docs describe the **#{version}** feature set.
-        - Public 0.9.6 macOS artifacts are Developer ID signed, notarized, stapled, and Gatekeeper-validated.
-        - Public 0.9.6 Windows artifacts are unsigned previews.
-        - GitHub Releases updater infrastructure is configured.
+        - Public #{version} macOS artifacts are Developer ID signed, notarized, stapled, and Gatekeeper-validated.
+        - Public #{version} Windows artifacts are unsigned previews.
+        - Production builds check GitHub Releases metadata once at launch without blocking startup; newer signed releases appear in the existing Update control.
+        - Manual rechecks remain available, while download, installation, and relaunch require explicit user action.
         - Updater and release checks must not broaden runtime network capability.
 
         ## macOS
 
-        Public release CI treats macOS signing/notarization as fail-closed. The 0.9.6 artifacts passed signing, notarization, stapling, and Gatekeeper validation. Local or test builds may still require the normal macOS right-click Open or Open Anyway flow.
+        Public release CI treats macOS signing/notarization as fail-closed. The #{version} artifacts passed signing, notarization, stapling, and Gatekeeper validation. Versions 0.9.6 and 0.9.7 require a one-time manual DMG upgrade to #{version} because their production capability set hid the Update control. Local or test builds may still require the normal macOS right-click Open or Open Anyway flow.
 
         ## Windows
 
-        Inactive Windows signing configuration and Authenticode verification helpers remain in the source tree, but the 0.9.6 public release workflow does not use them. Its Windows artifacts are unsigned previews.
+        Inactive Windows signing configuration and Authenticode verification helpers remain in the source tree, but the #{version} public release workflow does not use them. Its Windows artifacts are unsigned previews.
 
         ## Crash Reporting
 
-        Production crash reporting is reviewed/sanitized and routed through the Rust desktop layer to the Cloudflare Worker relay at `https://crash.dustwave.xyz`. The webview does not get arbitrary HTTP capability. Reports are bounded and sanitized: media files, frames, raw audio, full paths, tokens, cookies, and private environment values are not included.
+        Production crash reporting is reviewed/sanitized and routed through the Rust desktop layer to the Cloudflare Worker relay at `https://crash.dustwave.xyz`. The webview does not get arbitrary HTTP capability. Reports are bounded and sanitized: media files, frames, raw audio, full paths, tokens, cookies, private environment values, and arbitrary diagnostic logs are not included. The Reports control stays visible with an empty queue so the preference can be reviewed without creating or submitting a report.
 
         ## Release Validation
 
-        Release checks include desktop checks, renderer math, audio-reactive helper tests, crash relay tests, Tauri policy checks, and signing/updater verification appropriate to each platform.
+        Release CI resolves one immutable tag commit, requires the exact commit's successful desktop workflow, builds the app and pinned FFmpeg runtime concurrently, and verifies restored artifacts before packaging. Published-release smoke then launches the packaged app on macOS, Windows, and Linux, requires Update and Reports to remain visible, requires the duplicate backend readout to stay absent, and retains installer, signing, notarization, updater-signature, and real replacement checks appropriate to each platform.
 
         #{source_note(["README.md", "CHANGELOG.md", "docs/CONTRIBUTORS.md", "docs/SECURITY.md"])}
       MD

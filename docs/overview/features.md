@@ -111,9 +111,12 @@ The output window is presentation-focused and has a minimal command surface. Whe
 
 - Built with Tauri v2.
 - Production runtime is local-only by default.
-- GitHub Releases updater infrastructure is configured.
-- Public 0.9.6 macOS artifacts are Developer ID signed, notarized, stapled, and Gatekeeper-validated.
-- The 0.9.6 macOS release path validates the DMG layout, Developer ID identity, updater archive identity, and application-driven updater replacement.
+- The production app performs one non-blocking GitHub Releases metadata check per launch. Current/offline results stay silent; download, installation, and relaunch remain explicit user actions through the Update control.
+- Versions 0.9.6 and 0.9.7 require a one-time manual DMG upgrade to 0.9.9 because their production capability set hid the Update control.
+- The Reports control remains visible with an empty queue so users can review crash-report preferences before an error occurs; empty state does not create or submit a report.
+- The center Backend selector is the single top-bar backend control. Resolved runtime diagnostics remain available in the user-controlled Stats Overlay.
+- Public 0.9.9 macOS artifacts are Developer ID signed, notarized, stapled, and Gatekeeper-validated.
+- The 0.9.9 release path validates DMG layout, Developer ID and updater archive identity, application-driven replacement, visible Update and Reports controls, and the absence of a duplicate backend readout on packaged macOS, Windows, and Linux builds.
 - Current Windows artifacts remain unsigned preview builds.
 - Crash report submission is production-only, reviewed/sanitized, and routed through the Rust desktop layer to the Cloudflare Worker relay.
 

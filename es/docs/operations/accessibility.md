@@ -24,6 +24,10 @@ La accesibilidad es temprana para este proyecto. La aplicación actual se benefi
 flujos del selector.
 - grupo de control compacto pero visible.
 - Superposición de estadísticas persistente para el estado del renderizador.
+- estado en vivo cortés para verificaciones de actualización activadas por el usuario y versiones disponibles;
+Las comprobaciones de inicio silenciosas no anuncian resultados actuales/fuera de línea.
+- un control de informes persistente que mantiene accesibles las preferencias de informes de fallos
+antes de que cualquier informe esté pendiente.
 - Solicitudes de permisos nativas de la plataforma para la cámara, el micrófono y el audio del sistema.
 
 Limitaciones conocidas:
@@ -65,6 +69,7 @@ y MIDI.
 8. Contenido de superposición de estadísticas.
 9. Recuperación de permisos y mensajes de error.
 10. Estado del dispositivo MIDI, estado de toma de control suave, acciones SysEx y aprendizaje MIDI.
+11. Preferencia de diálogo de informes, recuento pendiente, acciones de envío y descarte.
 
 ## Reglas de control de la interfaz de usuario
 
@@ -82,6 +87,7 @@ patrón que se prueba con la entrada del teclado.
 - Los menús y controles adicionales deben cerrarse con Escape y restaurar el foco.
 - El texto de estado/error aparece cerca del control de activación y utiliza un
 estado apropiado o región de alerta cuando sea dinámico.
+- Los diálogos se cierran con Escape y restablecen el foco en su control de activación.
 - Los controles deshabilitados o irrelevantes están ocultos o deshabilitados consistentemente,
 que coincide con el modelo de perilla condicional.
 

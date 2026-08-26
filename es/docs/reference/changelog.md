@@ -8,21 +8,65 @@ lang: es
 
 # Registro de cambios
 
-El desarrollo de la versión 0.9.7 comienza con la resiliencia del transporte de lanzamiento. Versión
-0.9.6 continúa el trabajo de puesta en servicio experimental de MIDI, elimina
-Medición de la sobrecarga de ruta activa del renderizador/salida sin cambiar las matemáticas visuales ni
-calidad y refuerza la ruta de lanzamiento de arrastrar a Aplicaciones de macOS. Versión 0.9.5
-agrega 23 ajustes preestablecidos de caracteres inspirados en ascii.today acreditados y
-Control nativo experimental DIN MIDI para un Evolution/M-Audio UC-33e a través de un
-iConnectivity mioXC, que incluye cuatro páginas de controlador completas, adquisición suave,
-selección numérica preestablecida, aprendizaje MIDI y captura/restauración SysEx de banco completo.
-La versión 0.9.3 traslada las versiones de escritorio públicas a macOS firmada/notariada
-distribución, publica Windows como una vista previa sin firmar mientras se firma
-diferido y amplía la reactividad del audio con controles de mezcla densa que reducen
-reacción exagerada ante la música ocupada. La versión 0.9.0 sigue siendo la primera documentación.
-línea de base para el conjunto de características actual ASCII VJ Remix.
+La versión 0.9.9 mantiene accesibles las preferencias de informes de fallos aunque la cola esté vacía, elimina la lectura duplicada del backend de la barra superior y amplía las pruebas de humo de la interfaz empaquetada para cubrir ambos controles. La versión 0.9.8 restaura el control Actualizar de producción y la comprobación al inicio, agrega una prueba de regresión de la interfaz empaquetada y acorta las compilaciones al compilar la app y el entorno FFmpeg en paralelo antes de reutilizar los artefactos verificados. La versión 0.9.7 incorpora el controlador de comprobación silenciosa al inicio, conserva la instalación aprobada por el usuario y refuerza la resiliencia del transporte de versiones. La versión 0.9.6 continúa la puesta en marcha experimental de MIDI, reduce la sobrecarga medida de las rutas críticas del renderizador y la salida sin cambiar las matemáticas visuales ni la calidad, y refuerza la instalación de macOS mediante arrastre a Aplicaciones. La versión 0.9.5 añade 23 presets de caracteres con créditos e inspirados en ascii.today, además de control MIDI DIN nativo experimental para un Evolution/M-Audio UC-33e mediante un iConnectivity mioXC, con cuatro páginas completas de control, soft takeover, selección numérica de presets, MIDI Learn y captura/restauración SysEx del banco completo. La versión 0.9.3 adopta la distribución pública firmada y notarizada para macOS, publica Windows como vista previa sin firmar mientras se aplaza la firma y amplía la reactividad de audio con controles de mezcla densa que reducen la sobrerreacción a música cargada. La versión 0.9.0 sigue siendo la primera base documental del conjunto de funciones actual de ASCII VJ Remix.
 
-## [0.9.7] - Inédito
+## [0.9.9] - 2026-08-26
+
+### Corregido
+
+- El control Informes de la barra superior permanece visible en las compilaciones Tauri aunque la cola de fallos esté vacía, de modo que los usuarios pueden revisar la preferencia `ask`, `always` u `off` sin esperar a que ocurra un error. Los informes pendientes todavía añaden un contador y un estado de advertencia; Enviar y Descartar permanecen desactivados cuando la cola está vacía.
+- Se eliminó la lectura duplicada del backend del lado derecho de la barra superior. El selector Backend central sigue siendo el control canónico, mientras que la superposición Estadísticas continúa mostrando el backend resuelto en tiempo de ejecución.
+- Los listeners de la prueba de humo de la interfaz del actualizador empaquetado ahora se registran antes de inicializar los dispositivos, por lo que una solicitud temprana no puede competir con el arranque de la cámara o el audio.
+
+### Seguridad
+
+- Los informes siguen conteniendo únicamente datos de fallos limitados y sanitizados. Los diagnósticos de medios locales y los registros arbitrarios no se adjuntan ni se envían.
+- Se añadió un canario opcional de aceptación del relay de fallos de producción que se niega a ejecutarse cuando ya hay un informe de usuario pendiente y solo envía una carga sintética fija.
+
+### Validación
+
+- Se añadieron pruebas deterministas de la interfaz de informes de fallos para los estados de navegador, vacío, pendiente, desactivado y ocupado.
+- Las pruebas de humo estática y empaquetada ahora exigen que no exista el estado duplicado del backend. La prueba empaquetada para macOS, Windows y Linux también exige que el control Informes permanezca visible, ya sea vacío o con el contador de informes pendientes.
+
+## [0.9.8] - 2026-08-26
+
+### Fijado
+
+- Se restauró el control de actualización de producción y la verificación de inicio automático otorgando
+la ventana principal el permiso estrecho `core:app:allow-name` utilizado para verificar el
+Identidad de la aplicación de producción. El permiso faltante provocó el control y el estado.
+El área parpadeará y luego desaparecerá en 0.9.6 y 0.9.7.
+- Las fallas de disponibilidad del actualizador ahora registran su causa en lugar de fallar silenciosamente.
+
+### Cambió
+
+- La versión CI ahora resuelve una confirmación de etiqueta inmutable, requiere la exactitud
+`Desktop` flujo de trabajo de empuje principal para tener éxito en ese compromiso y construye el
+El tiempo de ejecución FFmpeg y el binario de la aplicación Tauri en paralelo.
+- La agrupación restaura los artefactos exactos del flujo de trabajo de un día. FFmpeg mantiene su
+comprobaciones de fuente/hash/recurso ancladas, mientras que la transferencia binaria de la aplicación verifica
+confirmación, plataforma, versión, tamaño de bytes y SHA-256 antes de que Tauri lo empaquete
+sin recompilar.
+
+### Validación
+
+- Se agregaron pruebas de reutilización de lanzamiento y compilación que cubren la selección exacta de ejecución del flujo de trabajo y
+Rechazo de archivos binarios de aplicaciones alterados o no coincidentes.
+- Smoke de lanzamiento publicado ahora inicia la aplicación empaquetada en macOS, Windows y
+Linux y requiere que el control Actualizar permanezca visible, cubriendo la información real
+Ruta de la interfaz de usuario en lugar de invocar únicamente el actualizador nativo directamente.
+
+## [0.9.7] - 2026-08-26
+
+### Agregado
+
+- La aplicación de escritorio de producción ahora realiza una versión de metadatos sin bloqueo.
+compruebe si hay paquetes de actualización firmados cada vez que se abra. Versión actual y
+las comprobaciones de inicio fuera de línea permanecen silenciosas; una versión más nueva aparece a través del
+control de actualización existente en la barra superior. Se evitó una regresión de la capacidad de producción
+ese control permanezca disponible hasta la corrección 0.9.8.
+- El control de actualización manual permanece disponible para una nueva verificación inmediata, y
+la descarga, la instalación y el reinicio siguen siendo iniciados explícitamente por el usuario.
 
 ### Fijado
 
@@ -30,6 +74,19 @@ línea de base para el conjunto de características actual ASCII VJ Remix.
 promover solo archivos tar FFmpeg completados antes de la verificación SHA-256 fijada.
 - El envío automático de lanzamiento de escritorio ahora reintenta fallas transitorias de la API GitHub
 con retroceso acotado.
+
+### Seguridad
+
+- Las comprobaciones automáticas reutilizan el punto final del actualizador Tauri existente y están firmados.
+artefactos. No envían medios, cámara, audio, ajustes preestablecidos, MIDI, informes de fallos ni
+los datos de ruta local y las compilaciones de desarrollo continúan deshabilitando la producción
+puntos finales del actualizador.
+
+### Validación
+
+- Se agregó cobertura determinista del controlador-actualizador para una verificación por lanzamiento.
+resultados silenciosos actuales/fuera de línea, descubrimiento de actualizaciones sin instalación automática,
+el respaldo manual, el progreso de la descarga y la transferencia de reinicio.
 
 ## [0.9.6] - 2026-08-17
 

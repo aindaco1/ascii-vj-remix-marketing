@@ -7,8 +7,14 @@ parent: "Reference"
 
 # Changelog
 
-Version 0.9.7 development begins with release transport resilience. Version
-0.9.6 continues the experimental MIDI commissioning work, removes
+Version 0.9.9 keeps crash-report preferences reachable with an empty queue,
+removes the duplicate top-bar backend readout, and extends packaged UI smoke to
+cover both controls. Version 0.9.8 restores the production Update control and
+launch check, adds a packaged UI regression smoke, and shortens release builds
+by compiling the app and FFmpeg runtime concurrently before verified artifact
+reuse. Version 0.9.7 adds the silent launch-check controller while retaining
+user-approved installation and strengthens release transport resilience.
+Version 0.9.6 continues the experimental MIDI commissioning work, removes
 measured renderer/output hot-path overhead without changing visual math or
 quality, and hardens the macOS drag-to-Applications release path. Version 0.9.5
 adds 23 credited ascii.today-inspired character presets and
@@ -21,7 +27,75 @@ deferred, and expands audio reactivity with dense-mix controls that reduce
 overreaction on busy music. Version 0.9.0 remains the first documentation
 baseline for the current ASCII VJ Remix feature set.
 
-## [0.9.7] - Unreleased
+## [0.9.9] - 2026-08-26
+
+### Fixed
+
+- The top-bar Reports control now remains visible in Tauri builds when the
+  crash queue is empty, so users can review the existing `ask`, `always`, and
+  `off` preference without waiting for an error. Pending reports still add a
+  count and warning state; Send and Discard remain disabled with an empty queue.
+- Removed the duplicate right-side backend readout from the top bar. The center
+  Backend selector remains the canonical control, while the user-owned Stats
+  Overlay continues to report the resolved runtime backend.
+- Packaged updater UI smoke listeners now bind before device initialization, so
+  early smoke requests cannot race camera or audio startup.
+
+### Security
+
+- Reports continue to contain only bounded, sanitized crash data. Local media
+  diagnostics and arbitrary logs are not attached or submitted.
+- Added an opt-in production crash-relay acceptance canary that refuses to run
+  when any user report is already pending and submits only a hard-coded
+  synthetic payload.
+
+### Validation
+
+- Added deterministic crash-report UI state tests for browser, empty, pending,
+  disabled, and busy states.
+- Static and packaged release smoke now require the duplicate backend status to
+  be absent. Packaged macOS, Windows, and Linux smoke also requires the Reports
+  control to remain visible in either its empty or pending-count state.
+
+## [0.9.8] - 2026-08-26
+
+### Fixed
+
+- Restored the production Update control and automatic launch check by granting
+  the main window the narrow `core:app:allow-name` permission used to verify the
+  production app identity. The missing permission caused the control and status
+  area to flash and then disappear in 0.9.6 and 0.9.7.
+- Updater availability failures now log their cause instead of failing silently.
+
+### Changed
+
+- Release CI now resolves one immutable tag commit, requires the exact
+  `Desktop` main-push workflow to succeed for that commit, and builds the
+  FFmpeg runtime and Tauri app binary in parallel.
+- Bundling restores the exact one-day workflow artifacts. FFmpeg keeps its
+  pinned source/hash/resource checks, while the app binary handoff verifies
+  commit, platform, version, byte size, and SHA-256 before Tauri packages it
+  without recompiling.
+
+### Validation
+
+- Added release-build reuse tests covering exact workflow-run selection and
+  rejection of altered or mismatched app binaries.
+- Published-release smoke now launches the packaged app on macOS, Windows, and
+  Linux and requires the Update control to remain visible, covering the actual
+  UI path rather than only invoking the native updater directly.
+
+## [0.9.7] - 2026-08-26
+
+### Added
+
+- The production desktop app now performs one non-blocking release-metadata
+  check for signed updater packages whenever it opens. Current-version and
+  offline launch checks stay silent; a newer version is surfaced through the
+  existing top-bar Update control. A production capability regression prevented
+  that control from remaining available until the 0.9.8 fix.
+- The manual Update control remains available for an immediate recheck, and
+  downloading, installation, and relaunch remain explicitly user initiated.
 
 ### Fixed
 
@@ -29,6 +103,19 @@ baseline for the current ASCII VJ Remix feature set.
   promote only completed FFmpeg tarballs before the pinned SHA-256 check.
 - Automatic desktop-release dispatch now retries transient GitHub API failures
   with bounded backoff.
+
+### Security
+
+- Automatic checks reuse the existing Tauri updater endpoint and signed
+  artifacts. They send no media, camera, audio, preset, MIDI, crash-report, or
+  local-path data, and development builds continue to disable production
+  updater endpoints.
+
+### Validation
+
+- Added deterministic updater-controller coverage for one check per launch,
+  silent current/offline results, update discovery without automatic install,
+  the manual fallback, download progress, and relaunch handoff.
 
 ## [0.9.6] - 2026-08-17
 

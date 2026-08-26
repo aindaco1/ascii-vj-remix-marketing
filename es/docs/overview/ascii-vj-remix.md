@@ -12,7 +12,7 @@ ASCII VJ Remix es un laboratorio de renderizado de escritorio nativo local para 
 
 Está diseñado para la experimentación al estilo VJ: elija una fuente, elija o cree un ajuste preestablecido, presione con fuerza el renderizador, muestre la salida en otra pantalla y siga ajustando la apariencia en vivo mientras los medios siguen ejecutándose.
 
-Los documentos fuente actuales describen el conjunto de características **0.9.6**.
+Los documentos fuente actuales describen el conjunto de características **0.9.9**.
 
 ## Límite del producto
 
@@ -20,7 +20,7 @@ Los documentos fuente actuales describen el conjunto de características **0.9.6
 - El modo Navegador/Vite es útil para el desarrollo, las pruebas de humo y la portabilidad del renderizador, pero no es el marco principal del producto.
 - El tiempo de ejecución es local primero y sin conexión de forma predeterminada.
 - Los medios, los fotogramas de la cámara y el audio seleccionados por el usuario siguen siendo locales.
-- Las rutas en línea intencionales se limitan al actualizador de versiones GitHub y al envío de informes de fallas revisados/desinfectados solo de producción.
+- Las rutas en línea intencionales se limitan a una verificación de metadatos de lanzamiento limitada en el inicio de producción, acciones explícitas de descarga/instalación del actualizador y envío de informes de fallas revisados/desinfectados solo en producción.
 - La infraestructura de Stream es solo de desarrollo y no está expuesta en la interfaz de usuario de Source normal.
 - El control experimental nativo MIDI está disponible para el equipo DIN UC-33e/mioXC documentado. Se limita intencionalmente a controles visuales, audiorreactivos, preestablecidos y WTF. La validación física actual cubre macOS Apple Silicon; El USB directo UC-33e no es compatible y la validación física de Windows/Linux está incompleta.
 
@@ -40,13 +40,13 @@ ASCII VJ Remix combina tres líneas de ingeniería:
 - Óptimo: M1 Pro/Max, M2 Pro/Max, M3 Pro/Max o más reciente; 16 GB de RAM o más; macOS 14 Sonoma, macOS 15 Sequoia o más reciente; Pantalla/proyector externo para Pop Out.
 - La compatibilidad con Intel Mac no es el objetivo de lanzamiento actual.
 - La cámara, el micrófono y la captura de audio requieren concesiones de privacidad explícitas macOS.
-- Los artefactos públicos 0.9.6 macOS están firmados con el ID del desarrollador, notariados, engrapados y validados por Gatekeeper.
+- Los artefactos públicos 0.9.9 macOS están firmados con el ID del desarrollador, notariados, engrapados y validados por Gatekeeper.
 
 ### Windows
 
 - Mínimo: Windows 10 22H2 o Windows 11, x64 CPU, tiempo de ejecución WebView2, D3D12 o WebGL2 compatible con GPU, 8 GB de RAM y aproximadamente 2 GB de espacio libre en disco.
 - Óptimo: Windows 11, Intel/AMD/NVIDIA GPU reciente con controladores actuales, 16 GB de RAM o más, decodificación de medios de hardware y pantalla de salida dedicada.
-- Los artefactos públicos 0.9.6 Windows son vistas previas sin firmar.
+- Los artefactos públicos 0.9.9 Windows son vistas previas sin firmar.
 
 ### Linux
 

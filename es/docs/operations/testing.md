@@ -23,6 +23,7 @@ npm run check:offline            # Build and verify bundled/offline assets
 npm run smoke:static             # Static UI/renderer smoke harness
 npm run check:tauri-policy       # Production CSP and local-only runtime policy
 npm run test:output-display      # Secondary-display placement simulation
+npm run test:desktop-updater     # Once-per-launch and manual updater orchestration
 npm run test:updater-manifest    # Tauri latest.json/updater manifest tests
 npm run test:macos-identity      # macOS bundle/team/designated-requirement tests
 npm run test:macos-secret-args   # macOS notarization secret argument safety
@@ -35,6 +36,7 @@ npm run test:render-math         # Shared renderer math vectors
 npm run test:audio-reactive      # Audio-reactive controls, clamps, dense-mix damping
 npm run test:midi                # UC-33e map, scaling, pickup, actions, coalescing
 npm run midi:probe -- --connect  # Physical mioXC input/output open test
+npm run test:crash-report-ui     # Reports visibility, count, and action-state tests
 npm run test:crash-relay         # Cloudflare crash relay sanitizer/rate-limit tests
 npm run test:vectors             # Adaptive codec vector checks
 npm run test:rust                # Rust tests
@@ -62,6 +64,7 @@ git diff --check
 |Arnés de interfaz de usuario estática|`npm run smoke:static`|
 |Política Tauri|`npm run check:tauri-policy`|
 |Lógica de visualización de salida|`npm run test:output-display`|
+|Comportamiento del actualizador de escritorio|`npm run test:desktop-updater`|
 |Manifiestos del actualizador|`npm run test:updater-manifest`|
 |Identidad de la aplicación macOS|`npm run test:macos-identity`, libera inspección de artefactos en macOS|
 |Manejo de secretos macOS|`npm run test:macos-secret-args`|
@@ -69,7 +72,7 @@ git diff --check
 |Preparación/decodificación de fotogramas multimedia|`npm run test:frame-prep`, `npm run test:decode-resize`, `npm run check:media`|
 |Paridad matemática del renderizador|Pruebas de vectores compartidos `npm run test:render-math`, Rust a través de `npm run test:rust`|
 |MIDI|`npm run test:midi`, Rust MIDI/Pruebas SysEx, `npm run midi:probe -- --connect`|
-|Relevo de choque|`npm run test:crash-relay`|
+|Informes de fallos|`npm run test:crash-report-ui`, `npm run test:crash-relay`|
 |Vectores de códec adaptativos|`npm run test:vectors`|
 |Módulos Rust/Tauri|`npm run test:rust`|
 |Rendimiento de salida nativa|`npm run smoke:native-output`, `npm run test:native-output-log`|
@@ -160,7 +163,8 @@ comportamiento cuando cambia el modelo de permiso.
 
 Para cambios en informes de fallas, verifique también que las compilaciones de depuración se capturen localmente, pero no
 no enviar, las versiones de lanzamiento usan solo `https://crash.dustwave.xyz/v1/reports`, y
-la ventana de salida no tiene permisos de informe de fallos.
+la ventana de salida no tiene permisos de informe de fallos. El control de Informes se mantiene
+visible con una cola vacía y los diagnósticos de medios locales nunca se envían.
 
 ### FFmpeg y motor de medios
 
@@ -181,6 +185,7 @@ npm run check:ffmpeg-release
 ### Lanzamiento y actualizador
 
 ```bash
+npm run test:desktop-updater
 npm run check:release
 npm run bundle:release
 npm run smoke:release-install
@@ -191,12 +196,35 @@ Ejecute `npm run ffmpeg:build-sidecar` antes que `npm run check:release` en limp
 clonar. `npm run bundle:release` ejecuta el paso de compilación del sidecar automáticamente.
 
 El humo de lanzamiento descarga artefactos del instalador de lanzamientos y comprobaciones GitHub.
-diseño, activos incluidos, paquetes de actualización firmados y comportamiento de `latest.json`. encendido
+diseño, activos incluidos, paquetes de actualización firmados, comportamiento de `latest.json`, el
+controles visibles de actualización e informes empaquetados y la ausencia de un duplicado
+lectura del backend en la barra superior. En
 macOS verifica el DMG descargado, lo monta como solo lectura en un temporal privado
 root, valida el diseño exacto de aplicación a aplicaciones e inspecciona el archivo montado
 aplicación antes del salto del actualizador.
+
+Si la publicación de artefactos termina correctamente pero un runner posterior
+revela un defecto en las herramientas de aceptación, ejecuta el flujo `Release
+Acceptance` contra la etiqueta inmutable existente después de corregir las
+herramientas. Ese flujo reutiliza los bytes publicados y no recompila ni
+reemplaza los artefactos de la versión.
 Updater-hop smoke usa `0.9.0` como la versión anterior mínima predeterminada porque
 Las versiones anteriores de `0.1.x` se firmaron con una clave de actualización diferente.
+
+La prueba del controlador verifica que la disponibilidad de producción permita exactamente una
+verificación silenciosa por lanzamiento, los resultados actuales/fuera de línea no anuncian el estado, un
+La actualización disponible no se instala automáticamente y la ruta manual existente
+todavía realiza nuevas comprobaciones e instalación activada por el usuario.
+
+Las versiones 0.9.6 y 0.9.7 se enviaron sin la capacidad de nombre de aplicación de la ventana principal
+utilizado por la puerta de disponibilidad del actualizador, por lo que su control de actualización puede parpadear y
+luego desaparece. Instale 0.9.8 manualmente desde el DMG notariado. Relanzar 0.9.8
+y confirme que la verificación de inicio de la versión actual permanece silenciosa mientras se actualiza
+El control permanece visible, luego use el control y confirme que informa "Hasta
+fecha`. Para la versión 0.9.9, inicie la aplicación 0.9.8 instalada y confirme su
+verificación de antecedentes emerge 0.9.9 sin descargarlo automáticamente. Después del
+instalación aprobada por el usuario, confirme que los informes permanecen visibles con una cola vacía y
+la lectura del backend del lado derecho está ausente.
 
 En macOS, la liberación de humo extrae el `.app.tar.gz` actual y anterior.
 cargas útiles, requiere `com.asciline.remix`, ID de equipo `PWT3Q52LZ2`, tiempo de ejecución reforzado,
@@ -275,7 +303,9 @@ probando una línea base de Nodo más nueva.
 
 Lanzamiento de CI:
 
-- construir artefactos macOS, Windows y Linux.
+- requiere una ejecución exitosa de la inserción principal `Desktop` para la confirmación de lanzamiento exacta.
+- compilar la aplicación y compilar FFmpeg simultáneamente en macOS, Windows y Linux,
+luego verifique y reutilice esas entradas exactas para empaquetar solo paquetes.
 - verificar el comportamiento del paquete sin conexión.
 - verificar la política Tauri.
 - construir/comprobar sidecars FFmpeg.
@@ -285,9 +315,9 @@ Lanzamiento de CI:
 - cargue instaladores, paquetes de actualización, firmas y `latest.json`.
 - validar macOS Firma de ID de desarrollador, notarización, grapado y Gatekeeper
 aceptación antes de publicar artefactos macOS.
-- publica artefactos Windows 0.9.6 como vistas previas sin firmar; el inactivo firmado
+- publica artefactos Windows 0.9.9 como vistas previas sin firmar; el inactivo firmado
 La ruta Windows incluye el firmante de Authenticode y la validación de marca de tiempo.
-- Ejecute instalar controles de humo después de la publicación.
+- ejecute comprobaciones de humo de instalación y de interfaz de usuario de actualización visible después de la publicación.
 - ejecute el actualizador macOS de identidad/humo de reemplazo en `macos-26`.
 
 ## Brechas conocidas

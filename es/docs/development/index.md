@@ -13,6 +13,6 @@ Los documentos de desarrollo cubren cómo trabajar en la aplicación sin romper 
 
 - [Quickstart](/es/docs/development/quickstart/): comandos de configuración, instalación, compilación y verificación locales.
 - [Arquitectura](/es/docs/development/architecture/): mapa de propiedad, límites del producto y arquitectura de escritorio/tiempo de ejecución.
-- [Motor de renderizado](/es/docs/development/rendering-engine/): flujo de fuente, selección de backend, parámetros, modulación de audio, Pop Out y rutas de transmisión.
+- [Motor de renderizado](/es/docs/development/rendering-engine/): flujo de origen, selección de backend, parámetros, modulación de audio, Pop Out y rutas de flujo.
 - [Contributing](/es/docs/development/contributing/): flujo de trabajo de contribución, notas de versión/actualización y política complementaria FFmpeg.
 - [Guía del agente](/es/docs/development/agent-guide/): carga de contexto y guía de seguridad para agentes de codificación LLM.

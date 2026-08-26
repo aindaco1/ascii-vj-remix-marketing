@@ -22,6 +22,7 @@ npm run check:offline            # Build and verify bundled/offline assets
 npm run smoke:static             # Static UI/renderer smoke harness
 npm run check:tauri-policy       # Production CSP and local-only runtime policy
 npm run test:output-display      # Secondary-display placement simulation
+npm run test:desktop-updater     # Once-per-launch and manual updater orchestration
 npm run test:updater-manifest    # Tauri latest.json/updater manifest tests
 npm run test:macos-identity      # macOS bundle/team/designated-requirement tests
 npm run test:macos-secret-args   # macOS notarization secret argument safety
@@ -34,6 +35,7 @@ npm run test:render-math         # Shared renderer math vectors
 npm run test:audio-reactive      # Audio-reactive controls, clamps, dense-mix damping
 npm run test:midi                # UC-33e map, scaling, pickup, actions, coalescing
 npm run midi:probe -- --connect  # Physical mioXC input/output open test
+npm run test:crash-report-ui     # Reports visibility, count, and action-state tests
 npm run test:crash-relay         # Cloudflare crash relay sanitizer/rate-limit tests
 npm run test:vectors             # Adaptive codec vector checks
 npm run test:rust                # Rust tests
@@ -61,6 +63,7 @@ git diff --check
 | Static UI harness | `npm run smoke:static` |
 | Tauri policy | `npm run check:tauri-policy` |
 | Output display logic | `npm run test:output-display` |
+| Desktop updater behavior | `npm run test:desktop-updater` |
 | Updater manifests | `npm run test:updater-manifest` |
 | macOS app identity | `npm run test:macos-identity`, release artifact inspection on macOS |
 | macOS secret handling | `npm run test:macos-secret-args` |
@@ -68,7 +71,7 @@ git diff --check
 | Media frame prep/decode | `npm run test:frame-prep`, `npm run test:decode-resize`, `npm run check:media` |
 | Renderer math parity | `npm run test:render-math`, Rust shared-vector tests through `npm run test:rust` |
 | MIDI | `npm run test:midi`, Rust MIDI/SysEx tests, `npm run midi:probe -- --connect` |
-| Crash relay | `npm run test:crash-relay` |
+| Crash reports | `npm run test:crash-report-ui`, `npm run test:crash-relay` |
 | Adaptive codec vectors | `npm run test:vectors` |
 | Rust/Tauri modules | `npm run test:rust` |
 | Native output performance | `npm run smoke:native-output`, `npm run test:native-output-log` |
@@ -159,7 +162,8 @@ behavior when the permission model changes.
 
 For crash-report changes, also verify that debug builds capture locally but do
 not submit, release builds use only `https://crash.dustwave.xyz/v1/reports`, and
-the output window has no crash-report permissions.
+the output window has no crash-report permissions. The Reports control stays
+visible with an empty queue, and local media diagnostics are never submitted.
 
 ### FFmpeg and Media Engine
 
@@ -180,6 +184,7 @@ npm run check:ffmpeg-release
 ### Release and Updater
 
 ```bash
+npm run test:desktop-updater
 npm run check:release
 npm run bundle:release
 npm run smoke:release-install
@@ -190,12 +195,34 @@ Run `npm run ffmpeg:build-sidecar` before `npm run check:release` on a clean
 clone. `npm run bundle:release` runs the sidecar build step automatically.
 
 The release smoke downloads artifacts from GitHub Releases and checks installer
-layout, bundled assets, signed updater packages, and `latest.json` behavior. On
+layout, bundled assets, signed updater packages, `latest.json` behavior, the
+visible packaged Update and Reports controls, and the absence of a duplicate
+top-bar backend readout. On
 macOS it verifies the downloaded DMG, mounts it read-only in a private temporary
 root, validates the exact app-to-Applications layout, and inspects the mounted
 app before the updater hop.
+
+If artifact publication succeeds but a post-publication runner exposes an
+acceptance-tooling defect, run the `Release Acceptance` workflow against the
+existing immutable tag after correcting the tooling. It reuses the published
+bytes and does not rebuild or replace release assets.
 Updater-hop smoke uses `0.9.0` as the default minimum previous version because
 older `0.1.x` releases were signed with a different updater key.
+
+The controller test verifies that production availability permits exactly one
+silent check per launch, current/offline results do not announce status, an
+available update is not installed automatically, and the existing manual path
+still performs rechecks and user-triggered installation.
+
+Versions 0.9.6 and 0.9.7 shipped without the main-window app-name capability
+used by the updater availability gate, so their Update control can flash and
+then disappear. Install 0.9.8 manually from the notarized DMG. Relaunch 0.9.8
+and confirm the current-version launch check stays silent while the Update
+control remains visible, then use the control and confirm it reports `Up to
+date`. For the 0.9.9 release, launch the installed 0.9.8 app and confirm its
+background check surfaces 0.9.9 without downloading it automatically. After the
+user-approved install, confirm Reports remains visible with an empty queue and
+the right-side backend readout is absent.
 
 On macOS, release smoke extracts the current and previous `.app.tar.gz`
 payloads, requires `com.asciline.remix`, Team ID `PWT3Q52LZ2`, hardened runtime,
@@ -274,7 +301,9 @@ testing a newer Node baseline.
 
 Release CI:
 
-- build macOS, Windows, and Linux artifacts.
+- require a successful `Desktop` main-push run for the exact release commit.
+- compile the app and build FFmpeg concurrently on macOS, Windows, and Linux,
+  then verify and reuse those exact inputs for bundle-only packaging.
 - verify offline bundle behavior.
 - verify Tauri policy.
 - build/check FFmpeg sidecars.
@@ -284,9 +313,9 @@ Release CI:
 - upload installers, updater packages, signatures, and `latest.json`.
 - validate macOS Developer ID signing, notarization, stapling, and Gatekeeper
   acceptance before publishing macOS artifacts.
-- publishes Windows 0.9.6 artifacts as unsigned previews; the inactive signed
+- publishes Windows 0.9.9 artifacts as unsigned previews; the inactive signed
   Windows path includes Authenticode signer and timestamp validation.
-- run install smoke checks after publishing.
+- run install and visible-updater-UI smoke checks after publishing.
 - run macOS updater identity/replacement smoke on `macos-26`.
 
 ## Known Gaps

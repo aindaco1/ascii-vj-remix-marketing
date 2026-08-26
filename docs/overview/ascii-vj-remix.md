@@ -11,7 +11,7 @@ ASCII VJ Remix is a local-first native desktop renderer lab for turning images, 
 
 It is built for VJ-style experimentation: pick a source, choose or build a preset, push the renderer hard, pop output onto another display, and keep tuning the look live while media keeps running.
 
-Current source docs describe the **0.9.6** feature set.
+Current source docs describe the **0.9.9** feature set.
 
 ## Product Boundary
 
@@ -19,7 +19,7 @@ Current source docs describe the **0.9.6** feature set.
 - Browser/Vite mode is useful for development, smoke tests, and renderer portability, but it is not the main product framing.
 - Runtime is local-first and offline by default.
 - User-selected media, camera frames, and audio remain local.
-- Intentional online paths are limited to the GitHub Releases updater and production-only reviewed/sanitized crash report submission.
+- Intentional online paths are limited to one bounded release-metadata check at production launch, explicit updater download/install actions, and production-only reviewed/sanitized crash report submission.
 - Stream infrastructure is development-only and is not exposed in the normal Source UI.
 - Experimental native MIDI control is available for the documented UC-33e/mioXC DIN rig. It is intentionally limited to visual, audio-reactive, preset, and WTF controls. Current physical validation covers macOS Apple Silicon; direct UC-33e USB is unsupported, and Windows/Linux physical validation is incomplete.
 
@@ -39,13 +39,13 @@ ASCII VJ Remix combines three engineering strands:
 - Optimal: M1 Pro/Max, M2 Pro/Max, M3 Pro/Max, or newer; 16 GB RAM or more; macOS 14 Sonoma, macOS 15 Sequoia, or newer; external display/projector for Pop Out.
 - Intel Mac support is not the current release target.
 - Camera, microphone, and audio capture require explicit macOS privacy grants.
-- Public 0.9.6 macOS artifacts are Developer ID signed, notarized, stapled, and Gatekeeper-validated.
+- Public 0.9.9 macOS artifacts are Developer ID signed, notarized, stapled, and Gatekeeper-validated.
 
 ### Windows
 
 - Minimum: Windows 10 22H2 or Windows 11, x64 CPU, WebView2 runtime, D3D12 or WebGL2-capable GPU, 8 GB RAM, and about 2 GB free disk space.
 - Optimal: Windows 11, recent Intel/AMD/NVIDIA GPU with current drivers, 16 GB RAM or more, hardware media decode, and dedicated output display.
-- Public 0.9.6 Windows artifacts are unsigned previews.
+- Public 0.9.9 Windows artifacts are unsigned previews.
 
 ### Linux
 
