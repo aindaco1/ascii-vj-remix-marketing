@@ -6,6 +6,7 @@ lang: es
 nav_enabled: false
 nav_exclude: true
 has_toc: false
+hide_search: true
 ---
 
 <section class="support-intro" aria-labelledby="support-title">
@@ -13,11 +14,9 @@ has_toc: false
     <img src="{{ site.data.support.brand.logo | relative_url }}" alt="" width="180" height="164">
   </div>
   <div class="support-intro__copy">
-    <p class="support-intro__eyebrow">Apoyo a Dust Wave</p>
     <h1 id="support-title">Apoya ASCII VJ Remix</h1>
-    <p>ASCII VJ Remix es software creativo local-first para DJs, VJs, artistas de medios y personas que construyen herramientas útiles fuera de la economía normal de plataformas.</p>
+    <p>ASCII VJ Remix es software creativo local-first creado por <a href="https://dustwave.xyz" target="_blank" rel="noopener noreferrer">Dust Wave</a> para DJs, VJs, artistas de medios y personas que construyen herramientas útiles fuera de la economía normal de plataformas.</p>
     <p>Tu apoyo da a Dust Wave más tiempo para visuales más fluidos, ventanas de salida más fuertes, mejor captura, lanzamientos confiables y controles más usables.</p>
-    <a href="https://dustwave.xyz" target="_blank" rel="noopener noreferrer">Conoce a Dust Wave</a>
   </div>
 </section>
 

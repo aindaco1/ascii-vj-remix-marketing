@@ -18,7 +18,9 @@ layout: table_wrappers
   {% endif %}
   <div class="main" id="top">
     {% include site-header.html %}
-    {% include components/header.html %}
+    {% unless page.hide_search %}
+      {% include components/header.html %}
+    {% endunless %}
     <div class="main-content-wrap">
       {% include components/breadcrumbs.html %}
       <div id="main-content" class="main-content">
@@ -36,7 +38,7 @@ layout: table_wrappers
         {% include components/footer.html %}
       </div>
     </div>
-    {% if site.search_enabled != false %}
+    {% if site.search_enabled != false and page.hide_search != true %}
       {% include components/search_footer.html %}
     {% endif %}
   </div>

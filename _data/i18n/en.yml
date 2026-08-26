@@ -13,19 +13,16 @@ home:
   primary_cta: Download
   secondary_cta: Docs
 support:
-  options_eyebrow: Support options
-  options_title: Choose how you want to help
+  options_title: Support options
   options_intro: Both options continue to a secure Stripe checkout. One-time support lets you choose the amount.
   provider_note: Payments are processed securely by Stripe. Dust Wave support is not represented as a tax-deductible charitable donation.
   one_time:
-    eyebrow: One-time support
-    title: Choose your amount
-    body: Give once at the amount that works for you.
+    title: One-time support
+    body: Choose the amount that works for you.
     amount: "$10 suggested · choose any amount"
     cta: Choose a one-time amount
   monthly:
-    eyebrow: Monthly support
-    title: Keep the work moving
-    body: Provide steady support for maintenance, releases, and documentation.
+    title: Monthly support
+    body: Keep the work moving with steady support for maintenance, releases, and documentation.
     amount: $5 per month
     cta: Support for $5 monthly

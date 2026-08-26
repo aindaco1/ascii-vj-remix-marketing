@@ -3,7 +3,6 @@
 {% assign support_labels = site.data.i18n[page_lang].support | default: site.data.i18n.en.support %}
 <section class="support-payment" aria-labelledby="support-options-title">
   <div class="support-payment__header">
-    <p class="support-payment__eyebrow">{{ support_labels.options_eyebrow }}</p>
     <h2 id="support-options-title">{{ support_labels.options_title }}</h2>
     <p>{{ support_labels.options_intro }}</p>
   </div>
@@ -13,7 +12,6 @@
       {% assign checkout_link = option.links[page_lang] | default: option.links.en %}
       {% assign option_labels = support_labels[option.key] %}
       <article class="support-option support-option--{{ option.key }}">
-        <p class="support-option__cadence">{{ option_labels.eyebrow }}</p>
         <h3 id="support-option-{{ option.key }}">{{ option_labels.title }}</h3>
         <p>{{ option_labels.body }}</p>
         <p class="support-option__amount">{{ option_labels.amount }}</p>

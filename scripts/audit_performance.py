@@ -12,6 +12,7 @@ PRODUCT = ROOT / "_data" / "product.yml"
 
 HOME_PAGES = ["index.html", "es/index.html"]
 DOC_PAGES = ["docs/index.html", "es/docs/index.html"]
+THEME_PAGES = [*DOC_PAGES, "support/index.html", "es/support/index.html"]
 HERO_WEBM = ROOT / "assets" / "videos" / "ascii-hero.webm"
 HERO_MP4 = ROOT / "assets" / "videos" / "ascii-hero.mp4"
 DISPLAY_FONT = ROOT / "assets" / "fonts" / "VCR_OSD_MONO_1.001.woff2"
@@ -20,6 +21,7 @@ WEBM_BUDGET = 4_000_000
 MP4_BUDGET = 4_000_000
 FONT_BUDGET = 20_000
 HASHED_SITE_JS = re.compile(r"/assets/js/site\.js\?v=[0-9a-f]{12}")
+HASHED_THEME_CSS = re.compile(r"/assets/css/just-the-docs-default\.css\?v=[0-9a-f]{12}")
 HASHED_HOME_JS = re.compile(r"/assets/js/home-animation\.js\?v=[0-9a-f]{12}")
 HASHED_WEBM = re.compile(r"/assets/videos/ascii-hero\.webm\?v=[0-9a-f]{12}")
 HASHED_MP4 = re.compile(r"/assets/videos/ascii-hero\.mp4\?v=[0-9a-f]{12}")
@@ -94,6 +96,12 @@ def main() -> int:
             continue
         require(HASHED_SITE_JS.search(html) is not None, errors, f"{rel}: site.js is not content-addressed")
         require("home-animation.js" not in html, errors, f"{rel}: homepage animation leaked into docs")
+
+    for rel in THEME_PAGES:
+        html = read(rel, errors)
+        if not html:
+            continue
+        require(HASHED_THEME_CSS.search(html) is not None, errors, f"{rel}: theme CSS is not content-addressed")
 
     if SITE.exists():
         for path in SITE.rglob("*.html"):
