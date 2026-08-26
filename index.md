@@ -24,8 +24,7 @@ nav_exclude: true
 <section class="hero-action-band" aria-label="ASCII VJ Remix summary and actions">
   <p class="hero-lede">ASCII VJ Remix turns video clips, cameras, and sound into live ASCII visuals. DJs can get a clean visualizer running fast. VJs can fine-tune the image, push the filters harder, and send the output to a screen.</p>
   <div class="cta-row">
-    <a class="btn btn-primary" href="https://github.com/aindaco1/ascii-vj-remix/releases/latest">Download v{{ site.data.product.latest_release.version }}</a>
-    <a class="btn" href="https://github.com/aindaco1/ascii-vj-remix">Github</a>
+    {% include download-latest-button.html label="Download latest" %}
   </div>
 </section>
 

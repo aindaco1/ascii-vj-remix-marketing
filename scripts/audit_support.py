@@ -65,6 +65,10 @@ def audit_page(
         errors.append(f"{label}: embedded Stripe Buy Button is forbidden")
     if any("js.stripe.com/v3/buy-button.js" in src for src in parser.script_sources):
         errors.append(f"{label}: obsolete Stripe Buy Button loader is present")
+    if any("/assets/js/vendor/lunr.min.js" in src for src in parser.script_sources):
+        errors.append(f"{label}: docs search index leaked into the support page")
+    if any("/assets/js/just-the-docs.js" in src for src in parser.script_sources):
+        errors.append(f"{label}: docs theme behavior leaked into the support page")
     if parser.has_search_control:
         errors.append(f"{label}: docs search control leaked into the support page")
     if not parser.has_dust_wave_link:

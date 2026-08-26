@@ -82,9 +82,33 @@
     new MutationObserver(sync).observe(nav, { attributes: true, attributeFilter: ['class'] });
   }
 
+  function desktopPlatform() {
+    const clientPlatform = navigator.userAgentData && navigator.userAgentData.platform;
+    const signature = `${clientPlatform || ''} ${navigator.platform || ''} ${navigator.userAgent || ''}`.toLowerCase();
+
+    if (/iphone|ipad|ipod|android|cros/.test(signature)) return '';
+    if (/macintosh|macintel|macppc|mac68k|macos|mac os/.test(signature)) return 'macos';
+    if (/windows|win32|win64|wince/.test(signature)) return 'windows';
+    if (/linux|x11/.test(signature)) return 'linux';
+    return '';
+  }
+
+  function configureLatestDownloads() {
+    const platform = desktopPlatform();
+    if (!platform) return;
+
+    document.querySelectorAll('[data-download-latest]').forEach((link) => {
+      const platformUrl = link.getAttribute(`data-download-${platform}`);
+      if (!platformUrl) return;
+      link.href = platformUrl;
+      link.setAttribute('data-download-detected', platform);
+    });
+  }
+
   applyTranslations(activeLang);
   pruneDocsNav(activeLang);
   syncDocsMenuState();
+  configureLatestDownloads();
 
   document.querySelectorAll('[data-language-switcher]').forEach((select) => {
     select.addEventListener('change', () => {

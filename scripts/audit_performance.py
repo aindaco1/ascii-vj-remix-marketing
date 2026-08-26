@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import re
 import sys
+from html.parser import HTMLParser
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -26,6 +27,17 @@ HASHED_HOME_JS = re.compile(r"/assets/js/home-animation\.js\?v=[0-9a-f]{12}")
 HASHED_WEBM = re.compile(r"/assets/videos/ascii-hero\.webm\?v=[0-9a-f]{12}")
 HASHED_MP4 = re.compile(r"/assets/videos/ascii-hero\.mp4\?v=[0-9a-f]{12}")
 PLACEHOLDER_LEAK = re.compile(r"(?:ZZTOKEN|ZXQZXQ|ZXC[A-Z0-9]+ZX)")
+
+
+class DownloadParser(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__()
+        self.downloads: list[dict[str, str]] = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        data = {key: value or "" for key, value in attrs}
+        if tag == "a" and "data-download-latest" in data:
+            self.downloads.append(data)
 
 
 def read(rel: str, errors: list[str]) -> str:
@@ -90,12 +102,29 @@ def main() -> int:
         require('fetchpriority="high"' in html, errors, f"{rel}: hero video priority hint is missing")
         require(release and f"v{release}" in html, errors, f"{rel}: latest release v{release} is missing")
 
+        parser = DownloadParser()
+        parser.feed(html)
+        require(len(parser.downloads) == 1, errors, f"{rel}: expected exactly one latest-download action")
+        if len(parser.downloads) == 1:
+            download = parser.downloads[0]
+            release_base = f"https://github.com/aindaco1/ascii-vj-remix/releases/download/v{release}/"
+            expected = {
+                "href": "https://github.com/aindaco1/ascii-vj-remix/releases/latest",
+                "data-download-macos": f"{release_base}ASCII.VJ.Remix_{release}_aarch64.dmg",
+                "data-download-windows": f"{release_base}ASCII.VJ.Remix_{release}_x64-setup.exe",
+                "data-download-linux": f"{release_base}ASCII.VJ.Remix_{release}_amd64.AppImage",
+            }
+            for attribute, value in expected.items():
+                require(download.get(attribute) == value, errors, f"{rel}: invalid {attribute} download target")
+
     for rel in DOC_PAGES:
         html = read(rel, errors)
         if not html:
             continue
         require(HASHED_SITE_JS.search(html) is not None, errors, f"{rel}: site.js is not content-addressed")
         require("home-animation.js" not in html, errors, f"{rel}: homepage animation leaked into docs")
+        require("/assets/js/vendor/lunr.min.js" in html, errors, f"{rel}: docs search index is missing")
+        require("/assets/js/just-the-docs.js" in html, errors, f"{rel}: docs theme behavior is missing")
 
     for rel in THEME_PAGES:
         html = read(rel, errors)

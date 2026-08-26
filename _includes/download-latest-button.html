@@ -1,0 +1,11 @@
+{% assign release_version = site.data.product.latest_release.version %}
+{% assign release_tag = 'v' | append: release_version %}
+{% assign release_base = 'https://github.com/aindaco1/ascii-vj-remix/releases/download/' | append: release_tag | append: '/' %}
+<a
+  class="btn btn-primary"
+  href="https://github.com/aindaco1/ascii-vj-remix/releases/latest"
+  data-download-latest
+  data-download-macos="{{ release_base }}ASCII.VJ.Remix_{{ release_version }}_aarch64.dmg"
+  data-download-windows="{{ release_base }}ASCII.VJ.Remix_{{ release_version }}_x64-setup.exe"
+  data-download-linux="{{ release_base }}ASCII.VJ.Remix_{{ release_version }}_amd64.AppImage"
+>{{ include.label }}</a>
