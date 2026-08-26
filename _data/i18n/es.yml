@@ -12,3 +12,20 @@ footer:
 home:
   primary_cta: Descargar
   secondary_cta: Documentación
+support:
+  options_eyebrow: Opciones de apoyo
+  options_title: Elige cómo quieres ayudar
+  options_intro: Ambas opciones continúan a un checkout seguro de Stripe. El apoyo único te permite elegir la cantidad.
+  provider_note: Los pagos se procesan de forma segura mediante Stripe. El apoyo a Dust Wave no se presenta como una donación benéfica deducible de impuestos.
+  one_time:
+    eyebrow: Apoyo único
+    title: Elige tu cantidad
+    body: Apoya una vez con la cantidad que funcione para ti.
+    amount: "$10 sugeridos · elige cualquier cantidad"
+    cta: Elegir una cantidad única
+  monthly:
+    eyebrow: Apoyo mensual
+    title: Mantén el trabajo en movimiento
+    body: Da apoyo constante para mantenimiento, lanzamientos y documentación.
+    amount: $5 al mes
+    cta: Apoyar con $5 al mes
