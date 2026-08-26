@@ -20,12 +20,25 @@ bundle exec jekyll build --trace
 python3 scripts/audit_docs_current_state.py
 python3 scripts/audit_links.py
 python3 scripts/audit_seo.py
+python3 scripts/audit_support.py
 python3 scripts/audit_performance.py
 ```
 
 The performance audit protects the homepage's inline critical CSS, route-scoped
 animation, content-addressed assets, responsive video metadata, and optimized
 font/video size budgets.
+
+## Dust Wave Support contract
+
+`_data/support.yml` is the single source for the support brand and checkout options. The English and Spanish support pages render that data with `_includes/support-options.html`, so provider configuration stays shared while ASCII VJ Remix keeps its own visual language. The contract intentionally supports one customer-chosen one-time amount (suggested at $10) and one fixed $5/month option.
+
+`scripts/audit_support.py` validates both built support pages, localized UTM attribution, the two required cadences, and direct Stripe-hosted checkout links. Production validation rejects Stripe test links. During a deliberate test-mode preview, use:
+
+```bash
+SUPPORT_ALLOW_TEST_LINKS=1 python3 scripts/audit_support.py
+```
+
+When checkout resources change, create and verify the replacement Product, Prices, and localized Payment Links first; then update `_data/support.yml` in a coordinated release. Do not archive an old recurring Price or Product while existing subscriptions still depend on it.
 
 ## Refresh from the source project
 
@@ -39,6 +52,7 @@ bundle exec jekyll build --trace
 python3 scripts/audit_docs_current_state.py
 python3 scripts/audit_links.py
 python3 scripts/audit_seo.py
+python3 scripts/audit_support.py
 python3 scripts/audit_performance.py
 ```
 

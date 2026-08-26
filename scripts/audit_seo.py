@@ -15,7 +15,9 @@ REQUIRED_PAGES = [
     "index.html",
     "es/index.html",
     "support/index.html",
+    "support/thanks/index.html",
     "es/support/index.html",
+    "es/support/gracias/index.html",
     "docs/index.html",
     "es/docs/index.html",
 ]

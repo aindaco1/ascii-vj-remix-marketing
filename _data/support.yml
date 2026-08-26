@@ -1,0 +1,29 @@
+contract_version: dust_wave_support_v1
+brand:
+  name: Dust Wave Support
+  url: https://dustwave.xyz
+  logo: /assets/images/dust-wave-support.png
+provider: stripe
+options:
+  - key: one_time
+    cadence: one_time
+    amount_type: customer_choice
+    suggested_amount_usd: 10
+    links:
+      en:
+        payment_link_id: plink_1U8WEWK9nUOzi4tv1c8dHlmb
+        url: https://buy.stripe.com/00w9AUc3H8nYgn5eve1oI0j?utm_source=asciivj&utm_medium=website&utm_campaign=dust_wave_support&utm_content=en_one_time
+      es:
+        payment_link_id: plink_1U8WF8K9nUOzi4tvgLOnb2bw
+        url: https://buy.stripe.com/5kQeVe6Jn9s22wfaeY1oI0k?utm_source=asciivj&utm_medium=website&utm_campaign=dust_wave_support&utm_content=es_one_time
+  - key: monthly
+    cadence: monthly
+    amount_type: fixed
+    amount_usd: 5
+    links:
+      en:
+        payment_link_id: plink_1U8WG6K9nUOzi4tvFHkam3pS
+        url: https://buy.stripe.com/cNi8wQ6JnbAa1sb5YI1oI0l?utm_source=asciivj&utm_medium=website&utm_campaign=dust_wave_support&utm_content=en_monthly
+      es:
+        payment_link_id: plink_1U8WGsK9nUOzi4tvMjJ851fS
+        url: https://buy.stripe.com/4gM14o7Nr8nYb2Ldra1oI0m?utm_source=asciivj&utm_medium=website&utm_campaign=dust_wave_support&utm_content=es_monthly
