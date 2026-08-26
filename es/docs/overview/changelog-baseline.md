@@ -8,27 +8,28 @@ lang: es
 
 # Base de la versión
 
-Los documentos actuales describen el conjunto de funciones **0.9.6**.
+Los documentos actuales describen el conjunto de funciones **0.9.9**.
 
-## 0.9.6 Aspectos destacados
+## Aspectos destacados de 0.9.9
 
-- El macOS Pop Out nativo carga fotogramas de origen decodificados solo cuando su versión del fotograma de origen cambia mientras la presentación y los parámetros en vivo continúan en la actualización de la pantalla.
-- WebGPU reutiliza almacenamiento de respaldo uniforme, vistas de textura y grupos de enlace estables; WebGL2 almacena en caché sus 18 ubicaciones uniformes de sombreador después de la vinculación.
-- Las transiciones numéricas preestablecidas y WTF actualizan los controles cambiantes durante la interpolación y luego sincronizan toda la fuente/cámara/superficie de control una vez finalizada.
-- La ruta de prueba medida macOS eliminó alrededor del 60% del trabajo duplicado de conversión RGB y carga de texturas para una fuente de 24 FPS presentada cerca de 60 FPS sin cambiar las matemáticas del renderizador, la resolución de fuente/salida, el comportamiento del sombreador o los controles de calidad.
-- La versión 0.9.5 agregó 23 ajustes preestablecidos de caracteres acreditados inspirados en ascii.today y UC-33e/mioXC MIDI nativo experimental con cuatro páginas, adquisición suave, aprendizaje MIDI, selección de ajustes preestablecidos numéricos y captura/restauración SysEx limitada.
-- Los paquetes de desarrollo normales ahora utilizan el nombre `ASCII VJ Remix Dev` y el identificador `com.asciline.remix.dev` separados.
-- El DMG macOS y la ruta del actualizador validan el diseño de arrastrar a las aplicaciones, la identidad de producción, la carga útil del actualizador firmado y el reemplazo real impulsado por la aplicación.
+- El control Informes permanece visible con una cola vacía para que los usuarios puedan revisar las preferencias `ask`, `always` y `off` antes de que ocurra un error. Los informes pendientes todavía añaden un contador y un estado de advertencia.
+- Se eliminó la lectura duplicada del backend del lado derecho. El selector Backend central sigue siendo el control canónico y la superposición Estadísticas conserva los diagnósticos del backend resuelto en tiempo de ejecución.
+- Los listeners de la prueba de humo de la interfaz del actualizador empaquetado se registran antes de inicializar los dispositivos, para que el arranque de la cámara o el audio no compita con una solicitud temprana.
+- La prueba de humo de la versión publicada abre las apps empaquetadas para macOS, Windows y Linux, exige que Actualizar e Informes permanezcan visibles y que la lectura duplicada del backend siga ausente.
+- La línea de versiones reciente también incluye las correcciones del actualizador y del pipeline de lanzamiento de 0.9.8, las optimizaciones del renderizador y la salida nativa de 0.9.6, y los presets y el MIDI UC-33e/mioXC experimental introducidos en 0.9.5.
 
 ## Línea de base de seguridad
 
-- Los permisos MIDI permanecen confinados a la ventana de control principal y el primer adaptador nativo acepta solo puertos con nombre mioXC.
-- Las compilaciones de desarrollo no pueden reemplazar la aplicación de producción ni heredar sus concesiones de privacidad macOS.
-- Los artefactos públicos macOS deben conservar el identificador del paquete de producción, el equipo de ID del desarrollador, el tiempo de ejecución reforzado y el requisito designado estable en todas las actualizaciones.
+- Los informes siguen conteniendo únicamente datos de fallos limitados y sanitizados. Los diagnósticos de medios locales y los registros arbitrarios no se adjuntan ni se envían.
+- El canario opcional de aceptación de producción se niega a ejecutarse cuando ya hay un informe de usuario pendiente y solo envía una carga sintética fija.
+- La comprobación de actualización al inicio no envía datos multimedia, de cámara, de audio, presets, MIDI, informes de fallos ni rutas locales, y no bloquea el arranque cuando la red no está disponible.
+- Los paquetes de actualización permanecen firmados y la instalación nunca comienza sin una acción del usuario.
+- Las compilaciones de desarrollo no pueden reemplazar la aplicación de producción, heredar sus concesiones de privacidad macOS ni utilizar el punto final del actualizador de producción.
+- Los artefactos públicos macOS deben conservar el identificador del paquete de producción, el equipo de ID del desarrollador, el tiempo de ejecución reforzado y el requisito designado estable en todas las actualizaciones; Los artefactos Windows actuales siguen siendo vistas previas sin firmar.
 
 ## Línea base de validación
 
-El registro de cambios 0.9.6 registra la validación optimizada de la aplicación, verificaciones de renderizador/estático/audio/MIDI/Tauri, 47 pruebas Rust, contadores de carga de fuentes, trabajo de interfaz de usuario de transición limitada, pruebas de diseño de DMG, pruebas de identidad de aplicaciones y humo del actualizador de versiones publicadas.
+El registro de cambios 0.9.9 documenta pruebas deterministas de la interfaz de informes de fallos, además de comprobaciones empaquetadas de Actualizar, Informes y el único control Backend en macOS, Windows y Linux. La puerta de lanzamiento más amplia conserva las comprobaciones del renderizador, audio, MIDI, política de Tauri, firma, notarización, instaladores y reemplazo mediante el actualizador.
 
 
 

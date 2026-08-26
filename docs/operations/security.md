@@ -47,7 +47,7 @@ FFmpeg sidecars, signed update artifacts, and reviewed/sanitized crash reports.
 | Tauri commands | `src-tauri/src/lib.rs` plus capability files | High | Treat every command as a security boundary. Validate inputs in Rust. |
 | Asset protocol | Empty by default, expanded only for selected media/session needs | High | Avoid persistent broad paths. |
 | FFmpeg sidecars | Bundled resources with policy checks and source/provenance metadata | Medium | No runtime downloads. Release sidecars disable network protocols. |
-| Updater | GitHub Releases endpoint with signed updater packages | High | Private signing key is external. Public key is committed. |
+| Updater | One production launch check plus explicit manual/download/install actions against the GitHub Releases endpoint with signed packages | High | Launch checks send no product data. Private signing key is external; public key is committed. |
 | Crash reporter | Rust-only POST to `https://crash.dustwave.xyz/v1/reports` in production builds | High | Reports are bounded, sanitized, user-configurable, and relayed to GitHub issues by a Cloudflare Worker. |
 | Experimental MIDI and UC-33e SysEx | Main-window-only Rust commands, mioXC port allowlist, bounded queues and packet limits | Medium | Profiles stay local and cannot target sources, Camera, Pop Out, or output displays. Physical full-bank restore verification remains incomplete. |
 | Logs and smoke reports | Local developer/test artifacts | Low to Medium | Do not log private file paths, raw audio, or sensitive environment values unless needed for explicit debugging. |
@@ -66,8 +66,8 @@ The current release line includes these security hardening rules:
   `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`, Apple certificate values, or keychain
   passwords in job-level workflow environment blocks.
 - Public macOS release CI fails closed when Apple Developer ID signing or
-  notarization is incomplete. Public 0.9.6 macOS artifacts are signed,
-  notarized, stapled, and Gatekeeper-validated; Windows 0.9.6 artifacts are
+  notarization is incomplete. Public 0.9.9 macOS artifacts are signed,
+  notarized, stapled, and Gatekeeper-validated; Windows 0.9.9 artifacts are
   unsigned previews.
 - Public macOS artifacts must retain Team ID `PWT3Q52LZ2` and the stable
   identifier/team designated requirement. CI validates both the built app and
@@ -147,6 +147,9 @@ Security requirements:
   audio, local storage dumps, environment dumps, or arbitrary logs.
 - The app stores at most a small local queue and lets the user choose `ask`,
   `always`, or `off`.
+- The Reports control remains reachable with an empty queue so the preference
+  can be reviewed before an error occurs. Empty state does not create or submit
+  a report.
 - Submission uses the Rust command surface only. The output window must not have
   crash-report permissions.
 - GitHub credentials must not be present in the desktop app, repository config,
@@ -171,6 +174,10 @@ kind, surface, platform, command/backend/source mode, native-output state, and
 explicit error-code fields; normalized stack frame or message are fallbacks.
 Issue bodies keep bounded aggregate state rather than concatenating every
 report.
+
+The opt-in production acceptance canary is hard-coded and refuses to run when a
+user report is already pending or the preference is `off`. It must never be
+expanded into a general log-upload path.
 
 ## Local Media and File Access
 
@@ -237,6 +244,15 @@ The updater is the intentional online path. It reads:
 ```text
 https://github.com/aindaco1/ascii-vj-remix/releases/latest/download/latest.json
 ```
+
+The production app checks that metadata once per launch without blocking
+renderer startup. Current-version and network-failure results remain silent;
+when a newer signed release exists, the existing Update control surfaces it.
+Downloading, installation, and relaunch require an explicit user action. The
+request contains no media, frames, camera or audio data, presets, MIDI state,
+crash reports, local paths, credentials, or analytics identifiers. Development
+builds do not receive the production endpoint. The launch request necessarily
+exposes ordinary connection metadata to GitHub and the surrounding network.
 
 Security requirements:
 
@@ -345,6 +361,7 @@ npm run release:secrets:check
 Updater:
 
 ```bash
+npm run test:desktop-updater
 npm run test:updater-manifest
 npm run updater:secret:check
 ```
@@ -363,7 +380,7 @@ npm run check:ffmpeg-resources
   deliberately ad-hoc development build still receives build-specific grants.
 - Ad-hoc macOS signing is acceptable for local builds only; public releases are
   Developer ID signed, notarized, stapled, and Gatekeeper-validated.
-- Windows 0.9.6 artifacts are unsigned previews and may trigger Unknown
+- Windows 0.9.9 artifacts are unsigned previews and may trigger Unknown
   Publisher, SmartScreen, or Defender warnings.
 - Linux media/camera/audio behavior varies by distribution, WebKitGTK, drivers,
   and portal setup.

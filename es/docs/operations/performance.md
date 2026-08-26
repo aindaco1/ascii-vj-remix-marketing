@@ -28,6 +28,8 @@ a través de IPC.
 ruta de control en vivo.
 - Mantenga todos los activos de tiempo de ejecución locales para que el rendimiento no dependa de la red.
 disponibilidad.
+- Inicie la verificación de actualización de lanzamiento de producción de forma asincrónica. Un lento o no disponible
+El punto final de lanzamiento no debe retrasar el inicio del renderizador, la fuente, el audio o el control.
 - Mantenga los informes de fallos fuera de la ruta de renderizado. Captura, colas, desinfección y
 La presentación debe estar limitada y no debe bloquear la presentación del marco o la presentación en vivo.
 controles.
@@ -109,6 +111,27 @@ El arnés de humo del navegador también implementa una transición numérica de
 requiere que la sincronización del control de fuente permanezca en no más de dos llamadas y
 cámara/sincronización visual completa en no más de una llamada mientras se actualiza el valor
 continúa durante toda la interpolación.
+
+## 0.9.8 Optimización de compilación de lanzamiento
+
+El trabajo de empaquetado Windows más lento de la versión 0.9.7 tomó aproximadamente 31 minutos. su
+La compilación del código fuente FFmpeg tomó alrededor de 12,5 minutos, la verificación de liberación repetida aproximadamente
+5,5 minutos, y la compilación de la aplicación más el empaquetado, unos 10 minutos; esos
+las etapas independientes fueron en su mayoría serializadas.
+
+La versión 0.9.8 adapta el patrón de reutilización de compilación verificada utilizado por MKV Magic. Lanzamiento
+CI resuelve una confirmación de etiqueta inmutable y ejecuta la compilación fuente FFmpeg y Tauri
+Compilación de la aplicación `--no-bundle` al mismo tiempo. También espera la fecha exacta.
+confirma el CI `Desktop` normal en lugar de repetir ese conjunto dentro de cada
+trabajo de embalaje. Los trabajos de paquete aceptan solo el flujo de trabajo de corta duración correspondiente
+artefactos, vuelva a verificar los recursos FFmpeg y verifique la confirmación del binario de la aplicación,
+plataforma, versión, tamaño y SHA-256 antes de que `tauri bundle` lo empaquete sin un
+segunda compilación. Firma, actualizador de firmas, notarización, inspección de paquetes,
+las verificaciones de activos publicados y los humos reales de instalación/actualización siguen siendo puertas de liberación.
+
+Esto cambia la ruta crítica de la suma de la compilación de la aplicación FFmpeg plus a
+aproximadamente el más lento de los dos, sin cambiar el código de renderizado, enviado
+recursos, plataformas de destino, política de firma o formatos de salida.
 
 ## Notas de backend
 
@@ -298,6 +321,7 @@ y 36 saltos por segundo mientras la presentación permanece cerca de 60 FPS.
 Puertas de escritorio y de liberación:
 
 ```bash
+npm run test:desktop-updater
 npm run check:desktop
 npm run check:release
 ```

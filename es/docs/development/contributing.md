@@ -114,6 +114,7 @@ Los atributos no interrumpen la firma de la aplicación. Puede anular el directo
 |`npm run test:rust`|Ejecute pruebas Rust.|
 |`npm run check:media`|Ejecute la preparación de fotogramas, la decodificación/cambio de tamaño y las comprobaciones de medios de sesión nativas.|
 |`npm run test:output-display`|Simulación determinista de ubicación de pantalla secundaria.|
+|`npm run test:desktop-updater`|Lanzamiento/organización del actualizador manual, verificación silenciosa, instalación y pruebas de progreso.|
 |`npm run smoke:native-output`|Ayudante de humo con rendimiento de salida nativa.|
 |`npm run smoke:ui-perf`|Ayudante de humo para el rendimiento de la interfaz de usuario.|
 |`npm run test:midi`|MIDI pruebas de mapa, escalado, adquisición suave, acción y alcance.|
@@ -327,9 +328,11 @@ No confirme los binarios secundarios generados ni las claves de liberación priv
 
 ## Trabajo de lanzamiento y actualización
 
-Las compilaciones de escritorio ASCII VJ Remix deben permanecer independientes en tiempo de ejecución. el unico
-La ruta en línea intencional es el actualizador Tauri, que verifica la versión GitHub.
-metadatos cuando la aplicación invoca el complemento de actualización.
+Las compilaciones de escritorio ASCII VJ Remix deben permanecer independientes en tiempo de ejecución. El Tauri
+El actualizador es una ruta en línea intencional: la aplicación de producción lo invoca una vez en
+el fondo en el inicio y cuando el usuario solicita una nueva verificación manual. una corriente
+o la verificación de inicio fallida permanece en silencio. Descarga, instalación y reinicio
+siguen siendo acciones explícitas del usuario a través del control de actualización existente.
 
 Los lanzamientos son publicados por `.github/workflows/release-desktop.yml`. la liberación
 Matrix construye artefactos macOS, Windows y Linux, los verifica y escribe el actualizador.
@@ -445,7 +448,7 @@ El repositorio contiene una ruta de firma de artefactos de Azure inactiva en
 `src-tauri/windows-artifact-sign.cmd`; ese envoltorio llama
 `scripts/windows_artifact_sign.ps1`. Esto firma artefactos Windows antes de Tauri
 crea firmas de actualización. La ruta de lanzamiento actual de Windows no utiliza esto
-config y publica artefactos de vista previa 0.9.6 sin firmar. Configurar Azure
+config y publica artefactos de vista previa 0.9.9 sin firmar. Configurar Azure
 valores solo después de que la firma Windows esté habilitada como política de lanzamiento:
 
 ```bash
@@ -469,6 +472,7 @@ Utilice estas comprobaciones antes de publicar cambios en la versión:
 
 ```bash
 npm run check:desktop
+npm run test:desktop-updater
 npm run test:updater-manifest
 npm run check:bundle:debug
 ```
@@ -479,22 +483,26 @@ rompiendo `codesign`. Se siguen utilizando espacios de trabajo normales de CI y 
 `src-tauri/target`. Anular con `ASCILINE_TAURI_TARGET_DIR` o
 `CARGO_TARGET_DIR` cuando sea necesario.
 
-Las versiones de lanzamiento ejecutan `npm run ffmpeg:build-sidecar` antes
-`npm run check:release`. Eso se basa en el FFmpeg 8.1.2 oficial fijado
-tarball de origen, reintenta fallos de transporte transitorios limitados, promueve sólo un
-descarga completa, verifica la fuente SHA-256, desactiva la red FFmpeg
-protocolos y etapas de binarios FFmpeg/ffprobe compatibles con LGPL como Tauri local
-recursos. Las compilaciones en tiempo de ejecución permanecen fuera de línea; CI puede descargar la fuente oficial durante
-lanza compilaciones, pero la aplicación empaquetada nunca descarga FFmpeg, códecs o renderizador
-activos en tiempo de ejecución.
+Las compilaciones de lanzamiento local ejecutan `npm run ffmpeg:build-sidecar` antes
+`npm run check:release`. El lanzamiento público CI mantiene el mismo FFmpeg oficial fijado
+8.1.2 fuente, promoción de descarga completa, fuente SHA-256, red deshabilitada
+protocolos y comprobaciones de recursos compatibles con LGPL, pero construye ese tiempo de ejecución en
+paralelo con `tauri build --no-bundle`. Requiere el compromiso exacto
+flujo de trabajo exitoso de main-push `Desktop`, luego entrega ambas salidas al paquete
+trabajos como artefactos inmutables del flujo de trabajo de un día. El binario de la aplicación restaurada es
+verificado con su confirmación, plataforma, versión, tamaño de bytes y SHA-256 antes
+`tauri bundle` lo empaqueta sin recompilar. Las compilaciones en tiempo de ejecución permanecen fuera de línea;
+CI puede descargar la fuente oficial durante las versiones de lanzamiento, pero la aplicación empaquetada
+nunca descarga FFmpeg, códecs o recursos de renderizado en tiempo de ejecución.
 
 El flujo de trabajo de lanzamiento también ejecuta `scripts/smoke_tauri_release_install.mjs` en
 macOS, Windows y Linux después de la publicación. Descarga artefactos de GitHub
 Lanzamientos en lugar de reutilizar directorios de compilación locales, detectando activos faltantes,
-URL `latest.json` incorrectas, problemas con el diseño del instalador y actualizador firmado roto
-descargas. macOS extrae adicionalmente archivos de actualización consecutivos, requiere
-el DMG debe contener la aplicación real, el enlace `/Applications` exacto y el Tauri revisado
-Metadatos del buscador; valida el DMG descargado y la aplicación montada; extractos
+URL `latest.json` incorrectas, problemas con el diseño del instalador, un control de actualización oculto y
+Descargas rotas del actualizador firmado. macOS extrae además secuencias
+archivos de actualización, requiere que el DMG contenga la aplicación real, exacta
+enlace `/Applications` y metadatos revisados del buscador Tauri; valida el
+DMG descargado y aplicación montada; extractos
 archivos de actualización consecutivos; requiere la producción estable designada
 requisito; realiza un verdadero auto-reemplazo del actualizador; y valida la
 identidad de la aplicación resultante. La carga de la versión no reemplaza la ya publicada
@@ -507,6 +515,13 @@ Se mantienen como publicaciones históricas, pero no se pueden utilizar como un 
 línea de base para la línea de aplicación actual.
 
 - `ASCILINE_DESKTOP_SMOKE=launch`: humo de lanzamiento acotado con informe.
+- `ASCILINE_DESKTOP_SMOKE=updater-ui`: requiere la actualización de producción empaquetada
+y los controles de informes permanezcan visibles después de la inicialización y requieren la
+La lectura duplicada del backend de la barra superior estará ausente.
+- `ASCILINE_CRASH_REPORT_SMOKE=submit`: canario de aceptación solo de producción. eso
+se niega a ejecutar con un informe pendiente existente o una preferencia `off`,
+captura un informe desinfectado codificado y lo envía a través del relé Rust
+ruta y requiere que la cola vuelva a estar vacía.
 - `ASCILINE_UPDATER_SMOKE=download`: comprueba `latest.json`, descarga el firmado
 paquete de actualización, verifica su firma, escribe un informe y sale.
 - `ASCILINE_UPDATER_SMOKE=install`: descarga y verifica el paquete de actualización,

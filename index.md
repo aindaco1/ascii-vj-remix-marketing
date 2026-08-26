@@ -65,12 +65,13 @@ nav_exclude: true
 <section class="section-band" aria-labelledby="release-heading">
   <p class="kicker">Latest release</p>
   <h2 id="release-heading">What changed in v{{ site.data.product.latest_release.version }}.</h2>
-  <p class="section-intro">The current release keeps the same visual math and quality controls while doing less repeated work in the renderer and native output path.</p>
+  <p class="section-intro">The current release keeps crash-report preferences within reach, simplifies the top bar, and expands packaged UI checks.</p>
   <div class="card-grid">
-    <article class="card pink"><h3>More ASCII looks</h3><p>Twenty-three credited ascii.today-inspired character presets join the traditional and extreme built-in looks introduced in the 0.9.5 release line.</p></article>
-    <article class="card"><h3>Experimental MIDI</h3><p>Native UC-33e control through a mioXC now covers visual, audio, preset, and WTF controls with soft takeover, MIDI Learn, numeric preset slots, and bounded SysEx tools.</p></article>
-    <article class="card pink"><h3>Faster output</h3><p>v0.9.6 reuses stable GPU resources, caches WebGL lookups, avoids duplicate native frame uploads, and limits transition-time UI work without reducing renderer quality.</p></article>
+    <article class="card pink"><h3>Reports stay available</h3><p>The top-bar Reports control remains visible with an empty queue, so you can review Ask, Always, or Off before a crash occurs.</p></article>
+    <article class="card"><h3>One backend control</h3><p>The duplicate right-side backend readout is gone. The center selector remains the single place to choose and stop the renderer.</p></article>
+    <article class="card pink"><h3>Stronger UI checks</h3><p>Packaged macOS, Windows, and Linux builds must keep Update and Reports visible and the duplicate backend readout absent.</p></article>
   </div>
+  <p class="section-intro"><strong>Already on macOS v0.9.6 or v0.9.7?</strong> Install the current release once from the notarized DMG; those two versions cannot surface the in-app update. v0.9.8 users can update in the app.</p>
   <p class="release-link"><a href="{{ '/docs/overview/changelog-baseline/' | relative_url }}">Read the v{{ site.data.product.latest_release.version }} release baseline</a></p>
 </section>
 

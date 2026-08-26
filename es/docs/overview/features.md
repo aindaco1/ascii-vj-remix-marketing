@@ -112,9 +112,12 @@ La ventana de salida está centrada en la presentación y tiene una superficie d
 
 - Construido con Tauri v2.
 - El tiempo de ejecución de producción es solo local de forma predeterminada.
-- GitHub La infraestructura del actualizador de versiones está configurada.
-- Los artefactos públicos 0.9.6 macOS están firmados con el ID del desarrollador, notariados, engrapados y validados por Gatekeeper.
-- La ruta de lanzamiento 0.9.6 macOS valida el diseño de DMG, la identidad del ID del desarrollador, la identidad del archivo del actualizador y el reemplazo del actualizador basado en la aplicación.
+- La app de producción realiza una comprobación no bloqueante de metadatos de GitHub Releases una vez por inicio. Si la versión es actual o no hay conexión, no muestra ningún aviso; la descarga, instalación y reinicio siguen siendo acciones explícitas del usuario mediante el control Actualizar.
+- Las versiones 0.9.6 y 0.9.7 requieren una actualización manual única de DMG a 0.9.9 porque su conjunto de capacidades de producción ocultaba el control de Actualización.
+- El control Informes permanece visible con una cola vacía para que los usuarios puedan revisar las preferencias de informes de fallos antes de que ocurra un error; el estado vacío no crea ni envía ningún informe.
+- El selector Backend central es el único control de backend de la barra superior. Los diagnósticos del backend resuelto en tiempo de ejecución siguen disponibles en la superposición Estadísticas controlada por el usuario.
+- Los artefactos públicos 0.9.9 macOS están firmados con el ID del desarrollador, notariados, engrapados y validados por Gatekeeper.
+- La ruta de lanzamiento 0.9.9 valida la disposición del DMG, las identidades de Developer ID y del archivo del actualizador, el reemplazo controlado por la app, los controles Actualizar e Informes visibles y la ausencia de una lectura duplicada del backend en las apps empaquetadas para macOS, Windows y Linux.
 - Los artefactos Windows actuales siguen siendo versiones preliminares sin firmar.
 - El envío de informes de fallos es solo de producción, se revisa/desinfecta y se enruta a través de la capa de escritorio Rust al relé Cloudflare Worker.
 
