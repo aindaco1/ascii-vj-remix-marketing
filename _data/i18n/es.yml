@@ -14,7 +14,6 @@ home:
   secondary_cta: Documentación
 support:
   options_title: Opciones de apoyo
-  options_intro: Ambas opciones continúan a un checkout seguro de Stripe. El apoyo único te permite elegir la cantidad.
   provider_note: Los pagos se procesan de forma segura mediante Stripe. El apoyo a Dust Wave no se presenta como una donación benéfica deducible de impuestos.
   one_time:
     title: Apoyo único

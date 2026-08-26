@@ -234,7 +234,6 @@ html[lang="es"] .site-nav .nav-list-item:has(> a[href^="/docs/"]) {
 .support-intro__copy h1,
 .support-intro__copy p,
 .support-payment__header h2,
-.support-payment__header p,
 .support-option h3,
 .support-option p,
 .support-note h2,
@@ -264,6 +263,9 @@ html[lang="es"] .site-nav .nav-list-item:has(> a[href^="/docs/"]) {
 }
 
 .support-option {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
   min-width: 0;
   padding: clamp(1rem, 3vw, 1.5rem);
   border: 1px solid var(--dw-border);
@@ -278,7 +280,8 @@ html[lang="es"] .site-nav .nav-list-item:has(> a[href^="/docs/"]) {
   border-top: 4px solid var(--dw-pink);
 }
 
-.support-option__amount {
+.support-option .support-option__amount {
+  margin-top: .4rem;
   color: var(--dw-text);
   font: 700 clamp(1.2rem, 4vw, 1.65rem)/1.2 "VCR OSD Mono", "SFMono-Regular", Menlo, Consolas, monospace;
 }

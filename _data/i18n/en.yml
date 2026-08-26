@@ -14,7 +14,6 @@ home:
   secondary_cta: Docs
 support:
   options_title: Support options
-  options_intro: Both options continue to a secure Stripe checkout. One-time support lets you choose the amount.
   provider_note: Payments are processed securely by Stripe. Dust Wave support is not represented as a tax-deductible charitable donation.
   one_time:
     title: One-time support
