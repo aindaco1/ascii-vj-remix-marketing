@@ -17,15 +17,18 @@ THEME_PAGES = [*DOC_PAGES, "support/index.html", "es/support/index.html"]
 HERO_WEBM = ROOT / "assets" / "videos" / "ascii-hero.webm"
 HERO_MP4 = ROOT / "assets" / "videos" / "ascii-hero.mp4"
 DISPLAY_FONT = ROOT / "assets" / "fonts" / "VCR_OSD_MONO_1.001.woff2"
+APP_ICON = ROOT / "assets" / "images" / "ascii-vj-remix-app-icon.png"
 
 WEBM_BUDGET = 4_000_000
 MP4_BUDGET = 4_000_000
 FONT_BUDGET = 20_000
+APP_ICON_BUDGET = 250_000
 HASHED_SITE_JS = re.compile(r"/assets/js/site\.js\?v=[0-9a-f]{12}")
 HASHED_THEME_CSS = re.compile(r"/assets/css/just-the-docs-default\.css\?v=[0-9a-f]{12}")
 HASHED_HOME_JS = re.compile(r"/assets/js/home-animation\.js\?v=[0-9a-f]{12}")
 HASHED_WEBM = re.compile(r"/assets/videos/ascii-hero\.webm\?v=[0-9a-f]{12}")
 HASHED_MP4 = re.compile(r"/assets/videos/ascii-hero\.mp4\?v=[0-9a-f]{12}")
+HASHED_APP_ICON = re.compile(r"/assets/images/ascii-vj-remix-app-icon\.png\?v=[0-9a-f]{12}")
 PLACEHOLDER_LEAK = re.compile(r"(?:ZZTOKEN|ZXQZXQ|ZXC[A-Z0-9]+ZX)")
 
 
@@ -96,11 +99,20 @@ def main() -> int:
         require(HASHED_HOME_JS.search(html) is not None, errors, f"{rel}: homepage animation is not content-addressed")
         require(HASHED_WEBM.search(html) is not None, errors, f"{rel}: WebM source is not content-addressed")
         require(HASHED_MP4.search(html) is not None, errors, f"{rel}: MP4 fallback is not content-addressed")
+        require(HASHED_APP_ICON.search(html) is not None, errors, f"{rel}: app icon is not content-addressed")
         require('as="image" type="image/svg+xml" fetchpriority="high"' in html, errors, f"{rel}: hero poster preload is missing")
         require('type="font/woff2"' in html and 'rel="preload"' in html, errors, f"{rel}: WOFF2 preload is missing")
         require('width="1200" height="766"' in html, errors, f"{rel}: hero video dimensions are missing")
         require('fetchpriority="high"' in html, errors, f"{rel}: hero video priority hint is missing")
         require(release and f"v{release}" in html, errors, f"{rel}: latest release v{release} is missing")
+        if rel == "index.html":
+            require("all 69 built-in Demo Image presets" in html, errors, f"{rel}: v0.9.12 preset fix is missing")
+            require("16 built-in palettes" in html, errors, f"{rel}: v0.9.11 palette story is missing")
+            require("approved neon play-and-pixel artwork" in html, errors, f"{rel}: v0.9.10 icon story is missing")
+        else:
+            require("los 69 presets integrados" in html, errors, f"{rel}: falta la corrección de presets de v0.9.12")
+            require("16 paletas integradas" in html, errors, f"{rel}: falta la historia de paletas de v0.9.11")
+            require("mismo diseño aprobado" in html, errors, f"{rel}: falta la historia del icono de v0.9.10")
 
         parser = DownloadParser()
         parser.feed(html)
@@ -142,6 +154,7 @@ def main() -> int:
     webm_size = check_asset(HERO_WEBM, WEBM_BUDGET, errors)
     mp4_size = check_asset(HERO_MP4, MP4_BUDGET, errors)
     font_size = check_asset(DISPLAY_FONT, FONT_BUDGET, errors)
+    icon_size = check_asset(APP_ICON, APP_ICON_BUDGET, errors)
 
     if errors:
         print("Performance audit failed:")
@@ -151,7 +164,7 @@ def main() -> int:
 
     print(
         "Performance audit passed "
-        f"(WebM {webm_size:,} B, MP4 {mp4_size:,} B, WOFF2 {font_size:,} B)"
+        f"(WebM {webm_size:,} B, MP4 {mp4_size:,} B, WOFF2 {font_size:,} B, icon {icon_size:,} B)"
     )
     return 0
 

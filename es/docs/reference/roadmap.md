@@ -8,154 +8,114 @@ lang: es
 
 # Hoja de ruta
 
-Este documento contiene únicamente trabajos prospectivos. No es una descripción del
-producto actual y no promete una fecha de lanzamiento o versión. Actual
-el comportamiento pertenece a [README](/es/docs/overview/ascii-vj-remix/) y guías de práctica; completado
-El historial de trabajos y lanzamientos pertenece a [Changelog](/es/docs/reference/changelog/).
+Este documento contiene únicamente trabajos prospectivos. No es una descripción del producto actual y no promete una fecha o versión de lanzamiento. El comportamiento actual pertenece a las [README](/es/docs/overview/ascii-vj-remix/) y guías de práctica; El trabajo completado y el historial de lanzamientos pertenecen al [Changelog](/es/docs/reference/changelog/).
 
 ## Distribución y Validación de Plataforma
 
-- Agregue firma Authenticode y marca de tiempo para los instaladores Windows cuando
-Se cuenta con un proveedor de firmas sustentable y una política de liberación.
-- Validar el comportamiento de Windows SmartScreen en máquinas limpias después de firmar
-comienza la distribución.
-- Ejecute pruebas de humo de instalación, lanzamiento y actualización en sitios físicos o representativos.
-máquinas virtuales Windows y Linux.
-- Validar los paquetes Linux AppImage, deb y rpm en una distribución mantenida
-matriz.
-- Confirme que las concesiones de privacidad de macOS sobrevivan a un actualizador público de identidad estable.
-una máquina limpia.
-- Decida si las versiones de Windows necesitan un tiempo de ejecución fijo de WebView2 sin conexión
-instalación.
+- Agregue firma Authenticode y marca de tiempo para los instaladores Windows cuando exista un proveedor de firma sostenible y una política de lanzamiento.
+- Valide el comportamiento de Windows SmartScreen en máquinas limpias después de que comience la distribución firmada.
+- Ejecute pruebas de humo de instalación, lanzamiento y actualización en máquinas Windows y Linux físicas o virtuales representativas.
+- Valide los paquetes Linux AppImage, deb y rpm en una matriz de distribución mantenida.
+- Confirme que las concesiones de privacidad de macOS sobrevivan a un actualizador público de identidad estable en una máquina limpia.
+- Decida si las versiones de Windows necesitan un tiempo de ejecución fijo de WebView2 para la instalación sin conexión.
 
 ## Controladores y perfiles MIDI
 
 - Valide el perfil DIN UC-33e/mioXC existente en el hardware Windows y Linux.
-- Evalúe la compatibilidad directa con USB UC-33e por separado del DIN/mioXC documentado
-camino.
-- Agregue un formato de importación/exportación de perfil de mapeo que el usuario pueda compartir con un esquema delimitado
-validación y sin rutas de medios.
-- Evaluar perfiles de controlador adicionales después del mapeo existente, software
-Los contratos de adquisición, reconexión y seguridad SysEx siguen estando cubiertos.
+- Evalúe la compatibilidad directa con USB UC-33e por separado de la ruta DIN/mioXC documentada.
+- Agregue un formato de importación/exportación de perfil de mapeo que el usuario pueda compartir con validación de esquema limitada y sin rutas de medios.
+- Evaluar perfiles de controlador adicionales después de que los contratos existentes de mapeo, soft takeover, reconexión y seguridad SysEx sigan cubiertos.
 - Evalúe los controles de suavizado y banda muerta por enlace.
-- Evalúe la edición segura de UC-33e SysEx sin necesidad de una captura previa
-volcado de banco completo.
+- Evalúe la edición segura de UC-33e SysEx sin necesidad de un volcado de banco completo capturado previamente.
 
 ## Modo de transmisión productizado
 
-- Decida si una fuente de transmisión de usuario normal utiliza la ruta de sesión Rust/FFmpeg,
-un sidecar incluido, un conector externo o una combinación revisada.
-- Mantenga Python/FastAPI como infraestructura de desarrollo/referencia a menos que se convierta en
-un componente empaquetado explícitamente.
-- Diseñe un flujo de trabajo de origen de Stream claro que no complique el valor predeterminado
-Panel de fuente local.
-- Restaure las métricas específicas de la transmisión solo cuando ayuden a los usuarios a diagnosticar el búfer,
-códec, ancho de banda o comportamiento de latencia.
-- Preservar la salida nativa, las transiciones preestablecidas y el mensaje de control limitado
-Comportamiento en el recorrido del arroyo.
+- Decida si una fuente de transmisión de usuario normal utiliza la ruta de sesión Rust/FFmpeg, un sidecar incluido, un conector externo o una combinación revisada.
+- Mantenga Python/FastAPI como infraestructura de desarrollo/referencia a menos que se convierta en un componente empaquetado explícitamente.
+- Diseñe un flujo de trabajo de origen de Stream claro que no complique el panel de origen local predeterminado.
+- Restaure las métricas específicas de la transmisión solo cuando ayuden a los usuarios a diagnosticar el comportamiento del búfer, el códec, el ancho de banda o la latencia.
+- Conserve la salida nativa, las transiciones preestablecidas y el comportamiento de los mensajes de control limitados en la ruta de la transmisión.
 - Agregue pruebas de transmisión de un extremo a otro antes de exponer el modo en la interfaz de usuario normal.
 
 ## Captura de audio nativa
 
-- Evalúe Core Audio Taps en macOS para la captura de audio del sistema con un alcance más estrecho
-superficie de permiso.
+- Evalúe Core Audio Taps en macOS para capturar audio del sistema con una superficie de permiso más estrecha.
 - Agregue bucle invertido WASAPI en Windows.
 - Agregue proveedores de audio del sistema PipeWire o PulseAudio en Linux.
-- Mantenga el procesamiento de audio local y pase fotogramas de características acotadas en lugar de
-muestras sin procesar ilimitadas en Tauri IPC.
+- Mantenga el procesamiento de audio local y pase cuadros de funciones limitados en lugar de muestras sin procesar ilimitadas a través de Tauri IPC.
 
 ## Rutas de cámara y textura nativa
 
 - Evalúe el intercambio de texturas AVFoundation/CVPixelBuffer-to-Metal en macOS.
 - Evalúe el intercambio de texturas de Media Foundation a D3D en Windows.
 - Evalúe la interoperabilidad PipeWire/V4L2-to-Vulkan o GLES en Linux cuando sea práctico.
-- Agregue composición multicámara nativa sin forzar todos los caminos
-Lectura del lienzo de WebView.
-- Preservar el comportamiento del último fotograma para que la salida en vivo no se quede obsoleta
-marcos de cámara.
+- Agregue una composición nativa multicámara sin forzar cada ruta a través de la lectura del lienzo de WebView.
+- Conserve el comportamiento del último fotograma para que la salida en vivo no acumule fotogramas de cámara obsoletos.
 
 ## Consistencia y rendimiento del renderizador
 
-- Defina un esquema de parámetros de renderizado compartido por controles de UI, ajustes preestablecidos, audio,
-WTF, MIDI, renderizadores de navegador, renderizadores de secuencias y salida nativa.
-- Reducir el color duplicado restante y el comportamiento de cuantización en WebGPU,
-WebGL2, lienzo, secuencia y rutas nativas `wgpu`.
+- Defina un esquema de parámetros de renderizado compartido por controles de UI, ajustes preestablecidos, audio, WTF, MIDI, renderizadores de navegador, renderizadores de secuencias y salida nativa.
+- Reduzca el color duplicado restante y el comportamiento de cuantización en las rutas WebGPU, WebGL2, Canvas, stream y `wgpu` nativas.
 - Agregue pruebas visuales limitadas o de salida dorada para ajustes preestablecidos representativos.
 - Haga que las reservas de backend sean visibles y diagnosticables.
 - Agregue puntos de referencia repetibles de compilación optimizada para la vista previa principal y Pop Out.
 - Agregue pruebas sintéticas de latencia de cámara y respuesta de audio con marca de tiempo.
-- Realice un seguimiento de la velocidad de fotogramas, las caídas de fotogramas, los recuentos de carga/salto y la propagación de parámetros
-con una producción de referencia comparable.
+- Realice un seguimiento de la velocidad de fotogramas, las caídas de fotogramas, los recuentos de carga/salto y la propagación de parámetros con resultados de referencia comparables.
+- Repita la carga de trabajo 0.9.11 1080p/audio/salida nativa en el piso de referencia Apple M1/16 GB y una máquina física comparable Windows integrada-GPU; retenga la compilación automatizada de Windows/Linux y el renderizador humea entre comprobaciones físicas.
+- Después de que se envíe el primer estilo de atlas Unicode neutral incluido, agregue estilos de atlas opcionales propiedad del proyecto sin cambiar los identificadores de conjunto de glifos, la cobertura de Unicode, la semántica de rampa personalizada ni los enlaces de renderizado. Mantenga los estilos generados en tiempo de compilación, agrupados localmente, cargados de forma diferida y sujetos a presupuestos explícitos de paquete/memoria GPU en lugar de introducir la búsqueda de fuentes del sistema en tiempo de ejecución.
+- Evalúe la extensión A de CJK y la compatibilidad con el atlas de plano suplementario solo con un presupuesto explícito de paquete/GPU/caché. El contrato de identificación escalar BMP directo actual debe versionarse en lugar de ampliarse silenciosamente.
+- Evalúe los grupos de grafemas, la configuración de guiones, el diseño bidireccional y las secuencias de emoji por separado de las rampas visuales de un solo escalar. Nadie debería entrar en el camino de la telefonía móvil sin un rendimiento medido y un comportamiento creativo claro.
 
 ## Presets y perfiles de usuario
 
 - Agregue cambio de nombre preestablecido por el usuario, selección de inicio, carpetas/etiquetas y búsqueda/filtro.
 - Separe los paquetes visuales preestablecidos de los perfiles de mapeo MIDI.
 - Mejore la validación de importaciones con errores localizados y legibles.
-- Evalúe paquetes de exportación que contengan ajustes preestablecidos visuales, configuraciones reactivas de audio,
-y mapeo de perfiles sin rutas de medios privados.
+- Evalúe paquetes de exportación que contengan ajustes preestablecidos visuales, configuraciones reactivas de audio y perfiles de mapeo sin rutas de medios privadas.
 
 ## Accesibilidad
 
 - Complete auditorías de teclado y lector de pantalla de la superficie de control.
 - Agregue controles automatizados de teclado, orden de enfoque, ARIA y contraste.
 - Evalúe el comportamiento de movimiento reducido para las transiciones de la superficie de control.
-- Evalúe una opción de fotosensibilidad que limite el parpadeo o la vibración extrema en
-modos aleatorios.
+- Evalúe una opción de fotosensibilidad que limite el parpadeo o la inquietud extrema en modos aleatorios.
 - Evalúe advertencias y exclusiones preestablecidas para resultados WTF intencionalmente intensos.
 
 ## Internacionalización
 
-- Introduzca un catálogo de cadenas agrupadas sólo cuando exista un mantenimiento
-flujo de trabajo de traducción.
-- Mantenga identificadores estables, nombres de dispositivos, nombres de archivos, bytes MIDI y nombres escritos por el usuario.
-independiente de las cadenas de visualización localizadas.
-- Agregue comprobaciones de clave faltante, clave no utilizada, humo local y diseño compacto con el
-primera configuración regional de aplicación compatible.
-- Localice el texto de permiso, instalador, actualizador, error y accesibilidad como parte
-de cada localidad admitida.
-- Mantenga los catálogos de traducción agrupados localmente sin servicio de traducción en tiempo de ejecución
-o dependencia de CDN.
+- Introduzca un catálogo de cadenas empaquetado solo cuando exista un flujo de trabajo de traducción mantenido.
+- Mantenga los identificadores estables, los nombres de dispositivos, los nombres de archivos, los bytes MIDI y los nombres escritos por el usuario independientes de las cadenas de visualización localizadas.
+- Agregue comprobaciones de clave faltante, clave no utilizada, humo de configuración regional y diseño compacto con la primera configuración regional de la aplicación compatible.
+- Localice el texto de permisos, instalador, actualizador, error y accesibilidad como parte de cada configuración regional admitida.
+- Mantenga los catálogos de traducción empaquetados localmente sin servicio de traducción en tiempo de ejecución ni dependencia de CDN.
 
 ## Documentación y ejemplos
 
-- Agregue capturas de pantalla mantenidas para la configuración, los permisos, la superficie de control y
-Pop Out.
-- Agregue guías de configuración de hardware para cámaras, interfaces de audio, proyectores y el
-Equipo UC-33e/mioXC.
-- Mantenga una matriz de resolución de problemas para permisos, respaldo de GPU, códecs y
-Problemas con la ventana de salida.
-- Mantenga README, renderizador, seguridad, rendimiento, pruebas, accesibilidad y
-Documentación de internacionalización alineada con comportamientos verificados.
+- Agregue capturas de pantalla mantenidas para la configuración, los permisos, la superficie de control y Pop Out.
+- Agregue guías de configuración de hardware para cámaras, interfaces de audio, proyectores y el equipo UC-33e/mioXC.
+- Mantenga una matriz de solución de problemas para permisos, respaldo de GPU, códecs y problemas de ventanas de salida.
+- Mantenga la documentación README, renderizador, seguridad, rendimiento, pruebas, accesibilidad e internacionalización alineada con el comportamiento verificado.
 
 ## Restricciones de planificación
 
 - La compatibilidad con WebGPU varía según las vistas web y plataformas de Tauri.
-- Linux GPU, el comportamiento de la cámara, el audio y el paquete varía según la distribución y
-pila de controladores.
-- La captura multicámara depende del firmware de la cámara, la topología USB y el funcionamiento.
-comportamiento del sistema.
+- Linux GPU, el comportamiento de la cámara, el audio y el paquete varían según la distribución y la pila de controladores.
+- La captura multicámara depende del firmware de la cámara, la topología del USB y el comportamiento del sistema operativo.
 - Las concesiones de privacidad macOS siguen siendo sensibles a la identidad y firma del paquete.
 - Las licencias y la configuración de FFmpeg siguen siendo puertas de lanzamiento.
 - La decodificación de medios nativos y la interoperabilidad de GPU difieren sustancialmente entre plataformas.
-- Las asignaciones estructurales de MIDI de alta velocidad pueden crear una rotación del renderizador a pesar de
-coalescencia y límites de tarifas.
-- El modo Stream requiere un flujo de trabajo completo del usuario antes de poder regresar al
-panel Fuente normal.
+- Las asignaciones estructurales de alta velocidad MIDI pueden crear una rotación del renderizador a pesar de los límites de velocidad y fusión.
+- El modo Transmisión requiere un flujo de trabajo de usuario completo antes de poder regresar al panel Fuente normal.
 
 ## 1.0 Dirección
 
 - Paquetes documentados e instalables para macOS, Windows y Linux.
-- Operación de escritorio sin conexión, excepto para verificaciones y revisiones de actualización deliberadas,
-informes de fallos de suscripción.
-- Imagen de demostración confiable, video de demostración, archivo personalizado, cámara, preajuste, WTF, audio y
-Flujos de trabajo Pop Out desde el primer lanzamiento.
+- Operación de escritorio sin conexión, excepto para verificaciones de actualizaciones deliberadas e informes de fallos revisados ​​y opcionales.
+- Flujos de trabajo confiables Demo Image, Demo Video, archivos personalizados, cámara, ajustes preestablecidos, WTF, audio y Pop Out desde el primer lanzamiento.
 - Comportamiento estable de MIDI en el equipo UC-33e/mioXC documentado.
 - El modo de transmisión ya sea producido y probado o ausente de la interfaz de usuario del usuario normal.
-- Los artefactos públicos macOS conservan la firma, la certificación notarial, el grapado y la identificación del desarrollador.
-Aceptación del gatekeeper e identidad del actualizador.
-- Los artefactos Windows utilizan una postura de distribución claramente documentada, con firmas
-los instaladores prefieren una vez que la ruta de firma esté operativa.
+- Los artefactos públicos macOS conservan la firma del ID del desarrollador, la certificación notarial, el grapado, la aceptación del Gatekeeper y la identidad del actualizador.
+- Los artefactos Windows utilizan una postura de distribución claramente documentada, y se prefieren los instaladores firmados una vez que la ruta de firma está operativa.
 - Los documentos y notas de la versión actuales coinciden con el producto enviado.
 
 

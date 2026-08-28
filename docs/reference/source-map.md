@@ -23,6 +23,7 @@ The sync script uses the following source files from the ASCII VJ Remix reposito
 | `docs/I18N.md` | Internationalization and localization expectations. |
 | `docs/ROADMAP.md` | Prospective direction only. |
 | `package.json` | NPM command reference. |
+| `src-tauri/icons/icon.png` | Approved canonical app icon copied into the marketing site. |
 
 ## Regenerate Docs
 

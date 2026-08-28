@@ -7,7 +7,37 @@ parent: "Reference"
 
 # Changelog
 
-Version 0.9.9 keeps crash-report preferences reachable with an empty queue,
+## [Unreleased]
+
+## [0.9.12] - 2026-08-28
+
+### Fixed
+
+- Restored visible primary-view output for every built-in Demo Image preset by
+  correcting WebGL glyph-page uploads and using cached max-coverage atlas mips
+  for glyphs rendered into very small cells.
+- Kept solid, pixel, and glyph preset canvases at the source aspect ratio by
+  resolving static row counts from the actual cell width and height.
+- Added an all-preset primary-view smoke matrix covering activation, visible
+  output, WebGL errors, lazy glyph-page completion, and canvas aspect.
+- Prevented blank primary-view glyph canvases in the macOS Apple WebKit runtime
+  by selecting the existing bounded Canvas2D glyph path there. Solid/pixel
+  primary presets retain WebGPU, compatible runtimes retain GPU glyphs, and the
+  native Pop Out renderer is unchanged.
+- Made the packaged desktop performance smoke reject an advancing renderer
+  whose primary canvas has no visible pixel signal.
+- Added a packaged Apple WebKit sweep that activates all 69 built-in Demo Image
+  presets and checks primary-view visibility, renderer family, running state,
+  GPU errors, and source/canvas aspect for each final surface.
+
+Version 0.9.12 restores every built-in preset in the primary app view while
+preserving the source aspect ratio and the native Pop Out path. Version 0.9.11
+adds performance-budgeted project palettes, ordered dithering,
+multilingual glyph controls, custom Unicode ramps, density guardrails, and
+renderer/native-output parity. Version 0.9.10 replaces the legacy television artwork with one canonical app
+icon generated for every packaged platform and carries the post-0.9.9 Reports
+acceptance correction. Version 0.9.9 keeps crash-report preferences reachable
+with an empty queue,
 removes the duplicate top-bar backend readout, and extends packaged UI smoke to
 cover both controls. Version 0.9.8 restores the production Update control and
 launch check, adds a packaged UI regression smoke, and shortens release builds
@@ -26,6 +56,115 @@ distribution, publishes Windows as an unsigned preview while signing is
 deferred, and expands audio reactivity with dense-mix controls that reduce
 overreaction on busy music. Version 0.9.0 remains the first documentation
 baseline for the current ASCII VJ Remix feature set.
+
+## [0.9.11] - 2026-08-28
+
+### Added
+
+- Added 16 project-native built-in palettes shared by controls, presets,
+  Canvas, WebGL2, WebGPU, and native `wgpu` output: Signal Court, Ember Gold,
+  Prism Armor, Verdigris Clay, Forest Kiln, Blush Lichen, Solar Standard,
+  Primary Rite, Jewel Circuit, Spectrum Vault, Soft Voltage, Midnight Scan,
+  Moss Ultraviolet, Cyan Fog, Dark Parade, and Sea Glass Array.
+- Added nearest-color and luminance-ramp mapping plus ordered Bayer 2x2, 4x4,
+  and 8x8 dithering with strength, scale, bias, and invert controls.
+- Added glyph depth, offset, reverse, source/fixed glyph color, background
+  color, and typed custom-ramp controls. Custom ramps are bounded to 96
+  supported Unicode scalars.
+- Added a deterministic, locally bundled neutral glyph atlas with ASCII,
+  Braille, blocks, box drawing, shapes, arrows, mathematical and technical
+  symbols, Latin Extended, Greek, Cyrillic, CJK punctuation/radicals,
+  Hiragana, Katakana, CJK Unified Ideographs U+4E00-U+9FFF, and Hangul
+  syllables.
+- Added ten palette/glyph presets and incorporated the remaining palettes into
+  existing presets without adding palette-pack or palette-JSON import.
+- Added a global Advanced Density preference that exposes up to 900 columns
+  outside visual presets and clearly removes the 30 FPS guarantee.
+
+### Changed
+
+- Fused palette lookup and ordered dithering into the existing cell pass. A
+  shared 32x32x32 lookup table is rebuilt only when palette/mapping changes.
+- Replaced the fixed bundled-glyph index path with Unicode-scalar glyph ids and
+  a paged atlas shared by browser GPU and native Pop Out renderers.
+- Repaged the atlas into sixteen 1024x1024 R8 pages. Total GPU allocation stays
+  bounded while multilingual selection performs smaller lazy decode/upload
+  operations; the decoded browser page cache is capped at four pages.
+- Added a glyph-resource input key so 60 Hz audio and transition updates do not
+  reconstruct ramps, allocate buffers, or upload glyph resources when glyph
+  settings are unchanged.
+- Native Pop Out now checks for an available surface before source-frame queue
+  writes, drains macOS display-link autorelease work per tick, and polls
+  completed GPU work. Occluded outputs no longer retain one upload staging
+  allocation per decoded frame.
+- Retuned built-in presets that previously requested 700 to 900 columns into
+  the measured normal-density envelope. Advanced Density remains available as
+  an explicit machine preference.
+- Extended WTF, audio reactivity, and MIDI through the existing canonical
+  parameter paths for palette, dither, and glyph behavior.
+
+### Performance
+
+- The normal accelerated ceiling is 640 columns and 160,000 total cells; the
+  software ceiling is 120 columns and 6,000 cells. Advanced Density allows up
+  to 900 columns and 500,000 cells without a frame-rate promise.
+- On an optimized M1 Max/64 GB validation host at 640 columns with 1080p video,
+  synthetic audio reactivity, and native Pop Out, feature-off WebGL2 measured
+  39.1 FPS main, 39.9 FPS with Pop Out, and 35.4 FPS during transitions.
+- The full Signal Court/Bayer 4/CJK workload measured 37.9, 40.1, and 37.0 FPS
+  for the same phases, with a worst phase P95 of 31.6 ms and about 446 MB peak
+  RSS. Native Pop Out presented near 60 FPS with zero GPU failures.
+- A pre-fix unattended 15-minute occlusion run grew from 156.5 MB to 9,411.9 MB
+  steady RSS. The fixed repeat began at 156.1 MB and ended at 155.5 MB, with a
+  446.1 MB startup peak and no native-sync failures. Background-window
+  throttling made that repeat memory evidence rather than FPS evidence.
+- These figures are local evidence from a faster-than-floor host, not physical
+  M1/16 GB or Windows integrated-GPU acceptance.
+
+### Validation
+
+- Added deterministic glyph source/manifest/hash verification and complete
+  common-block coverage tests for 34,895 Unicode scalars across 16 pages.
+- Extended static smoke to prove palette/dither/custom multilingual ramp state
+  reaches the WebGL2 output renderer and loads only the required atlas pages.
+- Extended UI performance reports with requested feature configuration,
+  renderer replacement counts, frame resets, and actual backend selection.
+- Density benchmarks now fail their process when a child run fails its FPS
+  contract or exceeds the steady-memory drift budget; a failed report can no
+  longer be printed from a successful benchmark command.
+- Renderer math, atlas verification, optimized static smoke, native Pop Out
+  smoke, and all 48 Rust tests pass locally. WebGPU was not exposed by the
+  local macOS webview during the optimized acceptance run, so it fell back to
+  WebGL2 and is not claimed as a local WebGPU performance result.
+
+## [0.9.10] - 2026-08-26
+
+### Changed
+
+- Replaced the legacy television app icon with the new neon play-and-pixel mark
+  across the macOS, Windows, Linux, iOS, and Android assets generated by Tauri.
+- Added one canonical 1024px RGBA icon source and a single generation command;
+  platform-specific icon files are generated outputs rather than independent
+  artwork sources.
+
+### Fixed
+
+- Published-release UI acceptance now recognizes both valid Reports states:
+  the empty `Reports` label and the pending-count label. A valid pending report
+  no longer causes Windows or Linux acceptance to reject otherwise working
+  immutable release artifacts.
+
+### Validation
+
+- Added a cross-platform icon check that regenerates all Tauri icon assets from
+  the canonical source and compares their decoded, alpha-composited image
+  content. PNG payloads inside ICO and ICNS containers are normalized so
+  platform-specific compression, transparent RGB data, container ordering, and
+  generated XML line endings do not mask artwork changes. A tightly bounded
+  pixel tolerance covers minor cross-platform resampling differences while
+  rejecting visible drift.
+- Desktop and release gates now run the icon consistency check before compiling
+  or packaging the app.
 
 ## [0.9.9] - 2026-08-26
 
@@ -55,7 +194,7 @@ baseline for the current ASCII VJ Remix feature set.
   disabled, and busy states.
 - Static and packaged release smoke now require the duplicate backend status to
   be absent. Packaged macOS, Windows, and Linux smoke also requires the Reports
-  control to remain visible in either its empty or pending-count state.
+  control to remain visible with an empty queue.
 
 ## [0.9.8] - 2026-08-26
 

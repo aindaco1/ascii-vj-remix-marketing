@@ -8,124 +8,107 @@ lang: es
 
 # Conjunto de funciones
 
-Esta página describe la línea base de funciones ASCII VJ Remix actual para desarrolladores que planean bifurcaciones, puertos, integraciones o trabajo de funciones.
+Esta página describe la línea base de funciones ASCII VJ Remix actual para desarrolladores que planean bifurcaciones, puertos, integraciones o trabajo de funciones. El mapa de capacidades se genera a partir del archivo README del repositorio principal.
 
-## Entradas de origen
+## Capacidades actuales
 
-- Archivos de imágenes locales.
-- Archivos de vídeo locales.
-- Selección de archivos MKV donde la ruta del decodificador de plataforma activa puede manejar la reproducción.
-- Entrada de cámara/webcam.
-- Múltiples cámaras simultáneas cuando el sistema operativo y el tiempo de ejecución permiten la captura simultánea.
+### Fuentes
+
+- Imagen de demostración incorporada, utilizada como fuente de inicio predeterminada.
+- Vídeo de demostración incorporado.
+- Archivos de imagen y vídeo locales seleccionados por el usuario.
+- Soporte de selección MKV en el selector de archivos del escritorio. La reproducción depende de la ruta del decodificador de la plataforma activa; MP4/H.264 es el formato admitido de forma más consistente.
+- Entrada de cámara web/cámara local.
+- Múltiples cámaras simultáneas cuando el sistema operativo y el tiempo de ejecución del escritorio lo permitan.
 - Diseños del mezclador de cámaras: cuadrícula, fila dividida, pila e imagen en imagen.
-- Controles de cámara para selección de dispositivo, tamaño de captura, FPS, diseño, encuadre y espejo.
-- Entradas de análisis de audio: micrófono/entrada, archivos de audio locales y audio del sistema/pantalla donde el sistema operativo lo expone a la aplicación de escritorio.
+- Los controles de la cámara aparecen directamente debajo del panel Fuente mientras la Cámara está activa.
+- Los medios estáticos y los fotogramas de las cámaras permanecen locales. No se suben a un servidor.
 
-Los medios y marcos de cámara seleccionados permanecen locales. El renderizador recibe URL de medios reproducibles o identificadores registrados de sesión local; no recibe acceso amplio al sistema de archivos.
+### Representación
 
-## Representación de backends
-
-- WebGPU es el principal objetivo de calidad en tiempos de ejecución de escritorio capaces.
-- WebGL2 es el principal respaldo integrado de GPU.
-- Canvas2D sigue siendo la ruta de compatibilidad para la salida ASCII de estilo glifo tradicional.
-- Pixel Canvas sigue estando disponible como alternativa de compatibilidad.
-- El Tauri Pop Out nativo utiliza un presentador `wgpu` cuando esté disponible:
+- El renderizador WebGPU es el principal objetivo de calidad en tiempos de ejecución de escritorio compatibles.
+- El renderizador WebGL2 es el principal respaldo integrado de GPU.
+- Las rutas Canvas2D y Pixel Canvas siguen siendo alternativas de compatibilidad.
+- La ventana de salida nativa Tauri utiliza un presentador `wgpu` cuando esté disponible:
   - Metal en macOS.
   - D3D12 en Windows.
   - Vulkan/GLES en Linux.
-- El Pop Out nativo conserva el modo de glifo y los parámetros del conjunto de caracteres para los ajustes preestablecidos de ASCII tradicionales en lugar de aplanarlos en celdas sólidas.
+- El Pop Out nativo conserva los parámetros del modo glifo y del conjunto de caracteres para los ajustes preestablecidos ASCII tradicionales en lugar de aplanarlos en celdas sólidas.
+- Dieciséis paletas nativas del proyecto, mapeo de color/luminancia más cercano y tramado Bayer 2x2/4x4/8x8 ordenado comparten un parámetro y un contrato de tabla de búsqueda en el navegador, Canvas y rutas de salida nativas.
+- Los controles de glifo cubren profundidad, desplazamiento, inversión, color de origen/fijo, fondo, Braille, bloques de dibujo/símbolos comunes, latín extendido, griego, cirílico, marcas CJK, Hiragana, Katakana, CJK unificado U+4E00-U+9FFF, Hangul y rampas personalizadas de hasta 96 escalares Unicode compatibles.
+- El atlas neutral Unicode se genera y verifica fuera de línea, se incluye localmente y se carga en páginas delimitadas de 1024 px solo cuando los glifos seleccionados las necesitan.
+- La densidad normal está protegida por el rendimiento mediante límites de columnas compartidas y de celdas totales. La preferencia global Advanced Density expone hasta 900 columnas sin una garantía de 30 FPS y nunca se almacena en ajustes preestablecidos visuales.
+- La versión 0.9.6 elimina las cargas duplicadas del marco fuente nativo, reutiliza recursos estables GPU y limita el trabajo de la interfaz de usuario en tiempo de transición sin cambiar las matemáticas del renderizador o la configuración de calidad.
+- El renderizador expone controles en vivo para cuadrícula, tamaño de celda, color, gamma, brillo, contraste, saturación, combinación de fondo, cuantificación, fluctuación, posición de muestra, suavizado, FPS, comportamiento de glifo/celda y estado de rendimiento.
+- La superposición de estadísticas está habilitada de forma predeterminada y sigue siendo controlada por el usuario.
 
-## Controles de renderizado en vivo
+### Presets y controles en vivo
 
-La aplicación mantiene la selección de fuente, ajustes preestablecidos, WTF mode, modulación de audio, salida nativa y control experimental de MIDI dirigidos a través de un modelo de parámetro canónico.
-
-Los principales grupos de control incluyen:
-
-- Modo de fuente, ID/URL del medio, tipo de medio y nombre de la fuente.
-- Identificadores de dispositivos de cámara, resolución, FPS, diseño, encuadre y espejo.
-- Selección de backend: automático, WebGPU, WebGL2, Canvas2D, Pixel Canvas.
-- Cuadrícula: columnas, filas, filas automáticas, dimensiones de celda y corrección de aspecto.
-- Color: saturación, contraste, brillo, gamma, combinación de fondo y cuantización.
-- Muestreo: FPS, cantidad de fluctuación, velocidad de fluctuación, posición de muestra y suavizado.
-- Comportamiento de glifos/celdas: modo glifo, modo sólido, juego de caracteres compacto, menú de familia de fuentes e intensidad mínima de glifo.
-- UI/rendimiento: superposición de estadísticas y tiempo de transición.
-
-Las transiciones estáticas entre familias de renderizadores mantienen la propiedad de los medios en la capa de tiempo de ejecución compartida. Los renderizadores Canvas2D, pixel Canvas, WebGL y WebGPU pueden realizar fundidos cruzados sobre la misma fuente en vivo en lugar de destruir y recargar medios cuando cambia el comportamiento del backend, glifo o celda sólida.
-
-## Preajustes
-
-ASCII VJ Remix incluye ajustes preestablecidos visuales integrados de solo lectura y ajustes preestablecidos administrados por el usuario.
-
-Las familias visuales integradas incluyen apariencias extremas como Neon Sledgehammer, Gamma Sinkhole, Chrome Wound, Candy Fragmenter, Paper Shredder, Cyberdelic Riot, Acid Snowstorm, Terminal Collapse y Neon Razorstorm.
-
-Los ajustes preestablecidos de ASCII tradicionales incluyen Classic Camera ASCII, ANSI Newsprint, Terminal Mono y Dense Typewriter.
-
-El catálogo de ajustes preestablecidos actual incluye 23 ajustes preestablecidos de personajes acreditados inspirados en ascii.today, incluidos Broadway KB, Computer, Doom, Ghost, Modular, Standard, Univers y Doh.
-
-Los ajustes preestablecidos del usuario se pueden guardar, duplicar, actualizar, eliminar, importar y exportar. Los ajustes preestablecidos conservan la fuente de medios activa a menos que el usuario la cambie explícitamente.
-
-## Transiciones y modo WTF
-
+- Ajustes preestablecidos visuales integrados de solo lectura, que incluyen estilos extremos como Neon Sledgehammer, Gamma Sinkhole, Chrome Wound, Candy Fragmenter, Paper Shredder, Cyberdelic Riot, Acid Snowstorm, Terminal Collapse y Neon Razorstorm.
+- Preajustes ASCII tradicionales integrados, incluidos Classic Camera ASCII, ANSI Newsprint, Terminal Mono y Dense Typewriter.
+- Veintitrés ajustes preestablecidos de caracteres de solo lectura adaptados de [ascii.today](https://ascii.today/), incluidos Broadway KB, Computer, Doom, Ghost, Modular, Standard, Univers y Doh. El paquete acreditado completo se encuentra en [ascii.today Character Presets](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/ASCII_TODAY_PRESETS.md).
+- Los controles de conjunto de caracteres y familia de fuentes permanecen compactos para que el ajuste ASCII tradicional no abarrote la densa superficie de control en vivo.
+- Los controles de paleta, mapeo, tramado ordenado, rampa de glifos y color de glifos se pueden ajustar y guardar de forma independiente a través del esquema visual preestablecido existente.
+- Diez variantes integradas de paleta/glifo incluyen Braille, dibujo de cuadro, marcas CJK, Hiragana, Katakana, CJK Unificado y Hangul. Las otras seis paletas se incorporan a los ajustes preestablecidos existentes.
+- Los ajustes preestablecidos del usuario se pueden guardar, duplicar, actualizar, eliminar, importar y exportar.
 - Las transiciones preestablecidas se funden en lugar de fundirse en negro.
 - El tiempo de transición es configurable.
-- Las transiciones estáticas de vídeo/cámara pueden moverse entre los renderizadores de glifos GPU, sólido/píxel y Canvas2D mientras se mantiene la reproducción en vivo.
-- WTF mode cambia continuamente a través de configuraciones aleatorias de seguridad en vivo.
-- WTF mode puede anclar la aleatorización tanto en familias de ajustes preestablecidos extremos como en ajustes preestablecidos ASCII tradicionales.
-- Las abrazaderas seguras evitan la salida de negro puro o blanco puro durante estados aleatorios o controlados por audio.
+- Los ajustes preestablecidos conservan la fuente de medios activa a menos que el usuario la cambie explícitamente.
+- WTF mode realiza una transición continua a través de configuraciones aleatorias seguras en vivo y se inclina hacia familias preestablecidas ASCII tanto extremas como tradicionales, evitando al mismo tiempo la salida de blanco puro o negro puro.
 
-## Reactividad de audio
+### Reactividad de audio
 
-La reactividad de audio está habilitada de forma predeterminada y comienza desde Mic/Entrada de forma predeterminada.
+- La reactividad de audio está activada de forma predeterminada.
+- El micrófono/entrada es la fuente reactiva de audio predeterminada.
+- Los archivos de audio locales pueden impulsar la modulación visual.
+- El audio del sistema/pantalla se admite cuando el sistema operativo proporciona una pista de audio a la aplicación de escritorio.
+- Las compilaciones de escritorio Tauri incluyen rutas de captura de audio nativas para funciones de audio de entrada/sistema.
+- Pistas de análisis de audio RMS, graves, medios-bajos, medios, medios-altos, agudos, presencia, brillo, densidad, energía transitoria, pulso de ritmo y movimiento espectral.
+- Los controles de amortiguación de mezcla densa y de nivel de ruido ayudan a que las canciones ocupadas se mantengan reactivas sin fijar la vibración y la respuesta de ritmo al máximo.
+- La modulación de audio no es persistente: afecta los parámetros de renderizado efectivos en vivo sin reescribir los ajustes preestablecidos guardados.
+- Los límites de seguridad evitan que la alta sensibilidad lleve al renderizador a pantallas de color blanco puro o negro puro.
 
-Analiza características limitadas en lugar de buffers de audio sin formato:
+### Pop Out y pantallas externas
 
-- RMS.
-- Bajo.
-- Medio-bajo.
-- Medio.
-- Medio-alto.
-- Agudos.
-- Presencia.
-- Brillo.
-- Densidad.
-- Energía transitoria y flujo.
-- Batir el pulso.
-- Movimiento espectral.
+- Pop Out crea una ventana de salida separada destinada a un proyector, una tarjeta de captura o una pantalla secundaria.
+- La ventana de control principal permanece visible e interactiva.
+- La ventana de salida del escritorio es nativa, no una segunda superficie de interfaz de usuario duplicada y pesada.
+- La selección de visualización de salida persiste cuando Tauri puede enumerar visualizaciones.
 
-Los controles de amortiguación de mezcla densa y ruido de fondo ayudan a que las pistas ocupadas se mantengan reactivas sin fijar la vibración y la respuesta de ritmo al máximo. La modulación de audio afecta los parámetros de renderizado efectivos en vivo sin reescribir los ajustes preestablecidos guardados.
+### Control experimental MIDI
 
-## Control experimental MIDI
+- Control experimental nativo DIN MIDI para un Evolution/M-Audio UC-33e conectado a través de un mioXC de iConnectivity.
+- Cuatro páginas de hardware para control visual, de audio, preestablecido y fino/de usuario, con los 9 atenuadores, 24 controladores giratorios y 14 botones asignables asignados.
+- Ranuras numéricas preestablecidas visualmente del 1 al 128 con Enter, Previous y Next.
+- La soft takeover está habilitada de forma predeterminada para evitar saltos después de cambios preestablecidos de software.
+- Anulaciones de MIDI Learn, monitoreo de conexión y reconexión automática de mioXC.
+- Captura limitada de SysEx de banco completo, instalación/restauración explícita, verificación y Ensure Profile on Connection opcional.
+- MIDI está restringido a parámetros visuales, configuraciones audio-reactivas, ajustes preestablecidos visuales y WTF mode. No puede cambiar las fuentes de medios, la cámara, Pop Out ni las pantallas de salida.
+- La validación de hardware físico actual cubre macOS Apple Silicon con el UC-33e conectado por DIN a través de un mioXC. No se admite USB directo UC-33e y la validación física de Windows/Linux no está completa.
 
-- La entrada/salida nativa multiplataforma MIDI se implementa a través de Rust `midir`.
-- El primer perfil de hardware utiliza un Evolution/M-Audio UC-33e a través de ambas direcciones DIN de un iConnectivity mioXC.
-- Cuatro páginas dirigidas a canales cubren control visual, de audio, preestablecido y fino/de usuario con toma de control suave, aprendizaje MIDI, ranuras preestablecidas numéricas estables y captura/restauración SysEx limitada.
-- MIDI no puede cambiar fuentes, cámara, Pop Out, pantallas de salida, archivos, actualizaciones o configuraciones de informes de fallas.
-- Pasan las pruebas automatizadas de mapeo, transporte, seguridad y alcance. La validación física cubre actualmente macOS Apple Silicon con el UC-33e conectado por DIN a través de un mioXC; El USB directo UC-33e no es compatible y la validación física de Windows/Linux está incompleta.
+MIDI sigue siendo experimental. Pasan las pruebas de mapeo automatizado, seguridad, transporte nativo y SysEx acotado. Ensure Profile on Connection permanece deshabilitado de forma predeterminada y requiere un perfil de hardware capturado y verificado manualmente.
 
-## Pop Out y pantallas externas
-
-Pop Out crea una ventana de salida separada para un proyector, una tarjeta de captura o una pantalla secundaria. La ventana de control principal permanece disponible para la sintonización en vivo.
-
-La ventana de salida está centrada en la presentación y tiene una superficie de comando mínima. Cuando Tauri puede enumerar pantallas, la selección de pantalla de salida persiste.
-
-## Embalaje y actualizaciones
+### Paquetes y actualizaciones de escritorio
 
 - Construido con Tauri v2.
 - El tiempo de ejecución de producción es solo local de forma predeterminada.
-- La app de producción realiza una comprobación no bloqueante de metadatos de GitHub Releases una vez por inicio. Si la versión es actual o no hay conexión, no muestra ningún aviso; la descarga, instalación y reinicio siguen siendo acciones explícitas del usuario mediante el control Actualizar.
-- Las versiones 0.9.6 y 0.9.7 requieren una actualización manual única de DMG a 0.9.9 porque su conjunto de capacidades de producción ocultaba el control de Actualización.
-- El control Informes permanece visible con una cola vacía para que los usuarios puedan revisar las preferencias de informes de fallos antes de que ocurra un error; el estado vacío no crea ni envía ningún informe.
-- El selector Backend central es el único control de backend de la barra superior. Los diagnósticos del backend resuelto en tiempo de ejecución siguen disponibles en la superposición Estadísticas controlada por el usuario.
-- Los artefactos públicos 0.9.9 macOS están firmados con el ID del desarrollador, notariados, engrapados y validados por Gatekeeper.
-- La ruta de lanzamiento 0.9.9 valida la disposición del DMG, las identidades de Developer ID y del archivo del actualizador, el reemplazo controlado por la app, los controles Actualizar e Informes visibles y la ausencia de una lectura duplicada del backend en las apps empaquetadas para macOS, Windows y Linux.
-- Los artefactos Windows actuales siguen siendo versiones preliminares sin firmar.
-- El envío de informes de fallos es solo de producción, se revisa/desinfecta y se enruta a través de la capa de escritorio Rust al relé Cloudflare Worker.
+- La aplicación empaquetada bloquea conexiones HTTP(S) remotas arbitrarias a través de una Política de seguridad de contenido de producción.
+- La aplicación utiliza capacidades Tauri limitadas divididas por ventana:
+  - La ventana de control principal puede abrir medios seleccionados y administrar la salida.
+  - La ventana de salida tiene una superficie de comando mínima.
+- La versión 0.9.8 comprueba metadatos de GitHub Releases para paquetes de actualización firmados una vez en segundo plano cada vez que se abre la aplicación de producción. Una verificación actual o fuera de línea es silenciosa; cuando existe una versión más reciente, el control Update de la barra superior la muestra. Las versiones 0.9.6 y 0.9.7 requieren una actualización manual de DMG a 0.9.8 porque una capacidad de producción faltante ocultaba su control Update.
+- El mismo control Update permanece disponible para una nueva verificación manual. La descarga, la instalación y el reinicio siguen siendo iniciados explícitamente por el usuario.
+- El control Reports permanece visible cuando no hay informes de fallos pendientes, por lo que siempre se puede acceder a las preferencias `ask`, `always` y `off`. Un recuento pendiente y un estado de advertencia aparecen solo después de que se captura un informe desinfectado y delimitado.
+- Los artefactos públicos 0.9.12 macOS están firmados con el ID del desarrollador, notariados, engrapados y validados por el Gatekeeper. Los artefactos públicos 0.9.12 Windows son vistas previas sin firmar.
+- Los comandos de desarrollo normales utilizan la aplicación `ASCII VJ Remix Dev` visiblemente separada y el identificador de paquete `com.asciline.remix.dev`. Las compilaciones de desarrollo no pueden reemplazar ni heredar las concesiones de privacidad de la aplicación de producción.
+- Las rutas en línea intencionales se limitan al flujo de verificación/descarga del actualizador y al envío de informes de fallas revisados/desinfectados solo en producción.
+- El envío del informe de fallos pasa a través de la capa de escritorio Rust hasta el relé `https://crash.dustwave.xyz` Cloudflare Worker. La vista web no obtiene capacidad HTTP arbitraria y los medios seleccionados nunca se cargan. Los diagnósticos de medios locales y los registros arbitrarios no se adjuntan a los informes de fallos.
 
-## Rutas avanzadas
+### Rutas avanzadas y solo de desarrollo
 
-- El trabajo de transmisión heredado ASCILINE y las sesiones de transmisión Rust/FFmpeg más nuevas existen, pero están ocultas de la interfaz de usuario de origen normal.
-- La política complementaria FFmpeg y la compatibilidad con códecs se encuentran en el trabajo del colaborador/lanzamiento.
-- La compatibilidad experimental con UC-33e/mioXC MIDI se envía con la validación documentada del hardware macOS Apple Silicon.
+La ruta de transmisión heredada ASCILINE y el código de sesión de transmisión Rust/FFmpeg son infraestructura de desarrollo. El modo de transmisión, el selector estático/transmisión, la etiqueta de conexión y el contador de búfer no están expuestos en la interfaz de usuario de origen normal.
+
+La configuración inicial del hardware y el mapa completo del controlador se encuentran en [docs/MIDI_UC33E.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MIDI_UC33E.md).
 
 
 
@@ -133,5 +116,3 @@ La ventana de salida está centrada en la presentación y tiene una superficie d
 
 Esta página se genera a partir del material fuente de ASCII VJ Remix. Fuentes primarias:
 - [README.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/README.md)
-- [docs/RENDERING_ENGINE.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/RENDERING_ENGINE.md)
-- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/CHANGELOG.md)

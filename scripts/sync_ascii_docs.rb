@@ -2,6 +2,7 @@
 # frozen_string_literal: true
 
 require "fileutils"
+require "digest"
 require "pathname"
 
 ROOT = Pathname(__dir__).join("..").expand_path
@@ -9,6 +10,8 @@ SOURCE_ROOT = Pathname(ENV.fetch("ASCII_VJ_SOURCE", "/Users/aindaco1/Library/Mob
 SOURCE_REPO = ENV.fetch("ASCII_VJ_REPO", "aindaco1/ascii-vj-remix")
 BLOB_BASE = "https://github.com/#{SOURCE_REPO}/blob/main/"
 TREE_BASE = "https://github.com/#{SOURCE_REPO}/tree/main/"
+ICON_SOURCE = "src-tauri/icons/icon.png"
+ICON_DESTINATION = "assets/images/ascii-vj-remix-app-icon.png"
 
 SOURCE_FILES = {
   readme: "README.md",
@@ -95,6 +98,34 @@ module SyncAsciiDocs
     markdown[/^##\s+\[#{Regexp.escape(version)}\]\s+-\s+(\d{4}-\d{2}-\d{2})\s*$/, 1] || ""
   end
 
+  def released_body(markdown, version)
+    escaped = Regexp.escape(version)
+    match = markdown.match(/^##\s+\[#{escaped}\]\s+-\s+\d{4}-\d{2}-\d{2}\s*\n(?<body>[\s\S]*?)(?=^##\s+|\z)/)
+    raise "Missing release notes for #{version}" unless match
+
+    match[:body].strip
+  end
+
+  def source_sections(source, headings)
+    markdown = read_source(source)
+    headings.map do |heading|
+      body = section(markdown, heading)
+      raise "Missing section #{heading.inspect} in #{source}" if body.empty?
+
+      "## #{heading}\n\n#{rewrite_links(body, source)}"
+    end.join("\n\n")
+  end
+
+  def sync_app_icon
+    source = SOURCE_ROOT.join(ICON_SOURCE)
+    raise "Missing source icon: #{source}" unless source.file?
+
+    destination = ROOT.join(ICON_DESTINATION)
+    destination.dirname.mkpath
+    FileUtils.cp(source, destination)
+    Digest::SHA256.file(destination).hexdigest
+  end
+
   def command_rows(package_json)
     scripts = package_json.scan(/"([^"]+)"\s*:\s*"([^"]+)"/)
     return [] if scripts.empty?
@@ -174,209 +205,29 @@ module SyncAsciiDocs
       product_overview: <<~MD,
         # ASCII VJ Remix
 
-        ASCII VJ Remix is a local-first native desktop renderer lab for turning images, videos, cameras, and audio-reactive signals into high-performance ASCII and cell-based visuals.
+        Current source docs describe the **#{version}** feature set. The sections below are selected directly from the mother repository so product identity, requirements, and hardware guidance do not drift into a second hand-maintained contract.
 
-        It is built for VJ-style experimentation: pick a source, choose or build a preset, push the renderer hard, pop output onto another display, and keep tuning the look live while media keeps running.
-
-        Current source docs describe the **#{version}** feature set.
-
-        ## Product Boundary
-
-        - The intended product is the packaged desktop app for macOS, Windows, and Linux.
-        - Browser/Vite mode is useful for development, smoke tests, and renderer portability, but it is not the main product framing.
-        - Runtime is local-first and offline by default.
-        - User-selected media, camera frames, and audio remain local.
-        - Intentional online paths are limited to one bounded release-metadata check at production launch, explicit updater download/install actions, and production-only reviewed/sanitized crash report submission.
-        - Stream infrastructure is development-only and is not exposed in the normal Source UI.
-        - Experimental native MIDI control is available for the documented UC-33e/mioXC DIN rig. It is intentionally limited to visual, audio-reactive, preset, and WTF controls. Current physical validation covers macOS Apple Silicon; direct UC-33e USB is unsupported, and Windows/Linux physical validation is incomplete.
-
-        ## Project Lineage
-
-        ASCII VJ Remix combines three engineering strands:
-
-        - **ASCILINE**: high-performance ASCII video streaming, adaptive frame encoding, Python/OpenCV experiments, terminal ideas, and Canvas fallback lineage.
-        - **GPU rendering**: high-quality WebGPU/WebGL visual output and local browser media-source architecture.
-        - **ASCII VJ Remix desktop work**: Tauri packaging, native media/audio adapters, native Pop Out output, local release/update infrastructure, crash reporting, and the dense VJ control surface.
-
-        ## System Requirements
-
-        ### macOS
-
-        - Minimum: Apple Silicon Mac, macOS 13 Ventura or newer, 8 GB RAM, Metal-capable GPU, and about 2 GB free disk space.
-        - Optimal: M1 Pro/Max, M2 Pro/Max, M3 Pro/Max, or newer; 16 GB RAM or more; macOS 14 Sonoma, macOS 15 Sequoia, or newer; external display/projector for Pop Out.
-        - Intel Mac support is not the current release target.
-        - Camera, microphone, and audio capture require explicit macOS privacy grants.
-        - Public #{version} macOS artifacts are Developer ID signed, notarized, stapled, and Gatekeeper-validated.
-
-        ### Windows
-
-        - Minimum: Windows 10 22H2 or Windows 11, x64 CPU, WebView2 runtime, D3D12 or WebGL2-capable GPU, 8 GB RAM, and about 2 GB free disk space.
-        - Optimal: Windows 11, recent Intel/AMD/NVIDIA GPU with current drivers, 16 GB RAM or more, hardware media decode, and dedicated output display.
-        - Public #{version} Windows artifacts are unsigned previews.
-
-        ### Linux
-
-        - Minimum: modern x86_64 Linux distribution, WebKitGTK 4.1 runtime, Mesa or vendor GPU drivers with WebGL2, 8 GB RAM, and about 2 GB free disk space.
-        - Optimal: Ubuntu 24.04, Fedora 40, Arch, or comparable current distro; Wayland or well-configured X11; recent Mesa/NVIDIA drivers; Vulkan-capable GPU.
-        - GPU behavior varies by distro, WebKitGTK version, and graphics driver.
-
-        ## Practical Hardware Guidance
-
-        The renderer can be demanding. Higher grid sizes, multiple cameras, audio reactivity, and native output windows all increase load.
-
-        For live camera work, stable USB cameras, direct USB ports or a powered hub, good lighting, AC power, and a dedicated output display often matter more than raw CPU alone.
+        #{source_sections("README.md", ["What This Project Is", "System Requirements", "Hardware Guidance", "Battery and Heat Warning"])}
 
         #{source_note(["README.md", "CHANGELOG.md"])}
       MD
       features: <<~MD,
         # Feature Set
 
-        This page describes the current ASCII VJ Remix feature baseline for developers planning forks, ports, integrations, or feature work.
+        This page describes the current ASCII VJ Remix feature baseline for developers planning forks, ports, integrations, or feature work. The capability map is generated from the mother repository's README.
 
-        ## Source Inputs
+        #{source_sections("README.md", ["Current Capabilities"])}
 
-        - Local image files.
-        - Local video files.
-        - MKV file selection where the active platform decoder path can handle playback.
-        - Camera/webcam input.
-        - Multiple simultaneous cameras when the OS and runtime allow concurrent capture.
-        - Camera mixer layouts: grid, split row, stack, and picture-in-picture.
-        - Camera controls for device selection, capture size, FPS, layout, framing, and mirror.
-        - Audio analysis inputs: mic/input, local audio files, and system/display audio where the OS exposes it to the desktop app.
-
-        Selected media and camera frames stay local. The renderer receives playable media URLs or session-local registered ids; it does not receive broad filesystem access.
-
-        ## Rendering Backends
-
-        - WebGPU is the primary quality target on capable desktop runtimes.
-        - WebGL2 is the main embedded GPU fallback.
-        - Canvas2D remains the compatibility path for traditional glyph-style ASCII output.
-        - Pixel Canvas remains available as a compatibility fallback.
-        - Native Tauri Pop Out uses a `wgpu` presenter where available:
-          - Metal on macOS.
-          - D3D12 on Windows.
-          - Vulkan/GLES on Linux.
-        - Native Pop Out preserves glyph mode and character-set parameters for traditional ASCII presets instead of flattening them into solid cells.
-
-        ## Live Renderer Controls
-
-        The app keeps source selection, presets, WTF mode, audio modulation, native output, and experimental MIDI control routed through one canonical parameter model.
-
-        Major control groups include:
-
-        - Source mode, media id/URL, media type, and source name.
-        - Camera device ids, resolution, FPS, layout, framing, and mirror.
-        - Backend selection: auto, WebGPU, WebGL2, Canvas2D, Pixel Canvas.
-        - Grid: columns, rows, auto rows, cell dimensions, and aspect correction.
-        - Color: saturation, contrast, brightness, gamma, background blend, and quantization.
-        - Sampling: FPS, jitter amount, jitter speed, sample position, and smoothing.
-        - Glyph/cell behavior: glyph mode, solid mode, compact character set, font family menu, and minimum glyph intensity.
-        - UI/performance: stats overlay and transition timing.
-
-        Static renderer-family transitions keep media ownership at the shared runtime layer. Canvas2D, pixel Canvas, WebGL, and WebGPU renderers can crossfade over the same live source instead of destroying and reloading media when backend, glyph, or solid-cell behavior changes.
-
-        ## Presets
-
-        ASCII VJ Remix includes read-only built-in visual presets and user-managed presets.
-
-        Built-in visual families include extreme looks such as Neon Sledgehammer, Gamma Sinkhole, Chrome Wound, Candy Fragmenter, Paper Shredder, Cyberdelic Riot, Acid Snowstorm, Terminal Collapse, and Neon Razorstorm.
-
-        Traditional ASCII presets include Classic Camera ASCII, ANSI Newsprint, Terminal Mono, and Dense Typewriter.
-
-        The current preset catalog includes 23 credited ascii.today-inspired character presets, including Broadway KB, Computer, Doom, Ghost, Modular, Standard, Univers, and Doh.
-
-        User presets can be saved, duplicated, updated, deleted, imported, and exported. Presets preserve the active media source unless the user explicitly changes it.
-
-        ## Transitions and WTF Mode
-
-        - Preset transitions crossfade instead of fading to black.
-        - Transition time is configurable.
-        - Static video/camera transitions can move between GPU, solid/pixel, and Canvas2D glyph renderers while keeping playback live.
-        - WTF mode continuously transitions through randomized live-safe settings.
-        - WTF mode can anchor randomization around both extreme preset families and traditional ASCII presets.
-        - Safe clamps avoid pure black or pure white output during random or audio-driven states.
-
-        ## Audio Reactivity
-
-        Audio reactivity is enabled by default and starts from Mic/Input by default.
-
-        It analyzes bounded features rather than raw audio buffers:
-
-        - RMS.
-        - Bass.
-        - Low-mid.
-        - Mid.
-        - High-mid.
-        - Treble.
-        - Presence.
-        - Brightness.
-        - Density.
-        - Transient energy and flux.
-        - Beat pulse.
-        - Spectral movement.
-
-        Dense-mix dampening and noise-floor controls help busy tracks stay reactive without pinning jitter and beat response at maximum. Audio modulation affects live effective render params without rewriting saved presets.
-
-        ## Experimental MIDI Control
-
-        - Native cross-platform MIDI input/output is implemented through Rust `midir`.
-        - The first hardware profile uses an Evolution/M-Audio UC-33e through both DIN directions of an iConnectivity mioXC.
-        - Four channel-addressed pages cover Visual, Audio, Presets, and Fine/User control with soft takeover, MIDI Learn, stable numeric preset slots, and bounded SysEx capture/restore.
-        - MIDI cannot change sources, Camera, Pop Out, output displays, files, updates, or crash-report settings.
-        - Automated mapping, transport, safety, and scope tests pass. Physical validation currently covers macOS Apple Silicon with the UC-33e connected by DIN through a mioXC; direct UC-33e USB is unsupported, and Windows/Linux physical validation is incomplete.
-
-        ## Pop Out and External Displays
-
-        Pop Out creates a separate output window for a projector, capture card, or secondary display. The main control window remains available for live tuning.
-
-        The output window is presentation-focused and has a minimal command surface. When Tauri can enumerate displays, output display selection is persisted.
-
-        ## Packaging and Updates
-
-        - Built with Tauri v2.
-        - Production runtime is local-only by default.
-        - The production app performs one non-blocking GitHub Releases metadata check per launch. Current/offline results stay silent; download, installation, and relaunch remain explicit user actions through the Update control.
-        - Versions 0.9.6 and 0.9.7 require a one-time manual DMG upgrade to #{version} because their production capability set hid the Update control.
-        - The Reports control remains visible with an empty queue so users can review crash-report preferences before an error occurs; empty state does not create or submit a report.
-        - The center Backend selector is the single top-bar backend control. Resolved runtime diagnostics remain available in the user-controlled Stats Overlay.
-        - Public #{version} macOS artifacts are Developer ID signed, notarized, stapled, and Gatekeeper-validated.
-        - The #{version} release path validates DMG layout, Developer ID and updater archive identity, application-driven replacement, visible Update and Reports controls, and the absence of a duplicate backend readout on packaged macOS, Windows, and Linux builds.
-        - Current Windows artifacts remain unsigned preview builds.
-        - Crash report submission is production-only, reviewed/sanitized, and routed through the Rust desktop layer to the Cloudflare Worker relay.
-
-        ## Advanced Paths
-
-        - Legacy ASCILINE stream work and newer Rust/FFmpeg stream sessions exist but are hidden from the normal Source UI.
-        - FFmpeg sidecar policy and codec support live in contributor/release work.
-        - Experimental UC-33e/mioXC MIDI support is shipped with documented macOS Apple Silicon hardware validation.
-
-        #{source_note(["README.md", "docs/RENDERING_ENGINE.md", "CHANGELOG.md"])}
+        #{source_note(["README.md"])}
       MD
       release_baseline: <<~MD,
         # Release Baseline
 
-        Current docs describe the **#{version}** feature set.
+        Current docs describe the **#{version}** feature set. The newest dated changelog entry is the release authority; the Unreleased section is intentionally excluded.
 
-        ## #{version} Highlights
+        ## #{version} Release Notes
 
-        - The Reports control remains visible with an empty queue so users can review the existing `ask`, `always`, and `off` preference before an error occurs. Pending reports still add a count and warning state.
-        - The duplicate right-side backend readout is removed. The center Backend selector remains the canonical control, and the user-owned Stats Overlay retains resolved runtime diagnostics.
-        - Packaged updater UI smoke listeners bind before device initialization so camera or audio startup cannot race an early smoke request.
-        - Published-release smoke launches packaged macOS, Windows, and Linux builds, requires Update and Reports to remain visible, and requires the duplicate backend readout to stay absent.
-        - The recent release line also includes the 0.9.8 updater and release-pipeline fixes, the 0.9.6 renderer and native-output optimizations, and the presets and experimental UC-33e/mioXC MIDI introduced in 0.9.5.
-
-        ## Security Baseline
-
-        - Reports continue to contain only bounded, sanitized crash data. Local media diagnostics and arbitrary logs are not attached or submitted.
-        - The opt-in production acceptance canary refuses to run when a user report is already pending and submits only a hard-coded synthetic payload.
-        - The launch update check sends no media, camera, audio, preset, MIDI, crash-report, or local-path data and does not block app startup when the network is unavailable.
-        - Updater packages remain signed, and installation never starts without a user action.
-        - Development builds cannot replace the production app, inherit its macOS privacy grants, or use the production updater endpoint.
-        - Public macOS artifacts must retain the production bundle identifier, Developer ID team, hardened runtime, and stable designated requirement across updates; current Windows artifacts remain unsigned previews.
-
-        ## Validation Baseline
-
-        The #{version} changelog records deterministic crash-report UI state tests plus packaged checks for Update, Reports, and the single backend control on macOS, Windows, and Linux. The broader release gate retains renderer, audio, MIDI, Tauri policy, signing, notarization, installer, and updater replacement checks.
+        #{rewrite_links(released_body(changelog, version), "CHANGELOG.md")}
 
         #{source_note(["CHANGELOG.md"])}
       MD
@@ -434,52 +285,15 @@ module SyncAsciiDocs
       architecture: <<~MD,
         # Architecture
 
-        ## Product Shape
+        This page assembles the architecture contract from the mother repository's agent and rendering guides instead of maintaining a parallel ownership model here.
 
-        ASCII VJ Remix is a Tauri v2 desktop app with a vanilla/Vite renderer UI, GPU/Canvas rendering paths, native output work, and local media/audio adapters.
+        #{source_sections("docs/AGENTS.md", ["Project Identity"])}
 
-        The app is a desktop performer tool, not a hosted SaaS app. Browser mode supports development and portability; the packaged desktop app is the product.
+        #{source_sections("docs/RENDERING_ENGINE.md", ["Architecture Properties", "High-Level Data Flow", "Parameter Model"])}
 
-        ## High-Level Flow
+        #{source_sections("docs/AGENTS.md", ["Repository Ownership Map", "Non-Negotiable Constraints"])}
 
-        ```text
-        source selection
-          -> source adapter
-          -> canonical params
-          -> optional live modulation
-          -> effective params
-          -> renderer runtime
-          -> main preview
-          -> optional native/browser Pop Out
-        ```
-
-        ## Ownership Map
-
-        | Area | Primary source locations |
-        | --- | --- |
-        | Main UI, params, presets, source controls, WTF, audio UI | `app.js`, `index.html`, `style.css` |
-        | GPU renderer and media source abstraction | `renderers/gpu/` |
-        | Tauri adapter and output-display helpers | `renderers/desktop/` |
-        | Tauri shell, commands, permissions, updater, native audio, native output | `src-tauri/` |
-        | Native Pop Out renderer | `src-tauri/src/native_output.rs`, `src-tauri/src/native_output/gpu.rs` |
-        | macOS native camera latency path | `src-tauri/src/native_output/native_camera.rs` |
-        | Rust media engine and FFmpeg sessions | `src-tauri/src/media_engine/` |
-        | Build, smoke, release, Podman, FFmpeg scripts | `scripts/` |
-        | User/developer docs | `docs/`, `README.md`, `CHANGELOG.md` |
-
-        ## Non-negotiable Constraints
-
-        - Preserve the app name and native desktop direction.
-        - Keep normal runtime local-first and offline by default.
-        - Keep renderer quality high; WebGPU/WebGL output is the visual quality target.
-        - Preserve fallback paths unless a replacement is implemented and tested.
-        - Treat Pop Out performance and latency as critical user-facing behavior.
-        - Keep selected local media local.
-        - Keep stats overlay user-owned.
-        - Keep stream infrastructure hidden until the stream workflow is productized end to end.
-        - Do not reduce the control density of the VJ surface when restyling.
-
-        #{source_note(["docs/AGENTS.md", "docs/RENDERING_ENGINE.md", "README.md"])}
+        #{source_note(["docs/AGENTS.md", "docs/RENDERING_ENGINE.md"])}
       MD
       rendering_engine: copied_page("Rendering Engine", "docs/RENDERING_ENGINE.md", "Development", 3),
       contributing: copied_page("Contributing", "docs/CONTRIBUTORS.md", "Development", 4),
@@ -506,32 +320,13 @@ module SyncAsciiDocs
       release: <<~MD,
         # Release and Updates
 
-        ## Current Release Posture
+        Current source docs describe the **#{version}** release line. Release mechanics and security posture are copied from their canonical mother-repository guides.
 
-        - Current source docs describe the **#{version}** feature set.
-        - Public #{version} macOS artifacts are Developer ID signed, notarized, stapled, and Gatekeeper-validated.
-        - Public #{version} Windows artifacts are unsigned previews.
-        - Production builds check GitHub Releases metadata once at launch without blocking startup; newer signed releases appear in the existing Update control.
-        - Manual rechecks remain available, while download, installation, and relaunch require explicit user action.
-        - Updater and release checks must not broaden runtime network capability.
+        #{source_sections("docs/SECURITY.md", ["Release Security Posture"])}
 
-        ## macOS
+        #{source_sections("docs/CONTRIBUTORS.md", ["Release and Updater Work"])}
 
-        Public release CI treats macOS signing/notarization as fail-closed. The #{version} artifacts passed signing, notarization, stapling, and Gatekeeper validation. Versions 0.9.6 and 0.9.7 require a one-time manual DMG upgrade to #{version} because their production capability set hid the Update control. Local or test builds may still require the normal macOS right-click Open or Open Anyway flow.
-
-        ## Windows
-
-        Inactive Windows signing configuration and Authenticode verification helpers remain in the source tree, but the #{version} public release workflow does not use them. Its Windows artifacts are unsigned previews.
-
-        ## Crash Reporting
-
-        Production crash reporting is reviewed/sanitized and routed through the Rust desktop layer to the Cloudflare Worker relay at `https://crash.dustwave.xyz`. The webview does not get arbitrary HTTP capability. Reports are bounded and sanitized: media files, frames, raw audio, full paths, tokens, cookies, private environment values, and arbitrary diagnostic logs are not included. The Reports control stays visible with an empty queue so the preference can be reviewed without creating or submitting a report.
-
-        ## Release Validation
-
-        Release CI resolves one immutable tag commit, requires the exact commit's successful desktop workflow, builds the app and pinned FFmpeg runtime concurrently, and verifies restored artifacts before packaging. Published-release smoke then launches the packaged app on macOS, Windows, and Linux, requires Update and Reports to remain visible, requires the duplicate backend readout to stay absent, and retains installer, signing, notarization, updater-signature, and real replacement checks appropriate to each platform.
-
-        #{source_note(["README.md", "CHANGELOG.md", "docs/CONTRIBUTORS.md", "docs/SECURITY.md"])}
+        #{source_note(["docs/SECURITY.md", "docs/CONTRIBUTORS.md", "CHANGELOG.md"])}
       MD
       reference_index: <<~MD,
         # Reference
@@ -582,6 +377,7 @@ module SyncAsciiDocs
         | `docs/I18N.md` | Internationalization and localization expectations. |
         | `docs/ROADMAP.md` | Prospective direction only. |
         | `package.json` | NPM command reference. |
+        | `src-tauri/icons/icon.png` | Approved canonical app icon copied into the marketing site. |
 
         ## Regenerate Docs
 
@@ -623,9 +419,17 @@ module SyncAsciiDocs
     SOURCE_FILES.each_value { |file| read_source(file) }
     changelog = read_source("CHANGELOG.md")
     version = released_version(changelog)
+    icon_sha256 = sync_app_icon
     product_data = ROOT.join("_data/product.yml")
     product_data.dirname.mkpath
-    product_data.write("latest_release:\n  version: #{version.inspect}\n  date: #{released_date(changelog, version).inspect}\n")
+    product_data.write(<<~YAML)
+      latest_release:
+        version: #{version.inspect}
+        date: #{released_date(changelog, version).inspect}
+      app_icon:
+        path: #{("/" + ICON_DESTINATION).inspect}
+        sha256: #{icon_sha256.inspect}
+    YAML
     DOCS.each do |path, title, parent, nav_order, key|
       write_page(path, title, parent, nav_order, pages.fetch(key))
     end

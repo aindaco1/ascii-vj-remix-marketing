@@ -57,21 +57,27 @@ nav_exclude: true
   <div class="stack-list">
     <article class="card"><h3>Video and camera input</h3><p>Use clips or live camera sources as raw material, then turn them into ASCII, cell, pixel, and glyph-based visuals.</p></article>
     <article class="card"><h3>Sound-reactive motion</h3><p>Let rhythm, brightness, density, and frequency bands move the image so the visuals respond to the set instead of sitting still.</p></article>
-    <article class="card"><h3>Preset range</h3><p>Move quickly between clean ASCII, dense cell patterns, solid/pixel looks, high-jitter modes, and palette-heavy treatments.</p></article>
-    <article class="card"><h3>Fine-tune control</h3><p>Adjust the filter until it fits the track, the room, and the screen — from legible ASCII texture to aggressive abstract output.</p></article>
+    <article class="card"><h3>Palette, dither, and glyph control</h3><p>Combine 16 built-in palettes with Bayer dithering, glyph depth and color controls, multilingual character sets, and custom Unicode ramps.</p></article>
+    <article class="card"><h3>Performance-aware density</h3><p>Stay inside shared renderer guardrails by default, or explicitly enable Advanced Density for grids up to 900 columns without a 30 FPS guarantee.</p></article>
   </div>
 </section>
 
 <section class="section-band" aria-labelledby="release-heading">
   <p class="kicker">Latest release</p>
   <h2 id="release-heading">What changed in v{{ site.data.product.latest_release.version }}.</h2>
-  <p class="section-intro">The current release keeps crash-report preferences within reach, simplifies the top bar, and expands packaged UI checks.</p>
-  <div class="card-grid">
-    <article class="card pink"><h3>Reports stay available</h3><p>The top-bar Reports control remains visible with an empty queue, so you can review Ask, Always, or Off before a crash occurs.</p></article>
-    <article class="card"><h3>One backend control</h3><p>The duplicate right-side backend readout is gone. The center selector remains the single place to choose and stop the renderer.</p></article>
-    <article class="card pink"><h3>Stronger UI checks</h3><p>Packaged macOS, Windows, and Linux builds must keep Update and Reports visible and the duplicate backend readout absent.</p></article>
+  <div class="release-summary">
+    <img class="release-app-icon" src="{{ site.data.product.app_icon.path | relative_url }}?v={{ site.data.product.app_icon.path | asset_fingerprint }}" width="512" height="512" alt="ASCII VJ Remix neon play-and-pixel app icon" loading="lazy" decoding="async">
+    <div>
+      <p class="section-intro">v0.9.12 restores visible, correctly proportioned primary output across every built-in preset. It carries forward v0.9.11's palette, dither, multilingual glyph, and density work plus the approved app icon introduced in v0.9.10.</p>
+      <p class="section-intro"><strong>One canonical icon.</strong> The macOS, Windows, Linux, iOS, Android, and marketing assets now derive from the same approved neon play-and-pixel artwork.</p>
+    </div>
   </div>
-  <p class="section-intro"><strong>Already on macOS v0.9.6 or v0.9.7?</strong> Install the current release once from the notarized DMG; those two versions cannot surface the in-app update. v0.9.8 users can update in the app.</p>
+  <div class="card-grid">
+    <article class="card pink"><h3>Every preset visible</h3><p>v0.9.12 fixes blank primary glyph canvases, keeps source aspect ratios intact, and smoke-tests all 69 built-in Demo Image presets in the packaged Apple WebKit app.</p></article>
+    <article class="card"><h3>16 palettes plus ordered dither</h3><p>Use project-native palettes, nearest or luminance mapping, and Bayer 2x2, 4x4, or 8x8 dithering across Canvas, WebGL2, WebGPU, and native Pop Out.</p></article>
+    <article class="card pink"><h3>Multilingual glyph range</h3><p>Tune depth, offset, direction, glyph colors, Braille, drawing symbols, CJK, Hiragana, Katakana, Hangul, or a custom ramp of up to 96 supported Unicode scalars.</p></article>
+  </div>
+  <p class="section-intro"><strong>Already on macOS v0.9.6 or v0.9.7?</strong> Install the current release once from the notarized DMG; those two versions cannot surface the in-app update. v0.9.8 and newer can update in the app.</p>
   <p class="release-link"><a href="{{ '/docs/overview/changelog-baseline/' | relative_url }}">Read the v{{ site.data.product.latest_release.version }} release baseline</a></p>
 </section>
 

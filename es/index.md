@@ -58,21 +58,27 @@ nav_exclude: true
   <div class="stack-list">
     <article class="card"><h3>Video y cámara</h3><p>Usa clips o cámaras en vivo como material base y conviértelos en visuales ASCII, de celda, pixel y glyph.</p></article>
     <article class="card"><h3>Movimiento reactivo al sonido</h3><p>Deja que ritmo, brillo, densidad y bandas de frecuencia muevan la imagen para que los visuales respondan al set.</p></article>
-    <article class="card"><h3>Rango de presets</h3><p>Muévete rápido entre ASCII limpio, patrones densos, looks sólidos/pixel, modos de alto jitter y tratamientos cargados de color.</p></article>
-    <article class="card"><h3>Control fino</h3><p>Ajusta el filtro hasta que le quede al track, al cuarto y a la pantalla: desde textura ASCII legible hasta salida abstracta agresiva.</p></article>
+    <article class="card"><h3>Control de paleta, dithering y glifos</h3><p>Combina 16 paletas integradas con dithering Bayer, controles de profundidad y color de glifos, conjuntos multilingües y rampas Unicode personalizadas.</p></article>
+    <article class="card"><h3>Densidad consciente del rendimiento</h3><p>Mantente dentro de los límites compartidos del renderizador o activa Densidad avanzada para usar hasta 900 columnas sin garantía de 30 FPS.</p></article>
   </div>
 </section>
 
 <section class="section-band" aria-labelledby="release-heading">
   <p class="kicker">Última versión</p>
   <h2 id="release-heading">Qué cambió en v{{ site.data.product.latest_release.version }}.</h2>
-  <p class="section-intro">La versión actual mantiene accesibles las preferencias de informes de fallos, simplifica la barra superior y amplía las comprobaciones de la interfaz empaquetada.</p>
-  <div class="card-grid">
-    <article class="card pink"><h3>Informes siempre accesibles</h3><p>El control Informes permanece visible aunque la cola esté vacía, para que puedas revisar Preguntar, Siempre o Desactivado antes de que ocurra un fallo.</p></article>
-    <article class="card"><h3>Un solo control de backend</h3><p>Se eliminó la lectura duplicada del lado derecho. El selector central sigue siendo el único lugar para elegir y detener el renderizador.</p></article>
-    <article class="card pink"><h3>Mejores comprobaciones de interfaz</h3><p>Las apps empaquetadas para macOS, Windows y Linux deben conservar Actualizar e Informes y no mostrar la lectura duplicada del backend.</p></article>
+  <div class="release-summary">
+    <img class="release-app-icon" src="{{ site.data.product.app_icon.path | relative_url }}?v={{ site.data.product.app_icon.path | asset_fingerprint }}" width="512" height="512" alt="Icono de la app ASCII VJ Remix con símbolo de reproducción y píxeles de neón" loading="lazy" decoding="async">
+    <div>
+      <p class="section-intro">v0.9.12 restaura una salida primaria visible y con proporciones correctas para todos los presets integrados. También incluye las paletas, el dithering, los glifos multilingües y los controles de densidad de v0.9.11, además del icono aprobado de v0.9.10.</p>
+      <p class="section-intro"><strong>Un solo icono canónico.</strong> Los recursos para macOS, Windows, Linux, iOS, Android y marketing ahora parten del mismo diseño aprobado de reproducción y píxeles de neón.</p>
+    </div>
   </div>
-  <p class="section-intro"><strong>¿Ya usas v0.9.6 o v0.9.7 en macOS?</strong> Instala la versión actual una vez desde el DMG notarizado; esas dos versiones no pueden mostrar la actualización dentro de la app. Los usuarios de v0.9.8 pueden actualizar dentro de la app.</p>
+  <div class="card-grid">
+    <article class="card pink"><h3>Todos los presets visibles</h3><p>v0.9.12 corrige lienzos primarios de glifos en blanco, conserva las proporciones de la fuente y prueba los 69 presets integrados de Imagen de demostración en la app empaquetada con Apple WebKit.</p></article>
+    <article class="card"><h3>16 paletas y dithering ordenado</h3><p>Usa paletas propias del proyecto, mapeo por cercanía o luminancia y dithering Bayer 2x2, 4x4 u 8x8 en Canvas, WebGL2, WebGPU y Pop Out nativo.</p></article>
+    <article class="card pink"><h3>Rango de glifos multilingüe</h3><p>Ajusta profundidad, desplazamiento, dirección, colores, Braille, símbolos, CJK, Hiragana, Katakana, Hangul o una rampa personalizada de hasta 96 escalares Unicode compatibles.</p></article>
+  </div>
+  <p class="section-intro"><strong>¿Ya usas v0.9.6 o v0.9.7 en macOS?</strong> Instala la versión actual una vez desde el DMG notarizado; esas dos versiones no pueden mostrar la actualización dentro de la app. v0.9.8 y versiones posteriores pueden actualizarse dentro de la app.</p>
   <p class="release-link"><a href="{{ '/es/docs/overview/changelog-baseline/' | relative_url }}">Leer la base de la versión v{{ site.data.product.latest_release.version }}</a></p>
 </section>
 

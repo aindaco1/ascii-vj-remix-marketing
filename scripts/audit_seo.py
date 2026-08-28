@@ -70,6 +70,14 @@ def link_href(parser: HeadParser, *, rel: str, hreflang: str | None = None) -> s
     return ""
 
 
+def link_hrefs(parser: HeadParser, *, rel: str) -> list[str]:
+    return [
+        item.get("href", "").strip()
+        for item in parser.links
+        if rel in item.get("rel", "").split()
+    ]
+
+
 def is_abs_http(url: str) -> bool:
     parsed = urlparse(url)
     return parsed.scheme in {"http", "https"} and bool(parsed.netloc)
@@ -115,6 +123,13 @@ def audit_page(rel: str, errors: list[str]) -> None:
         href = link_href(parser, rel="alternate", hreflang=lang)
         if not is_abs_http(href):
             fail(errors, f"{label}: missing absolute hreflang {lang}")
+    icon_pattern = re.compile(r"/assets/images/ascii-vj-remix-app-icon\.png\?v=[0-9a-f]{12}$")
+    favicons = link_hrefs(parser, rel="icon")
+    if not any(icon_pattern.search(href) for href in favicons):
+        fail(errors, f"{label}: canonical app icon favicon is missing or unhashed: {favicons!r}")
+    touch_icons = link_hrefs(parser, rel="apple-touch-icon")
+    if not any(icon_pattern.search(href) for href in touch_icons):
+        fail(errors, f"{label}: canonical app touch icon is missing or unhashed: {touch_icons!r}")
     footers = re.findall(r"<footer\b[^>]*>.*?</footer>", html, flags=re.IGNORECASE | re.DOTALL)
     footer_html = "\n".join(footers)
     for forbidden in FORBIDDEN_FOOTER_TEXT:

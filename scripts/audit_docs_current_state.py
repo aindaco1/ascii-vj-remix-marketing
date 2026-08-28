@@ -2,6 +2,7 @@
 """Reject stale or aspirational claims in generated current-state documentation."""
 from __future__ import annotations
 
+import hashlib
 import re
 import sys
 from pathlib import Path
@@ -9,6 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DOCS = ROOT / "docs"
 SPANISH_DOCS = ROOT / "es" / "docs"
+PRODUCT = ROOT / "_data" / "product.yml"
 CURRENT_STATE_EXCLUSIONS = {
     DOCS / "reference" / "changelog.md",
     DOCS / "reference" / "roadmap.md",
@@ -45,9 +47,91 @@ FORBIDDEN_SPANISH_CURRENT_STATE = {
     "translation placeholder leak": re.compile(r"ZZTOKEN|ZXQZXQ|ZXC[A-Z0-9]+ZX|BEGIN SOURCE|END SOURCE|FIN DOCUMENTOS", re.I),
 }
 
+ENGLISH_RELEASE_CLAIMS = {
+    "current docs feature set": re.compile(
+        r"Current (?:source )?docs describe the \*\*([0-9]+\.[0-9]+\.[0-9]+)\*\*"
+    ),
+    "overview feature baseline": re.compile(
+        r"current ([0-9]+\.[0-9]+\.[0-9]+) feature baseline", re.I
+    ),
+    "latest verified public release": re.compile(
+        r"latest verified public release are\s+([0-9]+\.[0-9]+\.[0-9]+)", re.I
+    ),
+    "public macOS artifacts": re.compile(
+        r"Public ([0-9]+\.[0-9]+\.[0-9]+) macOS artifacts", re.I
+    ),
+}
+
+SPANISH_RELEASE_CLAIMS = {
+    "current docs feature set": re.compile(
+        r"documentos(?: fuente)? actuales describen.*?\*\*([0-9]+\.[0-9]+\.[0-9]+)\*\*",
+        re.I,
+    ),
+    "public macOS artifacts": re.compile(
+        r"artefactos públicos ([0-9]+\.[0-9]+\.[0-9]+) macOS", re.I
+    ),
+}
+
+REQUIRED_FEATURE_MARKERS = [
+    "Sixteen project-native palettes",
+    "Bayer 2x2/4x4/8x8 dithering",
+    "custom typed ramps of up to 96 supported Unicode scalars",
+    "Advanced Density preference exposes up to 900 columns",
+]
+
 
 def relative(path: Path) -> str:
     return str(path.relative_to(ROOT))
+
+
+def product_value(key: str) -> str:
+    body = PRODUCT.read_text(errors="replace")
+    match = re.search(rf"^\s*{re.escape(key)}:\s*[\"']?([^\"'\s]+)", body, re.MULTILINE)
+    if not match:
+        raise ValueError(f"could not parse {key} from {relative(PRODUCT)}")
+    return match.group(1)
+
+
+def audit_release_claims(
+    docs_root: Path,
+    exclusions: set[Path],
+    patterns: dict[str, re.Pattern[str]],
+    expected: str,
+    errors: list[str],
+) -> None:
+    for path in sorted(docs_root.rglob("*.md")):
+        if path in exclusions:
+            continue
+        body = path.read_text(errors="replace")
+        for label, pattern in patterns.items():
+            for match in pattern.finditer(body):
+                actual = match.group(1)
+                if actual != expected:
+                    line = body.count("\n", 0, match.start()) + 1
+                    errors.append(
+                        f"{relative(path)}:{line}: {label} says {actual}; expected {expected}"
+                    )
+
+
+def audit_icon(expected_sha256: str, errors: list[str]) -> None:
+    icon = ROOT / "assets" / "images" / "ascii-vj-remix-app-icon.png"
+    if not icon.exists():
+        errors.append(f"{relative(icon)} is missing")
+        return
+
+    data = icon.read_bytes()
+    actual_sha256 = hashlib.sha256(data).hexdigest()
+    if actual_sha256 != expected_sha256:
+        errors.append(
+            f"{relative(icon)} hash {actual_sha256} does not match product data {expected_sha256}"
+        )
+    if len(data) < 24 or data[:8] != b"\x89PNG\r\n\x1a\n":
+        errors.append(f"{relative(icon)} is not a valid PNG")
+        return
+    width = int.from_bytes(data[16:20], "big")
+    height = int.from_bytes(data[20:24], "big")
+    if (width, height) != (512, 512):
+        errors.append(f"{relative(icon)} is {width}x{height}; expected 512x512")
 
 
 def audit_tree(
@@ -72,6 +156,14 @@ def audit_tree(
 
 def main() -> int:
     errors: list[str] = []
+    try:
+        release = product_value("version")
+        icon_sha256 = product_value("sha256")
+    except (OSError, ValueError) as exc:
+        errors.append(str(exc))
+        release = ""
+        icon_sha256 = ""
+
     audit_tree(DOCS, CURRENT_STATE_EXCLUSIONS, FORBIDDEN_CURRENT_STATE, errors)
     audit_tree(
         SPANISH_DOCS,
@@ -79,6 +171,39 @@ def main() -> int:
         FORBIDDEN_SPANISH_CURRENT_STATE,
         errors,
     )
+
+    if release:
+        audit_release_claims(
+            DOCS,
+            CURRENT_STATE_EXCLUSIONS,
+            ENGLISH_RELEASE_CLAIMS,
+            release,
+            errors,
+        )
+        audit_release_claims(
+            SPANISH_DOCS,
+            SPANISH_CURRENT_STATE_EXCLUSIONS,
+            SPANISH_RELEASE_CLAIMS,
+            release,
+            errors,
+        )
+
+        release_baseline = DOCS / "overview" / "changelog-baseline.md"
+        baseline_body = release_baseline.read_text(errors="replace") if release_baseline.exists() else ""
+        if f"## {release} Release Notes" not in baseline_body:
+            errors.append(
+                f"{relative(release_baseline)}: missing generated {release} release-notes heading"
+            )
+
+        features = DOCS / "overview" / "features.md"
+        feature_body = features.read_text(errors="replace") if features.exists() else ""
+        normalized_feature_body = re.sub(r"\s+", " ", feature_body)
+        for marker in REQUIRED_FEATURE_MARKERS:
+            if marker not in normalized_feature_body:
+                errors.append(f"{relative(features)}: missing current feature marker: {marker}")
+
+    if icon_sha256:
+        audit_icon(icon_sha256, errors)
 
     if DOCS.exists():
         roadmap = DOCS / "reference" / "roadmap.md"
@@ -88,8 +213,8 @@ def main() -> int:
             body = roadmap.read_text(errors="replace")
             if "This document contains prospective work only." not in body:
                 errors.append("docs/reference/roadmap.md: missing prospective-work contract")
-            if re.search(r"\b0\.9\.[0-9]+\b", body):
-                errors.append("docs/reference/roadmap.md: contains a stale version-specific milestone")
+            if re.search(r"^#{1,6}\s+.*\b0\.9\.[0-9]+\b", body, re.MULTILINE):
+                errors.append("docs/reference/roadmap.md: contains a version-specific milestone heading")
 
     if SPANISH_DOCS.exists():
         roadmap = SPANISH_DOCS / "reference" / "roadmap.md"
@@ -99,8 +224,8 @@ def main() -> int:
             body = roadmap.read_text(errors="replace")
             if "Este documento contiene únicamente trabajos prospectivos." not in body:
                 errors.append("es/docs/reference/roadmap.md: missing prospective-work contract")
-            if re.search(r"\b0\.9\.[0-9]+\b", body):
-                errors.append("es/docs/reference/roadmap.md: contains a stale version-specific milestone")
+            if re.search(r"^#{1,6}\s+.*\b0\.9\.[0-9]+\b", body, re.MULTILINE):
+                errors.append("es/docs/reference/roadmap.md: contains a version-specific milestone heading")
 
     if errors:
         print("Current-state documentation audit failed:")

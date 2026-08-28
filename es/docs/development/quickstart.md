@@ -35,12 +35,14 @@ Para trabajo de escritorio, instale los requisitos previos Tauri para el sistema
 |`npm run preview`|`vite preview --host 127.0.0.1 --port 8010`|
 |`npm run check`|`npm run check:offline`|
 |`npm run check:offline`|`npm run build && node scripts/check_offline_bundle.mjs`|
-|`npm run check:desktop`|`npm run check:offline && npm run check:tauri-policy && npm run test:release-build-reuse && npm run test:render-math && npm run test:audio-reactive && npm run test:midi && npm run test:crash-report-ui && npm run test:crash-relay && npm run test:output-display && npm run test:desktop-updater && npm run test:updater-manifest && npm run test:macos-artifacts && npm run test:macos-secret-args && npm run test:windows-secret-args && npm run test:ffmpeg-policy && npm run check:ffmpeg-resources && npm run test:rust && npm run tauri:build:dev -- --debug --no-bundle`|
-|`npm run check:release`|`npm run check:offline && npm run check:tauri-policy && npm run test:release-build-reuse && npm run test:render-math && npm run test:audio-reactive && npm run test:midi && npm run test:crash-report-ui && npm run test:crash-relay && npm run test:output-display && npm run test:desktop-updater && npm run test:updater-manifest && npm run test:macos-artifacts && npm run test:macos-secret-args && npm run test:windows-secret-args && npm run test:ffmpeg-policy && npm run check:release-runtime && npm run test:rust`|
+|`npm run check:desktop`|`npm run check:offline && npm run check:tauri-policy && npm run check:icons && npm run check:glyph-atlas && npm run test:release-build-reuse && npm run test:render-math && npm run test:audio-reactive && npm run test:midi && npm run test:crash-report-ui && npm run test:crash-relay && npm run test:output-display && npm run test:desktop-updater && npm run test:updater-manifest && npm run test:macos-artifacts && npm run test:macos-secret-args && npm run test:windows-secret-args && npm run test:ffmpeg-policy && npm run check:ffmpeg-resources && npm run test:rust && npm run tauri:build:dev -- --debug --no-bundle`|
+|`npm run check:release`|`npm run check:offline && npm run check:tauri-policy && npm run check:icons && npm run check:glyph-atlas && npm run test:release-build-reuse && npm run test:render-math && npm run test:audio-reactive && npm run test:midi && npm run test:crash-report-ui && npm run test:crash-relay && npm run test:output-display && npm run test:desktop-updater && npm run test:updater-manifest && npm run test:macos-artifacts && npm run test:macos-secret-args && npm run test:windows-secret-args && npm run test:ffmpeg-policy && npm run check:release-runtime && npm run test:rust`|
 |`npm run check:bundle`|`node scripts/check_tauri_bundle.mjs`|
 |`npm run check:bundle:debug`|`node scripts/check_tauri_bundle.mjs --profile debug --expected-bundle-id com.asciline.remix.dev`|
 |`npm run check:bundle:release`|`node scripts/check_tauri_bundle.mjs --profile release --expected-bundle-id com.asciline.remix`|
 |`npm run check:ffmpeg-resources`|`node scripts/check_ffmpeg_resources.mjs`|
+|`npm run check:icons`|`node scripts/check_app_icons.mjs`|
+|`npm run check:glyph-atlas`|`node scripts/check_glyph_atlas.mjs`|
 |`npm run check:ffmpeg-release`|`node scripts/check_ffmpeg_resources.mjs --require-current-platform`|
 |`npm run check:release-runtime`|`npm run test:ffmpeg-source-build && npm run check:ffmpeg-release`|
 |`npm run check:macos-notarization`|`node scripts/check_macos_notarization.mjs --profile release`|
@@ -56,6 +58,7 @@ Para trabajo de escritorio, instale los requisitos previos Tauri para el sistema
 |`npm run smoke:static`|`npm run build && node scripts/smoke_static_pages.mjs`|
 |`npm run smoke:native-output`|`node scripts/smoke_native_output_perf.mjs`|
 |`npm run smoke:ui-perf`|`node scripts/smoke_ui_perf.mjs`|
+|`npm run smoke:primary-presets`|`node scripts/smoke_primary_presets.mjs`|
 |`npm run smoke:release-install`|`node scripts/smoke_tauri_release_install.mjs`|
 |`npm run test:decode-resize`|`node scripts/check_decode_resize_parity.mjs`|
 |`npm run test:desktop-updater`|`node scripts/test_desktop_updater.mjs`|

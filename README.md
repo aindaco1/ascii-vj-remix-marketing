@@ -44,8 +44,15 @@ When checkout resources change, create and verify the replacement Product, Price
 
 ## Refresh from the source project
 
-The product documentation and release label are generated from the local ASCII
-VJ Remix checkout:
+The mother repository owns technical behavior and source documentation. This
+repository owns the public marketing copy, documentation presentation,
+localization pipeline, and deployment. `scripts/sync_ascii_docs.rb` selects or
+copies canonical source sections for the product overview, feature baseline,
+release notes, architecture, operations guides, command reference, roadmap,
+changelog, and approved app icon; do not hand-edit the generated English pages.
+
+Refresh the generated product documentation, release label, and icon from the
+local ASCII VJ Remix checkout:
 
 ```bash
 ruby scripts/sync_ascii_docs.rb
@@ -61,6 +68,11 @@ python3 scripts/audit_performance.py
 Review generated changes before publishing. The source changelog may include an
 unreleased section; the marketing site's release badge intentionally selects the
 newest dated release instead.
+
+`_data/product.yml` records the synced release and canonical icon SHA-256.
+`scripts/audit_docs_current_state.py` checks current-release claims, required
+renderer feature markers, and the copied icon's dimensions/hash so a version-only
+sync cannot relabel stale release copy.
 
 ## Source repo
 
