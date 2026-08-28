@@ -8,16 +8,28 @@ lang: es
 
 # Arquitectura
 
-## Forma del producto
+Esta página reúne el contrato de arquitectura del agente del repositorio principal y las guías de renderizado en lugar de mantener aquí un modelo de propiedad paralelo.
 
-ASCII VJ Remix es una aplicación de escritorio Tauri v2 con una interfaz de usuario de renderizado estándar/Vite, rutas de renderizado GPU/Canvas, trabajo de salida nativo y adaptadores de audio/medios locales.
+## Identidad del proyecto
 
-La aplicación es una herramienta de escritorio, no una aplicación SaaS alojada. El modo de navegador admite desarrollo y portabilidad; la aplicación de escritorio empaquetada es el producto.
+ASCII VJ Remix es un laboratorio de renderizado de escritorio nativo local para macOS, Windows y Linux. El producto previsto es la aplicación de escritorio Tauri, no una aplicación web alojada ni una compilación exclusiva del navegador.
 
-## Flujo de alto nivel
+El repositorio combina renderizado WebGPU/WebGL de alta calidad, rutas de compatibilidad de Canvas, infraestructura de códec y flujo derivado de ASCILINE y empaquetado de escritorio Tauri. La aplicación es una superficie de control creativa para imágenes ASCII/celulares en vivo.
+
+## Propiedades de arquitectura
+
+- La salida WebGPU/WebGL es el objetivo de calidad visual.
+- Las rutas de flujo adaptable y Canvas derivadas de ASCILINE permanecen disponibles como infraestructura de compatibilidad y desarrollo.
+- El uso normal de la aplicación es local primero y sin conexión.
+- Todos los controles en vivo se dirigen a través de un modelo de parámetro canónico.
+- Los ajustes preestablecidos, WTF mode, la reactividad de audio y el control MIDI componen sin bifurcar el estado del renderizador.
+- Pop Out utiliza rutas nativas de cuadros más recientes cuando están disponibles para minimizar la latencia de la cámara en vivo.
+- El comportamiento de paleta, tramado ordenado, glifo y densidad se define una vez en catálogos/matemáticas compartidos y se implementa en cada backend sin estado paralelo.
+
+## Flujo de datos de alto nivel
 
 ```text
-source selection
+Source selection
   -> source adapter
   -> canonical params
   -> optional live modulation
@@ -27,31 +39,111 @@ source selection
   -> optional native/browser Pop Out
 ```
 
-## Mapa de propiedad
+La selección de fuente puede provenir de medios integrados, archivos seleccionados por el usuario, transmisiones de cámara, cámaras mixtas o sesiones de transmisión de desarrollo. El tiempo de ejecución del renderizador elige el mejor backend para la fuente y el entorno activos.
 
-|Área|Ubicaciones de fuentes primarias|
+## Modelo de parámetros
+
+La aplicación mantiene un objeto de parámetro canónico, comúnmente denominado en el código `params`.
+
+Principales grupos de parámetros:
+
+- fuente: modo de fuente, URL/id de medio, tipo de medio, nombre de fuente.
+- cámara: ID de dispositivo seleccionado, resolución, FPS, diseño, encuadre, espejo.
+- backend: automático, WebGPU, WebGL2, Canvas2D, Pixel Canvas.
+- cuadrícula: columnas, filas, filas automáticas, ancho de celda, alto de celda, corrección de aspecto, preferencia global Advanced Density.
+- color: saturación, contraste, brillo, gamma, combinación de fondo, cuantización, identificación de paleta, mapeo de paleta.
+- tramado: matriz ordenada, fuerza, escala, sesgo, inversión.
+- muestreo: FPS, cantidad de fluctuación, velocidad de fluctuación, muestra X/Y, suavizado.
+- Glifo/celda: modo de glifo, modo sólido, conjunto de caracteres, rampa escrita personalizada, profundidad, desplazamiento, inversión, modo/color de color de glifo, color de fondo, estilo de atlas neutro, metadatos de familia de fuentes, intensidad mínima de glifo.
+- flujo: códec, calidad, tolerancia, configuración del búfer, sincronización de fotogramas.
+- UI/rendimiento: superposición de estadísticas, segundos de transición.
+
+La superficie de control, los ajustes preestablecidos, la persistencia, los cambios de fuente, WTF mode, la reactividad de audio, la salida nativa y MIDI leen o escriben a través de este modelo.
+
+Las transiciones estáticas entre familias de renderizadores mantienen la propiedad de los medios en la capa `StaticRuntime`. Los renderizadores Canvas2D, pixel Canvas, WebGL y WebGPU pueden realizar fundidos cruzados sobre la misma fuente de video/cámara en vivo en lugar de destruir y recargar medios cuando cambian `solidMode`, `glyphMode`, `pixel` o `backend`.
+
+### Matemáticas de renderizado compartido
+
+Los ayudantes compartidos reducen las matemáticas duplicadas del renderizador sin cambiar el lienzo establecido o la salida del flujo.
+
+Los ayudantes compartidos de JavaScript viven en:
+
+```text
+renderers/shared/character-sets.js
+renderers/shared/density-policy.js
+renderers/shared/glyph-atlas.js
+renderers/shared/palettes.js
+renderers/shared/render-math.js
+renderers/shared/render-math-vectors.json
+```
+
+El módulo compartido posee actualmente:
+
+- Procesamiento de color estilo GPU utilizado por instantáneas de software y pruebas de paridad nativa.
+- Procesamiento de color Legacy Canvas.
+- Procesamiento de color de flujo heredado.
+- Ayudantes de hash de jitter estilo sombreador.
+- un catálogo limitado de conjuntos de caracteres canónicos, que incluye adaptaciones acreditadas de ascii.today.
+- metadatos de cobertura Unicode aprobados completos y validación de rampa personalizada limitada.
+- ID/colores de paleta nativos del proyecto, una tabla de búsqueda de paleta de 32x32x32 en caché y matrices Bayer inmutables.
+- columna acelerada/software compartida y límites de densidad de celda total.
+- Identificadores de glifos escalares Unicode, direccionamiento de páginas de atlas de 1024 px, mips de navegador de cobertura máxima en caché, caché decodificada de cuatro páginas y carga diferida de páginas locales.
+- conjunto de caracteres compacto y ayudantes de luminancia a glifo.
+
+Las funciones Canvas y Stream se nombran intencionalmente por separado de la función GPU. Su comportamiento establecido de cuantificación y combinación de fondo sigue siendo distinto, mientras que los vectores compartidos protegen la compatibilidad.
+
+`npm run test:render-math` valida los ayudantes JavaScript frente a vectores compartidos. Las pruebas de salida nativa de Rust consumen el mismo archivo vectorial para la paridad de procesamiento de color de GPU.
+
+### Parámetros efectivos
+
+Algunas funciones afectan la representación en vivo sin cambiar el estado guardado.
+
+La reactividad del audio es el ejemplo principal:
+
+```text
+base params
+  + audio feature modulation
+  -> effective params
+  -> renderer.updateParams()
+```
+
+Los parámetros efectivos no deben persistir en los ajustes preestablecidos del usuario a menos que el usuario guarde explícitamente el estado actual como un ajuste preestablecido.
+
+## Mapa de propiedad del repositorio
+
+Utilice este mapa para encontrar al probable propietario de un cambio:
+
+|Área|Archivos primarios|
 | --- | --- |
-|UI principal, parámetros, ajustes preestablecidos, controles de fuente, WTF, UI de audio|`app.js`, `index.html`, `style.css`|
-|Abstracción de fuente de medios y renderizador GPU|`renderers/gpu/`|
-|Adaptador Tauri y ayudantes de visualización de salida|`renderers/desktop/`|
-|Shell Tauri, comandos, permisos, actualizador, audio nativo, salida nativa|`src-tauri/`|
-|Renderizador nativo Pop Out|`src-tauri/src/native_output.rs`, `src-tauri/src/native_output/gpu.rs`|
-|Ruta de latencia de cámara nativa macOS|`src-tauri/src/native_output/native_camera.rs`|
-|Motor de medios Rust y sesiones FFmpeg|`src-tauri/src/media_engine/`|
-|Construir, fumar, liberar, Podman, scripts FFmpeg|`scripts/`|
-|Documentos de usuario/desarrollador|`docs/`, `README.md`, `CHANGELOG.md`|
+|UI principal, parámetros, ajustes preestablecidos, controles de fuente, WTF, UI de audio|[app.js](https://github.com/aindaco1/ascii-vj-remix/blob/main/app.js), [index.html](https://github.com/aindaco1/ascii-vj-remix/blob/main/index.html), [style.css](https://github.com/aindaco1/ascii-vj-remix/blob/main/style.css)|
+|Abstracción de fuente de medios y renderizador GPU|[renderizadores/gpu/](https://github.com/aindaco1/ascii-vj-remix/tree/main/renderers/gpu)|
+|Mapeo MIDI, soft takeover, perfil UC-33e|[midi-mapping.js](https://github.com/aindaco1/ascii-vj-remix/blob/main/renderers/shared/midi-mapping.js), [MIDI_UC33E](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MIDI_UC33E.md)|
+|Adaptador Tauri y ayudantes de visualización de salida|[renderizadores/escritorio/](https://github.com/aindaco1/ascii-vj-remix/tree/main/renderers/desktop)|
+|Shell Tauri, comandos, permisos, actualizador, audio nativo, salida nativa|[src-tauri/](https://github.com/aindaco1/ascii-vj-remix/tree/main/src-tauri)|
+|Entrada/salida nativa MIDI y SysEx|[midi.rs](https://github.com/aindaco1/ascii-vj-remix/blob/main/src-tauri/src/midi.rs)|
+|Renderizador nativo Pop Out|[native_output.rs](https://github.com/aindaco1/ascii-vj-remix/blob/main/src-tauri/src/native_output.rs), [gpu.rs](https://github.com/aindaco1/ascii-vj-remix/blob/main/src-tauri/src/native_output/gpu.rs)|
+|Ruta de latencia de cámara nativa macOS|[native_camera.rs](https://github.com/aindaco1/ascii-vj-remix/blob/main/src-tauri/src/native_output/native_camera.rs)|
+|Motor multimedia Rust, códec, sesiones FFmpeg|[src-tauri/src/media_engine/](https://github.com/aindaco1/ascii-vj-remix/tree/main/src-tauri/src/media_engine)|
+|Medios de demostración integrados y accesorios ocultos|[medios/](https://github.com/aindaco1/ascii-vj-remix/tree/main/media)|
+|Experimentos de códec/vector|[experimentos/](https://github.com/aindaco1/ascii-vj-remix/tree/main/experiments)|
+|Construir, fumar, liberar, Podman, scripts FFmpeg|[guiones/](https://github.com/aindaco1/ascii-vj-remix/tree/main/scripts)|
+|Documentos de usuario/desarrollador|[docs/](https://github.com/aindaco1/ascii-vj-remix/tree/main/docs) y [README](/es/docs/overview/ascii-vj-remix/)|
 
 ## Restricciones no negociables
 
-- Conserve el nombre de la aplicación y la dirección nativa del escritorio.
-- Mantenga el tiempo de ejecución normal local primero y fuera de línea de forma predeterminada.
-- Mantenga alta la calidad del renderizado; La salida WebGPU/WebGL es el objetivo de calidad visual.
+- El tiempo de ejecución debe ser local primero y sin conexión de forma predeterminada.
+- No agregue CDN, fuentes alojadas, descodificadores alojados, telemetría ni dependencias de tiempo de ejecución en línea.
+- Las rutas intencionales de tiempo de ejecución en línea se limitan a la verificación de metadatos de lanzamiento limitados de la aplicación de producción para detectar artefactos de actualización firmados en el momento del lanzamiento, acciones explícitas de descarga/instalación del actualizador y envío de informes de fallas revisados/desinfectados solo en producción.
+- Conserve el nombre de la aplicación: ASCII VJ Remix.
+- Conserve la dirección de la aplicación nativa para macOS, Windows y Linux.
+- No replantee el modo de navegador como el producto. Las rutas del navegador/Vite son útiles para el desarrollo, las pruebas de humo y la portabilidad del renderizador.
+- Mantenga alta la calidad del renderizado. La salida WebGPU/WebGL es el objetivo de calidad visual.
 - Conserve las rutas alternativas a menos que se implemente y pruebe un reemplazo.
 - Trate el rendimiento y la latencia de Pop Out como un comportamiento crítico de cara al usuario.
-- Mantenga locales los medios locales seleccionados.
-- Mantenga la superposición de estadísticas como propiedad del usuario.
-- Mantenga oculta la infraestructura de transmisión hasta que el flujo de trabajo de transmisión se produzca de extremo a extremo.
-- No reduzca la densidad de control de la superficie VJ al rediseñar.
+- Mantenga locales los medios locales seleccionados por el usuario. No cargue archivos ni datos de cámara/audio.
+- Mantenga la superposición de estadísticas como propiedad del usuario. Los ajustes preestablecidos aleatorios, WTF mode y los ajustes preestablecidos de audio no lo desactivan a menos que el usuario lo haga explícitamente.
+- La infraestructura de transmisión existe pero no es un modo de fuente visible normal. Mantenga oculta su interfaz de usuario; La productización prospectiva pertenece a la hoja de ruta.
+- La seguridad, el rendimiento, la accesibilidad y la orientación de i18n se encuentran en documentos de práctica dedicados en `docs/`; actualizarlos cuando cambien los supuestos arquitectónicos.
 
 
 
@@ -60,4 +152,3 @@ source selection
 Esta página se genera a partir del material fuente de ASCII VJ Remix. Fuentes primarias:
 - [docs/AGENTS.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/AGENTS.md)
 - [docs/RENDERING_ENGINE.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/RENDERING_ENGINE.md)
-- [README.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/README.md)

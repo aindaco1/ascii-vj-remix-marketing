@@ -3,7 +3,7 @@ description: ASCII VJ Remix is a desktop visualizer for DJs and VJs who want liv
 url: "https://asciivj.com"
 baseurl: ""
 repository: aindaco1/ascii-vj-remix-marketing
-logo: /assets/images/ascii-social-card.png
+logo: /assets/images/ascii-vj-remix-app-icon.png
 image: /assets/images/ascii-social-card.png
 social:
   name: ASCII VJ Remix

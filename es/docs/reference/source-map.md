@@ -24,6 +24,7 @@ El script de sincronización utiliza los siguientes archivos fuente del reposito
 |`docs/I18N.md`|Expectativas de internacionalización y localización.|
 |`docs/ROADMAP.md`|Sólo dirección prospectiva.|
 |`package.json`|Referencia del comando NPM.|
+|`src-tauri/icons/icon.png`|Icono de aplicación canónica aprobada copiado en el sitio de marketing.|
 
 ## Regenerar documentos
 

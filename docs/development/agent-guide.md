@@ -87,8 +87,8 @@ ASCII/cell visuals.
 
 ## Current User-Facing Baseline
 
-The current packaged version and latest public release are 0.9.9. The Changelog
-is the only current-state document that includes unreleased changes.
+The current source/package version and latest verified public release are
+0.9.12. The Changelog owns release history; the Roadmap is prospective only.
 
 Sources:
 
@@ -110,9 +110,17 @@ Rendering:
 - The active renderer is controlled by one canonical parameter model.
 - Native Pop Out preserves glyph-mode and character-set params for traditional
   ASCII presets.
+- Sixteen project-native palettes, nearest/luminance mapping, and Bayer
+  2x2/4x4/8x8 dithering use the shared palette catalog and cached 32x32x32 LUT.
+- The neutral generated Unicode atlas covers the approved common BMP blocks in
+  sixteen 1024px pages. Browser decoded-page cache is capped at four; native
+  and browser GPU output use Unicode scalar ids and a maximum 96-id ramp.
+- Normal density is capped by shared accelerated/software column and total-cell
+  limits. Advanced Density is global, allows up to 900 columns without a 30 FPS
+  guarantee, and must never be stored in visual presets.
 - The shared character-set catalog includes 23 credited ascii.today-derived
   luminance ramps and matching read-only presets.
-- Native glyph output uses bounded fixed atlas/ramp resources;
+- Native glyph output uses bounded paged atlas/ramp resources;
   `fontFamily` is UI/preview metadata, not a native font-loading sink.
 - Reuse stable WebGPU/WebGL resources, keep native source uploads keyed to
   source-frame versions, and do not trade quality/resolution for performance.
@@ -243,8 +251,8 @@ npm run bundle:release
 
 Expected local release-build note:
 
-- Public 0.9.9 macOS artifacts are Developer ID signed, notarized, stapled, and
-  Gatekeeper-validated. Public 0.9.9 Windows artifacts are unsigned previews.
+- Public 0.9.12 macOS artifacts are Developer ID signed, notarized, stapled, and
+  Gatekeeper-validated. Public 0.9.12 Windows artifacts are unsigned previews.
   Normal local builds use
   `ASCII VJ Remix Dev` / `com.asciline.remix.dev`; the local launcher requires a
   stable identity before permission testing.
@@ -265,6 +273,10 @@ Expected local release-build note:
   production name, bundle identifier, and updater.
 - `src-tauri/tauri.notarized.conf.json` is for Developer ID notarized macOS
   release builds.
+- `assets/branding/ascii-vj-remix-app-icon-1024.png` is the canonical app icon.
+  Run `npm run icons:generate` instead of editing platform files under
+  `src-tauri/icons/` independently; `npm run check:icons` verifies the complete
+  generated set.
 - `src-tauri/tauri.windows-signed.conf.json` and its Authenticode helper exist
   but are inactive. The current Windows release path uses the default unsigned
   config.

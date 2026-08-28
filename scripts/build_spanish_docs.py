@@ -9,12 +9,10 @@ import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from json import dumps, loads
 from pathlib import Path
-from threading import Lock
+from threading import Lock, get_ident
 from urllib.error import HTTPError
 from urllib.parse import urlencode
 from urllib.request import urlopen
-
-
 
 ROOT = Path(__file__).resolve().parent.parent
 SOURCE_DIR = ROOT / "docs"
@@ -53,6 +51,12 @@ BODY_OVERRIDES = {
     "# Development": "# Desarrollo",
     "# Operations": "# Operaciones",
     "# Reference": "# Referencia",
+    "### Added": "### Añadido",
+    "### Changed": "### Cambiado",
+    "### Fixed": "### Corregido",
+    "### Performance": "### Rendimiento",
+    "### Security": "### Seguridad",
+    "### Validation": "### Validación",
     "## Source Material": "## Material de origen",
 }
 
@@ -78,6 +82,8 @@ MONTH_OVERRIDES = {
 CACHE_DIR = ROOT / ".translation-cache"
 CACHE_PATH = CACHE_DIR / "spanish-docs.json"
 TRANSLATE_SEPARATOR = "\nZXQZXQASCII_VJBREAKZXQZXQ\n"
+TRANSLATE_PRIMARY_ENDPOINT = "https://translate.googleapis.com/translate_a/single"
+TRANSLATE_FALLBACK_ENDPOINT = "https://clients5.google.com/translate_a/t"
 TRANSLATE_MAX_CHARS = int(os.environ.get("ASCII_VJ_TRANSLATE_MAX_CHARS", "1200"))
 TRANSLATE_TIMEOUT_SECONDS = float(os.environ.get("ASCII_VJ_TRANSLATE_TIMEOUT_SECONDS", "15"))
 TRANSLATE_RETRIES = int(os.environ.get("ASCII_VJ_TRANSLATE_RETRIES", "8"))
@@ -104,7 +110,9 @@ def load_translation_cache() -> dict[str, str]:
 
 def save_translation_cache_unlocked() -> None:
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
-    temporary = CACHE_PATH.with_suffix(".tmp")
+    temporary = CACHE_PATH.with_name(
+        f"{CACHE_PATH.stem}.{os.getpid()}.{get_ident()}.tmp"
+    )
     temporary.write_text(dumps(cache, ensure_ascii=False, sort_keys=True))
     temporary.replace(CACHE_PATH)
 
@@ -150,6 +158,7 @@ def protect_text(text: str) -> tuple[str, list[str]]:
         "GLES",
         "WebView2",
         "WebKitGTK",
+        "Apple WebKit",
         "Cloudflare Worker",
         "GitHub",
         "GitHub Releases",
@@ -163,9 +172,46 @@ def protect_text(text: str) -> tuple[str, list[str]]:
         "CPU",
         "FPS",
         "MKV",
+        "Unicode",
+        "Bayer",
+        "Braille",
+        "CJK",
+        "Hiragana",
+        "Katakana",
+        "Hangul",
+        "Advanced Density",
+        "Demo Image",
+        "Demo Video",
+        "Reports",
+        "Update",
+        "Stats Overlay",
+        "MIDI Learn",
+        "SysEx",
+        "Ensure Profile on Connection",
+        "soft takeover",
+        "Classic Camera ASCII",
+        "ANSI Newsprint",
+        "Terminal Mono",
+        "Dense Typewriter",
+        "Neon Sledgehammer",
+        "Gamma Sinkhole",
+        "Chrome Wound",
+        "Candy Fragmenter",
+        "Paper Shredder",
+        "Cyberdelic Riot",
+        "Acid Snowstorm",
+        "Terminal Collapse",
+        "Neon Razorstorm",
     ]
     for term in protected_terms:
         working = protect(rf"\b{re.escape(term)}\b", working)
+    # Keep source filenames and repository-relative paths verbatim in labels as
+    # well as URLs. Translating these labels makes otherwise valid references
+    # look like different files.
+    working = protect(
+        r"(?<![\w/])(?:[A-Za-z0-9_.-]+/)*[A-Za-z0-9_.-]+\.(?:css|html|js|json|lock|md|mjs|py|rb|rs|scss|sh|toml|ts|tsx|yaml|yml)(?![\w/])",
+        working,
+    )
     working = protect(r"\]\((?:https?://|/|mailto:)[^)]+\)", working)
     working = protect(r"https?://\S+", working)
     working = protect(r"mailto:\S+", working)
@@ -182,9 +228,41 @@ def restore_text(text: str, placeholders: list[str]) -> str:
     restored = restored.replace("Mezcla ASCII VJ", "ASCII VJ Remix")
     restored = restored.replace("Remix ASCII VJ", "ASCII VJ Remix")
     restored = restored.replace("ASCII VJ Remezcla", "ASCII VJ Remix")
-    return restored
+    return polish_translation(restored)
 
 
+def polish_translation(text: str) -> str:
+    """Normalize recurring technical phrases, including values loaded from cache."""
+    replacements = {
+        "GitHub publica metadatos": "metadatos de GitHub Releases",
+        "GitHub Publica metadatos": "metadatos de GitHub Releases",
+        "MIDI Aprenda": "MIDI Learn",
+        "MIDI Learn anulaciones": "Anulaciones de MIDI Learn",
+        "abrazaderas seguras": "límites de seguridad",
+        "Las límites de seguridad": "Los límites de seguridad",
+        "barandillas de densidad": "límites de densidad",
+        "barreras de densidad": "límites de densidad",
+        "una matriz de humo": "una matriz de pruebas de humo",
+        "el humo de rendimiento": "la prueba de humo de rendimiento",
+        "El humo de rendimiento": "La prueba de humo de rendimiento",
+        "un humo de regresión": "una prueba de humo de regresión",
+        "UI empaquetado": "UI empaquetada",
+        "extiende el humo de la interfaz de usuario empaquetado": "amplía la prueba de humo de la interfaz empaquetada",
+        "rampas con tipos personalizados de hasta 96 compatibles. Escalares Unicode": "rampas personalizadas de hasta 96 escalares Unicode compatibles",
+        "adquisición suave": "soft takeover",
+        "toma de control, selección numérica": "soft takeover, selección numérica",
+        "un ícono de aplicación canónica": "un icono canónico de la aplicación",
+        "lleva la corrección de aceptación posterior a 0.9.9 Reports": "incorpora la corrección de aceptación de Reports posterior a 0.9.9",
+        "antes de enviar una bifurcación].": "antes de publicar una bifurcación.",
+        "[Operations]": "[Operaciones]",
+        "[La referencia]": "[Referencia]",
+        "docs/ACCESIBILIDAD.md": "docs/ACCESSIBILITY.md",
+        "paquete.json": "package.json",
+    }
+    polished = text
+    for source, replacement in replacements.items():
+        polished = polished.replace(source, replacement)
+    return polished
 
 def translate_date_line(text: str) -> str | None:
     match = re.fullmatch(r"([A-Za-z]+) ([0-9]{1,2}), ([0-9]{4})", text.strip())
@@ -226,7 +304,7 @@ def translate_texts(texts: list[str]) -> list[str]:
         with cache_lock:
             cached = cache.get(stripped)
         if cached is not None:
-            translated[index] = cached
+            translated[index] = polish_translation(cached)
             continue
 
         protected, placeholders = protect_text(stripped)
@@ -250,7 +328,7 @@ def translate_texts(texts: list[str]) -> list[str]:
             chunk_values = pending_values[start:end]
             chunk_meta = pending_meta[start:end]
             joined = TRANSLATE_SEPARATOR.join(chunk_values)
-            params = urlencode(
+            primary_params = urlencode(
                 [
                     ("client", "gtx"),
                     ("sl", "en"),
@@ -259,7 +337,17 @@ def translate_texts(texts: list[str]) -> list[str]:
                     ("q", joined),
                 ]
             )
-            url = f"https://translate.googleapis.com/translate_a/single?{params}"
+            fallback_params = urlencode(
+                [
+                    ("client", "dict-chrome-ex"),
+                    ("sl", "en"),
+                    ("tl", "es"),
+                    ("q", joined),
+                ]
+            )
+            primary_url = f"{TRANSLATE_PRIMARY_ENDPOINT}?{primary_params}"
+            fallback_url = f"{TRANSLATE_FALLBACK_ENDPOINT}?{fallback_params}"
+            url = primary_url
 
             last_error = None
             payload = None
@@ -272,6 +360,9 @@ def translate_texts(texts: list[str]) -> list[str]:
                     break
                 except Exception as error:  # noqa: BLE001
                     last_error = error
+                    if isinstance(error, HTTPError) and error.code == 429 and url == primary_url:
+                        url = fallback_url
+                        continue
                     if attempt == TRANSLATE_RETRIES - 1:
                         raise
                     delay = min(2**attempt, TRANSLATE_RETRY_MAX_DELAY_SECONDS)
@@ -287,7 +378,12 @@ def translate_texts(texts: list[str]) -> list[str]:
             if payload is None and last_error is not None:
                 raise last_error
 
-            translated_joined = "".join(part[0] for part in payload[0])
+            if url == fallback_url:
+                if not isinstance(payload, list) or not payload or not isinstance(payload[0], str):
+                    raise RuntimeError("Spanish docs fallback translation returned an unexpected payload")
+                translated_joined = payload[0]
+            else:
+                translated_joined = "".join(part[0] for part in payload[0])
             batch = translated_joined.split(TRANSLATE_SEPARATOR)
 
             if len(batch) != len(chunk_values):
@@ -367,6 +463,60 @@ def translate_line(line: str) -> str:
     return rewrite_docs_links(translate_text(line))
 
 
+def coalesce_markdown_lines(body: str) -> str:
+    """Join hard-wrapped prose before translation while preserving Markdown blocks."""
+    lines = body.splitlines()
+    output: list[str] = []
+    index = 0
+    in_fence = False
+    fence_marker = ""
+    prefixed_block = re.compile(r"^(\s*(?:[-*+]\s+|\d+\.\s+|>\s+))(.+)$")
+
+    def is_structural(line: str) -> bool:
+        stripped = line.lstrip()
+        return (
+            not stripped
+            or stripped.startswith(("```", "~~~"))
+            or line.startswith("|")
+            or re.match(r"^#{1,6}\s+", line) is not None
+            or prefixed_block.match(line) is not None
+        )
+
+    while index < len(lines):
+        line = lines[index]
+        stripped = line.lstrip()
+
+        if stripped.startswith(("```", "~~~")):
+            marker = stripped[:3]
+            if not in_fence:
+                in_fence = True
+                fence_marker = marker
+            elif marker == fence_marker:
+                in_fence = False
+                fence_marker = ""
+            output.append(line)
+            index += 1
+            continue
+
+        if in_fence or not stripped or line.startswith("|") or re.match(r"^#{1,6}\s+", line):
+            output.append(line)
+            index += 1
+            continue
+
+        match = prefixed_block.match(line)
+        prefix = match.group(1) if match else ""
+        parts = [match.group(2).strip() if match else stripped]
+        cursor = index + 1
+        while cursor < len(lines) and not is_structural(lines[cursor]):
+            parts.append(lines[cursor].strip())
+            cursor += 1
+
+        output.append(prefix + " ".join(parts))
+        index = cursor
+
+    return "\n".join(output) + "\n"
+
+
 def translate_body(body: str) -> str:
     translated_lines = []
     in_fence = False
@@ -384,7 +534,7 @@ def translate_body(body: str) -> str:
         pending_texts.clear()
         pending_prefixes.clear()
 
-    for line in body.splitlines():
+    for line in coalesce_markdown_lines(body).splitlines():
         stripped = line.lstrip()
         if stripped.startswith("```") or stripped.startswith("~~~"):
             flush_pending()

@@ -4,7 +4,7 @@ Generated with the `product-marketing-docs-builder` operating pattern.
 
 ## Sources read
 
-- ASCII VJ Remix: README, CHANGELOG, AGENTS, SECURITY, PERFORMANCE, ACCESSIBILITY, I18N, TESTING, CONTRIBUTORS, RENDERING_ENGINE, package scripts, Tauri config, Cargo manifest, style.css, demo assets.
+- ASCII VJ Remix: README, CHANGELOG, AGENTS, SECURITY, PERFORMANCE, ACCESSIBILITY, I18N, TESTING, CONTRIBUTORS, RENDERING_ENGINE, package scripts, Tauri config, Cargo manifest, style.css, demo assets, and the approved canonical app icon.
 - Architecture reference: pool-marketing-docs Jekyll/just-the-docs layout, Sass, includes, Gemfile, GitHub Pages workflow, docs taxonomy.
 
 ## Style extraction
@@ -14,3 +14,8 @@ Generated with the `product-marketing-docs-builder` operating pattern.
 ## Claims policy
 
 This site only makes claims supported by ASCII VJ Remix source docs/config/scripts. It does not claim signed Windows artifacts or completed release builds beyond source repo documentation.
+
+The mother repository owns technical truth. The marketing repository owns the
+curated public narrative, generated presentation, localization, and deployment;
+its sync script copies canonical sections and the approved icon rather than
+maintaining parallel technical descriptions.

@@ -27,6 +27,10 @@ and keeping the dense control UI responsive while the renderer is under load.
   live-control path.
 - Keep all runtime assets local so performance does not depend on network
   availability.
+- Resolve density through the shared column/total-cell policy. Advanced Density
+  is an explicit global preference, not a visual-preset escape hatch.
+- Rebuild palette lookup tables and glyph ramps/pages only when their discrete
+  inputs change; audio and transition frames must remain uniform/param updates.
 - Start the production launch update check asynchronously. A slow or unavailable
   release endpoint must not delay renderer, source, audio, or control startup.
 - Keep crash reporting off the render path. Capture, queueing, sanitization, and
@@ -131,6 +135,79 @@ published-asset checks, and real install/update smokes remain release gates.
 This changes the critical path from the sum of FFmpeg plus app compilation to
 approximately the slower of the two, without changing renderer code, shipped
 resources, target platforms, signing policy, or output formats.
+
+## 0.9.11 Palette, Dither, Unicode, and Density Pass
+
+The 0.9.11 reference floor is Apple M1/16 GB or a comparable Windows x64
+integrated-GPU machine. Intel macOS is not a release target. The optimized
+primary workload is local 1080p video with Audio Reactivity and a visible
+native output window; the release target is 30 FPS with P95 frame time at or
+below 33.3 ms on the reference floor.
+
+Shared density limits are:
+
+| Mode | Columns | Total cells | Promise |
+| --- | ---: | ---: | --- |
+| Accelerated normal | 640 | 160,000 | Performance-guarded range; presets stay here. |
+| Software normal | 120 | 6,000 | Lower Canvas/CPU guardrail. |
+| Advanced Density | 900 | 500,000 | Explicit global preference; no 30 FPS guarantee. |
+
+The M1 Max/64 GB development host is faster than the reference floor, so its
+results are local regression evidence rather than floor acceptance. At 640
+columns, feature-off WebGL2 measured 39.1 FPS main, 39.9 FPS with native output,
+and 35.4 FPS during transition churn; peak RSS was about 444 MB. Signal Court +
+Bayer 4 + the CJK Unified ramp measured 37.9, 40.1, and 37.0 FPS with about
+446 MB peak RSS. Main/Pop Out/transition P95 values were 29.6/29.4/31.6 ms,
+within ten percent of the matched feature-off phases. Native output remained
+near 60 FPS with no GPU failures.
+
+Machine-readable evidence:
+
+- `docs/performance/0.9.10-phase-zero-baseline.md`
+- `docs/performance/0.9.11-density-feature-off-m1-max-webgl2.json`
+- `docs/performance/0.9.11-density-feature-on-m1-max-webgl2.json`
+- `docs/performance/0.9.11-pre-fix-occluded-output-soak-m1-max-webgl2.json`
+- `docs/performance/0.9.11-background-memory-soak-m1-max-webgl2.json`
+
+The first 15-minute unattended soak exposed an occluded-native-output resource
+retention bug: steady RSS climbed from 156.5 MB to 9,411.9 MB because source
+frames were uploaded before an output surface was available to submit them.
+Native output now acquires the surface before queue writes, skips uploads while
+occluded, drains the display-link thread's autorelease pool per tick, and polls
+completed GPU work without blocking. The repeat 15-minute run began at 156.1 MB
+steady RSS and ended at 155.5 MB, a -0.6 MB drift, with 446.1 MB startup peak
+and no native-sync failures.
+
+The repeat ran while the unattended macOS session kept the application in the
+background, so WebKit throttled requestAnimationFrame and native IPC to roughly
+1 Hz. That run is memory-lifetime evidence only, not frame-rate acceptance. The
+visible-window 640-column figures above remain the local FPS evidence; physical
+reference-floor and Windows performance acceptance remain separate.
+
+The base Unicode atlas is a fixed 16 MB R8 allocation divided into sixteen
+1024px pages. Browser GPU renderers add four max-coverage mip levels so thin
+strokes remain visible in small cells without adding per-frame texture reads;
+the bounded browser allocation is 21.25 MB. Only pages required by the active
+maximum-96-scalar ramp are decoded/uploaded, and the shared decoded browser
+cache retains at most four base pages plus their generated mips. This avoids
+the multi-second CJK page stalls observed with four 2048px pages while keeping
+package bytes, CPU cache, and GPU allocation bounded. Native Pop Out retains
+the 16 MB base-page allocation.
+
+The original local feature-on measurements selected WebGL2 and remain browser
+GPU regression evidence, not acceptance evidence for the installed Apple
+WebKit glyph preview.
+
+For the primary macOS Apple WebKit view, glyph mode uses the existing Canvas2D
+path and therefore the normal 120-column/6,000-cell software ceiling. This keeps
+the preview inside the 30 FPS floor while the independent native Pop Out stays
+GPU-rendered. Solid and pixel primary presets remain eligible for WebGPU. The
+Canvas selection is made when a renderer is constructed, not in the frame loop.
+An optimized installed-app run of that bounded glyph preview measured 30.0 FPS
+in the main phase, 30.0 FPS with native Pop Out, and 30.1 FPS during numeric
+transitions; the lowest sampled phase value was 29.5 FPS and the worst P95 was
+33.9 ms. Native Pop Out remained near 60 FPS with zero GPU failures. These are
+development-host regression results, not M1/16 GB floor certification.
 
 ## Backend Notes
 
@@ -299,18 +376,39 @@ Native output and UI performance helpers:
 ```bash
 npm run smoke:native-output
 npm run smoke:ui-perf
+npm run smoke:primary-presets
 npm run test:native-output-log
+npm run bench:density
 ```
 
 `smoke:ui-perf` starts from canonical defaults and uses two fixed,
 non-structural numeric transition targets. It records average, P10, P50, and
 minimum preview FPS plus native output rates and the renderer backends actually
-visited. To compare an exact installed or archived application bundle:
+visited, requested palette/dither/charset, renderer replacements, frame resets,
+and a post-run primary-canvas pixel signal. A renderer with advancing frames
+but an empty canvas fails the smoke. To compare an exact installed or archived
+application bundle:
 
 ```bash
 ASCILINE_SOURCE_APP="/absolute/path/ASCII VJ Remix Dev.app" \
 ASCILINE_UI_PERF_SMOKE_DURATION_MS=30000 \
 npm run smoke:ui-perf
+```
+
+`smoke:primary-presets` separately activates every built-in Demo Image preset
+inside the installed Apple WebKit app. It verifies the final primary canvas for
+each preset so Pop Out output, an intermediate transition snapshot, or a later
+renderer fallback cannot satisfy the primary-view acceptance check.
+
+Feature-on comparison example:
+
+```bash
+ASCILINE_UI_PERF_SMOKE_BACKEND=webgl2 \
+ASCILINE_UI_PERF_SMOKE_PALETTE=signal-court \
+ASCILINE_UI_PERF_SMOKE_DITHER=bayer4 \
+ASCILINE_UI_PERF_SMOKE_CHARSET=cjk-basic \
+ASCILINE_DENSITY_BENCH_COLUMNS=640 \
+npm run bench:density
 ```
 
 Native display-link logs include `sourceUploads` and `sourceUploadSkips`. For a

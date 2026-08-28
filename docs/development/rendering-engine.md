@@ -31,6 +31,8 @@ Related practice docs:
   renderer state.
 - Pop Out uses latest-frame native paths where available to minimize live-camera
   latency.
+- Palette, ordered-dither, glyph, and density behavior is defined once in
+  shared catalogs/math and implemented by each backend without parallel state.
 
 ## High-Level Data Flow
 
@@ -168,12 +170,15 @@ Major parameter groups:
 - source: source mode, media URL/id, media type, source name.
 - camera: selected device ids, resolution, FPS, layout, framing, mirror.
 - backend: auto, WebGPU, WebGL2, Canvas2D, Pixel Canvas.
-- grid: columns, rows, auto rows, cell width, cell height, aspect correction.
+- grid: columns, rows, auto rows, cell width, cell height, aspect correction,
+  global Advanced Density preference.
 - color: saturation, contrast, brightness, gamma, background blend,
-  quantization.
+  quantization, palette id, palette mapping.
+- dither: ordered matrix, strength, scale, bias, invert.
 - sampling: FPS, jitter amount, jitter speed, sample X/Y, smoothing.
-- glyph/cell: glyph mode, solid mode, compact character set and font family
-  menus, minimum glyph intensity.
+- glyph/cell: glyph mode, solid mode, character set, custom typed ramp, depth,
+  offset, reverse, glyph-color mode/color, background color, neutral atlas
+  style, font family metadata, minimum glyph intensity.
 - stream: codec, quality, tolerance, buffer settings, frame timing.
 - UI/performance: stats overlay, transition seconds.
 
@@ -195,6 +200,9 @@ Shared JavaScript helpers live in:
 
 ```text
 renderers/shared/character-sets.js
+renderers/shared/density-policy.js
+renderers/shared/glyph-atlas.js
+renderers/shared/palettes.js
 renderers/shared/render-math.js
 renderers/shared/render-math-vectors.json
 ```
@@ -207,6 +215,13 @@ The shared module currently owns:
 - shader-style jitter hash helpers.
 - a bounded canonical character-set catalog, including credited ascii.today
   adaptations.
+- complete approved Unicode coverage metadata and bounded custom-ramp
+  validation.
+- project-native palette ids/colors, a cached 32x32x32 palette lookup table,
+  and immutable Bayer matrices.
+- shared accelerated/software column and total-cell density limits.
+- Unicode-scalar glyph ids, 1024px atlas page addressing, cached max-coverage
+  browser mips, a four-page decoded cache, and lazy local page loading.
 - compact charset and luminance-to-glyph helpers.
 
 The Canvas and stream functions are intentionally named separately from the GPU
@@ -247,6 +262,15 @@ Typical browser priority:
 The user can override the backend manually. Controls that do not apply to the
 active backend are hidden or disabled.
 
+Backend choice is resolved once per renderer construction in
+`renderers/gpu/ascii/renderer/backend-policy.js`; it is not evaluated in the
+frame loop. The macOS Apple WebKit primary view uses the bounded Canvas2D path
+for glyph mode even when a browser GPU backend is available or manually
+requested, because both browser GPU glyph-atlas paths can expose a live
+renderer while presenting an empty canvas there. Solid/pixel primary presets
+can still use WebGPU, and glyph mode retains browser GPU rendering on compatible
+runtimes. Native Pop Out backend selection is separate and unchanged.
+
 ## WebGPU Renderer
 
 The WebGPU renderer is the primary quality target.
@@ -261,13 +285,13 @@ The renderer uses a two-stage GPU flow:
    - sample one point per cell.
    - apply animated per-cell jitter.
    - optionally mirror X.
-   - apply color processing.
+   - apply color processing, ordered thresholding, and palette lookup.
    - write one processed color per cell to a storage texture.
 2. Render pass:
    - draw a fullscreen triangle.
    - map output pixels to cells using cell width/height.
    - fetch the processed cell color.
-   - fill the output canvas.
+   - fill the output canvas or mask it through the selected Unicode glyph ramp.
 
 Color processing includes:
 
@@ -277,6 +301,9 @@ Color processing includes:
 - gamma.
 - optional color quantization.
 - background blend toward the app's dark canvas color.
+- optional Bayer 2x2/4x4/8x8 ordered dithering.
+- optional nearest-color or luminance-ramp palette mapping through a palette
+  lookup buffer that changes only when palette/mapping changes.
 
 Jitter uses a deterministic hash seeded by cell position and time, so static
 images can animate without changing source media.
@@ -287,6 +314,11 @@ external texture and creates its source-dependent compute binding per frame;
 that resource is frame-scoped by WebGPU. Grid/source rebuilds create a new
 renderer and therefore a new complete resource set.
 
+The glyph renderer uses Unicode scalar ids in a 96-entry storage buffer and a
+16-layer R8 texture array. Atlas pages are generated offline, locally bundled,
+and loaded on demand. Live audio/transition updates compare a compact glyph
+input key before resolving ramps or touching atlas resources.
+
 ## WebGL2 Renderer
 
 The WebGL2 backend mirrors the WebGPU visual model as closely as practical:
@@ -294,13 +326,16 @@ The WebGL2 backend mirrors the WebGPU visual model as closely as practical:
 - video frames upload with `texImage2D()` per frame.
 - images upload once.
 - first pass samples one color per cell into a cell-color texture.
-- second pass expands the cell-color texture to the visible canvas.
+- first-pass palette/dither math matches the shared contract.
+- second pass expands the cell-color texture and optionally samples the same
+  Unicode-scalar atlas/ramp contract as WebGPU.
 - shader uniforms match the WebGPU parameter set where possible.
 - all 18 shader uniform locations are cached after program linking rather than
   queried again during each frame.
 
-WebGL2 is the most important browser fallback because it is widely available on
-machines that do not expose WebGPU.
+WebGL2 is the most important browser GPU fallback because it is widely available
+on machines that do not expose WebGPU. The macOS Apple WebKit primary glyph
+view currently uses Canvas2D instead of either browser GPU atlas path.
 
 ## Canvas Renderers
 
@@ -308,6 +343,10 @@ Canvas paths preserve ASCILINE compatibility and low-level fallback behavior.
 
 Canvas2D glyph/text mode renders character-like cells. Pixel Canvas renders
 colored block/pixel data more directly.
+
+Canvas uses the same palette catalog, lookup table, ordered thresholds, and
+bounded active glyph ramp. It does not load operating-system fonts into the
+native output path and remains governed by the lower software density ceiling.
 
 These paths are important for:
 
@@ -462,19 +501,18 @@ the native presenter. Live camera presets do not use browser mirror transport by
 default because canvas readback and IPC frame transfer are too expensive for
 sustained output.
 
-For Canvas2D-style glyph presets, native output consumes the same canonical
-`glyphMode` and `charset` params as the control surface. The native `wgpu`
-presenter uses a bundled fixed bitmap glyph atlas and luminance ramp so
-traditional ASCII presets stay text-like in Pop Out instead of becoming solid
-color cells. WebGL/WebGPU-style presets disable native glyph masking even when
-their saved params still carry `glyphMode`; their main preview renders solid
-GPU cell rectangles, so Pop Out does the same.
-The frontend resolves the selected catalog entry into a bounded `charsetRamp`
-for native output. Rust accepts it only when it begins with a space, contains
-unique glyphs from the fixed atlas, and fits the native ramp texture; otherwise
-the allowlisted built-in ramp for `charset` is used.
-`fontFamily` remains a preview/control-surface parameter; the native path does
-not load arbitrary fonts and instead masks cells through the fixed atlas/ramp.
+Native output consumes the same canonical palette, dither, `glyphMode`,
+character-set/custom-ramp, depth/offset/reverse, and glyph/background color
+params as the control surface. The native `wgpu` presenter fuses palette and
+ordered-dither work into its cell pass, then masks cells through the same
+Unicode-scalar page/ramp contract as the browser GPU renderers.
+
+The frontend resolves the selected catalog entry into a bounded base
+`charsetRamp`; Rust validates supported scalars and applies depth, offset, and
+reverse once to create a maximum 96-id ramp. Required 1024px R8 atlas pages are
+decoded/uploaded lazily and retained in the presenter's fixed 16-layer texture.
+`fontFamily` remains preview/control-surface metadata; native output never loads
+arbitrary system or user fonts.
 
 For fallback/mirrored sources, bounded raw pixel snapshots can be sent from the
 main renderer to the native output.

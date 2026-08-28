@@ -8,12 +8,9 @@ lang: es
 
 # Rendimiento
 
-Esta guía documenta el modelo de desempeño actual, el comportamiento de aceptación y
-prácticas de validación para ASCII VJ Remix.
+Esta guía documenta el modelo de rendimiento actual, el comportamiento de aceptación y las prácticas de validación para ASCII VJ Remix.
 
-El trabajo de interpretación tiene que ver con el ritmo del cuadro, GPU
-salida, decodificación de medios, latencia de la cámara, respuesta audio reactiva, Pop Out nativo,
-y mantener la interfaz de usuario de control densa respondiendo mientras el renderizador está bajo carga.
+El trabajo de rendimiento consiste en el ritmo de fotogramas, la salida GPU, la decodificación de medios, la latencia de la cámara, la respuesta reactiva al audio, el Pop Out nativo y el mantenimiento de la capacidad de respuesta de la interfaz de usuario de control denso mientras el renderizador está bajo carga.
 
 ## Principios de desempeño
 
@@ -22,24 +19,18 @@ y mantener la interfaz de usuario de control densa respondiendo mientras el rend
 - Evite reinicios del renderizador para realizar cambios de control seguros en vivo.
 - Prefiere la semántica del último fotograma para la cámara en vivo y las rutas de salida.
 - Mantenga la vista previa principal y Pop Out FPS medidas por separado.
-- Mantenga la capacidad de respuesta del análisis de audio sin enviar buffers de audio sin procesar e ilimitados
-a través de IPC.
-- Mantenga la aleatorización, los ajustes preestablecidos, la reactividad de audio y MIDI en el mismo conjunto
-ruta de control en vivo.
-- Mantenga todos los activos de tiempo de ejecución locales para que el rendimiento no dependa de la red.
-disponibilidad.
-- Inicie la verificación de actualización de lanzamiento de producción de forma asincrónica. Un lento o no disponible
-El punto final de lanzamiento no debe retrasar el inicio del renderizador, la fuente, el audio o el control.
-- Mantenga los informes de fallos fuera de la ruta de renderizado. Captura, colas, desinfección y
-La presentación debe estar limitada y no debe bloquear la presentación del marco o la presentación en vivo.
-controles.
-- Vigila térmicas y batería. Esta aplicación puede mantener intencionalmente CPU, GPU, cámara,
-decodificación de medios y análisis de audio activos.
+- Mantenga el análisis de audio receptivo sin enviar búferes de audio sin procesar e ilimitados a través de IPC.
+- Mantenga la aleatorización, los ajustes preestablecidos, la reactividad de audio y MIDI en la misma ruta fusionada de control en vivo.
+- Mantenga todos los activos de tiempo de ejecución locales para que el rendimiento no dependa de la disponibilidad de la red.
+- Resuelva la densidad a través de la política de columnas compartidas/celdas totales. Advanced Density es una preferencia global explícita, no una trampilla de escape visual preestablecida.
+- Reconstruir tablas de búsqueda de paletas y rampas/páginas de glifos solo cuando cambien sus entradas discretas; Los fotogramas de audio y transición deben permanecer uniformes/actualizados en parámetros.
+- Inicie la verificación de actualización de lanzamiento de producción de forma asincrónica. Un punto final de lanzamiento lento o no disponible no debe retrasar el inicio del renderizador, la fuente, el audio o el control.
+- Mantenga los informes de fallos fuera de la ruta de renderizado. La captura, la puesta en cola, la desinfección y el envío deben estar delimitados y no deben bloquear la presentación del fotograma ni los controles en vivo.
+- Vigila térmicas y batería. Esta aplicación puede mantener activos intencionalmente CPU, GPU, la cámara, la decodificación de medios y el análisis de audio.
 
 ## Comportamiento de aceptación práctica
 
-Estos son criterios de regresión para el hardware compatible, no garantías de velocidad de fotogramas.
-en cada máquina.
+Estos son criterios de regresión para el hardware compatible, no garantías de velocidad de fotogramas en cada máquina.
 
 |Área|Objetivo|
 | --- | --- |
@@ -71,20 +62,16 @@ Las regresiones de rendimiento suelen ocurrir cuando una capa pasa por alto este
 
 Normas:
 
-- Utilice el modelo de parámetros canónicos para controles de interfaz de usuario, ajustes preestablecidos, WTF mode y audio.
-modulación, sincronización de salida nativa y MIDI.
+- Utilice el modelo de parámetros canónicos para controles de interfaz de usuario, ajustes preestablecidos, WTF mode, modulación de audio, sincronización de salida nativa y MIDI.
 - Cambie los controles de alta frecuencia por lotes a los cuadros de animación cuando sea posible.
-- No reconstruya los recursos del renderizador para cambios de control numérico que puedan ser
-actualizado como uniformes/params.
+- No reconstruya los recursos del procesador para cambios de control numérico que puedan actualizarse como uniformes/parámetros.
 - Separe los cambios de fuente de los cambios de parámetros visuales.
 - Conserve el tiempo de reproducción de medios activos cuando cambien los ajustes preestablecidos visuales.
 - Mantenga los cambios discretos controlados y predecibles durante las transiciones.
 
 ## 0.9.6 Pase de optimización medido
 
-La versión 0.9.6 elimina el trabajo repetido de configuración/copia de las rutas activas medidas sin
-cambio de sombreadores, muestreo, matemáticas de color, selección de glifos, fuente/salida
-resolución o controles de calidad.
+La versión 0.9.6 elimina el trabajo repetido de configuración/copia de las rutas activas medidas sin cambiar los sombreadores, el muestreo, las matemáticas de color, la selección de glifos, la resolución de fuente/salida o los controles de calidad.
 
 |Camino|antes|0.9.6 comportamiento|
 | --- | --- | --- |
@@ -93,52 +80,57 @@ resolución o controles de calidad.
 |WebGL2|18 llamadas `getUniformLocation` por cuadro|Resuelve las 18 ubicaciones una vez después de vincularlas.|
 |Transiciones numéricas|Sincronización completa de fuente, cámara, visibilidad, medidor y superficie de control en cada cuadro de interpolación|Sincronice los valores cambiantes durante la interpolación y realice la actualización completa del estado final una vez|
 
-En la versión de prueba optimizada de Apple Silicon macOS, el vídeo de demostración se decodificó a aproximadamente
-23.8 FPS mientras que el Pop Out nativo se presenta en 60.1 FPS. Almacenamiento en caché de la versión fuente
-realizó 23,8 cargas y omitió 36,3 cargas duplicadas por segundo, eliminando
-aproximadamente el 60% de la frecuencia de carga de textura/conversión RGB anterior. Un punto de referencia
-la ejecución aún puede verse afectada por la carga de la máquina; comparar la misma transición fija
-objetivos, backend, duración, tipo de construcción y percentiles de fase en lugar de un
-mínimo único.
+En la versión de prueba optimizada de Apple Silicon macOS, Demo Video se decodificó en aproximadamente 23,8 FPS, mientras que el Pop Out nativo se presentó en 60,1 FPS. El almacenamiento en caché de la versión fuente realizó 23,8 cargas y omitió 36,3 cargas duplicadas por segundo, eliminando aproximadamente el 60% de la frecuencia de carga de textura/conversión RGB anterior. Una ejecución de referencia aún puede verse afectada por la carga de la máquina; compare los mismos objetivos de transición fijos, backend, duración, tipo de compilación y percentiles de fase en lugar de un único mínimo.
 
-En el mismo host, la referencia 0.9.5 publicada optimizada midió 35,8 FPS en
-la fase principal y 39.3 FPS después de abrir Pop Out. El 0.9.6 final optimizado
-El candidato midió 38,6 y 39,0 FPS respectivamente, luego 35,9 FPS durante la sesión fija.
-abandono de transición numérica. El arnés más antiguo usaba una tercera fase aleatoria, por lo que solo
-las fases constante principal/Pop Out se utilizan para esa comparación de versiones.
+En el mismo host, la referencia optimizada publicada 0.9.5 midió 35,8 FPS en la fase principal y 39,3 FPS después de abrir Pop Out. El candidato final optimizado 0.9.6 midió 38,6 y 39,0 FPS respectivamente, luego 35,9 FPS durante la rotación de transición numérica fija. El arnés más antiguo usaba una tercera fase aleatoria, por lo que solo se usan las fases principal constante/Pop Out para esa comparación de lanzamiento.
 
-El arnés de humo del navegador también implementa una transición numérica de 250 ms. eso
-requiere que la sincronización del control de fuente permanezca en no más de dos llamadas y
-cámara/sincronización visual completa en no más de una llamada mientras se actualiza el valor
-continúa durante toda la interpolación.
+El arnés de humo del navegador también implementa una transición numérica de 250 ms. Requiere que la sincronización del control de fuente permanezca en no más de dos llamadas y la sincronización de cámara/visual completa en no más de una llamada mientras las actualizaciones de valores continúan durante la interpolación.
 
 ## 0.9.8 Optimización de compilación de lanzamiento
 
-El trabajo de empaquetado Windows más lento de la versión 0.9.7 tomó aproximadamente 31 minutos. su
-La compilación del código fuente FFmpeg tomó alrededor de 12,5 minutos, la verificación de liberación repetida aproximadamente
-5,5 minutos, y la compilación de la aplicación más el empaquetado, unos 10 minutos; esos
-las etapas independientes fueron en su mayoría serializadas.
+El trabajo de empaquetado Windows más lento de la versión 0.9.7 tomó aproximadamente 31 minutos. La compilación del código fuente FFmpeg tomó aproximadamente 12,5 minutos, la verificación de lanzamiento repetida aproximadamente 5,5 minutos y la compilación y empaquetado de la aplicación aproximadamente 10 minutos; esas etapas independientes fueron en su mayoría serializadas.
 
-La versión 0.9.8 adapta el patrón de reutilización de compilación verificada utilizado por MKV Magic. Lanzamiento
-CI resuelve una confirmación de etiqueta inmutable y ejecuta la compilación fuente FFmpeg y Tauri
-Compilación de la aplicación `--no-bundle` al mismo tiempo. También espera la fecha exacta.
-confirma el CI `Desktop` normal en lugar de repetir ese conjunto dentro de cada
-trabajo de embalaje. Los trabajos de paquete aceptan solo el flujo de trabajo de corta duración correspondiente
-artefactos, vuelva a verificar los recursos FFmpeg y verifique la confirmación del binario de la aplicación,
-plataforma, versión, tamaño y SHA-256 antes de que `tauri bundle` lo empaquete sin un
-segunda compilación. Firma, actualizador de firmas, notarización, inspección de paquetes,
-las verificaciones de activos publicados y los humos reales de instalación/actualización siguen siendo puertas de liberación.
+La versión 0.9.8 adapta el patrón de reutilización de compilación verificada utilizado por MKV Magic. La versión CI resuelve una confirmación de etiqueta inmutable y ejecuta la compilación del código fuente FFmpeg y la compilación de la aplicación Tauri `--no-bundle` simultáneamente. También espera el CI `Desktop` normal del compromiso exacto en lugar de repetir ese conjunto dentro de cada trabajo de empaquetado. Los trabajos de paquete aceptan solo los artefactos de flujo de trabajo de corta duración coincidentes, vuelven a verificar los recursos FFmpeg y verifican la confirmación, la plataforma, la versión, el tamaño y SHA-256 del binario de la aplicación antes de que `tauri bundle` la empaquete sin una segunda compilación. La firma, las firmas de actualizadores, la certificación notarial, la inspección de paquetes, las verificaciones de activos publicados y las instalaciones/actualizaciones reales siguen siendo puertas de liberación.
 
-Esto cambia la ruta crítica de la suma de la compilación de la aplicación FFmpeg plus a
-aproximadamente el más lento de los dos, sin cambiar el código de renderizado, enviado
-recursos, plataformas de destino, política de firma o formatos de salida.
+Esto cambia la ruta crítica de la suma de la compilación de la aplicación FFmpeg más a aproximadamente la más lenta de las dos, sin cambiar el código del procesador, los recursos enviados, las plataformas de destino, la política de firma o los formatos de salida.
+
+## 0.9.11 Paleta, tramado, Unicode y paso de densidad
+
+La base de referencia 0.9.11 es Apple M1/16 GB o un dispositivo similar Windows x64 integrado-GPU. Intel macOS no es un objetivo de lanzamiento. La carga de trabajo principal optimizada es video local de 1080p con reactividad de audio y una ventana de salida nativa visible; el objetivo de liberación es 30 FPS con un tiempo de cuadro P95 igual o inferior a 33,3 ms en el piso de referencia.
+
+Los límites de densidad compartida son:
+
+|Modo|columnas|Celdas totales|Promesa|
+| --- | ---: | ---: | --- |
+|Normal acelerada|640|160.000|Gama protegida por el rendimiento; Los ajustes preestablecidos permanecen aquí.|
+|Software normal|120|6.000|Barandilla Lona Inferior/CPU.|
+|Advanced Density|900|500.000|Preferencia global explícita; sin garantía de 30 FPS.|
+
+El host de desarrollo M1 Max/64 GB es más rápido que el piso de referencia, por lo que sus resultados son evidencia de regresión local en lugar de aceptación del piso. En 640 columnas, la función WebGL2 midió 39,1 FPS principal, 39,9 FPS con salida nativa y 35,4 FPS durante la rotación de transición; El RSS máximo fue de aproximadamente 444 MB. Signal Court + Bayer 4 + la rampa unificada CJK midió 37,9, 40,1 y 37,0 FPS con aproximadamente 446 MB de pico RSS. Los valores principales/Pop Out/transición P95 fueron 29,6/29,4/31,6 ms, dentro del diez por ciento de las fases de funciones coincidentes. La salida nativa se mantuvo cerca de 60 FPS sin fallas en GPU.
+
+Evidencia legible por máquina:
+
+- `docs/performance/0.9.10-phase-zero-baseline.md`
+- `docs/performance/0.9.11-density-feature-off-m1-max-webgl2.json`
+- `docs/performance/0.9.11-density-feature-on-m1-max-webgl2.json`
+- `docs/performance/0.9.11-pre-fix-occluded-output-soak-m1-max-webgl2.json`
+- `docs/performance/0.9.11-background-memory-soak-m1-max-webgl2.json`
+
+La primera inmersión desatendida de 15 minutos expuso un error de retención de recursos de salida nativa ocluidos: el RSS constante subió de 156,5 MB a 9411,9 MB porque los fotogramas de origen se cargaron antes de que hubiera una superficie de salida disponible para enviarlos. La salida nativa ahora adquiere la superficie antes de que se escriba en la cola, omite las cargas mientras está ocluida, drena el grupo de liberación automática del hilo de visualización por tick y las encuestas completadas GPU funcionan sin bloqueo. La ejecución repetida de 15 minutos comenzó con 156,1 MB de RSS constante y finalizó con 155,5 MB, una desviación de -0,6 MB, con un pico de inicio de 446,1 MB y sin fallas de sincronización nativa.
+
+La repetición se ejecutó mientras la sesión desatendida de macOS mantenía la aplicación en segundo plano, por lo que WebKit limitó requestAnimationFrame y IPC nativo a aproximadamente 1 Hz. Esa ejecución es sólo evidencia de la duración de la memoria, no de aceptación de la velocidad de fotogramas. Las cifras de 640 columnas de la ventana visible de arriba siguen siendo la evidencia local FPS; El piso de referencia físico y la aceptación del desempeño Windows permanecen separados.
+
+El atlas base Unicode es una asignación fija R8 de 16 MB dividida en dieciséis páginas de 1024 px. Los renderizadores del navegador GPU agregan cuatro niveles de mip de cobertura máxima para que los trazos finos permanezcan visibles en celdas pequeñas sin agregar lecturas de textura por cuadro; la asignación limitada del navegador es de 21,25 MB. Solo se decodifican/cargan las páginas requeridas por la rampa escalar máxima activa de 96, y la caché del navegador decodificada compartida retiene como máximo cuatro páginas base más sus mips generados. Esto evita las paradas de página CJK de varios segundos que se observan con cuatro páginas de 2048 px y, al mismo tiempo, mantiene limitados los bytes del paquete, la caché CPU y la asignación GPU. El Pop Out nativo conserva la asignación de página base de 16 MB.
+
+Las mediciones de funciones locales originales seleccionaron WebGL2 y siguen siendo evidencia de regresión GPU del navegador, no evidencia de aceptación para la vista previa del glifo Apple WebKit instalada.
+
+Para la vista principal macOS Apple WebKit, el modo de glifo utiliza la ruta Canvas2D existente y, por lo tanto, el límite de software normal de 120 columnas/6000 celdas. Esto mantiene la vista previa dentro del piso 30 FPS mientras que el Pop Out nativo independiente permanece renderizado en GPU. Los ajustes preestablecidos primarios de sólidos y píxeles siguen siendo elegibles para WebGPU. La selección del lienzo se realiza cuando se construye un renderizador, no en el bucle del cuadro. Una ejecución optimizada de la aplicación instalada de esa vista previa de glifo delimitada midió 30,0 FPS en la fase principal, 30,0 FPS con Pop Out nativo y 30,1 FPS durante las transiciones numéricas; el valor de fase muestreado más bajo fue 29,5 FPS y el peor P95 fue 33,9 ms. El Pop Out nativo se mantuvo cerca de 60 FPS con cero fallas en GPU. Estos son resultados de regresión de desarrollo-host, no certificación mínima de M1/16 GB.
 
 ## Notas de backend
 
 ### WebGPU
 
-WebGPU es el principal objetivo de calidad visual y la primera opción en capacidad
-Tiempos de ejecución de Chromium/WebView.
+WebGPU es el principal objetivo de calidad visual y la primera opción en tiempos de ejecución de Chromium/WebView compatibles.
 
 Esté atento a:
 
@@ -149,8 +141,7 @@ Esté atento a:
 
 ### WebGL2
 
-WebGL2 es el respaldo integrado más importante de GPU y realiza un seguimiento visual de WebGPU como
-tan de cerca como sea práctico.
+WebGL2 es el respaldo integrado más importante de GPU y realiza un seguimiento visual de WebGPU tan de cerca como sea práctico.
 
 Esté atento a:
 
@@ -161,8 +152,7 @@ Esté atento a:
 
 ### Canvas2D y Pixel Canvas
 
-Las rutas de lienzo preservan la compatibilidad y el linaje ASCILINE. Ellos no son los
-camino de la más alta calidad, pero deben seguir siendo funcionales.
+Las rutas de lienzo preservan la compatibilidad y el linaje ASCILINE. No son el camino de mayor calidad, pero deben seguir siendo funcionales.
 
 Esté atento a:
 
@@ -172,29 +162,23 @@ Esté atento a:
 
 ### Nativo Pop Out
 
-La ruta de salida nativa existe porque se creó un segundo renderizador de lienzo/vista web completo.
-no lo suficientemente rápido para el objetivo del producto.
+La ruta de salida nativa existe porque un segundo renderizador de lienzo/vista web completo no fue lo suficientemente rápido para el objetivo del producto.
 
 Normas:
 
 - Utilice la salida nativa `wgpu` cuando esté disponible.
 - Mantenga los permisos de la ventana de salida al mínimo.
 - Prefiere la transferencia directa de fotogramas o rutas de captura nativas del último fotograma.
-- Mantenga limitados los recursos en modo glifo. Los cambios en el juego de caracteres actualizan el
-rampa/parámetros de glifos pequeños, no activan la carga de fuentes ilimitadas ni dinámicas grandes
-asignación de atlas.
+- Mantenga limitados los recursos en modo glifo. Los cambios en el conjunto de caracteres actualizan los parámetros/la rampa de glifos pequeños, no activan la carga de fuentes ilimitadas ni la asignación de atlas dinámicos grandes.
 - Evite bloquear la interfaz de usuario principal mientras se presenta la ventana de salida.
-- Cargue texturas de origen en los cambios de versión del marco de origen en lugar de mostrarlas
-actualizar; Las personas que llaman de reserva sin versión deben continuar cargando.
-- Mantenga contadores/registros disponibles para adquisición de fotogramas, presentación y parámetros.
-versión, versión fuente y regresiones de ritmo.
+- Cargue texturas de origen en los cambios de versión del marco de origen en lugar de actualizar la pantalla; Las personas que llaman de reserva sin versión deben continuar cargando.
+- Mantenga contadores/registros disponibles para la adquisición de fotogramas, la presentación, la versión de parámetros, la versión de origen y las regresiones de ritmo.
 
 ## Presupuestos de fuentes específicas
 
 ### Imágenes estáticas
 
-La representación de imágenes estáticas es el camino más barato. Jitter, modulación de audio,
-y las transiciones WTF pueden animar la salida sin recargar la imagen.
+La representación de imágenes estáticas es el camino más barato. La fluctuación, la modulación de audio y las transiciones WTF pueden animar la salida sin recargar la imagen.
 
 Evitar:
 
@@ -220,8 +204,7 @@ Normas:
 - Prefiere la semántica del último fotograma.
 - Mantenga la resolución de la cámara/FPS ajustable.
 - No ponga en cola fotogramas antiguos de la cámara cuando el renderizador se quede atrás.
-- Utilice rutas de captura/textura nativas de la plataforma donde produzcan resultados significativos.
-reducciones de latencia.
+- Utilice rutas de captura/textura nativas de la plataforma donde produzcan reducciones de latencia significativas.
 - Para multicámara, sea explícito sobre el costo de la mezcla y el diseño seleccionado.
 
 ### Reactividad de audio
@@ -231,13 +214,9 @@ El análisis de audio está optimizado para una respuesta en vivo estable.
 Normas:
 
 - Mantenga las ventanas del analizador y el suavizado lo suficientemente bajos para una respuesta en vivo.
-- Utilice vectores de funciones como RMS, graves, medios, agudos, flujo, pulso de ritmo y
-fase en lugar de muestras crudas ilimitadas.
-- Mantenga los ayudantes de mezcla densa derivados de los mismos buffers del analizador delimitados:
-bandas medias-bajas/medias-altas, la presencia, el brillo y la densidad no suman
-Historia ilimitada o audio sin formato IPC.
-- Modulación de abrazadera para que la alta sensibilidad no pueda generar negro puro o blanco puro
-pantallas.
+- Utilice vectores de funciones como RMS, graves, medios, agudos, flujo, pulso de ritmo y fase en lugar de muestras sin procesar ilimitadas.
+- Mantenga los ayudantes de mezcla densa derivados de los mismos buffers del analizador limitados: las bandas medias bajas/medias altas, la presencia, el brillo y la densidad no agregan historial ilimitado ni audio sin formato IPC.
+- Modulación de abrazadera para que la alta sensibilidad no pueda generar pantallas en blanco o negro puro.
 - Reinicie la captura automáticamente cuando cambie el dispositivo de entrada seleccionado.
 
 ### Informe de fallos
@@ -246,27 +225,21 @@ Los informes de fallos deben ser oportunistas y de bajo costo.
 
 Normas:
 
-- Capture únicamente pequeños informes estructurados; no adjunte marcos, capturas de pantalla,
-archivos multimedia, audio sin procesar o registros largos.
+- Capture únicamente pequeños informes estructurados; no adjunte marcos, capturas de pantalla, archivos multimedia, audio sin formato ni registros largos.
 - Mantenga las colas locales delimitadas por el recuento de informes y el tamaño de bytes.
 - Envíe de forma asincrónica desde Rust con tiempos de espera de red cortos.
-- Nunca espere el envío del informe de fallas antes de iniciar los renderizadores, cambiar
-fuentes, abriendo Pop Out o aplicando controles en vivo.
+- Nunca espere a que se envíe el informe de fallos antes de iniciar los renderizadores, cambiar de fuente, abrir Pop Out o aplicar controles en vivo.
 - En compilaciones de depuración/desarrollo, capture localmente pero rechace el envío de red.
 
 ### Control experimental MIDI
 
 - Rust mantiene una cola de eventos limitada y descarta el evento más antiguo cuando está lleno.
-- JavaScript conserva los bordes ordenados de los botones pero fusiona eventos continuos mediante
-mensaje/canal/controlador antes de aplicar un marco.
+- JavaScript conserva los bordes ordenados de los botones pero fusiona eventos continuos por mensaje/canal/controlador antes de aplicar un marco.
 - Los parámetros seguros en vivo se actualizan a través de configuradores de renderizador existentes.
-- Los parámetros estructurales mantienen el camino de reconstrucción retrasado existente en lugar de
-reconstrucción por cada incremento de 7 bits.
-- La adquisición suave evita saltos disruptivos después de cambios preestablecidos sin agregar un
-bucle de sondeo por enlace.
+- Los parámetros estructurales mantienen la ruta de reconstrucción retrasada existente en lugar de reconstruir cada incremento de 7 bits.
+- La soft takeover evita saltos disruptivos después de cambios preestablecidos sin agregar un bucle de sondeo por enlace.
 - El monitoreo del puerto se ejecuta a una cadencia fija baja; las lecturas de eventos normales están limitadas.
-- La captura/restauración de SysEx es una operación de configuración explícita y nunca se ejecuta en el
-renderizar hilo. La restauración de paquetes tiene un ritmo para hardware más antiguo.
+- La captura/restauración de SysEx es una operación de configuración explícita y nunca se ejecuta en el subproceso de renderizado. La restauración de paquetes tiene un ritmo para hardware más antiguo.
 
 ## Guía térmica y de batería
 
@@ -300,13 +273,12 @@ Ayudantes de rendimiento de interfaz de usuario y salida nativa:
 ```bash
 npm run smoke:native-output
 npm run smoke:ui-perf
+npm run smoke:primary-presets
 npm run test:native-output-log
+npm run bench:density
 ```
 
-`smoke:ui-perf` parte de los valores predeterminados canónicos y utiliza dos valores fijos,
-objetivos de transición numérica no estructural. Registra promedio, P10, P50 y
-vista previa mínima de FPS más tasas de salida nativas y los backends del renderizador en realidad
-visitado. Para comparar un paquete exacto de aplicaciones instaladas o archivadas:
+`smoke:ui-perf` parte de valores predeterminados canónicos y utiliza dos objetivos de transición numéricos fijos y no estructurales. Registra promedio, P10, P50 y vista previa mínima FPS más tasas de salida nativas y los backends del renderizador realmente visitados, paleta/difuminado/conjunto de caracteres solicitados, reemplazos del renderizador, restablecimientos de fotogramas y una señal de píxeles del lienzo primario posterior a la ejecución. Un renderizador con marcos que avanzan pero un lienzo vacío falla el humo. Para comparar un paquete exacto de aplicaciones instaladas o archivadas:
 
 ```bash
 ASCILINE_SOURCE_APP="/absolute/path/ASCII VJ Remix Dev.app" \
@@ -314,9 +286,20 @@ ASCILINE_UI_PERF_SMOKE_DURATION_MS=30000 \
 npm run smoke:ui-perf
 ```
 
-Los registros de enlace de visualización nativos incluyen `sourceUploads` y `sourceUploadSkips`. por un
-24 videos FPS en una salida de 60 Hz, la forma saludable esperada es de aproximadamente 24 cargas
-y 36 saltos por segundo mientras la presentación permanece cerca de 60 FPS.
+`smoke:primary-presets` activa por separado todos los ajustes preestablecidos de Demo Image integrados dentro de la aplicación Apple WebKit instalada. Verifica el lienzo principal final para cada ajuste preestablecido, de modo que la salida Pop Out, una instantánea de transición intermedia o un recurso de renderizado posterior no puedan satisfacer la verificación de aceptación de la vista principal.
+
+Ejemplo de comparación de funciones activas:
+
+```bash
+ASCILINE_UI_PERF_SMOKE_BACKEND=webgl2 \
+ASCILINE_UI_PERF_SMOKE_PALETTE=signal-court \
+ASCILINE_UI_PERF_SMOKE_DITHER=bayer4 \
+ASCILINE_UI_PERF_SMOKE_CHARSET=cjk-basic \
+ASCILINE_DENSITY_BENCH_COLUMNS=640 \
+npm run bench:density
+```
+
+Los registros de enlace de visualización nativos incluyen `sourceUploads` y `sourceUploadSkips`. Para un vídeo de 24 FPS con una salida de 60 Hz, la forma saludable esperada es de aproximadamente 24 cargas y 36 saltos por segundo, mientras que la presentación permanece cerca de 60 FPS.
 
 Puertas de escritorio y de liberación:
 
@@ -348,8 +331,7 @@ Antes de enviar cambios de renderizador, fuente, salida o audio, verifique manua
 - El vídeo de demostración se reproduce sin iniciar manualmente el renderizador.
 - Cambiar la imagen de demostración y el vídeo de demostración es rápido.
 - Las transiciones preestablecidas son suaves y no muestran fotogramas multimedia originales.
-- Al menos un ajuste preestablecido ASCII tradicional, como Classic Camera ASCII, representa
-correctamente en la vista previa principal y Pop Out.
+- Al menos un ajuste preestablecido ASCII tradicional, como Classic Camera ASCII, se representa correctamente en la vista previa principal y Pop Out.
 - WTF mode se ejecuta indefinidamente y el cambio de fuente no afecta al renderizador.
 - La reactividad del audio cambia visiblemente la salida con el micrófono/entrada seleccionado.
 - Pop Out mantiene la vista previa principal receptiva.
@@ -357,8 +339,7 @@ correctamente en la vista previa principal y Pop Out.
 - La cámara Pop Out no se congela en el primer fotograma.
 - La superposición de estadísticas informa datos FPS/cuadrícula/fuente/preestablecidos creíbles.
 
-Para afirmaciones de rendimiento de compilación optimizada, use la aplicación compilada en lugar del desarrollador
-servidor o paquete de depuración.
+Para afirmaciones de rendimiento de compilación optimizada, utilice la aplicación creada en lugar del servidor de desarrollo o el paquete de depuración.
 
 ## Señales de regresión
 
@@ -373,8 +354,7 @@ Investigue inmediatamente cuando:
 - la salida de la cámara se congela o acumula fotogramas obsoletos.
 - El uso de CPU/GPU aumenta después de cerrar Pop Out.
 
-Punto de referencia prospectivo, prueba de latencia, uso compartido de texturas y panel de rendimiento
-el trabajo se rastrea en [Roadmap](/es/docs/reference/roadmap/).
+En [Roadmap](/es/docs/reference/roadmap/).] se realiza un seguimiento del trabajo prospectivo de referencia, prueba de latencia, uso compartido de texturas y panel de rendimiento.
 
 
 ## Material de origen

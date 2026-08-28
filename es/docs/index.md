@@ -11,7 +11,7 @@ Estos documentos son para desarrolladores de software que desean bifurcar, inspe
 
 ASCII VJ Remix es un visualizador de escritorio local y un banco de trabajo de renderizado. Para los usuarios, existe para brindar a los DJ un visualizador manejable y a los VJ un control detallado de filtro de video/ASCII. Para los desarrolladores, es una aplicación de escritorio Tauri con una densa superficie de control/representación, ruta de salida nativa, adaptadores de medios locales, modulación reactiva de audio e infraestructura de lanzamiento/actualización.
 
-La página de inicio pública está escrita para DJ y VJ. Esta sección es intencionalmente técnica: describe el modelo fuente de la aplicación, la arquitectura del renderizador, los límites del empaquetado del escritorio, la postura de seguridad, las limitaciones de rendimiento, las expectativas de accesibilidad, la postura de internacionalización, el flujo de trabajo de lanzamiento y la línea base de características actual 0.9.9.
+La página de inicio pública está escrita para DJ y VJ. Esta sección es intencionalmente técnica: describe el modelo fuente de la aplicación, la arquitectura del renderizador, los límites del empaquetado del escritorio, la postura de seguridad, las limitaciones de rendimiento, las expectativas de accesibilidad, la postura de internacionalización, el flujo de trabajo de lanzamiento y la línea base de características actual de la versión 0.9.12.
 
 ## Comience aquí
 
@@ -19,7 +19,7 @@ La página de inicio pública está escrita para DJ y VJ. Esta sección es inten
 2. [Conjunto de funciones](/es/docs/overview/features/) para obtener un mapa completo derivado del código fuente de lo que puede hacer la aplicación.
 3. [Quickstart](/es/docs/development/quickstart/) para configuración local y primeros comandos de verificación.
 4. [Arquitectura](/es/docs/development/architecture/) y [Motor de renderizado](/es/docs/development/rendering-engine/) antes de cambiar la fuente, el renderizador, el ajuste preestablecido, el audio, la cámara o el comportamiento de Pop Out.
-5. [Seguridad](/es/docs/operations/security/), [Rendimiento](/es/docs/operations/performance/), [Pruebas](/es/docs/operations/testing/), [Accesibilidad](/es/docs/operations/accessibility/) e [Internacionalización](/es/docs/operations/internationalization/) antes de enviar una bifurcación].
+5. [Seguridad](/es/docs/operations/security/), [Rendimiento](/es/docs/operations/performance/), [Pruebas](/es/docs/operations/testing/), [Accesibilidad](/es/docs/operations/accessibility/) e [Internacionalización](/es/docs/operations/internationalization/) antes de publicar una bifurcación.
 
 ## Páginas de descripción general
 
@@ -30,8 +30,8 @@ La página de inicio pública está escrita para DJ y VJ. Esta sección es inten
 ## Secciones derivadas de la fuente
 
 - [Desarrollo](/es/docs/development/) cubre la configuración local, la arquitectura, los componentes internos de renderizado, el flujo de trabajo de contribución y la orientación del agente LLM.
-- [Operations](/es/docs/operations/) cubre seguridad, rendimiento, pruebas, accesibilidad, i18n, empaquetado, actualizaciones e informes de fallos.
-- [La referencia](/es/docs/reference/) cubre comandos, hoja de ruta, registro de cambios y mapeo de fuente a documentos.
+- [Operaciones](/es/docs/operations/) cubre seguridad, rendimiento, pruebas, accesibilidad, i18n, empaquetado, actualizaciones e informes de fallos.
+- [Referencia](/es/docs/reference/) cubre comandos, hoja de ruta, registro de cambios y mapeo de fuente a documentos.
 
 
 
@@ -46,6 +46,6 @@ Esta página se genera a partir del material fuente de ASCII VJ Remix. Fuentes p
 - [docs/SECURITY.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/SECURITY.md)
 - [docs/PERFORMANCE.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/PERFORMANCE.md)
 - [docs/TESTING.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/TESTING.md)
-- [docs/ACCESIBILIDAD.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/ACCESSIBILITY.md)
+- [docs/ACCESSIBILITY.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/ACCESSIBILITY.md)
 - [docs/I18N.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/I18N.md)
 - [docs/ROADMAP.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/ROADMAP.md)

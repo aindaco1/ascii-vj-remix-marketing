@@ -8,57 +8,82 @@ lang: es
 
 # ASCII VJ Remix
 
-ASCII VJ Remix es un laboratorio de renderizado de escritorio nativo local para convertir imágenes, videos, cámaras y señales reactivas de audio en imágenes ASCII y basadas en celdas de alto rendimiento.
+Los documentos fuente actuales describen el conjunto de características **0.9.12**. Las secciones siguientes se seleccionan directamente del repositorio principal para que la identidad del producto, los requisitos y la guía de hardware no se conviertan en un contrato mantenido por segunda mano.
 
-Está diseñado para la experimentación al estilo VJ: elija una fuente, elija o cree un ajuste preestablecido, presione con fuerza el renderizador, muestre la salida en otra pantalla y siga ajustando la apariencia en vivo mientras los medios siguen ejecutándose.
+## ¿Qué es este proyecto?
 
-Los documentos fuente actuales describen el conjunto de características **0.9.9**.
+ASCII VJ Remix combina varias ideas de herramientas de escritorio y renderizador:
 
-## Límite del producto
+- Comenzó con [ASCILINE](https://github.com/YusufB5/ASCILINE), que proporciona una canalización de transmisión de video ASCII de alto rendimiento, código de servidor Python/FastAPI, preparación de cuadros OpenCV, codificación de cuadros WebSocket adaptable, experimentos de reproducción de terminal y respaldos de renderizado de Canvas.
+- Incluye renderizado WebGPU/WebGL de alta calidad junto con rutas de compatibilidad de Canvas.
+- Mantiene el espíritu local de una herramienta creativa independiente. La aplicación Tauri incluye el renderizador, los medios de demostración, las fuentes, la ruta de salida nativa y los adaptadores de medios locales para que el uso diario no requiera servicios en línea.
+- Utiliza una superficie de control VJ extremadamente negra, blanca, gris, rosa neón y azul neón con tipografía compacta estilo VCR y controles rectangulares nítidos.
 
-- El producto previsto es la aplicación de escritorio empaquetada para macOS, Windows y Linux.
-- El modo Navegador/Vite es útil para el desarrollo, las pruebas de humo y la portabilidad del renderizador, pero no es el marco principal del producto.
-- El tiempo de ejecución es local primero y sin conexión de forma predeterminada.
-- Los medios, los fotogramas de la cámara y el audio seleccionados por el usuario siguen siendo locales.
-- Las rutas en línea intencionales se limitan a una verificación de metadatos de lanzamiento limitada en el inicio de producción, acciones explícitas de descarga/instalación del actualizador y envío de informes de fallas revisados/desinfectados solo en producción.
-- La infraestructura de Stream es solo de desarrollo y no está expuesta en la interfaz de usuario de Source normal.
-- El control experimental nativo MIDI está disponible para el equipo DIN UC-33e/mioXC documentado. Se limita intencionalmente a controles visuales, audiorreactivos, preestablecidos y WTF. La validación física actual cubre macOS Apple Silicon; El USB directo UC-33e no es compatible y la validación física de Windows/Linux está incompleta.
-
-## Linaje del proyecto
-
-ASCII VJ Remix combina tres líneas de ingeniería:
-
-- **ASCILINE**: transmisión de video ASCII de alto rendimiento, codificación de fotogramas adaptable, experimentos de Python/OpenCV, ideas de terminales y linaje alternativo de Canvas.
-- **Representación GPU**: salida visual WebGPU/WebGL de alta calidad y arquitectura de fuente de medios del navegador local.
-- **Trabajo de escritorio ASCII VJ Remix**: empaquetado Tauri, adaptadores de audio/medios nativos, salida Pop Out nativa, infraestructura de lanzamiento/actualización local, informes de fallas y la densa superficie de control de VJ.
+El resultado es un banco de trabajo de renderizado en vivo para salida de video celular/ASCII estilizada.
 
 ## Requisitos del sistema
 
+Estos requisitos son una guía práctica para el renderizador actual, no un contrato. Los tamaños de cuadrícula más altos, las cámaras múltiples, la reactividad de audio y las ventanas de salida nativas aumentan la carga.
+
 ### macOS
 
-- Mínimo: Apple Silicon Mac, macOS 13 Ventura o posterior, 8 GB de RAM, GPU compatible con Metal y aproximadamente 2 GB de espacio libre en disco.
-- Óptimo: M1 Pro/Max, M2 Pro/Max, M3 Pro/Max o más reciente; 16 GB de RAM o más; macOS 14 Sonoma, macOS 15 Sequoia o más reciente; Pantalla/proyector externo para Pop Out.
-- La compatibilidad con Intel Mac no es el objetivo de lanzamiento actual.
+|Nivel|Requisito|
+| --- | --- |
+|Mínimo|Apple M1 o posterior, macOS 13 Ventura o posterior, 16 GB de RAM, GPU compatible con Metal, 2 GB de espacio libre en disco. Las compilaciones oficiales de macOS son las primeras de Apple Silicon.|
+|Óptimo|M1 Pro/Max, M2 Pro/Max, M3 Pro/Max o más reciente; 16 GB de RAM o más; macOS 14 Sonoma, macOS 15 Sequoia o más reciente; Pantalla/proyector externo para Pop Out.|
+
+Notas:
+
+- La compatibilidad con Intel Mac no es el objetivo de lanzamiento actual. Puede funcionar desde el código fuente si usted mismo crea un paquete compatible, pero no es la ruta probada.
 - La cámara, el micrófono y la captura de audio requieren concesiones de privacidad explícitas macOS.
-- Los artefactos públicos 0.9.9 macOS están firmados con el ID del desarrollador, notariados, engrapados y validados por Gatekeeper.
+- Las versiones públicas 0.9.12 están firmadas con el ID del desarrollador, certificadas ante notario, engrapadas y aceptadas por Gatekeeper. Las compilaciones locales o de prueba pueden requerir el flujo normal de clic derecho del botón Abrir o Abrir de todos modos con macOS.
 
 ### Windows
 
-- Mínimo: Windows 10 22H2 o Windows 11, x64 CPU, tiempo de ejecución WebView2, D3D12 o WebGL2 compatible con GPU, 8 GB de RAM y aproximadamente 2 GB de espacio libre en disco.
-- Óptimo: Windows 11, Intel/AMD/NVIDIA GPU reciente con controladores actuales, 16 GB de RAM o más, decodificación de medios de hardware y pantalla de salida dedicada.
-- Los artefactos públicos 0.9.9 Windows son vistas previas sin firmar.
+|Nivel|Requisito|
+| --- | --- |
+|Mínimo|Windows 10 22H2 o Windows 11, x64 CPU, tiempo de ejecución WebView2, GPU integrado ampliamente comparable a los gráficos Apple M1 con soporte D3D12 o WebGL2, 16 GB de RAM, 2 GB de espacio libre en disco.|
+|Óptimo|Windows 11, Intel/AMD/NVIDIA GPU reciente con controladores actuales, 16 GB de RAM o más, decodificación de medios de hardware, pantalla de salida dedicada.|
+
+Notas:
+
+- La mayoría de los sistemas Windows 10/11 actuales ya incluyen WebView2. Si un instalador informa que falta WebView2, instale Microsoft WebView2 Runtime una vez.
+- El loopback de audio del sistema WASAPI nativo no está implementado. El comportamiento actual del audio del sistema/pantalla depende de la ruta de captura expuesta por el tiempo de ejecución; verifíquelo en la máquina de destino antes de una sesión en vivo.
 
 ### Linux
 
-- Mínimo: distribución moderna x86_64 Linux, tiempo de ejecución WebKitGTK 4.1, controladores Mesa o GPU del proveedor con WebGL2, 8 GB de RAM y aproximadamente 2 GB de espacio libre en disco.
-- Óptimo: Ubuntu 24.04, Fedora 40, Arch o distribución actual comparable; Wayland o X11 bien configurado; controladores recientes de Mesa/NVIDIA; GPU compatible con Vulkan.
-- El comportamiento de GPU varía según la distribución, la versión de WebKitGTK y el controlador de gráficos.
+|Nivel|Requisito|
+| --- | --- |
+|Mínimo|Distribución moderna x86_64 Linux, tiempo de ejecución WebKitGTK 4.1, controladores Mesa o GPU del proveedor con WebGL2, 8 GB de RAM, 2 GB de espacio libre en disco.|
+|Óptimo|Ubuntu 24.04, Fedora 40, Arch o distribución actual comparable; Wayland o X11 bien configurado; controladores recientes de Mesa/NVIDIA; GPU compatible con Vulkan.|
 
-## Guía práctica de hardware
+Notas:
 
-El renderizador puede ser exigente. Los tamaños de cuadrícula más altos, las cámaras múltiples, la reactividad de audio y las ventanas de salida nativas aumentan la carga.
+- Linux Tauri utiliza la pila del sistema WebKitGTK, por lo que la compatibilidad con la función GPU varía según la distribución, la versión de WebKitGTK y el controlador de gráficos.
+- WebGL2 puede ser el recurso práctico de Linux incluso cuando WebGPU no esté disponible.
+- La cobertura nativa de cámara/audio/salida Linux está limitada fuera de CI y varía según la distribución y el hardware.
 
-Para el trabajo con cámara en vivo, las cámaras USB estables, los puertos USB directos o un concentrador con alimentación, una buena iluminación, alimentación de CA y una pantalla de salida dedicada a menudo son más importantes que CPU sin formato por sí solo.
+## Guía de hardware
+
+|Nivel|Hardware|
+| --- | --- |
+|Mínimo|Apple M1-class o CPU integrado de 4 núcleos más/GPU integrado, 16 GB de RAM, compatibilidad con WebGL2/Metal/D3D12/Vulkan/GLES, pantalla de 1080p, una cámara o una fuente de medios local a la vez.|
+|Óptimo|8 o más núcleos de rendimiento, 16 a 32 GB de RAM, Apple Silicon Pro/Max o un GPU discreto reciente, decodificación de video por hardware, almacenamiento SSD, pantalla/proyector externo, hardware de captura USB o HDMI, interfaz de audio compatible con su clase.|
+
+Para el trabajo con cámara en vivo, la mejor actualización a menudo no es CPU sin formato. Utilice cámaras USB estables, puertos USB directos o un concentrador con alimentación, buena iluminación y una máquina con alimentación de CA.
+
+## Advertencia de batería y calor
+
+ASCII VJ Remix puede ser exigente. La renderización de WebGPU/WebGL, un alto número de columnas, múltiples cámaras, análisis de audio y ventanas de salida nativas pueden mantener activos continuamente el CPU, el GPU, la cámara y el decodificador de medios.
+
+En portátiles:
+
+- Espere un mayor consumo de batería que un reproductor multimedia normal.
+- Utilice alimentación de CA para actuaciones o sesiones largas.
+- Columnas inferiores, FPS, resolución de la cámara y fluctuación si la máquina se calienta.
+- Deje Advanced Density desactivado para el rango protegido por rendimiento; un recuento elevado de columnas puede aumentar drásticamente el total de celdas cuando las filas automáticas están activas.
+- Cierre Pop Out cuando no necesite una segunda superficie de salida.
+- Prefiera la imagen de demostración incorporada o un solo video cuando realice pruebas con batería.
 
 
 

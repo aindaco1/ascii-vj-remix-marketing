@@ -8,12 +8,9 @@ lang: es
 
 # Pruebas
 
-Esta guía documenta los controles automatizados actuales, las rutas de verificación manual,
-y brechas de cobertura conocidas para ASCII VJ Remix.
+Esta guía documenta las verificaciones automatizadas actuales, las rutas de verificación manual y las brechas de cobertura conocidas para ASCII VJ Remix.
 
-Las pruebas se centran en paquetes fuera de línea, inicio del renderizador, cambio de fuente,
-salida nativa, comportamiento de medios/cámara/audio, permisos Tauri, sidecars FFmpeg,
-lanzar artefactos y manifiestos de actualización.
+Las pruebas se centran en paquetes fuera de línea, inicio del renderizador, cambio de fuente, salida nativa, comportamiento de medios/cámara/audio, permisos Tauri, sidecars FFmpeg, artefactos de lanzamiento y manifiestos de actualización.
 
 ## Referencia rápida
 
@@ -22,6 +19,8 @@ npm run build                    # Vite production build plus local asset copy
 npm run check:offline            # Build and verify bundled/offline assets
 npm run smoke:static             # Static UI/renderer smoke harness
 npm run check:tauri-policy       # Production CSP and local-only runtime policy
+npm run check:icons              # Canonical source and generated platform icons
+npm run check:glyph-atlas        # Unicode atlas manifest, dimensions, source, hashes
 npm run test:output-display      # Secondary-display placement simulation
 npm run test:desktop-updater     # Once-per-launch and manual updater orchestration
 npm run test:updater-manifest    # Tauri latest.json/updater manifest tests
@@ -47,6 +46,8 @@ npm run bundle:release           # Release gate, release build, bundle check
 npm run check:windows-authenticode # Inactive signed-Windows path signature check
 npm run smoke:native-output      # Native output performance helper
 npm run smoke:ui-perf            # UI performance helper
+npm run smoke:primary-presets    # Installed WebKit primary-view preset sweep
+npm run bench:density            # Optimized density/feature comparison reports
 npm run smoke:release-install    # Release artifact install/updater smoke
 ```
 
@@ -61,8 +62,10 @@ git diff --check
 |Área|Cheques actuales|
 | --- | --- |
 |Tiempo de ejecución sin conexión|`npm run check:offline`, `scripts/check_offline_bundle.mjs`|
-|Arnés de interfaz de usuario estática|`npm run smoke:static`|
+|Arnés de interfaz de usuario estática|`npm run smoke:static`, incluida la activación, la salida visible, los errores de WebGL, la finalización de la página de glifos y las comprobaciones de aspecto para cada ajuste preestablecido de imagen de demostración integrado|
 |Política Tauri|`npm run check:tauri-policy`|
+|Iconos de aplicaciones|`npm run check:icons`|
+|Atlas de glifos Unicode|`npm run check:glyph-atlas`, afirmaciones de bloque completo en pruebas matemáticas del renderizador/Rust|
 |Lógica de visualización de salida|`npm run test:output-display`|
 |Comportamiento del actualizador de escritorio|`npm run test:desktop-updater`|
 |Manifiestos del actualizador|`npm run test:updater-manifest`|
@@ -76,7 +79,8 @@ git diff --check
 |Vectores de códec adaptativos|`npm run test:vectors`|
 |Módulos Rust/Tauri|`npm run test:rust`|
 |Rendimiento de salida nativa|`npm run smoke:native-output`, `npm run test:native-output-log`|
-|Rendimiento de la interfaz de usuario|`npm run smoke:ui-perf` con valores predeterminados/transiciones fijos y promedio/P10/P50/mínimo FPS|
+|Rendimiento de la interfaz de usuario|`npm run smoke:ui-perf`, `npm run bench:density` con transiciones/valores predeterminados fijos, configuración de funciones, percentiles de fase, reemplazos de renderizador y restablecimientos de fotogramas|
+|Ajustes preestablecidos primarios instalados|`npm run smoke:primary-presets`, las 69 funciones integradas en la imagen de demostración con visibilidad primaria por ajuste preestablecido, familia de backend, estado de ejecución, error GPU y verificaciones de aspecto|
 |Lanzamiento de instalación/actualización|`npm run smoke:release-install`|
 
 ## Conjuntos de cheques recomendados
@@ -94,19 +98,19 @@ npm run build
 npm run smoke:static
 ```
 
-Agregue comprobaciones manuales para cambio de fuente, transiciones preestablecidas, WTF mode y audio
-Reactividad cuando cambia el comportamiento.
+Agregue comprobaciones manuales para cambio de fuente, transiciones preestablecidas, WTF mode y reactividad de audio cuando cambia el comportamiento.
 
 ### Cambios en el backend del renderizador
 
 ```bash
 npm run build
 npm run test:render-math
+npm run check:glyph-atlas
 npm run smoke:static
 npm run check:media
 ```
 
-También compare manualmente la salida WebGPU y WebGL2 para obtener ajustes preestablecidos representativos.
+También compare manualmente la salida de WebGPU y WebGL2 para determinar los estados representativos de desactivación de funciones, paleta/difusor, Braille, CJK/Kana, Hangul y de rampa personalizada escrita. Registre el backend real; un backend solicitado que retrocede no es evidencia del backend solicitado.
 
 ### Salida nativa o cambios Pop Out
 
@@ -117,10 +121,7 @@ npm run test:native-output-log
 npm run test:rust
 ```
 
-Utilice una compilación de aplicación optimizada antes de sacar conclusiones sobre el rendimiento.
-El humo del rendimiento de la interfaz de usuario comienza con valores predeterminados visuales canónicos, utiliza elementos fijos.
-transiciones numéricas no estructurales y registra cada backend visitado, así que repita
-las carreras son comparables. Seleccione un paquete exacto y una muestra más larga con:
+Utilice una compilación de aplicación optimizada antes de sacar conclusiones sobre el rendimiento. El humo del rendimiento de la interfaz de usuario comienza a partir de valores predeterminados visuales canónicos, utiliza transiciones numéricas no estructurales fijas, registra cada backend visitado y rechaza un lienzo primario sin señal de píxeles visible incluso cuando su contador FPS avanza. Seleccione un paquete exacto y una muestra más larga con:
 
 ```bash
 ASCILINE_SOURCE_APP="/absolute/path/ASCII VJ Remix.app" \
@@ -128,12 +129,28 @@ ASCILINE_UI_PERF_SMOKE_DURATION_MS=30000 \
 npm run smoke:ui-perf
 ```
 
-El análisis de registros nativos informa tanto de las tasas de carga de origen como de tasas de omisión de carga. Un saludable
-La fuente 24 FPS en una pantalla de 60 Hz carga cerca de la velocidad de la fuente y salta
-la pantalla duplicada marca mientras la presentación permanece cerca de la frecuencia de actualización.
-Para cambios en el modo de glifo, incluya al menos un ajuste preestablecido ASCII tradicional en el manual
-Pop Out comprueba y confirma que los cambios en el conjunto de caracteres/familia de fuentes no ocultan el
-Controles de glifo/celda.
+Para cambios preestablecidos principales, `npm run smoke:primary-presets` es la puerta de aceptación Apple WebKit instalada. La matriz Chromium `smoke:static` sigue siendo útil pero no sustituye a este barrido de escritorio.
+
+El análisis de registros nativos informa tanto de las tasas de carga de origen como de carga y omisión. Una fuente saludable de 24 FPS en una pantalla de 60 Hz carga cerca de la frecuencia de la fuente y omite los ticks de visualización duplicados mientras la presentación permanece cerca de la frecuencia de actualización. Para cambios en el modo de glifo, incluya ASCII tradicional, Braille, CJK/Kana, Hangul y una rampa de tipo mixto en las comprobaciones principales/Pop Out. Confirme que las páginas del atlas se carguen solo para la rampa activa, que se informen los escalares no admitidos y que los cambios en el conjunto de caracteres/familia de fuentes no oculten los controles de glifo.
+
+Para el contrato de densidad normal 0.9.11, ejecute compilaciones optimizadas con funciones activadas y desactivadas coincidentes en 640 columnas con audio sintético y salida nativa:
+
+```bash
+ASCILINE_UI_PERF_SMOKE_BACKEND=webgl2 \
+ASCILINE_DENSITY_BENCH_COLUMNS=640 \
+ASCILINE_DENSITY_BENCH_REPORT_PATH=/tmp/feature-off.json \
+npm run bench:density
+
+ASCILINE_UI_PERF_SMOKE_BACKEND=webgl2 \
+ASCILINE_UI_PERF_SMOKE_PALETTE=signal-court \
+ASCILINE_UI_PERF_SMOKE_DITHER=bayer4 \
+ASCILINE_UI_PERF_SMOKE_CHARSET=cjk-basic \
+ASCILINE_DENSITY_BENCH_COLUMNS=640 \
+ASCILINE_DENSITY_BENCH_REPORT_PATH=/tmp/feature-on.json \
+npm run bench:density
+```
+
+`bench:density` es una puerta de liberación: sale de un valor distinto de cero cuando falla cualquier humo de UI infantil, cuando su informe no es aceptado o cuando el RSS constante crece más que el valor mayor de 64 MB y 25 por ciento después del calentamiento. Una ejecución de macOS cuyas ventanas están en segundo plano puede ser útil para probar la vida útil de la memoria, pero su velocidad de fotogramas limitada no debe registrarse como aceptación del rendimiento de la ventana visible.
 
 ### Cambios en MIDI, UC-33e o SysEx
 
@@ -145,9 +162,7 @@ npm run midi:probe -- --connect
 npm run smoke:static
 ```
 
-La sonda física verifica que CoreMIDI pueda enumerar y abrir simultáneamente
-ambas direcciones del mioXC. No reemplaza el barrido de control y
-Lista de verificación de captura/restauración de banco completo en [MIDI_UC33E](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MIDI_UC33E.md).
+La sonda física verifica que CoreMIDI pueda enumerar y abrir simultáneamente ambas direcciones del mioXC. No reemplaza el barrido de control y la lista de verificación de captura/restauración de banco completo en [MIDI_UC33E](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MIDI_UC33E.md).
 
 ### Tauri Comandos, permisos o capacidades
 
@@ -158,13 +173,9 @@ npm run test:rust
 npm run check:desktop
 ```
 
-Verifique manualmente la cámara macOS, el micrófono, la pantalla/audio del sistema y Pop Out
-comportamiento cuando cambia el modelo de permiso.
+Verifique manualmente el comportamiento de la cámara macOS, el micrófono, la pantalla/sistema de audio y Pop Out cuando cambie el modelo de permiso.
 
-Para cambios en informes de fallas, verifique también que las compilaciones de depuración se capturen localmente, pero no
-no enviar, las versiones de lanzamiento usan solo `https://crash.dustwave.xyz/v1/reports`, y
-la ventana de salida no tiene permisos de informe de fallos. El control de Informes se mantiene
-visible con una cola vacía y los diagnósticos de medios locales nunca se envían.
+Para los cambios en los informes de fallos, verifique también que las compilaciones de depuración se capturen localmente pero no las envíen, que las compilaciones de lanzamiento utilicen solo `https://crash.dustwave.xyz/v1/reports` y que la ventana de salida no tenga permisos de informes de fallos. El control Reports permanece visible con una cola vacía y los diagnósticos de medios locales nunca se envían.
 
 ### FFmpeg y motor de medios
 
@@ -192,45 +203,17 @@ npm run smoke:release-install
 npm run test:macos-dmg-layout
 ```
 
-Ejecute `npm run ffmpeg:build-sidecar` antes que `npm run check:release` en limpio
-clonar. `npm run bundle:release` ejecuta el paso de compilación del sidecar automáticamente.
+Ejecute `npm run ffmpeg:build-sidecar` antes que `npm run check:release` en un clon limpio. `npm run bundle:release` ejecuta el paso de compilación del sidecar automáticamente.
 
-El humo de lanzamiento descarga artefactos del instalador de lanzamientos y comprobaciones GitHub.
-diseño, activos incluidos, paquetes de actualización firmados, comportamiento de `latest.json`, el
-controles visibles de actualización e informes empaquetados y la ausencia de un duplicado
-lectura del backend en la barra superior. En
-macOS verifica el DMG descargado, lo monta como solo lectura en un temporal privado
-root, valida el diseño exacto de aplicación a aplicaciones e inspecciona el archivo montado
-aplicación antes del salto del actualizador.
+El humo de lanzamiento descarga artefactos de los lanzamientos GitHub y verifica el diseño del instalador, los activos incluidos, los paquetes de actualización firmados, el comportamiento de `latest.json`, los controles empaquetados visibles Update y Reports y la ausencia de una lectura de backend duplicada en la barra superior. En macOS, verifica el DMG descargado, lo monta como de solo lectura en una raíz temporal privada, valida el diseño exacto de la aplicación a las aplicaciones e inspecciona la aplicación montada antes del salto del actualizador.
 
-Si la publicación de artefactos termina correctamente pero un runner posterior
-revela un defecto en las herramientas de aceptación, ejecuta el flujo `Release
-Acceptance` contra la etiqueta inmutable existente después de corregir las
-herramientas. Ese flujo reutiliza los bytes publicados y no recompila ni
-reemplaza los artefactos de la versión.
-Updater-hop smoke usa `0.9.0` como la versión anterior mínima predeterminada porque
-Las versiones anteriores de `0.1.x` se firmaron con una clave de actualización diferente.
+Si la publicación del artefacto se realiza correctamente pero un ejecutor posterior a la publicación expone un defecto en las herramientas de aceptación, ejecute el flujo de trabajo `Release Acceptance` con la etiqueta inmutable existente después de corregir las herramientas. Reutiliza los bytes publicados y no reconstruye ni reemplaza los activos de lanzamiento. Updater-hop smoke usa `0.9.0` como la versión anterior mínima predeterminada porque las versiones anteriores de `0.1.x` se firmaron con una clave de actualización diferente.
 
-La prueba del controlador verifica que la disponibilidad de producción permita exactamente una
-verificación silenciosa por lanzamiento, los resultados actuales/fuera de línea no anuncian el estado, un
-La actualización disponible no se instala automáticamente y la ruta manual existente
-todavía realiza nuevas comprobaciones e instalación activada por el usuario.
+La prueba del controlador verifica que la disponibilidad de producción permita exactamente una verificación silenciosa por lanzamiento, que los resultados actuales/fuera de línea no anuncien el estado, que una actualización disponible no se instale automáticamente y que la ruta manual existente aún realice nuevas verificaciones e instalaciones activadas por el usuario.
 
-Las versiones 0.9.6 y 0.9.7 se enviaron sin la capacidad de nombre de aplicación de la ventana principal
-utilizado por la puerta de disponibilidad del actualizador, por lo que su control de actualización puede parpadear y
-luego desaparece. Instale 0.9.8 manualmente desde el DMG notariado. Relanzar 0.9.8
-y confirme que la verificación de inicio de la versión actual permanece silenciosa mientras se actualiza
-El control permanece visible, luego use el control y confirme que informa "Hasta
-fecha`. Para la versión 0.9.9, inicie la aplicación 0.9.8 instalada y confirme su
-verificación de antecedentes emerge 0.9.9 sin descargarlo automáticamente. Después del
-instalación aprobada por el usuario, confirme que los informes permanecen visibles con una cola vacía y
-la lectura del backend del lado derecho está ausente.
+Las versiones 0.9.6 y 0.9.7 se enviaron sin la capacidad de nombre de aplicación de la ventana principal utilizada por la puerta de disponibilidad del actualizador, por lo que su control Update puede parpadear y luego desaparecer. Instale 0.9.8 manualmente desde el DMG notariado. Reinicie 0.9.8 y confirme que la verificación de inicio de la versión actual permanece silenciosa mientras el control Update permanece visible, luego use el control y confirme que informa `Up to date`. Para la versión 0.9.10, inicie la aplicación 0.9.9 instalada y confirme que la verificación de antecedentes aparezca en la versión 0.9.10 sin descargarla automáticamente. Después de la instalación aprobada por el usuario, confirme que el ícono de la nueva aplicación esté presente, que Reports permanezca visible en su estado vacío o de recuento pendiente y que la lectura del backend del lado derecho esté ausente.
 
-En macOS, la liberación de humo extrae el `.app.tar.gz` actual y anterior.
-cargas útiles, requiere `com.asciline.remix`, ID de equipo `PWT3Q52LZ2`, tiempo de ejecución reforzado,
-La aceptación del gatekeeper y exactamente el mismo requisito designado, luego ejecuta el
-aplicación anterior a través del actualizador y revalida el paquete reemplazado. el
-La aprobación interactiva de TCC en sí sigue siendo una verificación manual.
+En macOS, Release Smoke extrae las cargas útiles actuales y anteriores de `.app.tar.gz`, requiere `com.asciline.remix`, ID de equipo `PWT3Q52LZ2`, tiempo de ejecución reforzado, aceptación de Gatekeeper y exactamente el mismo requisito designado, luego ejecuta la aplicación anterior a través del actualizador y revalida el paquete reemplazado. La aprobación interactiva del TCC en sí sigue siendo una verificación manual.
 
 ## Lista de verificación manual de humo
 
@@ -243,23 +226,20 @@ La aprobación interactiva de TCC en sí sigue siendo una verificación manual.
 5. Seleccione Cámara y confirme la solicitud de permiso/comportamiento del dispositivo.
 6. Seleccione Micrófono/Entrada y confirme que se inicia la reactividad de audio o solicita permiso.
 7. Cambie de dispositivo de audio y confirme que la captura se reinicia automáticamente.
-8. Activar pantalla/audio del sistema cuando sea compatible y confirmar errores es útil
-cuando la fuente seleccionada no tiene pista de audio.
+8. Activar pantalla/audio del sistema cuando sea compatible y confirmar errores son útiles cuando la fuente seleccionada no tiene pista de audio.
 9. Haga clic en varios ajustes preestablecidos y confirme transiciones suaves.
-10. Seleccione un ajuste preestablecido ASCII tradicional y confirme el conjunto de caracteres y la familia de fuentes
-permanece compacto y visible.
-11. Active y desactive WTF mode y confirme que sigue respondiendo y puede visitar
-estados tradicionales de apariencia ASCII.
-12. Abra Pop Out y confirme que la vista previa principal sigue respondiendo.
-13. Confirme que Pop Out refleja los ajustes preestablecidos, WTF mode y la reactividad de audio mientras está completamente
-visible.
-14. Confirmar superposición de estadísticas informa el valor preestablecido/fuente/backend/grid/FPS activo.
-15. Cierre Pop Out y confirme que se establezca el uso de CPU/GPU.
+10. Seleccione un ajuste preestablecido ASCII tradicional y confirme que el conjunto de caracteres y la familia de fuentes permanezcan compactos y visibles.
+11. Seleccione ajustes preestablecidos de paleta/dither más Braille, Hiragana, Katakana, CJK, Hangul y una rampa personalizada mixta; confirme que main y Pop Out permanecen en paridad.
+12. Cambie Advanced Density y confirme que el modo normal regresa al techo protegido; Confirme que la preferencia no se copia en un ajuste preestablecido visual.
+13. Active y desactive WTF mode y confirme que sigue respondiendo y puede visitar estados tradicionales de aspecto ASCII.
+14. Abra Pop Out y confirme que la vista previa principal sigue respondiendo.
+15. Confirme que Pop Out refleja los ajustes preestablecidos, WTF mode y la reactividad de audio mientras está completamente visible.
+16. Confirmar superposición de estadísticas informa el valor preestablecido/fuente/backend/grid/FPS activo.
+17. Cierre Pop Out y confirme que se establezca el uso de CPU/GPU.
 
 ## Comprobaciones de hardware y plataforma
 
-La aplicación depende del hardware real y de las pilas de medios del sistema operativo. Las pruebas automatizadas no
-cubren todas las combinaciones de hardware y plataforma.
+La aplicación depende del hardware real y de las pilas de medios del sistema operativo. Las pruebas automatizadas no cubren todas las combinaciones de hardware y plataforma.
 
 Matrices manuales importantes:
 
@@ -268,8 +248,7 @@ Matrices manuales importantes:
 - macOS con sistema de captura de audio.
 - Windows con WebView2, D3D12/WebGL2, cámara, micrófono y ruta de instalación.
 - Linux con WebKitGTK, aceleración GPU, cámara, micrófono y ruta AppImage/deb.
-- Equipo experimental macOS Apple Silicon MIDI: Evolution/M-Audio UC-33e hasta
-ambas direcciones DIN de un iConnectivity mioXC, alimentado por separado.
+- Equipo experimental macOS Apple Silicon MIDI: Evolution/M-Audio UC-33e a través de ambas direcciones DIN de un iConnectivity mioXC, alimentado por separado.
 
 Al informar los resultados del hardware, incluya:
 
@@ -284,8 +263,7 @@ Al informar los resultados del hardware, incluya:
 
 ## Comprobaciones de Podman
 
-Podman es principalmente para un shell de desarrollo y legado reproducible similar a Linux
-Trabajo con Python/OpenCV/vector. No es el tiempo de ejecución de producción.
+Podman es principalmente para un shell de desarrollo reproducible similar a Linux y trabajo heredado de Python/OpenCV/vector. No es el tiempo de ejecución de producción.
 
 Comandos útiles:
 
@@ -296,16 +274,14 @@ scripts/podman_venv.sh
 scripts/podman_codec_tests.sh
 ```
 
-La imagen de Podman tiene como valor predeterminado el Nodo 24. Use `NODE_MAJOR=26` solo cuando esté explícitamente
-probando una línea base de Nodo más nueva.
+La imagen de Podman tiene como valor predeterminado el Nodo 24. Utilice `NODE_MAJOR=26` solo cuando pruebe explícitamente una línea base de Nodo más nueva.
 
 ## CI y comportamiento de liberación
 
 Lanzamiento de CI:
 
 - requiere una ejecución exitosa de la inserción principal `Desktop` para la confirmación de lanzamiento exacta.
-- compilar la aplicación y compilar FFmpeg simultáneamente en macOS, Windows y Linux,
-luego verifique y reutilice esas entradas exactas para empaquetar solo paquetes.
+- Compile la aplicación y cree FFmpeg simultáneamente en macOS, Windows y Linux, luego verifique y reutilice esas entradas exactas para empaquetar solo en paquetes.
 - verificar el comportamiento del paquete sin conexión.
 - verificar la política Tauri.
 - construir/comprobar sidecars FFmpeg.
@@ -313,10 +289,8 @@ luego verifique y reutilice esas entradas exactas para empaquetar solo paquetes.
 - generar fragmentos del manifiesto del actualizador.
 - fusionar fragmentos en `latest.json`.
 - cargue instaladores, paquetes de actualización, firmas y `latest.json`.
-- validar macOS Firma de ID de desarrollador, notarización, grapado y Gatekeeper
-aceptación antes de publicar artefactos macOS.
-- publica artefactos Windows 0.9.9 como vistas previas sin firmar; el inactivo firmado
-La ruta Windows incluye el firmante de Authenticode y la validación de marca de tiempo.
+- valide la firma de ID del desarrollador macOS, la certificación notarial, el grapado y la aceptación del Gatekeeper antes de publicar los artefactos macOS.
+- publica artefactos Windows como vistas previas sin firmar; la ruta Windows firmada inactiva incluye el firmante de Authenticode y la validación de marca de tiempo.
 - ejecute comprobaciones de humo de instalación y de interfaz de usuario de actualización visible después de la publicación.
 - ejecute el actualizador macOS de identidad/humo de reemplazo en `macos-26`.
 
@@ -326,13 +300,10 @@ La ruta Windows incluye el firmante de Authenticode y la validación de marca de
 - No hay un conjunto de pruebas completo de i18n/l10n.
 - No hay un paquete de salida visual dorado para ajustes preestablecidos.
 - Sin punto de referencia de latencia de cámara automatizado.
-- Se incluyen análisis, mapeo, eventos falsos y ensamblaje SysEx experimentales de MIDI.
-automatizado; Los barridos de control físico y la restauración del banco completo aún requieren la
-Equipo UC-33e/mioXC.
+- El análisis experimental de MIDI, el mapeo, los eventos falsos y el ensamblaje de SysEx están automatizados; Los barridos de control físico y la restauración del banco completo aún requieren el equipo UC-33e/mioXC.
 - La cobertura de audio/cámara/medios nativos de Linux está limitada fuera de CI.
 
-Lanzamiento prospectivo, plataforma, accesibilidad, localización y rendimiento.
-La cobertura se rastrea en [Roadmap](/es/docs/reference/roadmap/).
+El seguimiento del lanzamiento potencial, la plataforma, la accesibilidad, la localización y la cobertura de rendimiento se realiza en [Roadmap](/es/docs/reference/roadmap/).
 
 
 ## Material de origen
