@@ -1,6 +1,6 @@
 latest_release:
-  version: "0.9.12"
-  date: "2026-08-28"
+  version: "1.0.0"
+  date: "2026-08-31"
 app_icon:
   path: "/assets/images/ascii-vj-remix-app-icon.png"
   sha256: "21a3c8b1f2c14e9b1a8ab9dd3465ab76effb664b204b129e05c0a3794a3890b5"

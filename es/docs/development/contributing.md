@@ -99,11 +99,14 @@ En los espacios de trabajo macOS almacenados en iCloud Drive, el asistente de co
 |`npm run preview`|Obtenga una vista previa de la compilación de producción.|
 |`npm run check:offline`|Compile y verifique que no se requieran activos de tiempo de ejecución remotos.|
 |`npm run smoke:static`|Prueba de humo del navegador para la interfaz de usuario de origen, el inicio del renderizador, el respaldo de salida y los dispositivos de audio falsos.|
+|`npm run test:renderer-fallback`|Pruebas deterministas de respaldo de GPU a Canvas y de contrato de informe de renderizado limitado.|
 |`npm run tauri:dev`|Modo de desarrollo de escritorio Tauri.|
 |`npm run check:desktop`|Compilación sin conexión, política Tauri, simulación de visualización de salida, manifiesto de actualización, política de recursos FFmpeg, pruebas Rust y compilación sin paquete de depuración.|
 |`npm run icons:generate`|Regenere todos los íconos de la plataforma Tauri desde la fuente canónica de 1024px.|
 |`npm run check:icons`|Regenere íconos de forma aislada y verifique las coincidencias del conjunto confirmado.|
 |`npm run bundle:debug`|Cree un paquete de escritorio de depuración local y valídelo.|
+|`npm run bundle:test`|En Windows con los recursos FFmpeg verificados actuales preparados, cree un instalador de desarrollo de perfil de versión sin firmar y verifique su subsistema GUI.|
+|`npm run bundle:test:linux`|En Linux con los recursos FFmpeg verificados actualmente en preparación, cree paquetes de desarrollo AppImage, deb y rpm deshabilitados para el actualizador.|
 |`npm run bundle:release`|Ejecute puertas de lanzamiento, cree un paquete de lanzamiento y valídelo.|
 |`npm run test:rust`|Ejecute pruebas Rust.|
 |`npm run check:media`|Ejecute la preparación de fotogramas, la decodificación/cambio de tamaño y las comprobaciones de medios de sesión nativas.|
@@ -113,6 +116,8 @@ En los espacios de trabajo macOS almacenados en iCloud Drive, el asistente de co
 |`npm run smoke:ui-perf`|Ayudante de humo para el rendimiento de la interfaz de usuario.|
 |`npm run test:midi`|MIDI pruebas de mapa, escalado, soft takeover, acción y alcance.|
 |`npm run midi:probe`|Enumere las entradas/salidas físicas de MIDI; agregue `-- --connect` para abrir ambas direcciones mioXC.|
+
+Las solicitudes de extracción del mismo repositorio también empaquetan artefactos de desarrollo deshabilitados por el actualizador después de que pasa la puerta de escritorio de la plataforma. El instalador sin firmar `ASCII VJ Remix Dev` Windows se construye en modo de lanzamiento, verifica el subsistema gráfico PE y se instala junto con la identidad de producción. Linux produce paquetes AppImage, deb y rpm a partir de la misma identidad de desarrollo. CI crea y verifica los recursos FFmpeg/ffprobe anclados para cada conjunto de paquetes antes de agruparlos. Los artefactos `ascii-vj-remix-windows-test-<commit>` y `ascii-vj-remix-linux-test-<commit>` se conservan durante 14 días. Consulte [Linux VM QA](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/LINUX_VM_QA.md) para conocer la matriz de VM mantenida.
 
 ## Shell de desarrollo de Podman
 
@@ -267,6 +272,8 @@ Los comandos de desarrollo utilizan estas variables de entorno cuando se configu
 ASCILINE_FFMPEG=/path/to/ffmpeg
 ASCILINE_FFPROBE=/path/to/ffprobe
 ```
+
+En macOS y Windows, los contenedores Podman reutilizan una conexión Podman predeterminada en buen estado antes de iniciar `podman-machine-default`. Esto evita colisionar con la máquina virtual que ya se está ejecutando en otro proceso de pago. Configure `ASCILINE_PODMAN_MACHINE` solo cuando la máquina alternativa tenga un nombre diferente.
 
 Vista previa del canal de medios:
 

@@ -67,8 +67,8 @@ The current release line includes these security hardening rules:
   `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`, Apple certificate values, or keychain
   passwords in job-level workflow environment blocks.
 - Public macOS release CI fails closed when Apple Developer ID signing or
-  notarization is incomplete. Public 0.9.12 macOS artifacts are signed,
-  notarized, stapled, and Gatekeeper-validated; Windows 0.9.12 artifacts are
+  notarization is incomplete. Public 1.0.0 macOS artifacts are signed,
+  notarized, stapled, and Gatekeeper-validated; Windows 1.0.0 artifacts are
   unsigned previews.
 - Public macOS artifacts must retain Team ID `PWT3Q52LZ2` and the stable
   identifier/team designated requirement. CI validates both the built app and
@@ -141,6 +141,8 @@ The crash reporter can capture:
 - frontend `unhandledrejection` events.
 - Tauri command failures.
 - Rust panic-hook reports imported on the next launch.
+- renderer fallback/failure reports containing only bounded preset/backend,
+  source-class, error-summary, and recent renderer-event fields.
 
 Security requirements:
 
@@ -149,6 +151,11 @@ Security requirements:
   passwords, and auth-like context keys.
 - Reports must not include user media files, decoded frames, screenshots, raw
   audio, local storage dumps, environment dumps, or arbitrary logs.
+- Expected unavailable/disconnected microphone reports from older builds are
+  pruned locally using the same narrow hardware-error classifier used at
+  capture time; unexpected microphone errors remain queued.
+- Renderer diagnostics are limited to the eight most recent sanitized
+  structured events. They must not become a general local-log upload path.
 - The app stores at most a small local queue and lets the user choose `ask`,
   `always`, or `off`.
 - The Reports control remains reachable with an empty queue so the preference
@@ -156,6 +163,9 @@ Security requirements:
   a report.
 - Submission uses the Rust command surface only. The output window must not have
   crash-report permissions.
+- Submission additionally requires both a release-mode binary and the exact
+  production bundle identifier. Optimized Dev/QA packages retain their separate
+  identity and local queue but cannot submit reports.
 - GitHub credentials must not be present in the desktop app, repository config,
   or client-visible bundle.
 
@@ -178,6 +188,10 @@ kind, surface, platform, command/backend/source mode, native-output state, and
 explicit error-code fields; normalized stack frame or message are fallbacks.
 Issue bodies keep bounded aggregate state rather than concatenating every
 report.
+
+Failures from the best-effort local media-diagnostics writer are non-fatal and
+must be ignored by both the desktop adapter and relay. They do not describe an
+application crash and must not create GitHub issues.
 
 The opt-in production acceptance canary is hard-coded and refuses to run when a
 user report is already pending or the preference is `off`. It must never be
@@ -290,6 +304,8 @@ also an important supply-chain and licensing boundary.
 Rules:
 
 - Do not download FFmpeg, codecs, or media helper binaries at runtime.
+- Native fallback for built-in media accepts only the two exact shipped Demo
+  Video source ids; it does not grant the webview a general filesystem path.
 - Release sidecars are built from pinned official source.
 - Network protocols remain disabled for release FFmpeg builds unless a
   productized streaming feature explicitly requires a reviewed exception.
@@ -385,7 +401,7 @@ npm run check:ffmpeg-resources
   deliberately ad-hoc development build still receives build-specific grants.
 - Ad-hoc macOS signing is acceptable for local builds only; public releases are
   Developer ID signed, notarized, stapled, and Gatekeeper-validated.
-- Windows 0.9.12 artifacts are unsigned previews and may trigger Unknown
+- Windows 1.0.0 artifacts are unsigned previews and may trigger Unknown
   Publisher, SmartScreen, or Defender warnings.
 - Linux media/camera/audio behavior varies by distribution, WebKitGTK, drivers,
   and portal setup.

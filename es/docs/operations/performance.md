@@ -120,17 +120,19 @@ La primera inmersión desatendida de 15 minutos expuso un error de retención de
 
 La repetición se ejecutó mientras la sesión desatendida de macOS mantenía la aplicación en segundo plano, por lo que WebKit limitó requestAnimationFrame y IPC nativo a aproximadamente 1 Hz. Esa ejecución es sólo evidencia de la duración de la memoria, no de aceptación de la velocidad de fotogramas. Las cifras de 640 columnas de la ventana visible de arriba siguen siendo la evidencia local FPS; El piso de referencia físico y la aceptación del desempeño Windows permanecen separados.
 
-El atlas base Unicode es una asignación fija R8 de 16 MB dividida en dieciséis páginas de 1024 px. Los renderizadores del navegador GPU agregan cuatro niveles de mip de cobertura máxima para que los trazos finos permanezcan visibles en celdas pequeñas sin agregar lecturas de textura por cuadro; la asignación limitada del navegador es de 21,25 MB. Solo se decodifican/cargan las páginas requeridas por la rampa escalar máxima activa de 96, y la caché del navegador decodificada compartida retiene como máximo cuatro páginas base más sus mips generados. Esto evita las paradas de página CJK de varios segundos que se observan con cuatro páginas de 2048 px y, al mismo tiempo, mantiene limitados los bytes del paquete, la caché CPU y la asignación GPU. El Pop Out nativo conserva la asignación de página base de 16 MB.
+El atlas fuente Unicode está dividido en dieciséis páginas en escala de grises de 1024px. Solo se decodifican las páginas requeridas por la rampa activa de hasta 96 escalares de 96, y el caché del navegador compartido retiene como máximo cuatro páginas base más los mips de cobertura máxima generados. WebGPU compacta las máscaras activas y los cinco niveles de cobertura en una textura RGBA de 768x62, aproximadamente 186 KB de almacenamiento GPU. WebGL2 conserva la matriz R8 de 16 capas limitada y sus mips, mientras que el Pop Out nativo conserva la asignación de página base de 16 MB. Esto evita las paradas de página CJK de varios segundos que se observan con cuatro páginas de 2048 px y, al mismo tiempo, mantiene limitados los bytes del paquete, la caché CPU y la asignación WebGPU.
 
 Las mediciones de funciones locales originales seleccionaron WebGL2 y siguen siendo evidencia de regresión GPU del navegador, no evidencia de aceptación para la vista previa del glifo Apple WebKit instalada.
 
-Para la vista principal macOS Apple WebKit, el modo de glifo utiliza la ruta Canvas2D existente y, por lo tanto, el límite de software normal de 120 columnas/6000 celdas. Esto mantiene la vista previa dentro del piso 30 FPS mientras que el Pop Out nativo independiente permanece renderizado en GPU. Los ajustes preestablecidos primarios de sólidos y píxeles siguen siendo elegibles para WebGPU. La selección del lienzo se realiza cuando se construye un renderizador, no en el bucle del cuadro. Una ejecución optimizada de la aplicación instalada de esa vista previa de glifo delimitada midió 30,0 FPS en la fase principal, 30,0 FPS con Pop Out nativo y 30,1 FPS durante las transiciones numéricas; el valor de fase muestreado más bajo fue 29,5 FPS y el peor P95 fue 33,9 ms. El Pop Out nativo se mantuvo cerca de 60 FPS con cero fallas en GPU. Estos son resultados de regresión de desarrollo-host, no certificación mínima de M1/16 GB.
+Para la vista principal macOS Apple WebKit, los ajustes preestablecidos de glifos elegibles para aceleración utilizan la textura de rampa compacta WebGPU. Los ajustes preestablecidos que poseen explícitamente Canvas2D mantienen el límite de densidad de software normal. El barrido de todos los ajustes preestablecidos instalado resuelve 41 presets integrados en WebGPU y 28 en Canvas2D, mantiene los 69 visibles y confirma que todos los ajustes preestablecidos elegibles para GPU se aceleran. El Pop Out nativo permanece renderizado de forma independiente en GPU. Una ejecución estructural de 30 segundos mantuvo la vista principal en 30.0 FPS, la presentación nativa en 60.0 FPS, las cargas de origen en 23.5 FPS para el dispositivo 24 FPS y completó 16 fundidos cruzados sincronizados con cero GPU o fallas de transición. Estos son resultados de regresión del host de desarrollo de M1 Max, no la certificación mínima de M1/16 GB.
 
 ## Notas de backend
 
 ### WebGPU
 
-WebGPU es el principal objetivo de calidad visual y la primera opción en tiempos de ejecución de Chromium/WebView compatibles.
+WebGPU es el principal objetivo de calidad visual y la primera opción en tiempos de ejecución compatibles con Chromium y macOS Apple WebKit empaquetados.
+
+El ajuste preestablecido de perfil limpio no debe poseer la preferencia de renderizado global. El backend predeterminado es Automático y se espera que las funciones integradas sin un backend de compatibilidad explícito se resuelvan primero en WebGPU y en segundo lugar en WebGL2.
 
 Esté atento a:
 
@@ -171,6 +173,9 @@ Normas:
 - Prefiere la transferencia directa de fotogramas o rutas de captura nativas del último fotograma.
 - Mantenga limitados los recursos en modo glifo. Los cambios en el conjunto de caracteres actualizan los parámetros/la rampa de glifos pequeños, no activan la carga de fuentes ilimitadas ni la asignación de atlas dinámicos grandes.
 - Evite bloquear la interfaz de usuario principal mientras se presenta la ventana de salida.
+- Arma las transiciones preestablecidas una vez con una marca de tiempo compartida. No serialice una actualización de parámetro de solicitud/respuesta por cuadro de animación mientras una interpolación nativa o un fundido cruzado puedan avanzar en el enlace de visualización.
+- Mantenga la superficie nativa con la latencia de fotogramas mínima admitida para que el almacenamiento en búfer de la cadena de intercambio no agregue un retraso evitable entre la salida principal y la salida.
+- Prefiera un formato de superficie nativo que no sea sRGB para que la cadena de intercambio no transforme las matemáticas de color del renderizador de espacio de bytes compartido por segunda vez.
 - Cargue texturas de origen en los cambios de versión del marco de origen en lugar de actualizar la pantalla; Las personas que llaman de reserva sin versión deben continuar cargando.
 - Mantenga contadores/registros disponibles para la adquisición de fotogramas, la presentación, la versión de parámetros, la versión de origen y las regresiones de ritmo.
 
@@ -226,9 +231,11 @@ Los informes de fallos deben ser oportunistas y de bajo costo.
 Normas:
 
 - Capture únicamente pequeños informes estructurados; no adjunte marcos, capturas de pantalla, archivos multimedia, audio sin formato ni registros largos.
+- Las fallas del renderizador pueden vincular como máximo los ocho eventos de renderizador desinfectados más recientes; mantenga la colección delimitada y fuera del marco del trabajo.
 - Mantenga las colas locales delimitadas por el recuento de informes y el tamaño de bytes.
 - Envíe de forma asincrónica desde Rust con tiempos de espera de red cortos.
 - Nunca espere a que se envíe el informe de fallos antes de iniciar los renderizadores, cambiar de fuente, abrir Pop Out o aplicar controles en vivo.
+- Intente recurrir a Canvas inmediatamente después de un error de construcción de GPU; poner en cola su diagnóstico de forma asincrónica después de que el renderizador de reemplazo esté activo.
 - En compilaciones de depuración/desarrollo, capture localmente pero rechace el envío de red.
 
 ### Control experimental MIDI
@@ -286,6 +293,8 @@ ASCILINE_UI_PERF_SMOKE_DURATION_MS=30000 \
 npm run smoke:ui-perf
 ```
 
+Agregue `ASCILINE_UI_PERF_SMOKE_STRUCTURAL=1` para alternar familias de renderizadores de glifos y sólidos durante la fase de transición. Esto ejercita el fundido cruzado nativo de dos pasadas e informa la cadencia de cuadros del enlace de visualización `transitioned` además de la cadencia de parámetros y modulación de audio.
+
 `smoke:primary-presets` activa por separado todos los ajustes preestablecidos de Demo Image integrados dentro de la aplicación Apple WebKit instalada. Verifica el lienzo principal final para cada ajuste preestablecido, de modo que la salida Pop Out, una instantánea de transición intermedia o un recurso de renderizado posterior no puedan satisfacer la verificación de aceptación de la vista principal.
 
 Ejemplo de comparación de funciones activas:
@@ -336,6 +345,7 @@ Antes de enviar cambios de renderizador, fuente, salida o audio, verifique manua
 - La reactividad del audio cambia visiblemente la salida con el micrófono/entrada seleccionado.
 - Pop Out mantiene la vista previa principal receptiva.
 - Pop Out refleja WTF y cambios audio-reactivos mientras es completamente visible.
+- La paleta Pop Out, el brillo, el contraste y los colores de fondo coinciden con la vista previa principal del mismo ajuste preestablecido.
 - La cámara Pop Out no se congela en el primer fotograma.
 - La superposición de estadísticas informa datos FPS/cuadrícula/fuente/preestablecidos creíbles.
 

@@ -15,9 +15,9 @@ Esta página describe la línea base de funciones ASCII VJ Remix actual para des
 ### Fuentes
 
 - Imagen de demostración incorporada, utilizada como fuente de inicio predeterminada.
-- Vídeo de demostración incorporado.
+- H.264/MP4 Demo Video integrado en macOS y Windows, con un recurso VP8/WebM coincidente seleccionado en instalaciones limpias de Linux.
 - Archivos de imagen y vídeo locales seleccionados por el usuario.
-- Soporte de selección MKV en el selector de archivos del escritorio. La reproducción depende de la ruta del decodificador de la plataforma activa; MP4/H.264 es el formato admitido de forma más consistente.
+- Soporte de selección MKV en el selector de archivos del escritorio. Si la vista web de la plataforma no puede decodificar la demostración integrada o un video seleccionado, la aplicación de escritorio lo vuelve a intentar a través de la ruta FFmpeg incluida.
 - Entrada de cámara web/cámara local.
 - Múltiples cámaras simultáneas cuando el sistema operativo y el tiempo de ejecución del escritorio lo permitan.
 - Diseños del mezclador de cámaras: cuadrícula, fila dividida, pila e imagen en imagen.
@@ -29,6 +29,7 @@ Esta página describe la línea base de funciones ASCII VJ Remix actual para des
 - El renderizador WebGPU es el principal objetivo de calidad en tiempos de ejecución de escritorio compatibles.
 - El renderizador WebGL2 es el principal respaldo integrado de GPU.
 - Las rutas Canvas2D y Pixel Canvas siguen siendo alternativas de compatibilidad.
+- Las vistas de escritorio empaquetadas prueban WebGPU para cada ajuste preestablecido elegible para aceleración, luego WebGL2 y Canvas2D como alternativas limitadas. Los ajustes preestablecidos con un backend de compatibilidad explícita conservan Canvas2D en todas las plataformas.
 - La ventana de salida nativa Tauri utiliza un presentador `wgpu` cuando esté disponible:
   - Metal en macOS.
   - D3D12 en Windows.
@@ -46,8 +47,10 @@ Esta página describe la línea base de funciones ASCII VJ Remix actual para des
 
 - Ajustes preestablecidos visuales integrados de solo lectura, que incluyen estilos extremos como Neon Sledgehammer, Gamma Sinkhole, Chrome Wound, Candy Fragmenter, Paper Shredder, Cyberdelic Riot, Acid Snowstorm, Terminal Collapse y Neon Razorstorm.
 - Preajustes ASCII tradicionales integrados, incluidos Classic Camera ASCII, ANSI Newsprint, Terminal Mono y Dense Typewriter.
+- Classic Camera ASCII es el valor predeterminado para un perfil limpio. Los perfiles persistentes existentes mantienen su configuración visual en lugar de restablecerse silenciosamente. La opción visual de perfil limpio no anula la preferencia global de renderizado automático; Los ajustes preestablecidos sin un backend de compatibilidad explícito utilizan WebGPU/WebGL2 cuando el tiempo de ejecución los admite.
 - Veintitrés ajustes preestablecidos de caracteres de solo lectura adaptados de [ascii.today](https://ascii.today/), incluidos Broadway KB, Computer, Doom, Ghost, Modular, Standard, Univers y Doh. El paquete acreditado completo se encuentra en [ascii.today Character Presets](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/ASCII_TODAY_PRESETS.md).
-- Los controles de conjunto de caracteres y familia de fuentes permanecen compactos para que el ajuste ASCII tradicional no abarrote la densa superficie de control en vivo.
+- Built-in y My Presets se muestran como secciones separadas, ordenadas alfabéticamente de forma independiente con una búsqueda de nombre en vivo. El nombre anterior Point & Click Default ahora se muestra como Dense Color ASCII; su identificación preestablecida estable no cambia.
+- El conjunto de caracteres, la familia de fuentes, la paleta y otras selecciones comparten la misma geometría de control, por lo que el ajuste ASCII tradicional permanece alineado en la densa barra lateral.
 - Los controles de paleta, mapeo, tramado ordenado, rampa de glifos y color de glifos se pueden ajustar y guardar de forma independiente a través del esquema visual preestablecido existente.
 - Diez variantes integradas de paleta/glifo incluyen Braille, dibujo de cuadro, marcas CJK, Hiragana, Katakana, CJK Unificado y Hangul. Las otras seis paletas se incorporan a los ajustes preestablecidos existentes.
 - Los ajustes preestablecidos del usuario se pueden guardar, duplicar, actualizar, eliminar, importar y exportar.
@@ -98,11 +101,11 @@ MIDI sigue siendo experimental. Pasan las pruebas de mapeo automatizado, segurid
   - La ventana de salida tiene una superficie de comando mínima.
 - La versión 0.9.8 comprueba metadatos de GitHub Releases para paquetes de actualización firmados una vez en segundo plano cada vez que se abre la aplicación de producción. Una verificación actual o fuera de línea es silenciosa; cuando existe una versión más reciente, el control Update de la barra superior la muestra. Las versiones 0.9.6 y 0.9.7 requieren una actualización manual de DMG a 0.9.8 porque una capacidad de producción faltante ocultaba su control Update.
 - El mismo control Update permanece disponible para una nueva verificación manual. La descarga, la instalación y el reinicio siguen siendo iniciados explícitamente por el usuario.
-- El control Reports permanece visible cuando no hay informes de fallos pendientes, por lo que siempre se puede acceder a las preferencias `ask`, `always` y `off`. Un recuento pendiente y un estado de advertencia aparecen solo después de que se captura un informe desinfectado y delimitado.
-- Los artefactos públicos 0.9.12 macOS están firmados con el ID del desarrollador, notariados, engrapados y validados por el Gatekeeper. Los artefactos públicos 0.9.12 Windows son vistas previas sin firmar.
+- El control Reports permanece visible cuando no hay informes de fallos pendientes, por lo que siempre se puede acceder a las preferencias `ask`, `always` y `off`. Un recuento pendiente y un estado de advertencia aparecen solo después de que se captura un informe desinfectado y delimitado. Los paquetes de desarrollo conservan los informes localmente para su revisión y mantienen el envío desactivado; solo se puede enviar una compilación en modo de lanzamiento con el identificador del paquete de producción. Los informes de micrófonos no disponibles heredados se eliminan de la cola porque un dispositivo de entrada desconectado o ausente es un estado de hardware normal.
+- Los artefactos públicos 1.0.0 macOS están firmados con el ID del desarrollador, notariados, engrapados y validados por Gatekeeper. Los artefactos públicos 1.0.0 Windows son vistas previas sin firmar.
 - Los comandos de desarrollo normales utilizan la aplicación `ASCII VJ Remix Dev` visiblemente separada y el identificador de paquete `com.asciline.remix.dev`. Las compilaciones de desarrollo no pueden reemplazar ni heredar las concesiones de privacidad de la aplicación de producción.
 - Las rutas en línea intencionales se limitan al flujo de verificación/descarga del actualizador y al envío de informes de fallas revisados/desinfectados solo en producción.
-- El envío del informe de fallos pasa a través de la capa de escritorio Rust hasta el relé `https://crash.dustwave.xyz` Cloudflare Worker. La vista web no obtiene capacidad HTTP arbitraria y los medios seleccionados nunca se cargan. Los diagnósticos de medios locales y los registros arbitrarios no se adjuntan a los informes de fallos.
+- El envío del informe de fallos pasa a través de la capa de escritorio Rust hasta el relé `https://crash.dustwave.xyz` Cloudflare Worker. La vista web no obtiene capacidad HTTP arbitraria y los medios seleccionados nunca se cargan. Las fallas del renderizador pueden adjuntar un resumen de evento limitado y desinfectado con un estado preestablecido/de fondo; No se adjuntan diagnósticos de medios locales ni registros arbitrarios.
 
 ### Rutas avanzadas y solo de desarrollo
 

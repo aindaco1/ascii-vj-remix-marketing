@@ -107,11 +107,14 @@ attributes do not break app signing. You can override the build directory with
 | `npm run preview` | Preview the production build. |
 | `npm run check:offline` | Build and verify no remote runtime assets are required. |
 | `npm run smoke:static` | Browser smoke test for source UI, renderer startup, output fallback, and audio fake devices. |
+| `npm run test:renderer-fallback` | Deterministic GPU-to-Canvas fallback and bounded renderer-report contract tests. |
 | `npm run tauri:dev` | Tauri desktop dev mode. |
 | `npm run check:desktop` | Offline build, Tauri policy, output-display simulation, updater manifest, FFmpeg resource policy, Rust tests, and debug no-bundle build. |
 | `npm run icons:generate` | Regenerate every Tauri platform icon from the canonical 1024px source. |
 | `npm run check:icons` | Regenerate icons in isolation and verify the committed set matches. |
 | `npm run bundle:debug` | Build a local debug desktop bundle and validate it. |
+| `npm run bundle:test` | On Windows with the current verified FFmpeg resources staged, build an unsigned release-profile development installer and verify its GUI subsystem. |
+| `npm run bundle:test:linux` | On Linux with the current verified FFmpeg resources staged, build updater-disabled development AppImage, deb, and rpm packages. |
 | `npm run bundle:release` | Run release gates, build release bundle, and validate it. |
 | `npm run test:rust` | Run Rust tests. |
 | `npm run check:media` | Run frame prep, decode/resize, and native session media checks. |
@@ -121,6 +124,17 @@ attributes do not break app signing. You can override the build directory with
 | `npm run smoke:ui-perf` | UI performance smoke helper. |
 | `npm run test:midi` | MIDI map, scaling, soft-takeover, action, and scope tests. |
 | `npm run midi:probe` | List physical MIDI inputs/outputs; add `-- --connect` to open both mioXC directions. |
+
+Same-repository pull requests also package updater-disabled development
+artifacts after the platform's desktop gate passes. The unsigned `ASCII VJ
+Remix Dev` Windows installer is built in release mode, verifies the graphical
+PE subsystem, and installs alongside the production identity. Linux produces
+AppImage, deb, and rpm packages from the same development identity. CI builds
+and verifies the pinned FFmpeg/ffprobe resources for each package set before
+bundling. The
+`ascii-vj-remix-windows-test-<commit>` and
+`ascii-vj-remix-linux-test-<commit>` artifacts are retained for 14 days. See
+[Linux VM QA](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/LINUX_VM_QA.md) for the maintained VM matrix.
 
 ## Podman Development Shell
 
@@ -308,6 +322,11 @@ Development commands use these environment variables when set:
 ASCILINE_FFMPEG=/path/to/ffmpeg
 ASCILINE_FFPROBE=/path/to/ffprobe
 ```
+
+On macOS and Windows, the Podman wrappers reuse a healthy default Podman
+connection before starting `podman-machine-default`. This avoids colliding with
+another checkout's already-running VM. Set `ASCILINE_PODMAN_MACHINE` only when
+the fallback machine has a different name.
 
 Preview the media pipeline:
 

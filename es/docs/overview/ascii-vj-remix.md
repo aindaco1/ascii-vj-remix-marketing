@@ -8,7 +8,7 @@ lang: es
 
 # ASCII VJ Remix
 
-Los documentos fuente actuales describen el conjunto de características **0.9.12**. Las secciones siguientes se seleccionan directamente del repositorio principal para que la identidad del producto, los requisitos y la guía de hardware no se conviertan en un contrato mantenido por segunda mano.
+Los documentos fuente actuales describen el conjunto de características **1.0.0**. Las secciones siguientes se seleccionan directamente del repositorio principal para que la identidad del producto, los requisitos y la guía de hardware no se conviertan en un contrato mantenido por segunda mano.
 
 ## ¿Qué es este proyecto?
 
@@ -36,7 +36,7 @@ Notas:
 
 - La compatibilidad con Intel Mac no es el objetivo de lanzamiento actual. Puede funcionar desde el código fuente si usted mismo crea un paquete compatible, pero no es la ruta probada.
 - La cámara, el micrófono y la captura de audio requieren concesiones de privacidad explícitas macOS.
-- Las versiones públicas 0.9.12 están firmadas con el ID del desarrollador, certificadas ante notario, engrapadas y aceptadas por Gatekeeper. Las compilaciones locales o de prueba pueden requerir el flujo normal de clic derecho del botón Abrir o Abrir de todos modos con macOS.
+- Las versiones públicas 1.0.0 están firmadas con el ID del desarrollador, certificadas ante notario, engrapadas y aceptadas por Gatekeeper. Las compilaciones locales o de prueba pueden requerir el flujo normal de clic derecho del botón Abrir o Abrir de todos modos con macOS.
 
 ### Windows
 
@@ -55,7 +55,7 @@ Notas:
 |Nivel|Requisito|
 | --- | --- |
 |Mínimo|Distribución moderna x86_64 Linux, tiempo de ejecución WebKitGTK 4.1, controladores Mesa o GPU del proveedor con WebGL2, 8 GB de RAM, 2 GB de espacio libre en disco.|
-|Óptimo|Ubuntu 24.04, Fedora 40, Arch o distribución actual comparable; Wayland o X11 bien configurado; controladores recientes de Mesa/NVIDIA; GPU compatible con Vulkan.|
+|Óptimo|Ubuntu 24.04, Fedora 44, Arch o distribución actual comparable; Wayland o X11 bien configurado; controladores recientes de Mesa/NVIDIA; GPU compatible con Vulkan.|
 
 Notas:
 

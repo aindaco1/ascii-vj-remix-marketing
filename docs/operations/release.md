@@ -7,7 +7,7 @@ parent: "Operations"
 
 # Release and Updates
 
-Current source docs describe the **0.9.12** release line. Release mechanics and security posture are copied from their canonical mother-repository guides.
+Current source docs describe the **1.0.0** release line. Release mechanics and security posture are copied from their canonical mother-repository guides.
 
 ## Release Security Posture
 
@@ -23,8 +23,8 @@ The current release line includes these security hardening rules:
   `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`, Apple certificate values, or keychain
   passwords in job-level workflow environment blocks.
 - Public macOS release CI fails closed when Apple Developer ID signing or
-  notarization is incomplete. Public 0.9.12 macOS artifacts are signed,
-  notarized, stapled, and Gatekeeper-validated; Windows 0.9.12 artifacts are
+  notarization is incomplete. Public 1.0.0 macOS artifacts are signed,
+  notarized, stapled, and Gatekeeper-validated; Windows 1.0.0 artifacts are
   unsigned previews.
 - Public macOS artifacts must retain Team ID `PWT3Q52LZ2` and the stable
   identifier/team designated requirement. CI validates both the built app and

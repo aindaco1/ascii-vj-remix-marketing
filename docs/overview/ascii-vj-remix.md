@@ -7,7 +7,7 @@ parent: "Overview"
 
 # ASCII VJ Remix
 
-Current source docs describe the **0.9.12** feature set. The sections below are selected directly from the mother repository so product identity, requirements, and hardware guidance do not drift into a second hand-maintained contract.
+Current source docs describe the **1.0.0** feature set. The sections below are selected directly from the mother repository so product identity, requirements, and hardware guidance do not drift into a second hand-maintained contract.
 
 ## What This Project Is
 
@@ -45,7 +45,7 @@ Notes:
 - Intel Mac support is not the current release target. It may work from source
   if you build a compatible bundle yourself, but it is not the tested path.
 - Camera, microphone, and audio capture require explicit macOS privacy grants.
-- Public 0.9.12 release builds are Developer ID signed, notarized, stapled, and
+- Public 1.0.0 release builds are Developer ID signed, notarized, stapled, and
   accepted by Gatekeeper. Local or test builds may require the normal macOS
   right-click Open or Open Anyway flow.
 
@@ -69,7 +69,7 @@ Notes:
 | Level | Requirement |
 | --- | --- |
 | Minimum | Modern x86_64 Linux distribution, WebKitGTK 4.1 runtime, Mesa or vendor GPU drivers with WebGL2, 8 GB RAM, 2 GB free disk space. |
-| Optimal | Ubuntu 24.04, Fedora 40, Arch, or comparable current distro; Wayland or well-configured X11; recent Mesa/NVIDIA drivers; Vulkan-capable GPU. |
+| Optimal | Ubuntu 24.04, Fedora 44, Arch, or comparable current distro; Wayland or well-configured X11; recent Mesa/NVIDIA drivers; Vulkan-capable GPU. |
 
 Notes:
 

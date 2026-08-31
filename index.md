@@ -68,16 +68,16 @@ nav_exclude: true
   <div class="release-summary">
     <img class="release-app-icon" src="{{ site.data.product.app_icon.path | relative_url }}?v={{ site.data.product.app_icon.path | asset_fingerprint }}" width="512" height="512" alt="ASCII VJ Remix neon play-and-pixel app icon" loading="lazy" decoding="async">
     <div>
-      <p class="section-intro">v0.9.12 restores visible, correctly proportioned primary output across every built-in preset. It carries forward v0.9.11's palette, dither, multilingual glyph, and density work plus the approved app icon introduced in v0.9.10.</p>
-      <p class="section-intro"><strong>One canonical icon.</strong> The macOS, Windows, Linux, iOS, Android, and marketing assets now derive from the same approved neon play-and-pixel artwork.</p>
+      <p class="section-intro">v{{ site.data.product.latest_release.version }} is the first stable desktop release. It makes presets faster to find, restores the same acceleration-first renderer policy across macOS, Windows, and Linux, and brings built-in video and native Pop Out behavior into closer cross-platform parity.</p>
+      <p class="section-intro"><strong>One renderer contract.</strong> All 69 built-in presets must remain visible: 41 are acceleration-eligible and 28 intentionally use Canvas2D. Capable systems try WebGPU first, with WebGL2 and Canvas2D kept as real fallbacks.</p>
     </div>
   </div>
   <div class="card-grid">
-    <article class="card pink"><h3>Every preset visible</h3><p>v0.9.12 fixes blank primary glyph canvases, keeps source aspect ratios intact, and smoke-tests all 69 built-in Demo Image presets in the packaged Apple WebKit app.</p></article>
-    <article class="card"><h3>16 palettes plus ordered dither</h3><p>Use project-native palettes, nearest or luminance mapping, and Bayer 2x2, 4x4, or 8x8 dithering across Canvas, WebGL2, WebGPU, and native Pop Out.</p></article>
-    <article class="card pink"><h3>Multilingual glyph range</h3><p>Tune depth, offset, direction, glyph colors, Braille, drawing symbols, CJK, Hiragana, Katakana, Hangul, or a custom ramp of up to 96 supported Unicode scalars.</p></article>
+    <article class="card pink"><h3>Find a look mid-set</h3><p>Start clean with Classic Camera ASCII, search presets by name, and move through separate alphabetical Built-in and My Presets sections without losing the active source.</p></article>
+    <article class="card"><h3>Video that keeps moving</h3><p>The built-in demo uses a host-appropriate video format, and bundled or selected videos can retry through the included FFmpeg path when the system decoder cannot play them.</p></article>
+    <article class="card pink"><h3>Pop Out stays in step</h3><p>The main preview and native output now share transition timing, advance video playback together, and use a browser-parity surface format to keep colors aligned.</p></article>
   </div>
-  <p class="section-intro"><strong>Already on macOS v0.9.6 or v0.9.7?</strong> Install the current release once from the notarized DMG; those two versions cannot surface the in-app update. v0.9.8 and newer can update in the app.</p>
+  <p class="section-intro"><strong>Already on macOS v0.9.6 or v0.9.7?</strong> Install v{{ site.data.product.latest_release.version }} once from the notarized DMG; those two versions cannot surface the in-app update. v0.9.8 and newer can update in the app.</p>
   <p class="release-link"><a href="{{ '/docs/overview/changelog-baseline/' | relative_url }}">Read the v{{ site.data.product.latest_release.version }} release baseline</a></p>
 </section>
 

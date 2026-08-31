@@ -80,7 +80,8 @@ work and release history belong in the [Changelog](/docs/reference/changelog/).
 - Reduce remaining duplicated color and quantization behavior across WebGPU,
   WebGL2, Canvas, stream, and native `wgpu` paths.
 - Add golden-output or bounded visual tests for representative presets.
-- Make backend fallbacks visible and diagnosable.
+- Add a persistent in-canvas fallback indicator beyond the current Stats
+  Overlay and bounded Reports diagnostics.
 - Add repeatable optimized-build benchmarks for main preview and Pop Out.
 - Add synthetic timestamped camera-latency and audio-response tests.
 - Track frame rate, frame drops, upload/skip counts, and parameter propagation
@@ -103,7 +104,8 @@ work and release history belong in the [Changelog](/docs/reference/changelog/).
 
 ## Presets and User Profiles
 
-- Add user-preset rename, startup selection, folders/tags, and search/filter.
+- Add user-preset rename, optional user-selected startup behavior, and
+  folders/tags.
 - Separate visual preset packs from MIDI mapping profiles.
 - Improve import validation with readable, localized errors.
 - Evaluate export bundles containing visual presets, audio-reactive settings,
@@ -156,21 +158,6 @@ work and release history belong in the [Changelog](/docs/reference/changelog/).
   coalescing and rate limits.
 - Stream mode requires a complete user workflow before it can return to the
   normal Source panel.
-
-## 1.0 Direction
-
-- Installable, documented packages for macOS, Windows, and Linux.
-- Offline desktop operation except for deliberate update checks and reviewed,
-  opt-in crash reporting.
-- Reliable Demo Image, Demo Video, custom-file, Camera, preset, WTF, audio, and
-  Pop Out workflows from first launch.
-- Stable MIDI behavior on the documented UC-33e/mioXC rig.
-- Stream mode either productized and tested or absent from normal-user UI.
-- Public macOS artifacts retain Developer ID signing, notarization, stapling,
-  Gatekeeper acceptance, and updater identity.
-- Windows artifacts use a clearly documented distribution posture, with signed
-  installers preferred once the signing path is operational.
-- Current-state docs and release notes match the shipped product.
 
 
 ## Source Material

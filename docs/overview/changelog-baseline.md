@@ -7,55 +7,110 @@ parent: "Overview"
 
 # Release Baseline
 
-Current docs describe the **0.9.12** feature set. The newest dated changelog entry is the release authority; the Unreleased section is intentionally excluded.
+Current docs describe the **1.0.0** feature set. The newest dated changelog entry is the release authority; the Unreleased section is intentionally excluded.
 
-## 0.9.12 Release Notes
+## 1.0.0 Release Notes
+
+### Added
+
+- Added live preset-name search with separate, independently alphabetized
+  Built-in and My Presets sections, result status, keyboard clearing, and
+  no-results states.
+- Added release-profile pull-request packages for physical QA: an unsigned,
+  updater-disabled Windows development installer plus AppImage, deb, and rpm
+  Linux development packages retained for 14 days. Each package set includes
+  the pinned, platform-built, verified FFmpeg/ffprobe resources.
+- Added a non-destructive Hyper-V bootstrap and acceptance guide for Ubuntu
+  26.04.1 and Fedora 44 x86_64 test VMs on Windows 11 Pro.
+- Added a PE subsystem gate that rejects a Windows release-mode executable
+  unless it is marked as a graphical application.
+
+### Changed
+
+- Promoted the synchronized source/package metadata to the stable 1.0.0
+  release.
+- Made Classic Camera ASCII the default visual state for a clean profile while
+  preserving persisted profiles, and renamed the Point & Click Default display
+  label to Dense Color ASCII without changing its stable preset id.
+- Standardized sidebar select widths, heights, label columns, row spacing, and
+  value presentation; removed the redundant one-option Atlas Style control.
+- Labeled Advanced Density with its `Up to 900 columns` and no-30-FPS-guarantee
+  constraint directly in the control row.
+- Pinned Linux build and release acceptance runners to Ubuntu 24.04.
 
 ### Fixed
 
-- Restored visible primary-view output for every built-in Demo Image preset by
-  correcting WebGL glyph-page uploads and using cached max-coverage atlas mips
-  for glyphs rendered into very small cells.
-- Kept solid, pixel, and glyph preset canvases at the source aspect ratio by
-  resolving static row counts from the actual cell width and height.
-- Added an all-preset primary-view smoke matrix covering activation, visible
-  output, WebGL errors, lazy glyph-page completion, and canvas aspect.
-- Prevented blank primary-view glyph canvases in the macOS Apple WebKit runtime
-  by selecting the existing bounded Canvas2D glyph path there. Solid/pixel
-  primary presets retain WebGPU, compatible runtimes retain GPU glyphs, and the
-  native Pop Out renderer is unchanged.
-- Made the packaged desktop performance smoke reject an advancing renderer
-  whose primary canvas has no visible pixel signal.
-- Added a packaged Apple WebKit sweep that activates all 69 built-in Demo Image
-  presets and checks primary-view visibility, renderer family, running state,
-  GPU errors, and source/canvas aspect for each final surface.
+- Bound remote crash submission to both the production bundle identifier and a
+  release build. Optimized `ASCII VJ Remix Dev` QA packages now keep reports
+  local, label that state in the Reports UI, and cannot submit as production.
+- Added real RFC 3339 capture timestamps plus safe script/line/column and
+  requested/resolved renderer context to diagnostic issues without exposing
+  local paths. Native WebKit stack frames are no longer mistaken for emails.
+- Contained blocked Canvas2D pixel readback, including WebKit `SecurityError`
+  code 18, inside the renderer instead of escalating it as a global app error.
+- Added Linux-owned 1000x680 startup geometry with a 900x600 minimum instead of
+  inheriting the larger macOS/Windows window, while deriving the development
+  window title from its product identity rather than duplicating geometry.
+- Added platform-owned built-in Demo Video formats: H.264/MP4 for macOS and
+  Windows webviews, and VP8/WebM for clean Ubuntu and Fedora installations that
+  lack optional H.264 GStreamer codecs. Existing saved Demo Video selections
+  migrate to the correct platform asset, while both shipped demo formats and
+  user-selected videos retry through bundled FFmpeg if the platform decoder
+  rejects them. Exact bundled source ids preserve the existing narrow file
+  access boundary.
+- Treat unavailable or disconnected microphone devices as an expected hardware
+  condition. The app can attempt its browser fallback and no longer queues a
+  crash report merely because a VM has no usable microphone; legacy reports for
+  that exact condition are pruned on the next launch.
+- Made the Podman wrappers reuse an already-healthy default connection before
+  starting their fallback VM, avoiding macOS's one-active-machine collision
+  with other project checkouts.
+- Decoupled the clean-profile Classic Camera ASCII look from the global
+  renderer preference. Built-ins that do not explicitly request a compatibility
+  backend now start from Auto and resolve to WebGPU/WebGL2 when available on
+  every packaged desktop host.
+- Restored real WebGPU glyph rendering in the packaged macOS Apple WebKit view.
+  Glyph pages now decode through the bundled asset URL and compact the active
+  maximum-96-scalar ramp plus its coverage mips into a two-row RGBA texture
+  below WebKit's problematic wide-texture boundary. The installed preset sweep
+  resolves 41 built-ins to WebGPU and 28 intentional compatibility presets to
+  Canvas2D, with all 69 visible; Paper Shredder explicitly retains Canvas2D to
+  preserve the look it predates glyph-atlas parity with.
+- Increased the packaged preset sweep's primary-canvas sample resolution so
+  sparse Braille, kana, Hangul, and box-drawing strokes are evaluated before
+  thumbnail downsampling can average them away.
+- Synchronized primary-view and native Pop Out transitions on one timestamped
+  clock. Numeric transitions now use the same easing progress on both surfaces,
+  renderer-family changes use the same crossfade curve, and native presentation
+  uses minimum swapchain buffering instead of trailing by queued parameter
+  round trips.
+- Timestamped the primary video playback handoff so the native decoder advances
+  its initial seek by the time spent opening the output window and starting the
+  decoder, removing avoidable Pop Out playback lag.
+- Pinned native Pop Out to a browser-parity non-sRGB unorm surface format when
+  the platform supports it, preventing platform format order from applying an
+  extra sRGB conversion to the shared renderer colors.
+- Prevented release-mode Windows app and FFmpeg/ffprobe child processes from
+  opening visible console windows. Debug builds retain normal diagnostic
+  console behavior.
+- Retired the blanket Windows WebView2 glyph-to-Canvas policy now that the
+  compact active-ramp glyph texture is shared by the repaired WebGPU path.
+  Auto presets again attempt WebGPU on Windows, with WebGL2 and Canvas2D kept as
+  real construction fallbacks. A centralized 69 total / 41 accelerated / 28
+  explicit Canvas contract, a collapsed-seven unit regression, the visible
+  preset sweep, and the Windows CI matrix guard this ownership boundary.
+- Made the preset overflow menu focus its first action, close with Escape, and
+  restore focus to its trigger.
+- Made the local signing bootstrap import its temporary PKCS#12 identity with a
+  Keychain-compatible password, and made the local launcher refuse to delete a
+  bundle when its source and install paths are the same.
 
-Version 0.9.12 restores every built-in preset in the primary app view while
-preserving the source aspect ratio and the native Pop Out path. Version 0.9.11
-adds performance-budgeted project palettes, ordered dithering,
-multilingual glyph controls, custom Unicode ramps, density guardrails, and
-renderer/native-output parity. Version 0.9.10 replaces the legacy television artwork with one canonical app
-icon generated for every packaged platform and carries the post-0.9.9 Reports
-acceptance correction. Version 0.9.9 keeps crash-report preferences reachable
-with an empty queue,
-removes the duplicate top-bar backend readout, and extends packaged UI smoke to
-cover both controls. Version 0.9.8 restores the production Update control and
-launch check, adds a packaged UI regression smoke, and shortens release builds
-by compiling the app and FFmpeg runtime concurrently before verified artifact
-reuse. Version 0.9.7 adds the silent launch-check controller while retaining
-user-approved installation and strengthens release transport resilience.
-Version 0.9.6 continues the experimental MIDI commissioning work, removes
-measured renderer/output hot-path overhead without changing visual math or
-quality, and hardens the macOS drag-to-Applications release path. Version 0.9.5
-adds 23 credited ascii.today-inspired character presets and
-experimental native DIN MIDI control for an Evolution/M-Audio UC-33e through an
-iConnectivity mioXC, including four complete controller pages, soft takeover,
-numeric preset selection, MIDI Learn, and full-bank SysEx capture/restore.
-Version 0.9.3 moves public desktop releases to signed/notarized macOS
-distribution, publishes Windows as an unsigned preview while signing is
-deferred, and expands audio reactivity with dense-mix controls that reduce
-overreaction on busy music. Version 0.9.0 remains the first documentation
-baseline for the current ASCII VJ Remix feature set.
+Version 1.0.0 completes the first stable desktop release with a polished preset
+workflow, cross-platform packaged media handling, synchronized native Pop Out
+transitions and color, and one explicit 69 total / 41 accelerated / 28 Canvas
+built-in renderer contract. macOS artifacts remain Developer ID signed,
+notarized, stapled, and Gatekeeper-validated; Windows artifacts remain clearly
+documented unsigned previews.
 
 
 

@@ -63,7 +63,7 @@ El repositorio combina renderizado WebGPU/WebGL de alta calidad, rutas de compat
 
 ## Línea de base actual orientada al usuario
 
-La versión actual del código fuente/paquete y la última versión pública verificada son 0.9.12. El registro de cambios posee el historial de versiones; la Hoja de Ruta es sólo prospectiva.
+La versión actual del código fuente/paquete es 1.0.0, que también es la versión pública estable. El registro de cambios posee el historial de versiones; la Hoja de Ruta es sólo prospectiva.
 
 Fuentes:
 
@@ -79,11 +79,14 @@ Representación:
 - WebGPU es el principal objetivo de calidad.
 - WebGL2 es el principal respaldo integrado de GPU.
 - Canvas2D y Pixel Canvas siguen siendo alternativas de compatibilidad.
+- Las vistas de escritorio empaquetadas prueban WebGPU para cada ajuste preestablecido elegible para aceleración, luego WebGL2 y Canvas2D a través del respaldo limitado compartido. No utilice la plataforma de alojamiento ni la identidad del agente de usuario para reasignar de forma preventiva la propiedad preestablecida.
 - La salida nativa Pop Out usa `wgpu` cuando esté disponible, con Metal en macOS y los backends GPU correspondientes en Windows/Linux.
 - El renderizador activo está controlado por un modelo de parámetro canónico.
+- Classic Camera ASCII posee el estado visual de perfil limpio, no la preferencia de renderizado global. Mantenga el backend predeterminado en Auto; los integrados lo heredan a menos que declaren explícitamente un backend de compatibilidad.
+- Mantenga el contrato de backend integrado 69/41/28 centralizado en `renderers/shared/preset-backend-contract.js`: 69 ajustes preestablecidos de Canvas en total, 41 acelerados y 28 explícitos. Cualquier cambio intencional de propiedad debe actualizar el contrato y su evidencia visible de matriz preestablecida en conjunto.
 - El Pop Out nativo conserva los parámetros del modo glifo y del conjunto de caracteres para los ajustes preestablecidos ASCII tradicionales.
 - Dieciséis paletas nativas del proyecto, mapeo de luminancia/más cercano y difuminado Bayer 2x2/4x4/8x8 utilizan el catálogo de paletas compartido y la LUT de 32x32x32 en caché.
-- El atlas Unicode generado neutral cubre los bloques BMP comunes aprobados en dieciséis páginas de 1024px. La caché de páginas decodificadas del navegador tiene un límite de cuatro; La salida nativa y del navegador GPU utiliza identificadores escalares Unicode y una rampa máxima de 96 identificadores.
+- El atlas Unicode generado neutral cubre los bloques BMP comunes aprobados en dieciséis páginas de 1024px. La caché de páginas decodificadas del navegador tiene un límite de cuatro; La salida nativa y del navegador GPU utiliza identificadores escalares Unicode y una rampa máxima de 96 identificadores. La vista previa de WebGPU compacta la rampa activa y los mips de cobertura en una textura RGBA de dos filas; WebGL2 y la salida nativa conservan los recursos del atlas paginado.
 - La densidad normal está limitada por la columna acelerada/software compartida y los límites totales de celdas. Advanced Density es global, permite hasta 900 columnas sin una garantía de 30 FPS y nunca debe almacenarse en ajustes preestablecidos visuales.
 - El catálogo de conjunto de caracteres compartido incluye 23 rampas de luminancia derivadas de ascii.today acreditadas y ajustes preestablecidos de solo lectura coincidentes.
 - La salida de glifos nativos utiliza recursos de rampa/atlas paginados delimitados; `fontFamily` son metadatos de interfaz de usuario/vista previa, no un receptor de carga de fuentes nativo.
@@ -109,7 +112,7 @@ Interfaz de usuario:
 - El diseño es intencionadamente denso.
 - No reduzca la densidad de control al cambiar el estilo visual.
 - Evite agregar texto de marketing explicativo dentro de la interfaz de usuario de la aplicación.
-- Mantenga accesible el control Reports de la barra superior con una cola vacía; El estado pendiente es aditivo. No adjunte diagnósticos de medios locales ni registros arbitrarios.
+- Mantenga accesible el control Reports de la barra superior con una cola vacía; El estado pendiente es aditivo. Las fallas del renderizador pueden adjuntar el resumen del evento del renderizador desinfectado y delimitado definido por el contrato de seguridad. No adjunte diagnósticos de medios locales ni registros arbitrarios.
 - Mantenga la selección de backend en el control central. Los diagnósticos de backend resueltos pertenecen al Stats Overlay propiedad del usuario, no a una lectura duplicada de la barra superior.
 
 ## Mapa de propiedad del repositorio
@@ -202,7 +205,7 @@ npm run bundle:release
 
 Nota de compilación de lanzamiento local esperada:
 
-- Los artefactos públicos 0.9.12 macOS están firmados con ID de desarrollador, notariados, engrapados y validados por Gatekeeper. Los artefactos públicos 0.9.12 Windows son vistas previas sin firmar. Las compilaciones locales normales utilizan `ASCII VJ Remix Dev` / `com.asciline.remix.dev`; el iniciador local requiere una identidad estable antes de realizar la prueba de permiso.
+- Los artefactos públicos 1.0.0 macOS están firmados con el ID del desarrollador, notariados, engrapados y validados por Gatekeeper. Los artefactos públicos 1.0.0 Windows son vistas previas sin firmar. Las compilaciones locales normales utilizan `ASCII VJ Remix Dev` / `com.asciline.remix.dev`; el iniciador local requiere una identidad estable antes de realizar la prueba de permiso.
 - Si `TAURI_SIGNING_PRIVATE_KEY` o `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` están ausentes mientras los artefactos del actualizador están habilitados, el paquete de versiones fallará al firmar el actualizador. Las rutas de validación locales están documentadas en la guía para contribuyentes; nunca confirme ninguno de los archivos.
 
 ## Tauri y notas de embalaje

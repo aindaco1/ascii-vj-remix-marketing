@@ -14,11 +14,12 @@ This page describes the current ASCII VJ Remix feature baseline for developers p
 ### Sources
 
 - Built-in Demo Image, used as the default startup source.
-- Built-in Demo Video.
+- Built-in H.264/MP4 Demo Video on macOS and Windows, with a matching VP8/WebM
+  asset selected on clean Linux installations.
 - User-selected local image and video files.
-- MKV selection support in the desktop file picker. Playback depends on the
-  active platform decoder path; MP4/H.264 is the most consistently supported
-  format.
+- MKV selection support in the desktop file picker. If the platform webview
+  cannot decode the built-in demo or a selected video, the desktop app retries
+  it through the bundled FFmpeg path.
 - Local webcam/camera input.
 - Multiple simultaneous cameras when the operating system and desktop runtime
   allow it.
@@ -31,6 +32,9 @@ This page describes the current ASCII VJ Remix feature baseline for developers p
 - WebGPU renderer is the primary quality target on capable desktop runtimes.
 - WebGL2 renderer is the main embedded GPU fallback.
 - Canvas2D and pixel Canvas paths remain compatibility fallbacks.
+- Packaged desktop views attempt WebGPU for every acceleration-eligible preset,
+  then WebGL2 and Canvas2D as bounded fallbacks. Presets with an explicit
+  compatibility backend retain Canvas2D on every platform.
 - Native Tauri output window uses a `wgpu` presenter where available:
   - Metal on macOS.
   - D3D12 on Windows.
@@ -64,12 +68,21 @@ This page describes the current ASCII VJ Remix feature baseline for developers p
   Cyberdelic Riot, Acid Snowstorm, Terminal Collapse, and Neon Razorstorm.
 - Built-in traditional ASCII presets, including Classic Camera ASCII, ANSI
   Newsprint, Terminal Mono, and Dense Typewriter.
+- Classic Camera ASCII is the default for a clean profile. Existing persisted
+  profiles keep their visual settings instead of being silently reset. The
+  clean-profile visual choice does not override the global Auto renderer
+  preference; presets without an explicit compatibility backend use
+  WebGPU/WebGL2 when the runtime supports them.
 - Twenty-three read-only character presets adapted from
   [ascii.today](https://ascii.today/), including Broadway KB, Computer, Doom,
   Ghost, Modular, Standard, Univers, and Doh. The complete credited pack is in
   [ascii.today Character Presets](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/ASCII_TODAY_PRESETS.md).
-- Character Set and Font Family controls stay compact so traditional ASCII
-  tuning does not crowd the dense live-control surface.
+- Built-in and My Presets are shown as separate, independently alphabetized
+  sections with a live name search. The prior Point & Click Default display
+  name is now the more descriptive Dense Color ASCII; its stable preset id is
+  unchanged.
+- Character Set, Font Family, Palette, and other selects share the same control
+  geometry so traditional ASCII tuning stays aligned in the dense sidebar.
 - Palette, mapping, ordered-dither, glyph-ramp, and glyph-color controls are
   independently tunable and saved through the existing visual-preset schema.
 - Ten built-in palette/glyph variants include Braille, box drawing, CJK marks,
@@ -154,8 +167,12 @@ and requires a manually captured and verified hardware profile.
 - The Reports control remains visible when no crash reports are pending so the
   `ask`, `always`, and `off` preference is always reachable. A pending count and
   warning state appear only after a bounded, sanitized report is captured.
-- Public 0.9.12 macOS artifacts are Developer ID signed, notarized, stapled, and
-  Gatekeeper-validated. Public 0.9.12 Windows artifacts are unsigned previews.
+  Development bundles retain reports locally for review and keep Send disabled;
+  only a release-mode build with the production bundle identifier may submit.
+  Legacy unavailable-microphone reports are removed from the queue because a
+  disconnected or absent input device is a normal hardware state.
+- Public 1.0.0 macOS artifacts are Developer ID signed, notarized, stapled, and
+  Gatekeeper-validated. Public 1.0.0 Windows artifacts are unsigned previews.
 - Normal development commands use the visibly separate `ASCII VJ Remix Dev`
   app and `com.asciline.remix.dev` bundle identifier. Development builds cannot
   replace or inherit privacy grants from the production app.
@@ -163,8 +180,9 @@ and requires a manually captured and verified hardware profile.
   production-only reviewed/sanitized crash report submission.
 - Crash report submission goes through the Rust desktop layer to the
   `https://crash.dustwave.xyz` Cloudflare Worker relay. The webview does not get
-  arbitrary HTTP capability and selected media is never uploaded. Local media
-  diagnostics and arbitrary logs are not attached to crash reports.
+  arbitrary HTTP capability and selected media is never uploaded. Renderer
+  failures may attach a bounded, sanitized event summary with preset/backend
+  state; local media diagnostics and arbitrary logs are not attached.
 
 ### Advanced and Development-Only Paths
 

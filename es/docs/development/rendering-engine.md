@@ -49,13 +49,13 @@ La selección de fuente puede provenir de medios integrados, archivos selecciona
 Los elementos incorporados visibles son:
 
 - Imagen de demostración: `media/demo.svg`.
-- Vídeo de demostración: `media/demo-video-2.mp4`.
+- Demo Video: `media/demo-video-2.mp4` (H.264) en macOS y Windows, y `media/demo-video-2.webm` (VP8) en Linux, por lo que las vistas web limpias de Linux no requieren un complemento GStreamer H.264 opcional. Ambas URL representan la misma fuente lógica integrada; Las selecciones guardadas se normalizan según la plataforma actual. Si la vista web no puede decodificar ninguno de los recursos, la misma fuente de fotograma sin formato FFmpeg incluida utilizada para los vídeos seleccionados se hace cargo localmente.
 
 Los archivos multimedia adicionales incluidos permanecen ocultos como accesorios de desarrollo para pruebas de paridad y pruebas de humo de rendimiento.
 
 ### Archivos personalizados
 
-El modo de explorador utiliza las API de archivos del explorador y las URL de blobs. El modo Tauri utiliza un comando de diálogo nativo y registra el archivo seleccionado bajo una identificación de medio local de sesión. Esa identificación de medio está expuesta a la vista web a través del protocolo de activos de Tauri.
+El modo de explorador utiliza las API de archivos del explorador y las URL de blobs. El modo Tauri utiliza un comando de diálogo nativo y registra el archivo seleccionado bajo una identificación de medio local de sesión. Esa identificación de medio está expuesta a la vista web a través del protocolo de activos de Tauri. Los archivos MKV utilizan inmediatamente la ruta de marco sin formato FFmpeg incluida. Otros videos seleccionados prueban primero el decodificador de la plataforma y vuelven a intentarlo a través de FFmpeg incluido si ese decodificador rechaza el archivo.
 
 El límite de seguridad importante es que el renderizador reciba una URL de medio reproducible o una identificación registrada. No obtiene acceso amplio al sistema de archivos.
 
@@ -220,7 +220,7 @@ Prioridad típica del navegador:
 
 El usuario puede anular el backend manualmente. Los controles que no se aplican al backend activo están ocultos o deshabilitados.
 
-La elección del backend se resuelve una vez por construcción del renderizador en `renderers/gpu/ascii/renderer/backend-policy.js`; no se evalúa en el bucle del cuadro. La vista principal macOS Apple WebKit utiliza la ruta limitada Canvas2D para el modo de glifo incluso cuando un backend GPU del navegador está disponible o se solicita manualmente, porque ambas rutas del atlas de glifos GPU del navegador pueden exponer un renderizador en vivo mientras se presenta un lienzo vacío allí. Los ajustes preestablecidos primarios de sólidos/píxeles aún pueden usar WebGPU, y el modo de glifo conserva la representación de GPU del navegador en tiempos de ejecución compatibles. La selección de backend nativa de Pop Out es independiente y no cambia.
+La elección del backend se resuelve una vez por construcción del renderizador en `renderers/gpu/ascii/renderer/backend-policy.js`; no se evalúa en el bucle del cuadro. Sólo un backend de Canvas seleccionado explícitamente pasa por alto la construcción GPU. La identidad de la plataforma y el agente de usuario no cambian la propiedad preestablecida: las vistas empaquetadas macOS, Windows y Linux intentan el mismo orden de reserva WebGPU, WebGL2 y luego Canvas. La selección de backend nativa de Pop Out es independiente y no cambia.
 
 ## Renderizador WebGPU
 
@@ -258,7 +258,7 @@ Jitter utiliza un hash determinista sembrado por la posición y el tiempo de la 
 
 Los ArrayBuffers/DataViews uniformes, las vistas de textura y los grupos de enlaces cuyos recursos no cambian se crean una vez y se reutilizan. El vídeo del navegador sigue importando una textura externa y crea su enlace de cálculo dependiente de la fuente por fotograma; ese recurso tiene un alcance de marco de WebGPU. Las reconstrucciones de cuadrícula/fuente crean un nuevo renderizador y, por lo tanto, un nuevo conjunto de recursos completo.
 
-El renderizador de glifos utiliza identificadores escalares Unicode en un búfer de almacenamiento de 96 entradas y una matriz de texturas R8 de 16 capas. Las páginas del Atlas se generan sin conexión, se agrupan localmente y se cargan bajo demanda. Las actualizaciones de audio/transición en vivo comparan una clave de entrada de glifo compacta antes de resolver rampas o tocar recursos del atlas.
+El renderizador de glifos decodifica solo las páginas del atlas que necesita la rampa activa, luego empaqueta hasta 96 máscaras escalares Unicode y sus cinco niveles de cobertura máxima en una textura RGBA de 768x62 de dos filas. Mantener el ancho compacto por debajo de 1024 píxeles evita el límite de carga amplia Apple WebKit y al mismo tiempo conserva la búsqueda de texturas en tiempo constante en el paso del fragmento. Las páginas de Atlas se generan sin conexión, se agrupan localmente y se cargan a través de sus URL de activos. Las actualizaciones de audio/transición en vivo comparan una clave de entrada de glifo compacta antes de resolver rampas o tocar recursos del atlas.
 
 ## Renderizador WebGL2
 
@@ -272,7 +272,13 @@ El backend WebGL2 refleja el modelo visual WebGPU lo más fielmente posible:
 - Los uniformes de sombreado coinciden con el conjunto de parámetros WebGPU siempre que sea posible.
 - las 18 ubicaciones uniformes de sombreado se almacenan en caché después de vincular el programa en lugar de consultarse nuevamente durante cada cuadro.
 
-WebGL2 es el navegador alternativo GPU más importante porque está ampliamente disponible en máquinas que no exponen WebGPU. La vista de glifo principal macOS Apple WebKit actualmente usa Canvas2D en lugar de la ruta del atlas GPU del navegador.
+WebGL2 es el navegador alternativo GPU más importante porque está ampliamente disponible en máquinas que no exponen WebGPU.
+
+El valor predeterminado visual de perfil limpio y la preferencia del renderizador tienen propietarios separados: Classic Camera ASCII proporciona los parámetros visuales iniciales, mientras que el backend global sigue siendo Automático. Un ajuste preestablecido integrado hereda Auto a menos que declare explícitamente un backend de compatibilidad. Esto mantiene los ajustes preestablecidos de sólidos/píxeles en WebGPU o WebGL2 y al mismo tiempo preserva la propiedad intencional de Canvas2D para los ajustes preestablecidos de texto tradicionales y Paper Shredder.
+
+`StaticRuntime` trata la construcción de GPU como una operación recuperable. Si el renderizador WebGPU/WebGL2 solicitado no se puede inicializar, crea el renderizador Canvas equivalente tanto para el inicio inicial como para las transiciones preestablecidas en vivo. Un retroceso fallido del Canvas deja activa la superficie de transición anterior.
+
+La aceptación física de Windows 11 WebView2 encontró un modo de falla más limitado: la construcción de GPU y los contadores de cuadros tuvieron éxito, pero la salida del atlas de glifos permaneció en blanco, mientras que la salida de sólidos/píxeles permaneció visible. La respuesta anterior dirigió todas las vistas previas de glifos Windows a través de Canvas2D, colapsando el conjunto acelerado a aproximadamente siete ajustes preestablecidos. Desde entonces, la textura compacta de glifos de rampa activa ha reemplazado la ruta de carga de glifos problemática, por lo que la versión 1.0 retira esa ruta general y requiere que la matriz preestablecida Windows conserve 41 ajustes preestablecidos de Canvas acelerados y 28 explícitos. Un verdadero fallo en la construcción del renderizador todavía recae en Canvas2D.
 
 ## Renderizadores de lienzo
 
@@ -305,6 +311,8 @@ Responsabilidades:
 - preservar el estado de reproducción de video al cambiar ajustes preestablecidos que no cambian la fuente.
 - actualizar estadísticas.
 
+La construcción del renderizador registra una secuencia limitada de eventos estructurados. Una falla de GPU que activa Canvas, o una falla de transición total, pone en cola un elemento Reports deduplicado con backend solicitado/resuelto, valor preestablecido, clase de origen y resúmenes de eventos recientes. Los informes son asincrónicos y nunca bloquean el respaldo o la transición; no se incluye ningún marco, carga útil de medios ni registro local arbitrario.
+
 Para cambios estructurales, el tiempo de ejecución utiliza superficies de renderizado en capas:
 
 ```text
@@ -316,6 +324,8 @@ old renderer stays visible
 ```
 
 Esto evita cuadros negros durante las transiciones preestablecidas.
+
+Cuando el Pop Out nativo está activo, el controlador arma un contrato de transición que contiene los parámetros canónicos nuevos y antiguos, el tipo de transición, la duración y una hora de inicio compartida del reloj Unix. La vista principal y el enlace de visualización nativa derivan el progreso independientemente de esa misma marca de tiempo. Las transiciones numéricas utilizan la función de aceleración compartida; Las transiciones estructurales de la familia de renderizadores renderizan ambos estados nativos y los componen con la misma curva de opacidad saliente que la vista primaria en capas. Las actualizaciones del cuadro de animación IPC se suprimen hasta que se completa el contrato, luego se envía un estado canónico final.
 
 Para una interpolación numérica no estructural, solo los controles cuyos valores cambian se sincronizan durante los cuadros de animación. Las listas de fuentes, las opciones de dispositivos de cámara, la visibilidad, los medidores, la persistencia y la superficie de control completa se concilian en el límite estatal final. Esta es únicamente una optimización del trabajo de la interfaz de usuario; Los parámetros de renderizado efectivos y la sincronización nativa/Pop Out aún avanzan durante la interpolación.
 
@@ -362,8 +372,8 @@ La ruta Rust/FFmpeg transfiere la ruta de preparación de flujo Python/FastAPI h
 Forma actual:
 
 ```text
-Tauri selected media
-  -> Rust registry id
+Tauri selected or vetted bundled media
+  -> Rust registry id or exact bundled source id
   -> ffprobe metadata
   -> ffmpeg RGB frame reader
   -> frame preparation
@@ -385,7 +395,7 @@ Modos de preparación de fotogramas:
 - Modos de color 2 a 5: celdas `[char, R, G, B]` con niveles de color cuantificados.
 - Modo de píxel: celdas `[B, G, R]`.
 
-La ruta Rust complementa, en lugar de reemplazar, el renderizador estático WebGPU/WebGL. Proporciona preparación de medios empaquetados estilo flujo e integración de decodificador nativo.
+La ruta Rust complementa, en lugar de reemplazar, el renderizador estático WebGPU/WebGL. Proporciona preparación de medios empaquetados estilo flujo e integración de decodificador nativo. Los identificadores de fuente incluidos resuelven sólo los recursos de demostración MP4 y WebM enviados; no amplían el protocolo de activos ni exponen caminos arbitrarios.
 
 ## Representador de salida nativo
 
@@ -403,6 +413,8 @@ main UI params/source state
 ```
 
 Para imágenes/vídeos respaldados por archivos, Rust resuelve recursos agrupados o identificadores de medios registrados, decodifica fotogramas, carga el fotograma más reciente en GPU, aplica matemáticas de color de celda y presenta a través de la cadena de intercambio nativa.
+
+La superficie nativa GPU prefiere `Bgra8Unorm` o `Rgba8Unorm` que no sean sRGB, lo que coincide con la codificación del lienzo del navegador esperada por la matemática de color compartida. Los formatos sRGB informados por la plataforma siguen siendo un último recurso cuando no hay una superficie no normal disponible.
 
 En la ruta del enlace de visualización macOS, la versión decodificada del marco fuente se pasa al presentador. Cuando esa versión y las dimensiones del marco no han cambiado, el presentador reutiliza la textura de origen existente mientras sigue codificando/presentando con los últimos parámetros visuales y audio-reactivos. Las personas que llaman de reserva sin versión retienen las cargas incondicionales. Los registros exponen la carga de origen y los contadores de omisión.
 
