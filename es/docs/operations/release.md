@@ -8,7 +8,7 @@ lang: es
 
 # Lanzamiento y actualizaciones
 
-Los documentos fuente actuales describen la línea de versión **0.9.12**. La mecánica de lanzamiento y la postura de seguridad se copian de sus guías canónicas del repositorio principal.
+Los documentos fuente actuales describen la línea de versión **1.0.0**. La mecánica de lanzamiento y la postura de seguridad se copian de sus guías canónicas del repositorio principal.
 
 ## Liberar la postura de seguridad
 
@@ -17,7 +17,7 @@ La línea de lanzamiento actual incluye estas reglas de refuerzo de seguridad:
 - El CSP de producción solo permite el origen de la aplicación, Tauri IPC, y el protocolo de recursos Tauri necesarios para los medios locales seleccionados. Los puntos finales de Localhost HTTP/WebSocket existen solo en el CSP de desarrollo; El modo streaming no es una fuente de producción.
 - El envío de informes de fallos se implementa en Rust, no en webview `fetch`, por lo que el CSP de producción no obtiene acceso remoto arbitrario a `connect-src`.
 - Los secretos de firma del actualizador de acciones GitHub tienen como alcance la verificación del secreto del actualizador y los pasos de empaquetado de Tauri. No coloque `TAURI_SIGNING_PRIVATE_KEY`, `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`, valores de certificados de Apple ni contraseñas de llavero en bloques de entorno de flujo de trabajo a nivel de trabajo.
-- El CI de la versión pública macOS falla al cerrarse cuando la firma o certificación notarial del ID de desarrollador de Apple está incompleta. Los artefactos públicos 0.9.12 macOS están firmados, notariados, grapados y validados por Gatekeeper; Los artefactos Windows 0.9.12 son vistas previas sin firmar.
+- El CI de la versión pública macOS falla al cerrarse cuando la firma o certificación notarial del ID de desarrollador de Apple está incompleta. Los artefactos públicos 1.0.0 macOS están firmados, notariados, grapados y validados por Gatekeeper; Los artefactos Windows 1.0.0 son vistas previas sin firmar.
 - Los artefactos públicos macOS deben conservar el ID de equipo `PWT3Q52LZ2` y el identificador estable/requisito designado de equipo. CI valida tanto la aplicación creada como el archivo de actualización extraído y rechaza la identidad ad-hoc o de solo código hash.
 - Las herramientas de lanzamiento local requieren la identidad `ASCII VJ Remix Dev` separada y un certificado de firma local estable. Nunca se sincroniza con la ruta de la aplicación de producción.
 - Acciones GitHub Los trabajos macOS están anclados a `macos-26` en lugar de `macos-latest`. La pila nativa `wgpu`/`apple-metal` necesita el SDK macOS 26 ​​Metal, y el alias móvil `macos-latest` puede seleccionar un SDK más antiguo.

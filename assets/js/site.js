@@ -11,10 +11,9 @@
 
   const docsPath = (path) => path === '/docs' || path.startsWith('/docs/') || path === '/es/docs' || path.startsWith('/es/docs/');
   const initialUrl = new URL(window.location.href);
-  const storedLang = window.localStorage.getItem('ascii-vj-lang');
   const pageLang = document.documentElement.lang || 'en';
   const queryLang = initialUrl.searchParams.get('lang');
-  const activeLang = queryLang || (docsPath(initialUrl.pathname) ? pageLang : storedLang) || pageLang || 'en';
+  const activeLang = queryLang || pageLang || 'en';
 
   function valueForKey(locale, key) {
     return key.split('.').reduce((value, part) => value && value[part], translations[locale]);
@@ -113,7 +112,6 @@
   document.querySelectorAll('[data-language-switcher]').forEach((select) => {
     select.addEventListener('change', () => {
       const locale = select.value || 'en';
-      window.localStorage.setItem('ascii-vj-lang', locale);
       window.location.href = targetForLanguage(locale);
     });
   });

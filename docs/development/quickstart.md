@@ -34,8 +34,8 @@ For desktop work, install the Tauri prerequisites for the target OS. Linux devel
 | `npm run preview` | `vite preview --host 127.0.0.1 --port 8010` |
 | `npm run check` | `npm run check:offline` |
 | `npm run check:offline` | `npm run build && node scripts/check_offline_bundle.mjs` |
-| `npm run check:desktop` | `npm run check:offline && npm run check:tauri-policy && npm run check:icons && npm run check:glyph-atlas && npm run test:release-build-reuse && npm run test:render-math && npm run test:audio-reactive && npm run test:midi && npm run test:crash-report-ui && npm run test:crash-relay && npm run test:output-display && npm run test:desktop-updater && npm run test:updater-manifest && npm run test:macos-artifacts && npm run test:macos-secret-args && npm run test:windows-secret-args && npm run test:ffmpeg-policy && npm run check:ffmpeg-resources && npm run test:rust && npm run tauri:build:dev -- --debug --no-bundle` |
-| `npm run check:release` | `npm run check:offline && npm run check:tauri-policy && npm run check:icons && npm run check:glyph-atlas && npm run test:release-build-reuse && npm run test:render-math && npm run test:audio-reactive && npm run test:midi && npm run test:crash-report-ui && npm run test:crash-relay && npm run test:output-display && npm run test:desktop-updater && npm run test:updater-manifest && npm run test:macos-artifacts && npm run test:macos-secret-args && npm run test:windows-secret-args && npm run test:ffmpeg-policy && npm run check:release-runtime && npm run test:rust` |
+| `npm run check:desktop` | `npm run check:offline && npm run check:tauri-policy && npm run check:icons && npm run check:glyph-atlas && npm run test:release-build-reuse && npm run test:render-math && npm run test:preset-backend-contract && npm run test:canvas-readback && npm run test:renderer-fallback && npm run test:media-source-policy && npm run test:audio-reactive && npm run test:midi && npm run test:crash-report-ui && npm run test:crash-relay && npm run test:output-display && npm run test:desktop-updater && npm run test:updater-manifest && npm run test:macos-artifacts && npm run test:macos-secret-args && npm run test:windows-secret-args && npm run test:ffmpeg-policy && npm run check:ffmpeg-resources && npm run test:rust && npm run tauri:build:dev -- --debug --no-bundle` |
+| `npm run check:release` | `npm run check:offline && npm run check:tauri-policy && npm run check:icons && npm run check:glyph-atlas && npm run test:release-build-reuse && npm run test:render-math && npm run test:preset-backend-contract && npm run test:canvas-readback && npm run test:renderer-fallback && npm run test:media-source-policy && npm run test:audio-reactive && npm run test:midi && npm run test:crash-report-ui && npm run test:crash-relay && npm run test:output-display && npm run test:desktop-updater && npm run test:updater-manifest && npm run test:macos-artifacts && npm run test:macos-secret-args && npm run test:windows-secret-args && npm run test:ffmpeg-policy && npm run check:release-runtime && npm run test:rust` |
 | `npm run check:bundle` | `node scripts/check_tauri_bundle.mjs` |
 | `npm run check:bundle:debug` | `node scripts/check_tauri_bundle.mjs --profile debug --expected-bundle-id com.asciline.remix.dev` |
 | `npm run check:bundle:release` | `node scripts/check_tauri_bundle.mjs --profile release --expected-bundle-id com.asciline.remix` |
@@ -46,6 +46,7 @@ For desktop work, install the Tauri prerequisites for the target OS. Linux devel
 | `npm run check:release-runtime` | `npm run test:ffmpeg-source-build && npm run check:ffmpeg-release` |
 | `npm run check:macos-notarization` | `node scripts/check_macos_notarization.mjs --profile release` |
 | `npm run check:windows-authenticode` | `node scripts/check_windows_authenticode.mjs --profile release` |
+| `npm run check:windows-gui` | `node scripts/check_windows_gui_subsystem.mjs --profile release` |
 | `npm run check:media` | `npm run test:frame-prep && npm run test:decode-resize && npm run media:pipeline-preview -- media/<bundled-test-fixture>.mp4 96 54 12 5 false && npm run media:pipeline-preview -- media/<bundled-test-fixture>.mp4 96 54 12 5 true && npm run media:native-session-preview -- media/<bundled-test-fixture>.mp4 96 54 12 5 false 4 && npm run media:native-session-preview -- media/<bundled-test-fixture>.mp4 96 54 12 5 true 4` |
 | `npm run check:tauri-policy` | `node scripts/check_tauri_policy.mjs` |
 | `npm run release:version:check` | `node scripts/check_release_version.mjs` |
@@ -73,8 +74,12 @@ For desktop work, install the Tauri prerequisites for the target OS. Linux devel
 | `npm run test:windows-secret-args` | `node scripts/test_windows_artifact_signing_secret_args.mjs` |
 | `npm run test:audio-reactive` | `node scripts/test_audio_reactive.mjs` |
 | `npm run test:midi` | `node scripts/test_midi_mapping.mjs` |
+| `npm run test:media-source-policy` | `node scripts/test_media_source_policy.mjs` |
 | `npm run test:native-output-log` | `node scripts/analyze_native_output_log.mjs` |
 | `npm run test:render-math` | `node scripts/test_render_math.mjs` |
+| `npm run test:preset-backend-contract` | `node scripts/test_preset_backend_contract.mjs` |
+| `npm run test:canvas-readback` | `node scripts/test_canvas_readback.mjs` |
+| `npm run test:renderer-fallback` | `node scripts/test_renderer_fallback.mjs` |
 | `npm run test:release-build-reuse` | `node scripts/test_release_build_reuse.mjs` |
 | `npm run test:crash-report-ui` | `node scripts/test_crash_report_ui.mjs` |
 | `npm run test:crash-relay` | `npm --prefix crash-relay test` |

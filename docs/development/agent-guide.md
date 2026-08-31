@@ -87,8 +87,8 @@ ASCII/cell visuals.
 
 ## Current User-Facing Baseline
 
-The current source/package version and latest verified public release are
-0.9.12. The Changelog owns release history; the Roadmap is prospective only.
+The current source/package version is 1.0.0, which is also the stable public
+release. The Changelog owns release history; the Roadmap is prospective only.
 
 Sources:
 
@@ -105,16 +105,28 @@ Rendering:
 - WebGPU is the primary quality target.
 - WebGL2 is the main embedded GPU fallback.
 - Canvas2D and pixel Canvas remain compatibility fallbacks.
+- Packaged desktop views attempt WebGPU for every acceleration-eligible preset,
+  then WebGL2 and Canvas2D through the shared bounded fallback. Do not use host
+  platform or user-agent identity to preemptively reassign preset ownership.
 - Native Pop Out output uses `wgpu` where available, with Metal on macOS and
   corresponding GPU backends on Windows/Linux.
 - The active renderer is controlled by one canonical parameter model.
+- Classic Camera ASCII owns the clean-profile visual state, not the global
+  renderer preference. Keep the default backend on Auto; built-ins inherit it
+  unless they explicitly declare a compatibility backend.
+- Keep the 69/41/28 built-in backend contract centralized in
+  `renderers/shared/preset-backend-contract.js`: 69 total, 41 accelerated, and
+  28 explicit Canvas presets. Any intentional ownership change must update the
+  contract and its visible preset-matrix evidence together.
 - Native Pop Out preserves glyph-mode and character-set params for traditional
   ASCII presets.
 - Sixteen project-native palettes, nearest/luminance mapping, and Bayer
   2x2/4x4/8x8 dithering use the shared palette catalog and cached 32x32x32 LUT.
 - The neutral generated Unicode atlas covers the approved common BMP blocks in
   sixteen 1024px pages. Browser decoded-page cache is capped at four; native
-  and browser GPU output use Unicode scalar ids and a maximum 96-id ramp.
+  and browser GPU output use Unicode scalar ids and a maximum 96-id ramp. The
+  WebGPU preview compacts the active ramp and coverage mips into a two-row RGBA
+  texture; WebGL2 and native output retain paged atlas resources.
 - Normal density is capped by shared accelerated/software column and total-cell
   limits. Advanced Density is global, allows up to 900 columns without a 30 FPS
   guarantee, and must never be stored in visual presets.
@@ -155,7 +167,9 @@ UI:
 - Do not reduce control density when changing visual styling.
 - Avoid adding explanatory marketing text inside the app UI.
 - Keep the top-bar Reports control reachable with an empty queue; pending state
-  is additive. Do not attach local media diagnostics or arbitrary logs.
+  is additive. Renderer failures may attach the bounded, sanitized renderer
+  event summary defined by the security contract. Do not attach local media
+  diagnostics or arbitrary logs.
 - Keep backend selection in the center control. Resolved-backend diagnostics
   belong in the user-owned Stats Overlay, not a duplicate top-bar readout.
 
@@ -251,8 +265,8 @@ npm run bundle:release
 
 Expected local release-build note:
 
-- Public 0.9.12 macOS artifacts are Developer ID signed, notarized, stapled, and
-  Gatekeeper-validated. Public 0.9.12 Windows artifacts are unsigned previews.
+- Public 1.0.0 macOS artifacts are Developer ID signed, notarized, stapled, and
+  Gatekeeper-validated. Public 1.0.0 Windows artifacts are unsigned previews.
   Normal local builds use
   `ASCII VJ Remix Dev` / `com.asciline.remix.dev`; the local launcher requires a
   stable identity before permission testing.

@@ -18,6 +18,7 @@ HERO_WEBM = ROOT / "assets" / "videos" / "ascii-hero.webm"
 HERO_MP4 = ROOT / "assets" / "videos" / "ascii-hero.mp4"
 DISPLAY_FONT = ROOT / "assets" / "fonts" / "VCR_OSD_MONO_1.001.woff2"
 APP_ICON = ROOT / "assets" / "images" / "ascii-vj-remix-app-icon.png"
+SITE_SCRIPT = ROOT / "assets" / "js" / "site.js"
 
 WEBM_BUDGET = 4_000_000
 MP4_BUDGET = 4_000_000
@@ -86,6 +87,19 @@ def main() -> int:
         errors.append(str(exc))
         release = ""
 
+    site_script = SITE_SCRIPT.read_text(errors="replace") if SITE_SCRIPT.exists() else ""
+    require(bool(site_script), errors, "assets/js/site.js is missing")
+    require(
+        "const activeLang = queryLang || pageLang || 'en';" in site_script,
+        errors,
+        "site language is not owned by the current localized route",
+    )
+    require(
+        "ascii-vj-lang" not in site_script,
+        errors,
+        "stored language state can override the current localized route",
+    )
+
     for rel in HOME_PAGES:
         html = read(rel, errors)
         if not html:
@@ -106,13 +120,15 @@ def main() -> int:
         require('fetchpriority="high"' in html, errors, f"{rel}: hero video priority hint is missing")
         require(release and f"v{release}" in html, errors, f"{rel}: latest release v{release} is missing")
         if rel == "index.html":
-            require("all 69 built-in Demo Image presets" in html, errors, f"{rel}: v0.9.12 preset fix is missing")
-            require("16 built-in palettes" in html, errors, f"{rel}: v0.9.11 palette story is missing")
-            require("approved neon play-and-pixel artwork" in html, errors, f"{rel}: v0.9.10 icon story is missing")
+            require("All 69 built-in presets must remain visible" in html, errors, f"{rel}: renderer contract is missing")
+            require("search presets by name" in html, errors, f"{rel}: preset search story is missing")
+            require("retry through the included FFmpeg path" in html, errors, f"{rel}: bundled video fallback story is missing")
+            require("share transition timing" in html, errors, f"{rel}: synchronized Pop Out story is missing")
         else:
-            require("los 69 presets integrados" in html, errors, f"{rel}: falta la corrección de presets de v0.9.12")
-            require("16 paletas integradas" in html, errors, f"{rel}: falta la historia de paletas de v0.9.11")
-            require("mismo diseño aprobado" in html, errors, f"{rel}: falta la historia del icono de v0.9.10")
+            require("Los 69 presets integrados deben seguir visibles" in html, errors, f"{rel}: falta el contrato de renderizado")
+            require("busca presets por nombre" in html, errors, f"{rel}: falta la historia de búsqueda de presets")
+            require("reintentarse con FFmpeg" in html, errors, f"{rel}: falta la historia del fallback de video")
+            require("comparten el tiempo de las transiciones" in html, errors, f"{rel}: falta la historia de Pop Out sincronizado")
 
         parser = DownloadParser()
         parser.feed(html)

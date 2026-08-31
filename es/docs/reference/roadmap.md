@@ -57,7 +57,7 @@ Este documento contiene únicamente trabajos prospectivos. No es una descripció
 - Defina un esquema de parámetros de renderizado compartido por controles de UI, ajustes preestablecidos, audio, WTF, MIDI, renderizadores de navegador, renderizadores de secuencias y salida nativa.
 - Reduzca el color duplicado restante y el comportamiento de cuantización en las rutas WebGPU, WebGL2, Canvas, stream y `wgpu` nativas.
 - Agregue pruebas visuales limitadas o de salida dorada para ajustes preestablecidos representativos.
-- Haga que las reservas de backend sean visibles y diagnosticables.
+- Agregue un indicador de respaldo persistente en el lienzo más allá del diagnóstico actual Stats Overlay y limitado Reports.
 - Agregue puntos de referencia repetibles de compilación optimizada para la vista previa principal y Pop Out.
 - Agregue pruebas sintéticas de latencia de cámara y respuesta de audio con marca de tiempo.
 - Realice un seguimiento de la velocidad de fotogramas, las caídas de fotogramas, los recuentos de carga/salto y la propagación de parámetros con resultados de referencia comparables.
@@ -68,7 +68,7 @@ Este documento contiene únicamente trabajos prospectivos. No es una descripció
 
 ## Presets y perfiles de usuario
 
-- Agregue cambio de nombre preestablecido por el usuario, selección de inicio, carpetas/etiquetas y búsqueda/filtro.
+- Agregue cambio de nombre preestablecido por el usuario, comportamiento de inicio opcional seleccionado por el usuario y carpetas/etiquetas.
 - Separe los paquetes visuales preestablecidos de los perfiles de mapeo MIDI.
 - Mejore la validación de importaciones con errores localizados y legibles.
 - Evalúe paquetes de exportación que contengan ajustes preestablecidos visuales, configuraciones reactivas de audio y perfiles de mapeo sin rutas de medios privadas.
@@ -106,17 +106,6 @@ Este documento contiene únicamente trabajos prospectivos. No es una descripció
 - La decodificación de medios nativos y la interoperabilidad de GPU difieren sustancialmente entre plataformas.
 - Las asignaciones estructurales de alta velocidad MIDI pueden crear una rotación del renderizador a pesar de los límites de velocidad y fusión.
 - El modo Transmisión requiere un flujo de trabajo de usuario completo antes de poder regresar al panel Fuente normal.
-
-## 1.0 Dirección
-
-- Paquetes documentados e instalables para macOS, Windows y Linux.
-- Operación de escritorio sin conexión, excepto para verificaciones de actualizaciones deliberadas e informes de fallos revisados ​​y opcionales.
-- Flujos de trabajo confiables Demo Image, Demo Video, archivos personalizados, cámara, ajustes preestablecidos, WTF, audio y Pop Out desde el primer lanzamiento.
-- Comportamiento estable de MIDI en el equipo UC-33e/mioXC documentado.
-- El modo de transmisión ya sea producido y probado o ausente de la interfaz de usuario del usuario normal.
-- Los artefactos públicos macOS conservan la firma del ID del desarrollador, la certificación notarial, el grapado, la aceptación del Gatekeeper y la identidad del actualizador.
-- Los artefactos Windows utilizan una postura de distribución claramente documentada, y se prefieren los instaladores firmados una vez que la ruta de firma está operativa.
-- Los documentos y notas de la versión actuales coinciden con el producto enviado.
 
 
 ## Material de origen

@@ -32,6 +32,8 @@ npm run test:frame-prep          # Rust/JS frame-prep parity
 npm run test:decode-resize       # Decode/resize parity checks
 npm run check:media              # Media pipeline checks
 npm run test:render-math         # Shared renderer math vectors
+npm run test:canvas-readback     # Contained success and blocked Canvas2D readback
+npm run test:renderer-fallback   # GPU-to-Canvas fallback and bounded diagnostics
 npm run test:audio-reactive      # Audio-reactive controls, clamps, dense-mix damping
 npm run test:midi                # UC-33e map, scaling, pickup, actions, coalescing
 npm run midi:probe -- --connect  # Physical mioXC input/output open test
@@ -42,8 +44,11 @@ npm run test:rust                # Rust tests
 npm run check:desktop            # Main desktop validation gate
 npm run check:release            # Release-oriented gate; expects staged FFmpeg sidecar
 npm run bundle:debug             # Build and validate local debug bundle
+npm run bundle:test              # Windows release-profile dev installer + GUI check
+npm run bundle:test:linux        # Linux release-profile dev AppImage/deb/rpm
 npm run bundle:release           # Release gate, release build, bundle check
 npm run check:windows-authenticode # Inactive signed-Windows path signature check
+npm run check:windows-gui        # Require the release EXE GUI subsystem
 npm run smoke:native-output      # Native output performance helper
 npm run smoke:ui-perf            # UI performance helper
 npm run smoke:primary-presets    # Installed WebKit primary-view preset sweep
@@ -62,7 +67,7 @@ git diff --check
 |Área|Cheques actuales|
 | --- | --- |
 |Tiempo de ejecución sin conexión|`npm run check:offline`, `scripts/check_offline_bundle.mjs`|
-|Arnés de interfaz de usuario estática|`npm run smoke:static`, incluida la activación, la salida visible, los errores de WebGL, la finalización de la página de glifos y las comprobaciones de aspecto para cada ajuste preestablecido de imagen de demostración integrado|
+|Arnés de interfaz de usuario estática|`npm run smoke:static`, incluida activación, configuración predeterminada de perfil limpio, búsqueda preestablecida en vivo, secciones alfabéticas independientes, enfoque de menú adicional, geometría de selección alineada, salida visible, errores WebGL, finalización de página de glifos y comprobaciones de aspecto para cada ajuste preestablecido Demo Image integrado|
 |Política Tauri|`npm run check:tauri-policy`|
 |Iconos de aplicaciones|`npm run check:icons`|
 |Atlas de glifos Unicode|`npm run check:glyph-atlas`, afirmaciones de bloque completo en pruebas matemáticas del renderizador/Rust|
@@ -73,7 +78,7 @@ git diff --check
 |Manejo de secretos macOS|`npm run test:macos-secret-args`|
 |FFmpeg política/recursos|`npm run test:ffmpeg-policy`, `npm run check:ffmpeg-resources`, `npm run check:ffmpeg-release`|
 |Preparación/decodificación de fotogramas multimedia|`npm run test:frame-prep`, `npm run test:decode-resize`, `npm run check:media`|
-|Paridad matemática del renderizador|Pruebas de vectores compartidos `npm run test:render-math`, Rust a través de `npm run test:rust`|
+|Matemáticas del renderizador/retroceso|Pruebas de vector compartido `npm run test:render-math`, `npm run test:renderer-fallback`, Rust a través de `npm run test:rust`|
 |MIDI|`npm run test:midi`, Rust MIDI/Pruebas SysEx, `npm run midi:probe -- --connect`|
 |Informes de fallos|`npm run test:crash-report-ui`, `npm run test:crash-relay`|
 |Vectores de códec adaptativos|`npm run test:vectors`|
@@ -105,6 +110,7 @@ Agregue comprobaciones manuales para cambio de fuente, transiciones preestableci
 ```bash
 npm run build
 npm run test:render-math
+npm run test:renderer-fallback
 npm run check:glyph-atlas
 npm run smoke:static
 npm run check:media
@@ -121,7 +127,7 @@ npm run test:native-output-log
 npm run test:rust
 ```
 
-Utilice una compilación de aplicación optimizada antes de sacar conclusiones sobre el rendimiento. El humo del rendimiento de la interfaz de usuario comienza a partir de valores predeterminados visuales canónicos, utiliza transiciones numéricas no estructurales fijas, registra cada backend visitado y rechaza un lienzo primario sin señal de píxeles visible incluso cuando su contador FPS avanza. Seleccione un paquete exacto y una muestra más larga con:
+Utilice una compilación de aplicación optimizada antes de sacar conclusiones sobre el rendimiento. El humo del rendimiento de la interfaz de usuario comienza a partir de valores predeterminados visuales canónicos, utiliza transiciones numéricas no estructurales fijas, registra cada backend visitado y rechaza un lienzo primario sin señal de píxeles visible incluso cuando su contador FPS avanza. Configure `ASCILINE_UI_PERF_SMOKE_STRUCTURAL=1` para alternar familias de renderizadores de glifos y sólidos y ejercite la ruta de fundido cruzado nativo de reloj compartido. Seleccione un paquete exacto y una muestra más larga con:
 
 ```bash
 ASCILINE_SOURCE_APP="/absolute/path/ASCII VJ Remix.app" \
@@ -129,9 +135,11 @@ ASCILINE_UI_PERF_SMOKE_DURATION_MS=30000 \
 npm run smoke:ui-perf
 ```
 
-Para cambios preestablecidos principales, `npm run smoke:primary-presets` es la puerta de aceptación Apple WebKit instalada. La matriz Chromium `smoke:static` sigue siendo útil pero no sustituye a este barrido de escritorio.
+Para cambios preestablecidos principales, `npm run smoke:primary-presets` es la puerta de aceptación Apple WebKit instalada. La matriz Chromium `smoke:static` sigue siendo útil pero no sustituye a este barrido de escritorio. El muestreador de señal conserva un límite máximo de 960x540, por lo que se evalúan máscaras Unicode escasas de un píxel antes de que una pequeña miniatura pueda promediarlas en el fondo.
 
 El análisis de registros nativos informa tanto de las tasas de carga de origen como de carga y omisión. Una fuente saludable de 24 FPS en una pantalla de 60 Hz carga cerca de la frecuencia de la fuente y omite los ticks de visualización duplicados mientras la presentación permanece cerca de la frecuencia de actualización. Para cambios en el modo de glifo, incluya ASCII tradicional, Braille, CJK/Kana, Hangul y una rampa de tipo mixto en las comprobaciones principales/Pop Out. Confirme que las páginas del atlas se carguen solo para la rampa activa, que se informen los escalares no admitidos y que los cambios en el conjunto de caracteres/familia de fuentes no oculten los controles de glifo.
+
+Para cambios de salida de color, compare los estados de paleta, brillo, contraste, fondo y escala de grises neutral entre principal y Pop Out. El conjunto de unidades Rust requiere que el selector de superficie nativo prefiera formatos no normales que no sean sRGB incluso cuando la plataforma informa primero un formato sRGB.
 
 Para el contrato de densidad normal 0.9.11, ejecute compilaciones optimizadas con funciones activadas y desactivadas coincidentes en 640 columnas con audio sintético y salida nativa:
 
@@ -175,7 +183,11 @@ npm run check:desktop
 
 Verifique manualmente el comportamiento de la cámara macOS, el micrófono, la pantalla/sistema de audio y Pop Out cuando cambie el modelo de permiso.
 
-Para los cambios en los informes de fallos, verifique también que las compilaciones de depuración se capturen localmente pero no las envíen, que las compilaciones de lanzamiento utilicen solo `https://crash.dustwave.xyz/v1/reports` y que la ventana de salida no tenga permisos de informes de fallos. El control Reports permanece visible con una cola vacía y los diagnósticos de medios locales nunca se envían.
+Para los cambios en los informes de fallos, verifique también que las compilaciones de depuración se capturen localmente pero no las envíen, que las compilaciones de lanzamiento utilicen solo `https://crash.dustwave.xyz/v1/reports` y que la ventana de salida no tenga permisos de informes de fallos. El control Reports permanece visible con una cola vacía, los diagnósticos de medios locales nunca se envían y los informes del procesador contienen solo el resumen de eventos estructurado delimitado. La salida de Windows WebView2 GPU aún requiere la aceptación física de Windows además de estas comprobaciones de contratos multiplataforma.
+
+La prueba 2026-08-29 Windows 11 estableció que Signal Court y Midnight Scan CJK podían inicializarse en blanco tanto en WebGPU como en WebGL2, mientras que la ruta sólida/píxel de Neon Sledgehammer permanecía visible y la cámara se abría sin un informe de diagnóstico de medios falso. La regla general de glifo a lienzo Windows ahora se eliminó después de la reparación de la textura de glifo compacto. Vuelva a verificar los ajustes preestablecidos representativos de ASCII, Braille, CJK, Hangul, sólidos y de píxeles en el instalador de reemplazo antes de fusionarlos.
+
+La matriz preestablecida estática también verifica la propiedad del backend: el estado limpio y las funciones integradas sin un backend de compatibilidad explícita conservan Auto y se resuelven en WebGPU/WebGL2 en el tiempo de ejecución de Chromium smoke capaz. El barrido preestablecido empaquetado por separado requiere el contrato de propiedad de Canvas centralizado 69 en total / 41 acelerado / 28 explícito. El carril CI Windows ejecuta toda la matriz visible; La aceptación física de Windows también debe confirmar que los 41 ajustes preestablecidos acelerados se resuelven en WebGPU en la máquina RTX de destino y permanecen visibles.
 
 ### FFmpeg y motor de medios
 
@@ -185,6 +197,8 @@ npm run check:ffmpeg-resources
 npm run check:media
 npm run test:rust
 ```
+
+`test:media-source-policy` cubre tanto la selección de la plataforma Demo Video como los identificadores de fuente empaquetados exactos elegibles para el respaldo nativo de FFmpeg. La suite Rust rechaza los identificadores agrupados transversales y no reconocidos. La aceptación física de Linux aún debe demostrar que una falla de decodificación de vista web alcanza el respaldo y muestra cuadros en avance.
 
 Para sidecars de lanzamiento:
 
@@ -224,7 +238,7 @@ En macOS, Release Smoke extrae las cargas útiles actuales y anteriores de `.app
 3. Cambie a Vídeo de demostración y confirme que comienza la reproducción.
 4. Vuelva a la imagen de demostración y confirme que el renderizador no se atasca.
 5. Seleccione Cámara y confirme la solicitud de permiso/comportamiento del dispositivo.
-6. Seleccione Micrófono/Entrada y confirme que se inicia la reactividad de audio o solicita permiso.
+6. Seleccione Micrófono/Entrada y confirme que se inicia la reactividad de audio o solicita permiso. Sin un dispositivo de entrada disponible, confirme el estado amigable inactivo y que Reports permanezca vacío, incluso después de reiniciar en una cola anterior.
 7. Cambie de dispositivo de audio y confirme que la captura se reinicia automáticamente.
 8. Activar pantalla/audio del sistema cuando sea compatible y confirmar errores son útiles cuando la fuente seleccionada no tiene pista de audio.
 9. Haga clic en varios ajustes preestablecidos y confirme transiciones suaves.
@@ -233,7 +247,7 @@ En macOS, Release Smoke extrae las cargas útiles actuales y anteriores de `.app
 12. Cambie Advanced Density y confirme que el modo normal regresa al techo protegido; Confirme que la preferencia no se copia en un ajuste preestablecido visual.
 13. Active y desactive WTF mode y confirme que sigue respondiendo y puede visitar estados tradicionales de aspecto ASCII.
 14. Abra Pop Out y confirme que la vista previa principal sigue respondiendo.
-15. Confirme que Pop Out refleja los ajustes preestablecidos, WTF mode y la reactividad de audio mientras está completamente visible.
+15. Confirme que Pop Out refleja los ajustes preestablecidos, WTF mode y la reactividad de audio mientras está completamente visible, y que sus colores coinciden con la vista previa principal.
 16. Confirmar superposición de estadísticas informa el valor preestablecido/fuente/backend/grid/FPS activo.
 17. Cierre Pop Out y confirme que se establezca el uso de CPU/GPU.
 
@@ -247,7 +261,7 @@ Matrices manuales importantes:
 - macOS con cámara USB externa.
 - macOS con sistema de captura de audio.
 - Windows con WebView2, D3D12/WebGL2, cámara, micrófono y ruta de instalación.
-- Linux con WebKitGTK, aceleración GPU, cámara, micrófono y ruta AppImage/deb.
+- Linux con aceleración WebKitGTK, GPU, cámara, micrófono y rutas AppImage/deb/rpm. La matriz de VM mantenida y la lista de verificación de paquetes se encuentran en [Linux VM QA](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/LINUX_VM_QA.md).
 - Equipo experimental macOS Apple Silicon MIDI: Evolution/M-Audio UC-33e a través de ambas direcciones DIN de un iConnectivity mioXC, alimentado por separado.
 
 Al informar los resultados del hardware, incluya:
@@ -291,6 +305,7 @@ Lanzamiento de CI:
 - cargue instaladores, paquetes de actualización, firmas y `latest.json`.
 - valide la firma de ID del desarrollador macOS, la certificación notarial, el grapado y la aceptación del Gatekeeper antes de publicar los artefactos macOS.
 - publica artefactos Windows como vistas previas sin firmar; la ruta Windows firmada inactiva incluye el firmante de Authenticode y la validación de marca de tiempo.
+- marca el ejecutable de la versión Windows como una aplicación GUI e inicia FFmpeg/ffprobe sin consolas secundarias visibles.
 - ejecute comprobaciones de humo de instalación y de interfaz de usuario de actualización visible después de la publicación.
 - ejecute el actualizador macOS de identidad/humo de reemplazo en `macos-26`.
 

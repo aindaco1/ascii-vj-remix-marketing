@@ -52,7 +52,7 @@ La línea de lanzamiento actual incluye estas reglas de refuerzo de seguridad:
 - El CSP de producción solo permite el origen de la aplicación, Tauri IPC, y el protocolo de recursos Tauri necesarios para los medios locales seleccionados. Los puntos finales de Localhost HTTP/WebSocket existen solo en el CSP de desarrollo; El modo streaming no es una fuente de producción.
 - El envío de informes de fallos se implementa en Rust, no en webview `fetch`, por lo que el CSP de producción no obtiene acceso remoto arbitrario a `connect-src`.
 - Los secretos de firma del actualizador de acciones GitHub tienen como alcance la verificación del secreto del actualizador y los pasos de empaquetado de Tauri. No coloque `TAURI_SIGNING_PRIVATE_KEY`, `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`, valores de certificados de Apple ni contraseñas de llavero en bloques de entorno de flujo de trabajo a nivel de trabajo.
-- El CI de la versión pública macOS falla al cerrarse cuando la firma o certificación notarial del ID de desarrollador de Apple está incompleta. Los artefactos públicos 0.9.12 macOS están firmados, notariados, grapados y validados por Gatekeeper; Los artefactos Windows 0.9.12 son vistas previas sin firmar.
+- El CI de la versión pública macOS falla al cerrarse cuando la firma o certificación notarial del ID de desarrollador de Apple está incompleta. Los artefactos públicos 1.0.0 macOS están firmados, notariados, grapados y validados por Gatekeeper; Los artefactos Windows 1.0.0 son vistas previas sin firmar.
 - Los artefactos públicos macOS deben conservar el ID de equipo `PWT3Q52LZ2` y el identificador estable/requisito designado de equipo. CI valida tanto la aplicación creada como el archivo de actualización extraído y rechaza la identidad ad-hoc o de solo código hash.
 - Las herramientas de lanzamiento local requieren la identidad `ASCII VJ Remix Dev` separada y un certificado de firma local estable. Nunca se sincroniza con la ruta de la aplicación de producción.
 - Acciones GitHub Los trabajos macOS están anclados a `macos-26` en lugar de `macos-latest`. La pila nativa `wgpu`/`apple-metal` necesita el SDK macOS 26 ​​Metal, y el alias móvil `macos-latest` puede seleccionar un SDK más antiguo.
@@ -92,15 +92,19 @@ El reportero de accidentes puede capturar:
 - eventos front-end `unhandledrejection`.
 - Fallos del comando Tauri.
 - Rust informes de gancho de pánico importados en el próximo lanzamiento.
+- Informes de respaldo/fallo del renderizador que contienen solo campos limitados preestablecidos/backend, clase de origen, resumen de errores y eventos recientes del renderizador.
 
 Requisitos de seguridad:
 
 - Los informes deben estar delimitados antes del almacenamiento local y antes de su envío.
 - Reports debe redactar rutas locales, URL de activos/archivos, correos electrónicos, tokens, cookies, contraseñas y claves de contexto similares a las de autenticación.
 - Reports no debe incluir archivos multimedia del usuario, fotogramas decodificados, capturas de pantalla, audio sin formato, volcados de almacenamiento local, volcados de entorno ni registros arbitrarios.
+- Los informes de micrófonos no disponibles/desconectados esperados de versiones anteriores se eliminan localmente utilizando el mismo clasificador de errores de hardware estrecho utilizado en el momento de la captura; Los errores inesperados del micrófono permanecen en cola.
+- Los diagnósticos del renderizador se limitan a los ocho eventos estructurados desinfectados más recientes. No deben convertirse en una ruta general de carga de registros locales.
 - La aplicación almacena como máximo una pequeña cola local y permite al usuario elegir `ask`, `always` o `off`.
 - El control Reports permanece accesible con una cola vacía para que se pueda revisar la preferencia antes de que ocurra un error. El estado vacío no crea ni envía un informe.
 - El envío utiliza únicamente la superficie de comando Rust. La ventana de salida no debe tener permisos de informe de fallos.
+- El envío requiere además un binario del modo de lanzamiento y el identificador exacto del paquete de producción. Los paquetes optimizados de desarrollo y control de calidad conservan su identidad independiente y su cola local, pero no pueden enviar informes.
 - Las credenciales GitHub no deben estar presentes en la aplicación de escritorio, la configuración del repositorio o el paquete visible para el cliente.
 
 Arquitectura de retransmisión de fallos:
@@ -115,6 +119,8 @@ release desktop app
 ```
 
 El Cloudflare Worker vive en `crash-relay/`. Los secretos de su aplicación GitHub se configuran con `wrangler secret put`, y sus espacios de nombres KV limitan la velocidad de admisión y las huellas dactilares de bloqueo del índice. Los informes similares actualizan un problema abierto en lugar de crear un problema nuevo para cada informe. La huella digital prefiere dimensiones estables como tipo, superficie, plataforma, modo comando/backend/fuente, estado de salida nativa y campos de código de error explícitos; El marco de pila normalizado o el mensaje son alternativas. Los organismos emisores mantienen un estado agregado acotado en lugar de concatenar cada informe.
+
+Las fallas del escritor de diagnóstico de medios local de mejor esfuerzo no son fatales y deben ser ignoradas tanto por el adaptador de escritorio como por el relé. No describen una falla de la aplicación y no deben crear problemas GitHub.
 
 El canario de aceptación de producción opcional está codificado y se niega a ejecutarse cuando ya hay un informe de usuario pendiente o la preferencia es `off`. Nunca debe expandirse a una ruta de carga de registros general.
 
@@ -190,6 +196,7 @@ Los sidecars FFmpeg se incluyen para mantener la funcionalidad multimedia indepe
 Normas:
 
 - No descargue FFmpeg, códecs ni archivos binarios de ayuda multimedia en tiempo de ejecución.
+- El respaldo nativo para medios integrados acepta solo los dos identificadores de fuente exactos enviados Demo Video; no otorga a la vista web una ruta general del sistema de archivos.
 - Los sidecars de lanzamiento se crean a partir de una fuente oficial fijada.
 - Los protocolos de red permanecen deshabilitados para las compilaciones de lanzamiento FFmpeg a menos que una función de transmisión en formato producto requiera explícitamente una excepción revisada.
 - Los sidecars necesitan versión, SHA-256, licencia, fuente y metadatos de AVISO.
@@ -268,7 +275,7 @@ npm run check:ffmpeg-resources
 
 - Las indicaciones de privacidad de macOS siguen siendo sensibles a la ruta de la aplicación, el identificador del paquete y la identidad de firma. Las identidades de producción y desarrollo están aisladas, pero una construcción de desarrollo deliberadamente ad hoc aún recibe subvenciones específicas para esa construcción.
 - La firma ad hoc macOS solo es aceptable para compilaciones locales; los lanzamientos públicos están firmados con el ID del desarrollador, notariados, engrapados y validados por Gatekeeper.
-- Los artefactos Windows 0.9.12 son vistas previas sin firmar y pueden activar advertencias de Editor desconocido, SmartScreen o Defender.
+- Los artefactos Windows 1.0.0 son vistas previas sin firmar y pueden activar advertencias de Editor desconocido, SmartScreen o Defender.
 - El comportamiento de los medios/cámara/audio de Linux varía según la distribución, WebKitGTK, los controladores y la configuración del portal.
 - El modo de transmisión existe en las rutas de desarrollo, pero está oculto en la interfaz de usuario normal y excluido del CSP de producción.
 

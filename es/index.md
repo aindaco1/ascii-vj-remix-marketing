@@ -69,16 +69,16 @@ nav_exclude: true
   <div class="release-summary">
     <img class="release-app-icon" src="{{ site.data.product.app_icon.path | relative_url }}?v={{ site.data.product.app_icon.path | asset_fingerprint }}" width="512" height="512" alt="Icono de la app ASCII VJ Remix con símbolo de reproducción y píxeles de neón" loading="lazy" decoding="async">
     <div>
-      <p class="section-intro">v0.9.12 restaura una salida primaria visible y con proporciones correctas para todos los presets integrados. También incluye las paletas, el dithering, los glifos multilingües y los controles de densidad de v0.9.11, además del icono aprobado de v0.9.10.</p>
-      <p class="section-intro"><strong>Un solo icono canónico.</strong> Los recursos para macOS, Windows, Linux, iOS, Android y marketing ahora parten del mismo diseño aprobado de reproducción y píxeles de neón.</p>
+      <p class="section-intro">v{{ site.data.product.latest_release.version }} es la primera versión estable de escritorio. Agiliza la búsqueda de presets, restaura la misma política de aceleración en macOS, Windows y Linux, y acerca el comportamiento del video integrado y de Pop Out nativo entre plataformas.</p>
+      <p class="section-intro"><strong>Un solo contrato de renderizado.</strong> Los 69 presets integrados deben seguir visibles: 41 pueden usar aceleración y 28 usan Canvas2D de forma intencional. Los sistemas compatibles prueban primero WebGPU y conservan WebGL2 y Canvas2D como fallbacks reales.</p>
     </div>
   </div>
   <div class="card-grid">
-    <article class="card pink"><h3>Todos los presets visibles</h3><p>v0.9.12 corrige lienzos primarios de glifos en blanco, conserva las proporciones de la fuente y prueba los 69 presets integrados de Imagen de demostración en la app empaquetada con Apple WebKit.</p></article>
-    <article class="card"><h3>16 paletas y dithering ordenado</h3><p>Usa paletas propias del proyecto, mapeo por cercanía o luminancia y dithering Bayer 2x2, 4x4 u 8x8 en Canvas, WebGL2, WebGPU y Pop Out nativo.</p></article>
-    <article class="card pink"><h3>Rango de glifos multilingüe</h3><p>Ajusta profundidad, desplazamiento, dirección, colores, Braille, símbolos, CJK, Hiragana, Katakana, Hangul o una rampa personalizada de hasta 96 escalares Unicode compatibles.</p></article>
+    <article class="card pink"><h3>Encuentra un look durante el set</h3><p>Empieza con Classic Camera ASCII, busca presets por nombre y recorre secciones alfabéticas separadas para Built-in y My Presets sin perder la fuente activa.</p></article>
+    <article class="card"><h3>Video que sigue avanzando</h3><p>El demo integrado usa un formato adecuado para cada sistema, y los videos incluidos o seleccionados pueden reintentarse con FFmpeg cuando el decodificador del sistema no logra reproducirlos.</p></article>
+    <article class="card pink"><h3>Pop Out se mantiene sincronizado</h3><p>El preview principal y la salida nativa ahora comparten el tiempo de las transiciones, avanzan juntos el video y usan un formato de superficie compatible con el navegador para mantener el color alineado.</p></article>
   </div>
-  <p class="section-intro"><strong>¿Ya usas v0.9.6 o v0.9.7 en macOS?</strong> Instala la versión actual una vez desde el DMG notarizado; esas dos versiones no pueden mostrar la actualización dentro de la app. v0.9.8 y versiones posteriores pueden actualizarse dentro de la app.</p>
+  <p class="section-intro"><strong>¿Ya usas v0.9.6 o v0.9.7 en macOS?</strong> Instala v{{ site.data.product.latest_release.version }} una vez desde el DMG notarizado; esas dos versiones no pueden mostrar la actualización dentro de la app. v0.9.8 y versiones posteriores pueden actualizarse dentro de la app.</p>
   <p class="release-link"><a href="{{ '/es/docs/overview/changelog-baseline/' | relative_url }}">Leer la base de la versión v{{ site.data.product.latest_release.version }}</a></p>
 </section>
 

@@ -20,6 +20,8 @@ La accesibilidad es temprana para este proyecto. La aplicación actual se benefi
 - en su mayoría botones HTML estándar, controles deslizantes, controles de selección, casillas de verificación y flujos de selección de archivos.
 - grupo de control compacto pero visible.
 - Superposición de estadísticas persistente para el estado del renderizador.
+- Búsqueda preestablecida nativa con estado de resultado cortés, comportamiento de escape para borrar y estados vacíos visibles para ambas secciones preestablecidas.
+- un menú adicional preestablecido que enfoca su primera acción habilitada y restaura el enfoque del disparador cuando Escape lo cierra.
 - estado en vivo cortés para verificaciones de actualización activadas por el usuario y versiones disponibles; Las comprobaciones de inicio silenciosas no anuncian resultados actuales/fuera de línea.
 - un control persistente Reports que mantiene accesibles las preferencias de informes de fallas antes de que cualquier informe esté pendiente.
 - Solicitudes de permisos nativas de la plataforma para la cámara, el micrófono y el audio del sistema.
@@ -129,12 +131,14 @@ Normas:
 
 ## Cobertura automatizada actual
 
-Los controles actuales son indirectos:
+Las comprobaciones actuales cubren un subconjunto específico de las interacciones preestablecidas/de control:
 
 ```bash
 npm run build
 npm run smoke:static
 ```
+
+El humo estático verifica el filtrado preestablecido en vivo, Escape-to-clear, restauración de enfoque para el menú adicional preestablecido, texto descriptivo Advanced Density y geometría de selección visible consistente en el tamaño de ventana mínimo admitido.
 
 No hay un teclado dedicado, un hacha, una instantánea ARIA, un orden de enfoque, un movimiento reducido o un conjunto de contraste automatizado. Esas lagunas también se resumen en [Testing](/es/docs/operations/testing/); El trabajo prospectivo de accesibilidad vive en el [Roadmap](/es/docs/reference/roadmap/).
 
