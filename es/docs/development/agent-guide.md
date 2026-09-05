@@ -63,7 +63,7 @@ El repositorio combina renderizado WebGPU/WebGL de alta calidad, rutas de compat
 
 ## Línea de base actual orientada al usuario
 
-La versión actual del código fuente/paquete es 1.0.0, que también es la versión pública estable. El registro de cambios posee el historial de versiones; la Hoja de Ruta es sólo prospectiva.
+La versión actual del código fuente y los paquetes es 1.0.3, que también es la versión pública estable. El registro de cambios recoge el historial de versiones; la hoja de ruta contiene únicamente trabajo futuro.
 
 Fuentes:
 
@@ -83,9 +83,9 @@ Representación:
 - La salida nativa Pop Out usa `wgpu` cuando esté disponible, con Metal en macOS y los backends GPU correspondientes en Windows/Linux.
 - El renderizador activo está controlado por un modelo de parámetro canónico.
 - Classic Camera ASCII posee el estado visual de perfil limpio, no la preferencia de renderizado global. Mantenga el backend predeterminado en Auto; los integrados lo heredan a menos que declaren explícitamente un backend de compatibilidad.
-- Mantenga el contrato de backend integrado 69/41/28 centralizado en `renderers/shared/preset-backend-contract.js`: 69 ajustes preestablecidos de Canvas en total, 41 acelerados y 28 explícitos. Cualquier cambio intencional de propiedad debe actualizar el contrato y su evidencia visible de matriz preestablecida en conjunto.
+- Mantenga el contrato de backend integrado 71/43/28 centralizado en `renderers/shared/preset-backend-contract.js`: 71 ajustes preestablecidos de Canvas en total, 43 acelerados y 28 explícitos. Cualquier cambio intencional de propiedad debe actualizar el contrato y su evidencia visible de matriz preestablecida en conjunto.
 - El Pop Out nativo conserva los parámetros del modo glifo y del conjunto de caracteres para los ajustes preestablecidos ASCII tradicionales.
-- Dieciséis paletas nativas del proyecto, mapeo de luminancia/más cercano y difuminado Bayer 2x2/4x4/8x8 utilizan el catálogo de paletas compartido y la LUT de 32x32x32 en caché.
+- Diecisiete paletas nativas del proyecto, mapeo más cercano/de luminancia y difuminado Bayer 2x2/4x4/8x8 utilizan el catálogo de paletas compartido y la LUT de 32x32x32 en caché.
 - El atlas Unicode generado neutral cubre los bloques BMP comunes aprobados en dieciséis páginas de 1024px. La caché de páginas decodificadas del navegador tiene un límite de cuatro; La salida nativa y del navegador GPU utiliza identificadores escalares Unicode y una rampa máxima de 96 identificadores. La vista previa de WebGPU compacta la rampa activa y los mips de cobertura en una textura RGBA de dos filas; WebGL2 y la salida nativa conservan los recursos del atlas paginado.
 - La densidad normal está limitada por la columna acelerada/software compartida y los límites totales de celdas. Advanced Density es global, permite hasta 900 columnas sin una garantía de 30 FPS y nunca debe almacenarse en ajustes preestablecidos visuales.
 - El catálogo de conjunto de caracteres compartido incluye 23 rampas de luminancia derivadas de ascii.today acreditadas y ajustes preestablecidos de solo lectura coincidentes.
@@ -128,7 +128,7 @@ Utilice este mapa para encontrar al probable propietario de un cambio:
 |Shell Tauri, comandos, permisos, actualizador, audio nativo, salida nativa|[src-tauri/](https://github.com/aindaco1/ascii-vj-remix/tree/main/src-tauri)|
 |Entrada/salida nativa MIDI y SysEx|[midi.rs](https://github.com/aindaco1/ascii-vj-remix/blob/main/src-tauri/src/midi.rs)|
 |Renderizador nativo Pop Out|[native_output.rs](https://github.com/aindaco1/ascii-vj-remix/blob/main/src-tauri/src/native_output.rs), [gpu.rs](https://github.com/aindaco1/ascii-vj-remix/blob/main/src-tauri/src/native_output/gpu.rs)|
-|Ruta de latencia de cámara nativa macOS|[native_camera.rs](https://github.com/aindaco1/ascii-vj-remix/blob/main/src-tauri/src/native_output/native_camera.rs)|
+|Rutas de cámara nativas de la plataforma|[native_camera.rs](https://github.com/aindaco1/ascii-vj-remix/blob/main/src-tauri/src/native_output/native_camera.rs), [ffmpeg.rs](https://github.com/aindaco1/ascii-vj-remix/blob/main/src-tauri/src/media_engine/ffmpeg.rs)|
 |Motor multimedia Rust, códec, sesiones FFmpeg|[src-tauri/src/media_engine/](https://github.com/aindaco1/ascii-vj-remix/tree/main/src-tauri/src/media_engine)|
 |Medios de demostración integrados y accesorios ocultos|[medios/](https://github.com/aindaco1/ascii-vj-remix/tree/main/media)|
 |Experimentos de códec/vector|[experimentos/](https://github.com/aindaco1/ascii-vj-remix/tree/main/experiments)|
@@ -205,7 +205,7 @@ npm run bundle:release
 
 Nota de compilación de lanzamiento local esperada:
 
-- Los artefactos públicos 1.0.0 macOS están firmados con el ID del desarrollador, notariados, engrapados y validados por Gatekeeper. Los artefactos públicos 1.0.0 Windows son vistas previas sin firmar. Las compilaciones locales normales utilizan `ASCII VJ Remix Dev` / `com.asciline.remix.dev`; el iniciador local requiere una identidad estable antes de realizar la prueba de permiso.
+- Los artefactos públicos macOS están firmados con ID de desarrollador, notariados, grapados y validados por Gatekeeper. Los artefactos Windows actuales son vistas previas sin firmar. Las compilaciones locales normales utilizan `ASCII VJ Remix Dev` / `com.asciline.remix.dev`; el iniciador local requiere una identidad estable antes de realizar la prueba de permiso.
 - Si `TAURI_SIGNING_PRIVATE_KEY` o `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` están ausentes mientras los artefactos del actualizador están habilitados, el paquete de versiones fallará al firmar el actualizador. Las rutas de validación locales están documentadas en la guía para contribuyentes; nunca confirme ninguno de los archivos.
 
 ## Tauri y notas de embalaje

@@ -40,10 +40,11 @@ FFmpeg sidecars, signed update artifacts, and reviewed/sanitized crash reports.
 | Local image/video files | Browser File API or Tauri dialog plus session-local media registry | Medium | Files are selected explicitly without broad filesystem access. |
 | Built-in demo media | Bundled under `media/` and copied into app assets | Low | Demo media is local and versioned. |
 | Built-in palettes/glyph atlas | Project-owned palette catalog plus pinned, generated, locally bundled glyph pages | Low | No runtime palette pack, font, CDN, or language-resource import/download. |
-| Camera input | Browser `getUserMedia`; macOS native AVFoundation path for Pop Out | Medium | Requires OS privacy permission. Frames stay local. |
+| Camera input | Browser `getUserMedia`; native AVFoundation, Media Foundation, or bundled-FFmpeg V4L2 path for single-camera Pop Out | Medium | Requires OS privacy permission. Frames stay local. Windows uses one Media Foundation owner for native output and an in-memory binary preview bridge; Linux releases the WebView camera for exclusive V4L2 capture. |
 | Mic/input audio | Web Audio and native Tauri providers | Medium | Requires OS privacy permission. Analysis features are bounded. |
 | System/display audio | Browser display audio when present; native desktop providers where available | Medium | Platform permissions vary. Do not broaden capture beyond feature needs. |
 | Presets/settings | Local browser storage, IndexedDB, imported/exported JSON | Low to Medium | User-authored data. Validate imports before applying. |
+| Screenshots | Main-window-only Rust Desktop writer | Medium | Accepts only bounded PNG bytes, creates a unique file, and returns no path. No broad filesystem scope or save dialog. |
 | Output window | Tauri output window with minimal permissions | Medium | Must not expose media selection, filesystem, updater, or broad command APIs. |
 | Tauri commands | `src-tauri/src/lib.rs` plus capability files | High | Treat every command as a security boundary. Validate inputs in Rust. |
 | Asset protocol | Empty by default, expanded only for selected media/session needs | High | Avoid persistent broad paths. |
@@ -67,9 +68,9 @@ The current release line includes these security hardening rules:
   `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`, Apple certificate values, or keychain
   passwords in job-level workflow environment blocks.
 - Public macOS release CI fails closed when Apple Developer ID signing or
-  notarization is incomplete. Public 1.0.0 macOS artifacts are signed,
-  notarized, stapled, and Gatekeeper-validated; Windows 1.0.0 artifacts are
-  unsigned previews.
+  notarization is incomplete. Public macOS artifacts are signed, notarized,
+  stapled, and Gatekeeper-validated; current Windows artifacts are unsigned
+  previews.
 - Public macOS artifacts must retain Team ID `PWT3Q52LZ2` and the stable
   identifier/team designated requirement. CI validates both the built app and
   the extracted updater archive and rejects ad-hoc or code-hash-only identity.
@@ -111,11 +112,12 @@ The production runtime is intentionally narrow:
   localhost stream/dev endpoints exist only in `devCsp`.
 - `npm run check:tauri-policy` verifies the local-only runtime policy, the
   GitHub updater endpoint exception, and the Rust-only crash reporter command
-  boundary.
+  boundary. It also matches each literal frontend Tauri invocation to its
+  generated permission file and main-window capability grant.
 - Capabilities in `src-tauri/capabilities/` split main-window privileges from
   output-window privileges.
 - The main window owns media selection, output management, audio providers, and
-  updater/crash-report work.
+  screenshot, updater, and crash-report work.
 - The output window only listens for render/output messages and exposes
   the minimum close/fullscreen behavior it needs.
 
@@ -143,6 +145,10 @@ The crash reporter can capture:
 - Rust panic-hook reports imported on the next launch.
 - renderer fallback/failure reports containing only bounded preset/backend,
   source-class, error-summary, and recent renderer-event fields.
+- native media/camera/mirror worker failures with a bounded component label and
+  sanitized error summary.
+- explicit manual current-state snapshots with an optional bounded user note
+  and the same structured renderer/output context.
 
 Security requirements:
 
@@ -154,6 +160,9 @@ Security requirements:
 - Expected unavailable/disconnected microphone reports from older builds are
   pruned locally using the same narrow hardware-error classifier used at
   capture time; unexpected microphone errors remain queued.
+- Native output window-handle loss during normal close or worker replacement is
+  teardown, not a crash. Unexpected media, camera, mirror, or renderer failures
+  remain reportable through the bounded component/error contract.
 - Renderer diagnostics are limited to the eight most recent sanitized
   structured events. They must not become a general local-log upload path.
 - The app stores at most a small local queue and lets the user choose `ask`,
@@ -222,6 +231,18 @@ Reactivity is an intentional default mode, so the app may request
 microphone/input permission during startup. Capture remains OS-gated and local,
 and the user can stop it by disabling Audio Reactivity or changing the audio
 source.
+
+Single-camera Pop Out may open the already selected camera through a native
+platform provider: AVFoundation on macOS, Media Foundation on Windows, or V4L2
+through the bundled network-disabled FFmpeg runtime on Linux. It does not add a
+new remote endpoint or persist camera frames. Manual diagnostics may contain
+bounded device-independent timing and fallback counters, never frame bytes.
+Windows uses one Media Foundation capture client while native output is open.
+It does not send camera pixels through a network or persistent store.
+The native worker exposes only its latest
+downscaled JPEG through a binary command response to the main WebView. The
+frame is drawn in memory, is not logged or persisted, and is replaced by the
+next frame.
 
 Current macOS bundle identifier:
 
@@ -337,6 +358,9 @@ Import rules:
 - Do not let imported presets disable Stats Overlay unless the user imported
   that choice intentionally and the UI makes it clear.
 - Do not include private absolute media paths in exported packs by default.
+- Preset playlists store only a bounded name, timing/mode metadata, and stable
+  preset ids. They do not duplicate visual settings or retain source/media
+  fields.
 
 ### MIDI and SysEx Rules
 
@@ -401,7 +425,7 @@ npm run check:ffmpeg-resources
   deliberately ad-hoc development build still receives build-specific grants.
 - Ad-hoc macOS signing is acceptable for local builds only; public releases are
   Developer ID signed, notarized, stapled, and Gatekeeper-validated.
-- Windows 1.0.0 artifacts are unsigned previews and may trigger Unknown
+- Current Windows artifacts are unsigned previews and may trigger Unknown
   Publisher, SmartScreen, or Defender warnings.
 - Linux media/camera/audio behavior varies by distribution, WebKitGTK, drivers,
   and portal setup.

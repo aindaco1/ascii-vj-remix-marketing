@@ -8,7 +8,7 @@ lang: es
 
 # ASCII VJ Remix
 
-Los documentos fuente actuales describen el conjunto de características **1.0.0**. Las secciones siguientes se seleccionan directamente del repositorio principal para que la identidad del producto, los requisitos y la guía de hardware no se conviertan en un contrato mantenido por segunda mano.
+Los documentos fuente actuales describen las funciones de **1.0.3**. Las secciones siguientes proceden directamente del repositorio principal para mantener una sola referencia sobre el producto, los requisitos y las recomendaciones de hardware.
 
 ## ¿Qué es este proyecto?
 
@@ -36,7 +36,7 @@ Notas:
 
 - La compatibilidad con Intel Mac no es el objetivo de lanzamiento actual. Puede funcionar desde el código fuente si usted mismo crea un paquete compatible, pero no es la ruta probada.
 - La cámara, el micrófono y la captura de audio requieren concesiones de privacidad explícitas macOS.
-- Las versiones públicas 1.0.0 están firmadas con el ID del desarrollador, certificadas ante notario, engrapadas y aceptadas por Gatekeeper. Las compilaciones locales o de prueba pueden requerir el flujo normal de clic derecho del botón Abrir o Abrir de todos modos con macOS.
+- Las versiones públicas de macOS están firmadas con el ID del desarrollador, certificadas ante notario, grapadas y aceptadas por Gatekeeper. Las compilaciones locales o de prueba pueden requerir el flujo normal de macOS, hacer clic con el botón derecho en Abrir o Abrir de todos modos.
 
 ### Windows
 
@@ -48,6 +48,7 @@ Notas:
 Notas:
 
 - La mayoría de los sistemas Windows 10/11 actuales ya incluyen WebView2. Si un instalador informa que falta WebView2, instale Microsoft WebView2 Runtime una vez.
+- Pop Out con una sola cámara usa Media Foundation y el renderizador nativo D3D12 en Windows cuando están disponibles; conserva la duplicación acotada como alternativa ante incompatibilidades del dispositivo o controlador. Un único cliente nativo captura para ambas vistas, evitando intentos fallidos de apertura simultánea y nuevas aperturas al cambiar de preset. También envía el último fotograma como JPEG binario de tamaño reducido al renderizador principal WebGPU, evitando que dos clientes compitan por la cámara y la serialización de RGBA sin comprimir. La captura del navegador se restaura después de que el hilo nativo libere por completo el dispositivo. Los cambios de fuente completan este traspaso antes de iniciar el siguiente preview.
 - El loopback de audio del sistema WASAPI nativo no está implementado. El comportamiento actual del audio del sistema/pantalla depende de la ruta de captura expuesta por el tiempo de ejecución; verifíquelo en la máquina de destino antes de una sesión en vivo.
 
 ### Linux
@@ -61,7 +62,8 @@ Notas:
 
 - Linux Tauri utiliza la pila del sistema WebKitGTK, por lo que la compatibilidad con la función GPU varía según la distribución, la versión de WebKitGTK y el controlador de gráficos.
 - WebGL2 puede ser el recurso práctico de Linux incluso cuando WebGPU no esté disponible.
-- La cobertura nativa de cámara/audio/salida Linux está limitada fuera de CI y varía según la distribución y el hardware.
+- Pop Out con una sola cámara usa captura V4L2 mediante FFmpeg local incluido y renderizado nativo Vulkan/GLES. Como muchos dispositivos V4L2 son exclusivos, el preview principal de la cámara se pausa mientras Pop Out nativo está activo y se recupera al cerrarlo.
+- El comportamiento nativo de cámara/audio/salida Linux varía según la distribución y el hardware; La aceptación de paquetes de Ubuntu y Fedora sigue siendo una prueba física.
 
 ## Guía de hardware
 

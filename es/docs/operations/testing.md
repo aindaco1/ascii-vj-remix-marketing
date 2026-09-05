@@ -34,6 +34,7 @@ npm run check:media              # Media pipeline checks
 npm run test:render-math         # Shared renderer math vectors
 npm run test:canvas-readback     # Contained success and blocked Canvas2D readback
 npm run test:renderer-fallback   # GPU-to-Canvas fallback and bounded diagnostics
+npm run test:preset-playlists    # Playlist schema, bounds, reorder, loop selection
 npm run test:audio-reactive      # Audio-reactive controls, clamps, dense-mix damping
 npm run test:midi                # UC-33e map, scaling, pickup, actions, coalescing
 npm run midi:probe -- --connect  # Physical mioXC input/output open test
@@ -67,11 +68,12 @@ git diff --check
 |Área|Cheques actuales|
 | --- | --- |
 |Tiempo de ejecución sin conexión|`npm run check:offline`, `scripts/check_offline_bundle.mjs`|
-|Arnés de interfaz de usuario estática|`npm run smoke:static`, incluida activación, configuración predeterminada de perfil limpio, búsqueda preestablecida en vivo, secciones alfabéticas independientes, enfoque de menú adicional, geometría de selección alineada, salida visible, errores WebGL, finalización de página de glifos y comprobaciones de aspecto para cada ajuste preestablecido Demo Image integrado|
+|Arnés de interfaz de usuario estática|`npm run smoke:static`, que incluye activación, limpieza de perfil predeterminada, búsqueda de ajustes preestablecidos en vivo, edición/guardado/reordenamiento/controles de bucle de listas de reproducción, interfaz de usuario de captura de pantalla nativa accesible, geometría de selección alineada, salida visible, errores de WebGL, finalización de páginas de glifos y comprobaciones de aspecto para cada ajuste preestablecido de Demo Image integrado.|
 |Política Tauri|`npm run check:tauri-policy`|
 |Iconos de aplicaciones|`npm run check:icons`|
 |Atlas de glifos Unicode|`npm run check:glyph-atlas`, afirmaciones de bloque completo en pruebas matemáticas del renderizador/Rust|
 |Lógica de visualización de salida|`npm run test:output-display`|
+|Listas de reproducción preestablecidas|`npm run test:preset-playlists`, además de alineación de token de control renderizada, creación sin avisos, evitación de ajustes preestablecidos activos, despido modal, estado de transición veraz, enrutamiento de transición compartido y cobertura de inicio/detención en `npm run smoke:static`|
 |Comportamiento del actualizador de escritorio|`npm run test:desktop-updater`|
 |Manifiestos del actualizador|`npm run test:updater-manifest`|
 |Identidad de la aplicación macOS|`npm run test:macos-identity`, libera inspección de artefactos en macOS|
@@ -85,7 +87,7 @@ git diff --check
 |Módulos Rust/Tauri|`npm run test:rust`|
 |Rendimiento de salida nativa|`npm run smoke:native-output`, `npm run test:native-output-log`|
 |Rendimiento de la interfaz de usuario|`npm run smoke:ui-perf`, `npm run bench:density` con transiciones/valores predeterminados fijos, configuración de funciones, percentiles de fase, reemplazos de renderizador y restablecimientos de fotogramas|
-|Ajustes preestablecidos primarios instalados|`npm run smoke:primary-presets`, las 69 funciones integradas en la imagen de demostración con visibilidad primaria por ajuste preestablecido, familia de backend, estado de ejecución, error GPU y verificaciones de aspecto|
+|Ajustes preestablecidos primarios instalados|`npm run smoke:primary-presets`, los 71 integrados en Demo Image con visibilidad primaria por ajuste preestablecido, familia de backend, estado de ejecución, error GPU y verificaciones de aspecto|
 |Lanzamiento de instalación/actualización|`npm run smoke:release-install`|
 
 ## Conjuntos de cheques recomendados
@@ -139,6 +141,10 @@ Para cambios preestablecidos principales, `npm run smoke:primary-presets` es la 
 
 El análisis de registros nativos informa tanto de las tasas de carga de origen como de carga y omisión. Una fuente saludable de 24 FPS en una pantalla de 60 Hz carga cerca de la frecuencia de la fuente y omite los ticks de visualización duplicados mientras la presentación permanece cerca de la frecuencia de actualización. Para cambios en el modo de glifo, incluya ASCII tradicional, Braille, CJK/Kana, Hangul y una rampa de tipo mixto en las comprobaciones principales/Pop Out. Confirme que las páginas del atlas se carguen solo para la rampa activa, que se informen los escalares no admitidos y que los cambios en el conjunto de caracteres/familia de fuentes no oculten los controles de glifo.
 
+Para la cámara Pop Out, verifique el modo de salida resuelto y el movimiento visible. macOS, Windows y Linux deben seleccionar `native-camera` para una cámara. Varias cámaras deben seleccionar `mirror`; Windows/Linux también debería volver a intentar reflejar cuando la verificación previa nativa no pueda producir un marco. En Windows físico, confirme los avances de la imagen de la cámara tanto en la ventana principal como en la de Pop Out con `exclusiveCameraActive` verdadero. En esa sesión de propietario único, confirme que `nativeOutputPreview.transport` es `binary-jpeg`, ambas vistas avanzan y la cámara del navegador se vuelve a adquirir después del cierre sin cambiar las fuentes. `test:output-display` ejecuta el orden de transferencia de origen Windows y las pruebas de regresión geométrica de vista previa; `smoke:static` renderiza aparatos con vista previa nativa 4:3/16:9 y comprueba sus bordes derechos. Utilice `SMOKE_REQUIRE_WEBGPU=1` en un tiempo de ejecución de prueba compatible con WebGPU para rechazar el respaldo y ejercitar el reemplazo de texturas de WebGPU. En Linux, confirme los avances nativos de Pop Out mientras la vista previa exclusiva de WebView está en pausa y que la vista previa se vuelve a adquirir después del cierre. Capture un informe manual del cuadro de diálogo Reports existente; una simulación de política local no reemplaza la aceptación del dispositivo.
+
+En Windows y Linux, mantenga también abierto Pop Out mientras cambia repetidamente entre Demo Image, Demo Video y Cámara. Cada cambio de modo debe finalizar el trabajador nativo anterior antes de que se reutilice la ventana de salida compartida. Cierre y vuelva a abrir inmediatamente Pop Out después de esa secuencia; la aplicación no debe entrar en pánico en una superficie `wgpu` no válida ni poner en cola un informe `underlying handle is not available` durante el desmontaje normal.
+
 Para cambios de salida de color, compare los estados de paleta, brillo, contraste, fondo y escala de grises neutral entre principal y Pop Out. El conjunto de unidades Rust requiere que el selector de superficie nativo prefiera formatos no normales que no sean sRGB incluso cuando la plataforma informa primero un formato sRGB.
 
 Para el contrato de densidad normal 0.9.11, ejecute compilaciones optimizadas con funciones activadas y desactivadas coincidentes en 640 columnas con audio sintético y salida nativa:
@@ -181,13 +187,19 @@ npm run test:rust
 npm run check:desktop
 ```
 
+La puerta de política también verifica que cada comando invocado por el adaptador de escritorio tenga un permiso Tauri generado y una concesión en la capacidad de la ventana principal. Un comando Rust registrado en `generate_handler!` no se puede llamar desde una vista web empaquetada hasta que existan ambas partes de ACL.
+
 Verifique manualmente el comportamiento de la cámara macOS, el micrófono, la pantalla/sistema de audio y Pop Out cuando cambie el modelo de permiso.
 
 Para los cambios en los informes de fallos, verifique también que las compilaciones de depuración se capturen localmente pero no las envíen, que las compilaciones de lanzamiento utilicen solo `https://crash.dustwave.xyz/v1/reports` y que la ventana de salida no tenga permisos de informes de fallos. El control Reports permanece visible con una cola vacía, los diagnósticos de medios locales nunca se envían y los informes del procesador contienen solo el resumen de eventos estructurado delimitado. La salida de Windows WebView2 GPU aún requiere la aceptación física de Windows además de estas comprobaciones de contratos multiplataforma.
 
+La aceptación manual del informe debe comenzar con una cola vacía: ingrese una nota breve, capture el estado actual, confirme que la vista previa contiene un informe `manual-diagnostic` y un contexto de salida/representador limitado, luego confirme que una compilación de desarrollo mantiene el envío deshabilitado. Verifique por separado el envío de producción sin adjuntar medios, capturas de pantalla, rutas de archivos, URL o registros de procesos arbitrarios.
+
 La prueba 2026-08-29 Windows 11 estableció que Signal Court y Midnight Scan CJK podían inicializarse en blanco tanto en WebGPU como en WebGL2, mientras que la ruta sólida/píxel de Neon Sledgehammer permanecía visible y la cámara se abría sin un informe de diagnóstico de medios falso. La regla general de glifo a lienzo Windows ahora se eliminó después de la reparación de la textura de glifo compacto. Vuelva a verificar los ajustes preestablecidos representativos de ASCII, Braille, CJK, Hangul, sólidos y de píxeles en el instalador de reemplazo antes de fusionarlos.
 
-La matriz preestablecida estática también verifica la propiedad del backend: el estado limpio y las funciones integradas sin un backend de compatibilidad explícita conservan Auto y se resuelven en WebGPU/WebGL2 en el tiempo de ejecución de Chromium smoke capaz. El barrido preestablecido empaquetado por separado requiere el contrato de propiedad de Canvas centralizado 69 en total / 41 acelerado / 28 explícito. El carril CI Windows ejecuta toda la matriz visible; La aceptación física de Windows también debe confirmar que los 41 ajustes preestablecidos acelerados se resuelven en WebGPU en la máquina RTX de destino y permanecen visibles.
+La matriz preestablecida estática también verifica la propiedad del backend: el estado limpio y las funciones integradas sin un backend de compatibilidad explícita retienen Auto y se resuelven en WebGPU/WebGL2 en el tiempo de ejecución de humo Chromium capaz. El barrido preestablecido empaquetado por separado requiere el contrato de propiedad de Canvas centralizado 71 en total / 43 acelerado / 28 explícito. El carril CI Windows ejecuta toda la matriz visible; La aceptación física de Windows también debe confirmar que los 43 ajustes preestablecidos acelerados se resuelven en WebGPU en la máquina RTX de destino y permanecen visibles.
+
+El mismo humo genera muestras de colores conocidas a través de WebGL2 real y las compara con el asignador de paletas compartido para las 17 paletas en los modos más cercano y de luminancia, incluidos los cambios de paleta en vivo y de inicio. También verifica que las cargas de paletas conserven la configuración de orientación de la imagen de origen.
 
 ### FFmpeg y motor de medios
 
@@ -250,6 +262,8 @@ En macOS, Release Smoke extrae las cargas útiles actuales y anteriores de `.app
 15. Confirme que Pop Out refleja los ajustes preestablecidos, WTF mode y la reactividad de audio mientras está completamente visible, y que sus colores coinciden con la vista previa principal.
 16. Confirmar superposición de estadísticas informa el valor preestablecido/fuente/backend/grid/FPS activo.
 17. Cierre Pop Out y confirme que se establezca el uso de CPU/GPU.
+18. Con una cámara seleccionada en Windows, capture un diagnóstico manual mientras Pop Out está abierto y confirme que `cameraFallbackActive` sea falso. Confirme que la salida en vivo se mantiene fluida mientras cambia los ajustes preestablecidos y FPS. Con `exclusiveCameraActive`, confirme los avances de la vista previa principal a través de `nativeOutputPreview`, su FPS aceptado es distinto de cero y la vista previa normal de la cámara se restaura después de cerrar con `previewRestoreSucceeded` aumentando. Si se activa la copia de seguridad del espejo, confirme que `nativeOutputAdapter.nativeCameraFailureReason` explica el motivo y se volverá a adquirir la vista previa.
+19. Repita la prueba de una sola cámara en Ubuntu con AppImage/deb y Fedora con rpm. La vista previa de la cámara principal puede pausarse mientras V4L2 sea propiedad del Pop Out nativo; confirme que se restaure después del cierre. Si se activa la reserva, confirme que se vuelva a adquirir la vista previa y que el informe incluya el espejo distinto de cero aceptado FPS.
 
 ## Comprobaciones de hardware y plataforma
 

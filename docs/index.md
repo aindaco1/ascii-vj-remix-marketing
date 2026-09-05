@@ -10,7 +10,7 @@ These docs are for software developers who want to fork, inspect, extend, packag
 
 ASCII VJ Remix is a local-first desktop visualizer and renderer workbench. For users, it exists to give DJs a manageable visualizer and VJs fine-grained ASCII/video filter control. For developers, it is a Tauri desktop application with a dense renderer/control surface, native output path, local media adapters, audio-reactive modulation, and release/update infrastructure.
 
-The public homepage is written for DJs and VJs. This section is intentionally technical: it describes the app's source model, renderer architecture, desktop packaging boundary, security posture, performance constraints, accessibility expectations, internationalization posture, release workflow, and current 1.0.0 feature baseline.
+The public homepage is written for DJs and VJs. This section is intentionally technical: it describes the app's source model, renderer architecture, desktop packaging boundary, security posture, performance constraints, accessibility expectations, internationalization posture, release workflow, and current 1.0.3 feature baseline.
 
 ## Start Here
 

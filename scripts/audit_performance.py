@@ -119,16 +119,7 @@ def main() -> int:
         require('width="1200" height="766"' in html, errors, f"{rel}: hero video dimensions are missing")
         require('fetchpriority="high"' in html, errors, f"{rel}: hero video priority hint is missing")
         require(release and f"v{release}" in html, errors, f"{rel}: latest release v{release} is missing")
-        if rel == "index.html":
-            require("All 69 built-in presets must remain visible" in html, errors, f"{rel}: renderer contract is missing")
-            require("search presets by name" in html, errors, f"{rel}: preset search story is missing")
-            require("retry through the included FFmpeg path" in html, errors, f"{rel}: bundled video fallback story is missing")
-            require("share transition timing" in html, errors, f"{rel}: synchronized Pop Out story is missing")
-        else:
-            require("Los 69 presets integrados deben seguir visibles" in html, errors, f"{rel}: falta el contrato de renderizado")
-            require("busca presets por nombre" in html, errors, f"{rel}: falta la historia de búsqueda de presets")
-            require("reintentarse con FFmpeg" in html, errors, f"{rel}: falta la historia del fallback de video")
-            require("comparten el tiempo de las transiciones" in html, errors, f"{rel}: falta la historia de Pop Out sincronizado")
+        # Release-specific homepage copy is checked by audit_docs_current_state.py.
 
         parser = DownloadParser()
         parser.feed(html)

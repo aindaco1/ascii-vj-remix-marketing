@@ -84,15 +84,17 @@ N camera streams
 
 Los controles de la cámara incluyen selección de dispositivo, tamaño de captura, FPS, diseño, encuadre y espejo. Los controles del modo frontal están ocultos cuando son irrelevantes para las capacidades del dispositivo seleccionado.
 
-Tauri Pop Out nativo tiene una ruta macOS adicional para salida de una sola cámara:
+Pop Out nativo de Tauri tiene rutas de captura de una sola cámara específicas para cada plataforma:
 
 ```text
-AVFoundation capture
+macOS: AVFoundation capture
+Windows: Media Foundation source reader
+Linux: bundled FFmpeg V4L2 input
   -> latest BGRA/RGB frame
   -> native output renderer
 ```
 
-Esa ruta evita la lectura del lienzo de WebView y se introdujo para reducir la latencia de la cámara.
+La presentación nativa de Pop Out evita la lectura del canvas del WebView y el envío de cada fotograma por Tauri IPC. En Windows, un único cliente nativo controla la cámara para ambas vistas; reduce el tamaño del último fotograma, lo codifica como JPEG y lo devuelve mediante una respuesta binaria de Tauri a un canvas que consume el preview WebGPU existente. En Linux, el preview principal del WebView se pausa mientras Pop Out nativo controla un dispositivo V4L2 exclusivo y recupera la cámara al cerrarse. Windows/Linux comprueban un fotograma antes de mostrar la salida nativa y recurren a la duplicación acotada si no pueden abrir el dispositivo. Windows conserva esa primera captura en vez de abrir dos veces la cámara. El callback asíncrono de Media Foundation actualiza un único espacio para el último fotograma, independientemente del renderizado GPU y de las lecturas del preview.
 
 ### Audio
 
@@ -268,6 +270,7 @@ El backend WebGL2 refleja el modelo visual WebGPU lo más fielmente posible:
 - Las imágenes se cargan una vez.
 - primero pase muestras de un color por celda a una textura de color de celda.
 - La paleta de primer paso/matemática de tramado coincide con el contrato compartido.
+- Las texturas de búsqueda de paleta conservan el orden de las filas de datos, mientras que las imágenes de origen mantienen su propia configuración de giro vertical.
 - La segunda pasada expande la textura del color de la celda y, opcionalmente, muestra el mismo contrato de rampa/atlas escalar Unicode que WebGPU.
 - Los uniformes de sombreado coinciden con el conjunto de parámetros WebGPU siempre que sea posible.
 - las 18 ubicaciones uniformes de sombreado se almacenan en caché después de vincular el programa en lugar de consultarse nuevamente durante cada cuadro.
@@ -278,7 +281,7 @@ El valor predeterminado visual de perfil limpio y la preferencia del renderizado
 
 `StaticRuntime` trata la construcción de GPU como una operación recuperable. Si el renderizador WebGPU/WebGL2 solicitado no se puede inicializar, crea el renderizador Canvas equivalente tanto para el inicio inicial como para las transiciones preestablecidas en vivo. Un retroceso fallido del Canvas deja activa la superficie de transición anterior.
 
-La aceptación física de Windows 11 WebView2 encontró un modo de falla más limitado: la construcción de GPU y los contadores de cuadros tuvieron éxito, pero la salida del atlas de glifos permaneció en blanco, mientras que la salida de sólidos/píxeles permaneció visible. La respuesta anterior dirigió todas las vistas previas de glifos Windows a través de Canvas2D, colapsando el conjunto acelerado a aproximadamente siete ajustes preestablecidos. Desde entonces, la textura compacta de glifos de rampa activa ha reemplazado la ruta de carga de glifos problemática, por lo que la versión 1.0 retira esa ruta general y requiere que la matriz preestablecida Windows conserve 41 ajustes preestablecidos de Canvas acelerados y 28 explícitos. Un verdadero fallo en la construcción del renderizador todavía recae en Canvas2D.
+Las pruebas físicas de Windows 11 con WebView2 detectaron un fallo específico: el renderizador GPU se inicializaba y sus contadores avanzaban, pero el atlas de glifos se veía en blanco, mientras que la salida de celdas sólidas o píxeles seguía visible. La solución anterior enviaba todos los previews de glifos de Windows a Canvas2D, dejando unos siete presets acelerados. La textura compacta de la rampa activa sustituyó aquella ruta problemática, por lo que la línea 1.0 abandona esa asignación general a Canvas2D. La matriz actual de Windows debe conservar 43 presets acelerados y 28 presets explícitos de Canvas. Un fallo real al crear el renderizador sigue recurriendo a Canvas2D.
 
 ## Renderizadores de lienzo
 
@@ -418,11 +421,11 @@ La superficie nativa GPU prefiere `Bgra8Unorm` o `Rgba8Unorm` que no sean sRGB, 
 
 En la ruta del enlace de visualización macOS, la versión decodificada del marco fuente se pasa al presentador. Cuando esa versión y las dimensiones del marco no han cambiado, el presentador reutiliza la textura de origen existente mientras sigue codificando/presentando con los últimos parámetros visuales y audio-reactivos. Las personas que llaman de reserva sin versión retienen las cargas incondicionales. Los registros exponen la carga de origen y los contadores de omisión.
 
-Para la salida de una sola cámara macOS, AVFoundation captura los últimos fotogramas directamente para el presentador nativo. Los ajustes preestablecidos de la cámara en vivo no utilizan el transporte espejo del navegador de forma predeterminada porque la lectura del lienzo y la transferencia de fotogramas IPC son demasiado costosas para una salida sostenida.
+Para salida de una sola cámara, AVFoundation en macOS, Media Foundation en Windows y la entrada local incluida FFmpeg V4L2 en Linux capturan fotogramas directamente para el presentador nativo. Los ajustes preestablecidos de la cámara en vivo no utilizan el transporte espejo del navegador de forma predeterminada porque la lectura del lienzo y la transferencia de fotogramas IPC son demasiado costosas para una salida sostenida. Varias cámaras y fallas de apertura nativa mantienen la ruta del espejo limitada.
 
 La salida nativa consume los mismos parámetros canónicos de paleta, tramado, `glyphMode`, conjunto de caracteres/rampa personalizada, profundidad/desplazamiento/inversión y glifo/color de fondo que la superficie de control. El presentador nativo `wgpu` fusiona paleta y trabajo de tramado ordenado en su paso de celda, luego enmascara las celdas a través del mismo contrato de rampa/página escalar Unicode que los renderizadores GPU del navegador.
 
-La interfaz resuelve la entrada de catálogo seleccionada en una base delimitada `charsetRamp`; Rust valida los escalares admitidos y aplica profundidad, desplazamiento y retroceso una vez para crear una rampa máxima de 96 id. Las páginas del atlas R8 de 1024 px requeridas se decodifican/cargan de forma perezosa y se retienen en la textura fija de 16 capas del presentador. `fontFamily` sigue siendo metadatos de vista previa/superficie de control; La salida nativa nunca carga fuentes arbitrarias del sistema o del usuario.
+La interfaz resuelve la entrada del catálogo seleccionada en una base delimitada `charsetRamp`; Rust valida los escalares admitidos y aplica profundidad, desplazamiento y retroceso una vez para crear una rampa máxima de 96 id. Las páginas del atlas R8 de 1024 px requeridas se decodifican/cargan de forma perezosa y se retienen en la textura fija de 16 capas del presentador. Windows también carga los cuatro niveles MIP de cobertura máxima utilizados por la ruta de glifos de celdas pequeñas del navegador. macOS y Linux conservan su muestreo de página base existente. `fontFamily` sigue siendo metadatos de vista previa/superficie de control; La salida nativa nunca carga fuentes arbitrarias del sistema o del usuario.
 
 Para fuentes alternativas/reflejadas, se pueden enviar instantáneas de píxeles sin procesar delimitadas desde el renderizador principal a la salida nativa.
 
@@ -431,6 +434,8 @@ Reglas de diseño de salida nativas:
 - La ventana de salida no posee amplios permisos Tauri.
 - El presentador consume los últimos parámetros en vivo.
 - Se prefiere la semántica del último fotograma al almacenamiento en búfer profundo.
+- Los cambios de fuente y modo de duplicación en Windows/Linux detienen el hilo nativo anterior y esperan a que termine antes de reutilizar la ventana de salida. Los errores de validación de superficie o la pérdida del identificador de ventana durante el cierre o reemplazo normal son condiciones de cierre recuperables, no un pánico del proceso ni un evento para el informe de fallos.
+- La captura nativa de cámara en Windows/Linux debe producir un fotograma de comprobación antes de abrir la ventana de salida. Windows conserva esa captura como único cliente. Ambas plataformas restauran la cámara del WebView antes de recurrir a la duplicación o después de cerrar una sesión nativa exclusiva. Durante una sesión exclusiva de Windows, un puente binario JPEG acotado con el último fotograma mantiene vivo el preview WebGPU principal. Windows emite el evento de cierre solo después de que el hilo de Media Foundation haya liberado el dispositivo. El sufijo de modelo USB opcional de Chromium solo se admite cuando la coincidencia con el nombre descriptivo de Media Foundation no es ambigua.
 - El comportamiento del renderizador principal no debe retroceder cuando Pop Out está abierto.
 - el respaldo del navegador debe permanecer disponible.
 

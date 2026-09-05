@@ -11,7 +11,7 @@ Estos documentos son para desarrolladores de software que desean bifurcar, inspe
 
 ASCII VJ Remix es un visualizador de escritorio local y un banco de trabajo de renderizado. Para los usuarios, existe para brindar a los DJ un visualizador manejable y a los VJ un control detallado de filtro de video/ASCII. Para los desarrolladores, es una aplicación de escritorio Tauri con una densa superficie de control/representación, ruta de salida nativa, adaptadores de medios locales, modulación reactiva de audio e infraestructura de lanzamiento/actualización.
 
-La página de inicio pública está escrita para DJ y VJ. Esta sección es intencionalmente técnica: describe el modelo fuente de la aplicación, la arquitectura del renderizador, los límites del empaquetado del escritorio, la postura de seguridad, las limitaciones de rendimiento, las expectativas de accesibilidad, la postura de internacionalización, el flujo de trabajo de lanzamiento y la línea base de características actual 1.0.0.
+La página de inicio pública está escrita para DJ y VJ. Esta sección es intencionalmente técnica: describe el modelo fuente de la aplicación, la arquitectura del renderizador, los límites del empaquetado del escritorio, la postura de seguridad, las limitaciones de rendimiento, las expectativas de accesibilidad, la postura de internacionalización, el flujo de trabajo de lanzamiento y la línea base de características actual 1.0.3.
 
 ## Comience aquí
 

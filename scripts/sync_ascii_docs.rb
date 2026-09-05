@@ -225,6 +225,8 @@ module SyncAsciiDocs
 
         Current docs describe the **#{version}** feature set. The newest dated changelog entry is the release authority; the Unreleased section is intentionally excluded.
 
+        [Download v#{version} and read its publication and platform-validation notes](https://github.com/#{SOURCE_REPO}/releases/tag/v#{version}). The changelog date records the source release entry; GitHub Releases records when the downloads were published.
+
         ## #{version} Release Notes
 
         #{rewrite_links(released_body(changelog, version), "CHANGELOG.md")}
@@ -321,6 +323,8 @@ module SyncAsciiDocs
         # Release and Updates
 
         Current source docs describe the **#{version}** release line. Release mechanics and security posture are copied from their canonical mother-repository guides.
+
+        See the [v#{version} release](https://github.com/#{SOURCE_REPO}/releases/tag/v#{version}) for published installers, updater packages, and platform-validation notes.
 
         #{source_sections("docs/SECURITY.md", ["Release Security Posture"])}
 
