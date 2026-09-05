@@ -36,6 +36,7 @@ npm run check:media              # Media pipeline checks
 npm run test:render-math         # Shared renderer math vectors
 npm run test:canvas-readback     # Contained success and blocked Canvas2D readback
 npm run test:renderer-fallback   # GPU-to-Canvas fallback and bounded diagnostics
+npm run test:preset-playlists    # Playlist schema, bounds, reorder, loop selection
 npm run test:audio-reactive      # Audio-reactive controls, clamps, dense-mix damping
 npm run test:midi                # UC-33e map, scaling, pickup, actions, coalescing
 npm run midi:probe -- --connect  # Physical mioXC input/output open test
@@ -69,11 +70,12 @@ git diff --check
 | Area | Current Checks |
 | --- | --- |
 | Offline runtime | `npm run check:offline`, `scripts/check_offline_bundle.mjs` |
-| Static UI harness | `npm run smoke:static`, including activation, clean-profile default, live preset search, independent alphabetical sections, overflow-menu focus, aligned select geometry, visible output, WebGL errors, glyph-page completion, and aspect checks for every built-in Demo Image preset |
+| Static UI harness | `npm run smoke:static`, including activation, clean-profile default, live preset search, playlist edit/save/reorder/loop controls, accessible native-only screenshot UI, aligned select geometry, visible output, WebGL errors, glyph-page completion, and aspect checks for every built-in Demo Image preset |
 | Tauri policy | `npm run check:tauri-policy` |
 | App icons | `npm run check:icons` |
 | Unicode glyph atlas | `npm run check:glyph-atlas`, complete-block assertions in renderer math/Rust tests |
 | Output display logic | `npm run test:output-display` |
+| Preset playlists | `npm run test:preset-playlists`, plus rendered control-token alignment, no-prompt creation, active-preset avoidance, modal dismissal, truthful transition status, shared transition routing, and start/stop coverage in `npm run smoke:static` |
 | Desktop updater behavior | `npm run test:desktop-updater` |
 | Updater manifests | `npm run test:updater-manifest` |
 | macOS app identity | `npm run test:macos-identity`, release artifact inspection on macOS |
@@ -87,7 +89,7 @@ git diff --check
 | Rust/Tauri modules | `npm run test:rust` |
 | Native output performance | `npm run smoke:native-output`, `npm run test:native-output-log` |
 | UI performance | `npm run smoke:ui-perf`, `npm run bench:density` with fixed defaults/transitions, feature configuration, phase percentiles, renderer replacements, and frame resets |
-| Installed primary presets | `npm run smoke:primary-presets`, all 69 built-ins on Demo Image with per-preset primary visibility, backend-family, running-state, GPU-error, and aspect checks |
+| Installed primary presets | `npm run smoke:primary-presets`, all 71 built-ins on Demo Image with per-preset primary visibility, backend-family, running-state, GPU-error, and aspect checks |
 | Release install/update | `npm run smoke:release-install` |
 
 ## Recommended Check Sets
@@ -161,6 +163,30 @@ and a mixed typed ramp in main/Pop Out checks. Confirm atlas pages load only for
 the active ramp, unsupported scalars are reported, and Character Set/Font
 Family changes do not hide the Glyph controls.
 
+For Camera Pop Out, verify the resolved output mode as well as visible motion.
+macOS, Windows, and Linux should select `native-camera` for one camera. Multiple
+cameras should select `mirror`; Windows/Linux should also retry mirror when
+native preflight cannot produce a frame. On physical Windows, confirm the
+camera image advances in both the main and Pop Out windows with
+`exclusiveCameraActive` true. In that single-owner session,
+confirm `nativeOutputPreview.transport` is `binary-jpeg`, both views advance,
+and the browser camera is reacquired after close without changing sources.
+`test:output-display` executes the Windows source-handoff ordering and preview
+geometry regression tests; `smoke:static` renders 4:3/16:9 native-preview fixtures
+and checks their right edges. Use `SMOKE_REQUIRE_WEBGPU=1` on a WebGPU-capable
+test runtime to reject fallback and exercise WebGPU texture replacement.
+On Linux, confirm native Pop Out advances while the exclusive WebView preview
+is paused and that the preview is reacquired after close. Capture a manual
+report from the existing Reports dialog; a local policy simulation does not
+replace device acceptance.
+
+On Windows and Linux, also keep Pop Out open while switching repeatedly between
+Demo Image, Demo Video, and Camera. Each mode change must finish the previous
+native worker before the shared output window is reused. Close and immediately
+reopen Pop Out after that sequence; the app must not panic on an invalid
+`wgpu` surface or queue an `underlying handle is not available` report during
+normal teardown.
+
 For color-output changes, compare palette, brightness, contrast, background,
 and neutral grayscale states between main and Pop Out. The Rust unit suite
 requires the native surface selector to prefer non-sRGB unorm formats even when
@@ -213,6 +239,11 @@ npm run test:rust
 npm run check:desktop
 ```
 
+The policy gate also checks that every command invoked by the desktop adapter
+has a generated Tauri permission and a grant in the main-window capability. A
+Rust command registered in `generate_handler!` is not callable from a packaged
+webview until both ACL pieces exist.
+
 Manually verify macOS Camera, Microphone, Screen/System Audio, and Pop Out
 behavior when the permission model changes.
 
@@ -223,6 +254,12 @@ visible with an empty queue, local media diagnostics are never submitted, and
 renderer reports contain only the bounded structured event summary. Windows
 WebView2 GPU output still requires physical Windows acceptance in addition to
 these cross-platform contract checks.
+
+Manual report acceptance should begin with an empty queue: enter a short note,
+capture current state, confirm the preview contains a `manual-diagnostic`
+report and bounded renderer/output context, then confirm a development build
+keeps Send disabled. Separately verify production submission without attaching
+media, screenshots, file paths, URLs, or arbitrary process logs.
 
 The 2026-08-29 Windows 11 test established that Signal Court and Midnight Scan
 CJK could initialize blank under both WebGPU and WebGL2, while Neon
@@ -235,10 +272,15 @@ installer before merging.
 The static preset matrix also verifies backend ownership: clean state and
 built-ins without an explicit compatibility backend retain Auto and resolve to
 WebGPU/WebGL2 in the capable Chromium smoke runtime. The packaged preset sweep
-separately requires the centralized 69 total / 41 accelerated / 28 explicit
+separately requires the centralized 71 total / 43 accelerated / 28 explicit
 Canvas ownership contract. The Windows CI lane runs the full visible matrix;
-physical Windows acceptance must additionally confirm the 41 accelerated
+physical Windows acceptance must additionally confirm the 43 accelerated
 presets resolve to WebGPU on the target RTX machine and remain visible.
+
+The same smoke renders known color swatches through actual WebGL2 and compares
+them with the shared palette mapper for all 17 palettes in nearest and luminance
+modes, including startup and live palette changes. It also verifies that palette
+uploads preserve the source-image orientation setting.
 
 ### FFmpeg and Media Engine
 
@@ -341,6 +383,18 @@ Use this after user-facing renderer, source, audio, or output changes:
     visible, and that its colors match the main preview.
 16. Confirm Stats Overlay reports the active preset/source/backend/grid/FPS.
 17. Close Pop Out and confirm CPU/GPU usage settles.
+18. With one camera selected on Windows, capture a manual diagnostic while Pop
+    Out is open and confirm `cameraFallbackActive` is false. Confirm live output
+    remains smooth while changing presets and FPS. With
+    `exclusiveCameraActive`, confirm the main preview advances through
+    `nativeOutputPreview`, its accepted FPS is nonzero, and the normal camera
+    preview restores after close with `previewRestoreSucceeded` increasing. If mirror fallback activates, confirm
+    `nativeOutputAdapter.nativeCameraFailureReason` explains why and the preview
+    is reacquired.
+19. Repeat the single-camera test on Ubuntu with AppImage/deb and Fedora with
+    rpm. The main camera preview may pause while V4L2 is owned by native Pop
+    Out; confirm it restores after close. If fallback activates, confirm the
+    preview is reacquired and the report includes nonzero mirror accepted FPS.
 
 ## Hardware and Platform Checks
 

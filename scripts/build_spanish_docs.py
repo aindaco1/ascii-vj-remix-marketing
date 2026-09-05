@@ -57,6 +57,7 @@ BODY_OVERRIDES = {
     "### Performance": "### Rendimiento",
     "### Security": "### Seguridad",
     "### Validation": "### Validación",
+    "### Preserved": "### Conservado",
     "## Source Material": "## Material de origen",
 }
 
@@ -81,6 +82,8 @@ MONTH_OVERRIDES = {
 
 CACHE_DIR = ROOT / ".translation-cache"
 CACHE_PATH = CACHE_DIR / "spanish-docs.json"
+REVIEWED_TRANSLATIONS_PATH = ROOT / "scripts" / "spanish-docs-overrides.json"
+REVIEWED_TRANSLATIONS = loads(REVIEWED_TRANSLATIONS_PATH.read_text())
 TRANSLATE_SEPARATOR = "\nZXQZXQASCII_VJBREAKZXQZXQ\n"
 TRANSLATE_PRIMARY_ENDPOINT = "https://translate.googleapis.com/translate_a/single"
 TRANSLATE_FALLBACK_ENDPOINT = "https://clients5.google.com/translate_a/t"
@@ -208,6 +211,12 @@ def protect_text(text: str) -> tuple[str, list[str]]:
         "Acid Snowstorm",
         "Terminal Collapse",
         "Neon Razorstorm",
+        "ASCII World Mint",
+        "ASCII City Nightshift",
+        "City Nightshift",
+        "Media Foundation",
+        "DirectShow",
+        "V4L2",
     ]
     for term in protected_terms:
         working = protect(rf"\b{re.escape(term)}\b", working)
@@ -319,6 +328,10 @@ def translate_texts(texts: list[str]) -> list[str]:
 
         if stripped in SECTION_TITLES:
             translated[index] = SECTION_TITLES[stripped]
+            continue
+
+        if stripped in REVIEWED_TRANSLATIONS:
+            translated[index] = REVIEWED_TRANSLATIONS[stripped]
             continue
 
         with cache_lock:

@@ -7,7 +7,7 @@ parent: "Overview"
 
 # ASCII VJ Remix
 
-Current source docs describe the **1.0.0** feature set. The sections below are selected directly from the mother repository so product identity, requirements, and hardware guidance do not drift into a second hand-maintained contract.
+Current source docs describe the **1.0.3** feature set. The sections below are selected directly from the mother repository so product identity, requirements, and hardware guidance do not drift into a second hand-maintained contract.
 
 ## What This Project Is
 
@@ -45,7 +45,7 @@ Notes:
 - Intel Mac support is not the current release target. It may work from source
   if you build a compatible bundle yourself, but it is not the tested path.
 - Camera, microphone, and audio capture require explicit macOS privacy grants.
-- Public 1.0.0 release builds are Developer ID signed, notarized, stapled, and
+- Public macOS release builds are Developer ID signed, notarized, stapled, and
   accepted by Gatekeeper. Local or test builds may require the normal macOS
   right-click Open or Open Anyway flow.
 
@@ -60,6 +60,14 @@ Notes:
 
 - Most current Windows 10/11 systems already include WebView2. If an installer
   reports that WebView2 is missing, install the Microsoft WebView2 Runtime once.
+- Single-camera Pop Out uses Windows Media Foundation capture and the D3D12
+  native renderer when available, with the existing bounded mirror as a
+  device/driver fallback. One native owner captures for both views, avoiding
+  failed concurrent-open probes and device reacquisition on preset changes. It
+  also supplies a downscaled, latest-frame binary JPEG feed to the existing
+  WebGPU main renderer, avoiding camera contention and raw-RGBA serialization.
+  Browser camera capture is restored after the native worker fully releases the
+  device. Source switches settle ownership before starting the next preview.
 - Native WASAPI system-audio loopback is not implemented. Current system/display
   audio behavior depends on the capture path exposed by the runtime; verify it
   on the target machine before a live session.
@@ -76,8 +84,12 @@ Notes:
 - Linux Tauri uses the system WebKitGTK stack, so GPU feature support varies by
   distribution, WebKitGTK version, and graphics driver.
 - WebGL2 may be the practical Linux fallback even when WebGPU is not available.
-- Native Linux camera/audio/output coverage is limited outside CI and varies by
-  distribution and hardware.
+- Single-camera Pop Out uses V4L2 capture through the bundled local FFmpeg
+  runtime and Vulkan/GLES native rendering. Because many V4L2 devices are
+  exclusive, the main camera preview pauses while native Pop Out is active and
+  is restored when it closes.
+- Native Linux camera/audio/output behavior varies by distribution and
+  hardware; Ubuntu and Fedora package acceptance remains a physical test.
 
 ## Hardware Guidance
 

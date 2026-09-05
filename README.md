@@ -69,6 +69,16 @@ Review generated changes before publishing. The source changelog may include an
 unreleased section; the marketing site's release badge intentionally selects the
 newest dated release instead.
 
+Verify that release and its platform assets on GitHub Releases before publishing
+the site. The product-data date comes from the changelog and can differ from the
+date the downloads were published.
+
+Reviewed Spanish passages live in `scripts/spanish-docs-overrides.json`, keyed by
+the complete English source paragraph or table cell. The translation script
+applies them before its local cache or translation service, preserving corrected
+technical meanings and attribution links across regeneration. Add new reviewed
+entries when the source wording changes; do not edit generated Spanish pages.
+
 `_data/product.yml` records the synced release and canonical icon SHA-256.
 `scripts/audit_docs_current_state.py` checks current-release claims, required
 renderer feature markers, and the copied icon's dimensions/hash so a version-only

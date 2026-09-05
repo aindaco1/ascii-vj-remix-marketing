@@ -41,7 +41,7 @@ This page describes the current ASCII VJ Remix feature baseline for developers p
   - Vulkan/GLES on Linux.
 - Native Pop Out preserves glyph-mode and character-set params for traditional
   ASCII presets instead of flattening them into solid cells.
-- Sixteen project-native palettes, nearest-color/luminance mapping, and ordered
+- Seventeen project-native palettes, nearest-color/luminance mapping, and ordered
   Bayer 2x2/4x4/8x8 dithering share one parameter and lookup-table contract
   across browser, Canvas, and native output paths.
 - Glyph controls cover depth, offset, reverse, source/fixed color, background,
@@ -68,6 +68,13 @@ This page describes the current ASCII VJ Remix feature baseline for developers p
   Cyberdelic Riot, Acid Snowstorm, Terminal Collapse, and Neon Razorstorm.
 - Built-in traditional ASCII presets, including Classic Camera ASCII, ANSI
   Newsprint, Terminal Mono, and Dense Typewriter.
+- ASCII World Mint applies gently jittering mint line-character glyphs on a dark
+  teal background to the selected image, video, or camera, inspired by
+  [yeahpython's ASCII World](https://yeahpython.github.io/game/game.html).
+- ASCII City Nightshift uses a near-black background, amber and sage lighting,
+  and jittering dense terminal characters, inspired by
+  [tweakyourpc's ASCII City](https://tweakyourpc.github.io/ascii-city/).
+  Both presets animate still images even with audio reactivity off.
 - Classic Camera ASCII is the default for a clean profile. Existing persisted
   profiles keep their visual settings instead of being silently reset. The
   clean-profile visual choice does not override the global Auto renderer
@@ -85,11 +92,14 @@ This page describes the current ASCII VJ Remix feature baseline for developers p
   geometry so traditional ASCII tuning stays aligned in the dense sidebar.
 - Palette, mapping, ordered-dither, glyph-ramp, and glyph-color controls are
   independently tunable and saved through the existing visual-preset schema.
-- Ten built-in palette/glyph variants include Braille, box drawing, CJK marks,
-  Hiragana, Katakana, CJK Unified, and Hangul looks. The other six palettes are
-  incorporated into existing presets.
+- Eleven built-in palette/glyph variants include ASCII City Nightshift, Braille,
+  box drawing, CJK marks, Hiragana, Katakana, CJK Unified, and Hangul looks. The
+  other six palettes are incorporated into existing presets.
 - User presets can be saved, duplicated, updated, deleted, imported, and
   exported.
+- Multiple named preset playlists can be saved with reordered stable preset
+  entries, one shared hold interval, and random or in-order looping. Playlist
+  playback keeps each preset's existing transition duration authoritative.
 - Preset transitions crossfade instead of fading to black.
 - Transition time is configurable.
 - Presets preserve the active media source unless the user explicitly changes
@@ -124,6 +134,14 @@ This page describes the current ASCII VJ Remix feature baseline for developers p
 - The desktop output window is native, not a second heavyweight duplicated UI
   surface.
 - Output display selection is persisted when Tauri can enumerate displays.
+- Single-camera output uses platform-native capture: AVFoundation on macOS,
+  Media Foundation on Windows, and V4L2 through the bundled local FFmpeg
+  runtime on Linux. Windows/Linux frames feed the native `wgpu` presenter;
+  bounded current-frame mirroring remains available when native device opening
+  fails or multiple cameras are selected.
+- The camera-icon control saves the current primary renderer surface as a PNG
+  directly to Desktop. The HTML Stats Overlay is outside that captured surface,
+  and no save dialog is opened.
 
 ### Experimental MIDI Control
 
@@ -167,12 +185,15 @@ and requires a manually captured and verified hardware profile.
 - The Reports control remains visible when no crash reports are pending so the
   `ask`, `always`, and `off` preference is always reachable. A pending count and
   warning state appear only after a bounded, sanitized report is captured.
+  The same dialog can capture a manual current-state diagnostic with an optional
+  problem description; it uses the existing bounded report schema and queue,
+  not arbitrary application logs.
   Development bundles retain reports locally for review and keep Send disabled;
   only a release-mode build with the production bundle identifier may submit.
   Legacy unavailable-microphone reports are removed from the queue because a
   disconnected or absent input device is a normal hardware state.
-- Public 1.0.0 macOS artifacts are Developer ID signed, notarized, stapled, and
-  Gatekeeper-validated. Public 1.0.0 Windows artifacts are unsigned previews.
+- Public macOS artifacts are Developer ID signed, notarized, stapled, and
+  Gatekeeper-validated. Current Windows artifacts are unsigned previews.
 - Normal development commands use the visibly separate `ASCII VJ Remix Dev`
   app and `com.asciline.remix.dev` bundle identifier. Development builds cannot
   replace or inherit privacy grants from the production app.

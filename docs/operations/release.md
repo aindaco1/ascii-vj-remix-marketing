@@ -7,7 +7,9 @@ parent: "Operations"
 
 # Release and Updates
 
-Current source docs describe the **1.0.0** release line. Release mechanics and security posture are copied from their canonical mother-repository guides.
+Current source docs describe the **1.0.3** release line. Release mechanics and security posture are copied from their canonical mother-repository guides.
+
+See the [v1.0.3 release](https://github.com/aindaco1/ascii-vj-remix/releases/tag/v1.0.3) for published installers, updater packages, and platform-validation notes.
 
 ## Release Security Posture
 
@@ -23,9 +25,9 @@ The current release line includes these security hardening rules:
   `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`, Apple certificate values, or keychain
   passwords in job-level workflow environment blocks.
 - Public macOS release CI fails closed when Apple Developer ID signing or
-  notarization is incomplete. Public 1.0.0 macOS artifacts are signed,
-  notarized, stapled, and Gatekeeper-validated; Windows 1.0.0 artifacts are
-  unsigned previews.
+  notarization is incomplete. Public macOS artifacts are signed, notarized,
+  stapled, and Gatekeeper-validated; current Windows artifacts are unsigned
+  previews.
 - Public macOS artifacts must retain Team ID `PWT3Q52LZ2` and the stable
   identifier/team designated requirement. CI validates both the built app and
   the extracted updater archive and rejects ad-hoc or code-hash-only identity.
@@ -223,6 +225,9 @@ successful main-push `Desktop` workflow, then hands both outputs to the bundle
 jobs as immutable one-day workflow artifacts. The restored app binary is
 verified against its commit, platform, version, byte size, and SHA-256 before
 `tauri bundle` packages it without recompiling. Runtime builds remain offline;
+Unix artifact downloads restore executable mode on `ffmpeg` and `ffprobe`
+before the release-input checks, because zipped artifact transfers reset file
+permissions. Runtime hashes and camera-input availability are still verified.
 CI may download official source during release builds, but the packaged app
 never downloads FFmpeg, codecs, or renderer assets at runtime.
 

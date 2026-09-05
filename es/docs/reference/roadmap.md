@@ -47,8 +47,8 @@ Este documento contiene únicamente trabajos prospectivos. No es una descripció
 ## Rutas de cámara y textura nativa
 
 - Evalúe el intercambio de texturas AVFoundation/CVPixelBuffer-to-Metal en macOS.
-- Evalúe el intercambio de texturas de Media Foundation a D3D en Windows.
-- Evalúe la interoperabilidad PipeWire/V4L2-to-Vulkan o GLES en Linux cuando sea práctico.
+- Evalúe el intercambio de texturas de copia cero de Media Foundation a D3D más allá de la ruta de fotograma RGB nativa 1.0.3 en Windows.
+- Evalúe la interoperabilidad de PipeWire o copia cero de V4L2 a Vulkan/GLES más allá de la ruta 1.0.3 incluida-FFmpeg V4L2 en Linux.
 - Agregue una composición nativa multicámara sin forzar cada ruta a través de la lectura del lienzo de WebView.
 - Conserve el comportamiento del último fotograma para que la salida en vivo no acumule fotogramas de cámara obsoletos.
 

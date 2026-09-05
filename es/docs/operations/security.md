@@ -32,10 +32,11 @@ El perfil de riesgo de ASCII VJ Remix es una aplicación de escritorio Tauri loc
 |Archivos de imagen/vídeo locales|API de archivos del navegador o cuadro de diálogo Tauri más registro de medios local de sesión|Medio|Los archivos se seleccionan explícitamente sin acceso amplio al sistema de archivos.|
 |Medios de demostración incorporados|Incluido en `media/` y copiado en los recursos de la aplicación|Bajo|Los medios de demostración son locales y versionados.|
 |Paletas integradas/atlas de glifos|Catálogo de paletas propiedad del proyecto más páginas de glifos ancladas, generadas y agrupadas localmente|Bajo|Sin importación/descarga de paquetes de paletas de tiempo de ejecución, fuentes, CDN o recursos de idioma.|
-|Entrada de cámara|Navegador `getUserMedia`; macOS ruta nativa AVFoundation para Pop Out|Medio|Requiere permiso de privacidad del sistema operativo. Los marcos permanecen locales.|
+|Entrada de cámara|Navegador `getUserMedia`; ruta nativa AVFoundation, Media Foundation o FFmpeg V4L2 incluida para Pop Out de una sola cámara|Medio|Requiere permiso de privacidad del sistema operativo. Los fotogramas permanecen en el equipo. Windows usa un único cliente de Media Foundation para la salida nativa y un puente binario de preview en memoria; Linux libera la cámara del WebView para la captura exclusiva V4L2.|
 |Audio de micrófono/entrada|Proveedores de audio web y Tauri nativos|Medio|Requiere permiso de privacidad del sistema operativo. Las funciones de análisis están limitadas.|
 |Audio del sistema/pantalla|El navegador muestra audio cuando está presente; proveedores de escritorio nativos donde estén disponibles|Medio|Los permisos de la plataforma varían. No amplíe la captura más allá de las necesidades de funciones.|
 |Preajustes/configuraciones|Almacenamiento del navegador local, IndexedDB, JSON importado/exportado|Bajo a Medio|Datos escritos por el usuario. Validar las importaciones antes de aplicar.|
+|Capturas de pantalla|Escritor de escritorio Rust solo para ventana principal|Medio|Acepta solo bytes PNG delimitados, crea un archivo único y no devuelve ninguna ruta. No hay un alcance amplio del sistema de archivos ni un cuadro de diálogo para guardar.|
 |Ventana de salida|Ventana de salida Tauri con permisos mínimos|Medio|No debe exponer la selección de medios, el sistema de archivos, el actualizador ni las API de comandos amplios.|
 |Comandos Tauri|`src-tauri/src/lib.rs` más archivos de capacidad|Alto|Trate cada comando como un límite de seguridad. Validar entradas en Rust.|
 |Protocolo de activos|Vacío de forma predeterminada, expandido solo para necesidades de sesión/medios seleccionados|Alto|Evite caminos amplios y persistentes.|
@@ -52,7 +53,7 @@ La línea de lanzamiento actual incluye estas reglas de refuerzo de seguridad:
 - El CSP de producción solo permite el origen de la aplicación, Tauri IPC, y el protocolo de recursos Tauri necesarios para los medios locales seleccionados. Los puntos finales de Localhost HTTP/WebSocket existen solo en el CSP de desarrollo; El modo streaming no es una fuente de producción.
 - El envío de informes de fallos se implementa en Rust, no en webview `fetch`, por lo que el CSP de producción no obtiene acceso remoto arbitrario a `connect-src`.
 - Los secretos de firma del actualizador de acciones GitHub tienen como alcance la verificación del secreto del actualizador y los pasos de empaquetado de Tauri. No coloque `TAURI_SIGNING_PRIVATE_KEY`, `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`, valores de certificados de Apple ni contraseñas de llavero en bloques de entorno de flujo de trabajo a nivel de trabajo.
-- El CI de la versión pública macOS falla al cerrarse cuando la firma o certificación notarial del ID de desarrollador de Apple está incompleta. Los artefactos públicos 1.0.0 macOS están firmados, notariados, grapados y validados por Gatekeeper; Los artefactos Windows 1.0.0 son vistas previas sin firmar.
+- El CI de la versión pública macOS falla al cerrarse cuando la firma o certificación notarial del ID de desarrollador de Apple está incompleta. Los artefactos públicos macOS están firmados, notariados, grapados y validados por Gatekeeper; Los artefactos Windows actuales son vistas previas sin firmar.
 - Los artefactos públicos macOS deben conservar el ID de equipo `PWT3Q52LZ2` y el identificador estable/requisito designado de equipo. CI valida tanto la aplicación creada como el archivo de actualización extraído y rechaza la identidad ad-hoc o de solo código hash.
 - Las herramientas de lanzamiento local requieren la identidad `ASCII VJ Remix Dev` separada y un certificado de firma local estable. Nunca se sincroniza con la ruta de la aplicación de producción.
 - Acciones GitHub Los trabajos macOS están anclados a `macos-26` en lugar de `macos-latest`. La pila nativa `wgpu`/`apple-metal` necesita el SDK macOS 26 ​​Metal, y el alias móvil `macos-latest` puede seleccionar un SDK más antiguo.
@@ -69,9 +70,9 @@ El tiempo de ejecución de producción es intencionalmente limitado:
 
 - `src-tauri/tauri.conf.json` mantiene una Política de Seguridad de Contenidos de producción restrictiva.
 - El CSP de producción no permite puntos finales HTTP/WebSocket de host local arbitrarios; Los puntos finales de desarrollo/transmisión de localhost solo existen en `devCsp`.
-- `npm run check:tauri-policy` verifica la política de tiempo de ejecución solo local, la excepción del punto final del actualizador GitHub y el límite del comando del informe de fallas solo Rust.
+- `npm run check:tauri-policy` verifica la política de tiempo de ejecución solo local, la excepción del punto final del actualizador GitHub y el límite del comando del informe de fallos solo Rust. También hace coincidir cada invocación literal de Tauri de la interfaz con su archivo de permisos generado y la concesión de capacidad de la ventana principal.
 - Las capacidades de `src-tauri/capabilities/` dividen los privilegios de la ventana principal de los privilegios de la ventana de salida.
-- La ventana principal posee selección de medios, administración de salida, proveedores de audio y trabajo de actualización/informe de fallos.
+- La ventana principal posee selección de medios, administración de salida, proveedores de audio y trabajo de captura de pantalla, actualización e informe de fallas.
 - La ventana de salida solo escucha mensajes de renderizado/salida y expone el comportamiento mínimo de cierre/pantalla completa que necesita.
 
 Al agregar un comando Tauri:
@@ -93,6 +94,8 @@ El reportero de accidentes puede capturar:
 - Fallos del comando Tauri.
 - Rust informes de gancho de pánico importados en el próximo lanzamiento.
 - Informes de respaldo/fallo del renderizador que contienen solo campos limitados preestablecidos/backend, clase de origen, resumen de errores y eventos recientes del renderizador.
+- Fallos de medios nativos/cámara/espejo con una etiqueta de componente delimitada y un resumen de errores desinfectado.
+- instantáneas manuales explícitas del estado actual con una nota de usuario limitada opcional y el mismo contexto estructurado de renderizado/salida.
 
 Requisitos de seguridad:
 
@@ -100,6 +103,7 @@ Requisitos de seguridad:
 - Reports debe redactar rutas locales, URL de activos/archivos, correos electrónicos, tokens, cookies, contraseñas y claves de contexto similares a las de autenticación.
 - Reports no debe incluir archivos multimedia del usuario, fotogramas decodificados, capturas de pantalla, audio sin formato, volcados de almacenamiento local, volcados de entorno ni registros arbitrarios.
 - Los informes de micrófonos no disponibles/desconectados esperados de versiones anteriores se eliminan localmente utilizando el mismo clasificador de errores de hardware estrecho utilizado en el momento de la captura; Los errores inesperados del micrófono permanecen en cola.
+- La pérdida del identificador de la ventana de salida nativa durante el cierre normal o el reemplazo del trabajador es un desmontaje, no un bloqueo. Las fallas inesperadas de medios, cámaras, espejos o renderizadores siguen siendo reportables a través del contrato de error/componente limitado.
 - Los diagnósticos del renderizador se limitan a los ocho eventos estructurados desinfectados más recientes. No deben convertirse en una ruta general de carga de registros locales.
 - La aplicación almacena como máximo una pequeña cola local y permite al usuario elegir `ask`, `always` o `off`.
 - El control Reports permanece accesible con una cola vacía para que se pueda revisar la preferencia antes de que ocurra un error. El estado vacío no crea ni envía un informe.
@@ -140,6 +144,8 @@ Normas:
 ## Cámara, micrófono y sistema de audio
 
 La cámara y la captura de audio son entradas locales sensibles. La captura comienza desde el comportamiento visible de la aplicación, como seleccionar Cámara o habilitar Reactividad de audio. La reactividad de audio es un modo predeterminado intencional, por lo que la aplicación puede solicitar permiso de entrada/micrófono durante el inicio. La captura permanece local y controlada por el sistema operativo, y el usuario puede detenerla desactivando la reactividad de audio o cambiando la fuente de audio.
+
+La cámara única Pop Out puede abrir la cámara ya seleccionada a través de un proveedor de plataforma nativa: AVFoundation en macOS, Media Foundation en Windows o V4L2 a través del tiempo de ejecución FFmpeg incluido con red deshabilitada en Linux. No agrega un nuevo punto final remoto ni persiste los fotogramas de la cámara. Los diagnósticos manuales pueden contener contadores de tiempo y de reserva independientes del dispositivo, nunca bytes de trama. Windows utiliza un cliente de captura Media Foundation mientras la salida nativa está abierta. No envía píxeles de la cámara a través de una red o un almacén persistente. El trabajador nativo expone solo su último JPEG reducido a través de una respuesta de comando binario al WebView principal. El fotograma se dibuja en la memoria, no se registra ni persiste y se reemplaza por el siguiente fotograma.
 
 Identificador de paquete macOS actual:
 
@@ -223,6 +229,7 @@ Reglas de importación:
 - Rechace campos estructurales desconocidos en lugar de aplicarlos silenciosamente.
 - No permita que los ajustes preestablecidos importados deshabiliten Stats Overlay a menos que el usuario haya importado esa opción intencionalmente y la interfaz de usuario lo deje claro.
 - No incluya rutas de medios absolutas privadas en los paquetes exportados de forma predeterminada.
+- Las listas de reproducción preestablecidas almacenan solo un nombre limitado, metadatos de tiempo/modo e identificaciones preestablecidas estables. No duplican configuraciones visuales ni conservan campos de fuente/medios.
 
 ### MIDI y reglas SysEx
 
@@ -275,7 +282,7 @@ npm run check:ffmpeg-resources
 
 - Las indicaciones de privacidad de macOS siguen siendo sensibles a la ruta de la aplicación, el identificador del paquete y la identidad de firma. Las identidades de producción y desarrollo están aisladas, pero una construcción de desarrollo deliberadamente ad hoc aún recibe subvenciones específicas para esa construcción.
 - La firma ad hoc macOS solo es aceptable para compilaciones locales; los lanzamientos públicos están firmados con el ID del desarrollador, notariados, engrapados y validados por Gatekeeper.
-- Los artefactos Windows 1.0.0 son vistas previas sin firmar y pueden activar advertencias de Editor desconocido, SmartScreen o Defender.
+- Los artefactos Windows actuales son vistas previas sin firmar y pueden activar advertencias de Editor desconocido, SmartScreen o Defender.
 - El comportamiento de los medios/cámara/audio de Linux varía según la distribución, WebKitGTK, los controladores y la configuración del portal.
 - El modo de transmisión existe en las rutas de desarrollo, pero está oculto en la interfaz de usuario normal y excluido del CSP de producción.
 

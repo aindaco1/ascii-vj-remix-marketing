@@ -26,6 +26,7 @@ nav_exclude: true
   <div class="cta-row">
     {% include download-latest-button.html label="Download latest" %}
   </div>
+  <p class="section-intro">macOS Apple Silicon · Windows x64 preview · Linux x86_64</p>
 </section>
 
 <section class="section-band" aria-labelledby="product-heading">
@@ -57,8 +58,10 @@ nav_exclude: true
   <div class="stack-list">
     <article class="card"><h3>Video and camera input</h3><p>Use clips or live camera sources as raw material, then turn them into ASCII, cell, pixel, and glyph-based visuals.</p></article>
     <article class="card"><h3>Sound-reactive motion</h3><p>Let rhythm, brightness, density, and frequency bands move the image so the visuals respond to the set instead of sitting still.</p></article>
-    <article class="card"><h3>Palette, dither, and glyph control</h3><p>Combine 16 built-in palettes with Bayer dithering, glyph depth and color controls, multilingual character sets, and custom Unicode ramps.</p></article>
+    <article class="card"><h3>Palette, dither, and glyph control</h3><p>Combine 17 built-in palettes with Bayer dithering, glyph depth and color controls, multilingual character sets, and custom Unicode ramps.</p></article>
     <article class="card"><h3>Performance-aware density</h3><p>Stay inside shared renderer guardrails by default, or explicitly enable Advanced Density for grids up to 900 columns without a 30 FPS guarantee.</p></article>
+    <article class="card"><h3>Preset playlists</h3><p>Save a sequence of looks, reorder it, and loop it in order or at random. Set a shared hold interval and let the presets crossfade while your source keeps playing.</p></article>
+    <article class="card"><h3>Save a frame</h3><p>Capture the current visual as a PNG straight to your Desktop, with the Stats Overlay left out of the image.</p></article>
   </div>
 </section>
 
@@ -68,16 +71,15 @@ nav_exclude: true
   <div class="release-summary">
     <img class="release-app-icon" src="{{ site.data.product.app_icon.path | relative_url }}?v={{ site.data.product.app_icon.path | asset_fingerprint }}" width="512" height="512" alt="ASCII VJ Remix neon play-and-pixel app icon" loading="lazy" decoding="async">
     <div>
-      <p class="section-intro">v{{ site.data.product.latest_release.version }} is the first stable desktop release. It makes presets faster to find, restores the same acceleration-first renderer policy across macOS, Windows, and Linux, and brings built-in video and native Pop Out behavior into closer cross-platform parity.</p>
-      <p class="section-intro"><strong>One renderer contract.</strong> All 69 built-in presets must remain visible: 41 are acceleration-eligible and 28 intentionally use Canvas2D. Capable systems try WebGPU first, with WebGL2 and Canvas2D kept as real fallbacks.</p>
+      <p class="section-intro">v{{ site.data.product.latest_release.version }} improves camera Pop Out on Windows and Linux and adds two animated ASCII looks. Windows source switching and preview sizing are more reliable, and WebGL2 palette colors stay consistent when you change looks.</p>
+      <p class="section-intro"><strong>71 built-in presets, 17 palettes.</strong> Find a look by name, tune the glyphs and color, or save a playlist that moves through your favorites.</p>
     </div>
   </div>
   <div class="card-grid">
-    <article class="card pink"><h3>Find a look mid-set</h3><p>Start clean with Classic Camera ASCII, search presets by name, and move through separate alphabetical Built-in and My Presets sections without losing the active source.</p></article>
-    <article class="card"><h3>Video that keeps moving</h3><p>The built-in demo uses a host-appropriate video format, and bundled or selected videos can retry through the included FFmpeg path when the system decoder cannot play them.</p></article>
-    <article class="card pink"><h3>Pop Out stays in step</h3><p>The main preview and native output now share transition timing, advance video playback together, and use a browser-parity surface format to keep colors aligned.</p></article>
+    <article class="card pink"><h3>Keep both camera views live</h3><p>On Windows, one native camera feed supplies the main preview and Pop Out. Switch between camera, image, and video more reliably, with corrected preview proportions and Acid Snowstorm's tiny-cell appearance.</p></article>
+    <article class="card"><h3>ASCII World Mint</h3><p>Thin mint characters on dark teal, with gentle jitter that keeps a still image moving even when audio reactivity is off.</p></article>
+    <article class="card pink"><h3>ASCII City Nightshift</h3><p>Dense terminal characters, near-black shadows, and amber and sage highlights. Continuous jitter brings the city-at-night look to images, video, or a camera.</p></article>
   </div>
-  <p class="section-intro"><strong>Already on macOS v0.9.6 or v0.9.7?</strong> Install v{{ site.data.product.latest_release.version }} once from the notarized DMG; those two versions cannot surface the in-app update. v0.9.8 and newer can update in the app.</p>
   <p class="release-link"><a href="{{ '/docs/overview/changelog-baseline/' | relative_url }}">Read the v{{ site.data.product.latest_release.version }} release baseline</a></p>
 </section>
 

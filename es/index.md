@@ -27,6 +27,7 @@ nav_exclude: true
   <div class="cta-row">
     {% include download-latest-button.html label="Descargar la última versión" %}
   </div>
+  <p class="section-intro">macOS Apple Silicon · Windows x64 en versión preliminar · Linux x86_64</p>
 </section>
 
 <section class="section-band" aria-labelledby="product-heading">
@@ -58,8 +59,10 @@ nav_exclude: true
   <div class="stack-list">
     <article class="card"><h3>Video y cámara</h3><p>Usa clips o cámaras en vivo como material base y conviértelos en visuales ASCII, de celda, pixel y glyph.</p></article>
     <article class="card"><h3>Movimiento reactivo al sonido</h3><p>Deja que ritmo, brillo, densidad y bandas de frecuencia muevan la imagen para que los visuales respondan al set.</p></article>
-    <article class="card"><h3>Control de paleta, dithering y glifos</h3><p>Combina 16 paletas integradas con dithering Bayer, controles de profundidad y color de glifos, conjuntos multilingües y rampas Unicode personalizadas.</p></article>
+    <article class="card"><h3>Control de paleta, dithering y glifos</h3><p>Combina 17 paletas integradas con dithering Bayer, controles de profundidad y color de glifos, conjuntos multilingües y rampas Unicode personalizadas.</p></article>
     <article class="card"><h3>Densidad consciente del rendimiento</h3><p>Mantente dentro de los límites compartidos del renderizador o activa Densidad avanzada para usar hasta 900 columnas sin garantía de 30 FPS.</p></article>
+    <article class="card"><h3>Listas de presets</h3><p>Guarda una secuencia de looks, cambia su orden y repítela en orden o al azar. Define cuánto dura cada preset y deja que las transiciones avancen mientras tu fuente sigue reproduciéndose.</p></article>
+    <article class="card"><h3>Guarda un fotograma</h3><p>Captura el visual actual como PNG directamente en tu Escritorio, sin incluir la superposición de estadísticas.</p></article>
   </div>
 </section>
 
@@ -69,16 +72,15 @@ nav_exclude: true
   <div class="release-summary">
     <img class="release-app-icon" src="{{ site.data.product.app_icon.path | relative_url }}?v={{ site.data.product.app_icon.path | asset_fingerprint }}" width="512" height="512" alt="Icono de la app ASCII VJ Remix con símbolo de reproducción y píxeles de neón" loading="lazy" decoding="async">
     <div>
-      <p class="section-intro">v{{ site.data.product.latest_release.version }} es la primera versión estable de escritorio. Agiliza la búsqueda de presets, restaura la misma política de aceleración en macOS, Windows y Linux, y acerca el comportamiento del video integrado y de Pop Out nativo entre plataformas.</p>
-      <p class="section-intro"><strong>Un solo contrato de renderizado.</strong> Los 69 presets integrados deben seguir visibles: 41 pueden usar aceleración y 28 usan Canvas2D de forma intencional. Los sistemas compatibles prueban primero WebGPU y conservan WebGL2 y Canvas2D como fallbacks reales.</p>
+      <p class="section-intro">v{{ site.data.product.latest_release.version }} mejora Pop Out con cámara en Windows y Linux y añade dos looks ASCII animados. En Windows, el cambio de fuente y las proporciones del preview son más fiables; en WebGL2, los colores de las paletas se mantienen al cambiar de look.</p>
+      <p class="section-intro"><strong>71 presets integrados, 17 paletas.</strong> Busca un look por nombre, ajusta los glifos y el color o guarda una lista que recorra tus favoritos.</p>
     </div>
   </div>
   <div class="card-grid">
-    <article class="card pink"><h3>Encuentra un look durante el set</h3><p>Empieza con Classic Camera ASCII, busca presets por nombre y recorre secciones alfabéticas separadas para Built-in y My Presets sin perder la fuente activa.</p></article>
-    <article class="card"><h3>Video que sigue avanzando</h3><p>El demo integrado usa un formato adecuado para cada sistema, y los videos incluidos o seleccionados pueden reintentarse con FFmpeg cuando el decodificador del sistema no logra reproducirlos.</p></article>
-    <article class="card pink"><h3>Pop Out se mantiene sincronizado</h3><p>El preview principal y la salida nativa ahora comparten el tiempo de las transiciones, avanzan juntos el video y usan un formato de superficie compatible con el navegador para mantener el color alineado.</p></article>
+    <article class="card pink"><h3>Dos vistas de cámara en vivo</h3><p>En Windows, una sola captura nativa alimenta el preview principal y Pop Out. Cambia entre cámara, imagen y video con mayor fiabilidad, con las proporciones del preview corregidas y el aspecto de celdas diminutas de Acid Snowstorm.</p></article>
+    <article class="card"><h3>ASCII World Mint</h3><p>Caracteres finos de color menta sobre un fondo verde azulado oscuro, con un jitter suave que mantiene las imágenes fijas en movimiento incluso sin reactividad al audio.</p></article>
+    <article class="card pink"><h3>ASCII City Nightshift</h3><p>Caracteres densos de terminal, sombras casi negras y luces ámbar y verde salvia. El jitter continuo lleva ese look de ciudad nocturna a imágenes, video o una cámara.</p></article>
   </div>
-  <p class="section-intro"><strong>¿Ya usas v0.9.6 o v0.9.7 en macOS?</strong> Instala v{{ site.data.product.latest_release.version }} una vez desde el DMG notarizado; esas dos versiones no pueden mostrar la actualización dentro de la app. v0.9.8 y versiones posteriores pueden actualizarse dentro de la app.</p>
   <p class="release-link"><a href="{{ '/es/docs/overview/changelog-baseline/' | relative_url }}">Leer la base de la versión v{{ site.data.product.latest_release.version }}</a></p>
 </section>
 

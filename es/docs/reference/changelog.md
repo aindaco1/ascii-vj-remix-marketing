@@ -8,6 +8,68 @@ lang: es
 
 # Registro de cambios
 
+## [1.0.3] - 2026-09-02
+
+### Añadido
+
+- Se añadió ASCII City Nightshift, un preset original inspirado en [ASCII City de tweakyourpc](https://tweakyourpc.github.io/ascii-city/). Usa la paleta compartida City Nightshift, sombras casi negras, luces ámbar y verde salvia, y caracteres densos de terminal con un jitter suave sobre la imagen, el video o la cámara seleccionados. Las imágenes fijas se animan sin audio.
+- Se añadió ASCII World Mint, un preset original inspirado en [ASCII World de yeahpython](https://yeahpython.github.io/game/game.html), con glifos ASCII finos de color menta, un fondo verde azulado oscuro y jitter continuo sobre la imagen, el video o la cámara actuales.
+- Se añadió captura nativa de una sola cámara para Pop Out mediante Media Foundation en Windows y la entrada V4L2 de FFmpeg incluido en Linux. Ambas rutas alimentan el renderizador nativo `wgpu` existente y evitan la lectura del canvas del WebView y el envío de cada fotograma por Tauri IPC en la ruta normal.
+- Se añadieron entradas de cámara alternativas mediante DirectShow en Windows y V4L2 en Linux al FFmpeg incluido. Las comprobaciones de empaquetado exigen que FFmpeg incluya el dispositivo de entrada correspondiente antes de aceptar los artefactos de la versión.
+- Se añadieron métricas acotadas de tiempos, transferencia y FPS aceptados de la duplicación de fotogramas a los informes manuales para medir su comportamiento en equipos físicos.
+- Se añadió un puente de preview de cámara nativa exclusivo de Windows para dispositivos que rechazan dos clientes de captura. Un único cliente de Media Foundation alimenta tanto Pop Out nativo como un preview binario JPEG del último fotograma, limitado a 640x360 y 30 FPS, para el renderizador principal WebGPU existente.
+
+### Cambiado
+
+- Windows abre una única sesión de cámara con Media Foundation y mantiene el preview principal en vivo mediante el puente de preview nativo; Linux conserva su flujo exclusivo V4L2. Las sesiones exclusivas esperan a que termine el hilo de trabajo nativo antes de reintentar la captura del navegador, con un número limitado de reaperturas.
+- La selección de cámara en Windows acepta el identificador de modelo USB que Chromium añade al nombre cuando coincide sin ambigüedad con el nombre descriptivo de Media Foundation. Los diagnósticos manuales conservan el motivo del fallo de apertura nativa cuando se necesita recurrir a la duplicación de fotogramas.
+- La duplicación de cámara alternativa en Windows/Linux usa el último fotograma, un perfil de 640x360 y una única solicitud en curso, con un máximo de 30 FPS. Las demás rutas de duplicación conservan sus dimensiones anteriores y su límite de 15 FPS.
+- Los diagnósticos manuales conservan el tipo de informe y la superficie revisados al pasar por el relé e incluyen el estado de la salida nativa en las incidencias generadas en GitHub. Los informes de Windows conservan el motivo del fallo de apertura compartida, los FPS aceptados por el puente de preview, la tasa de transferencia codificada y los tiempos de lectura, codificación y decodificación.
+
+### Corregido
+
+- Las cargas de las tablas de paleta de WebGL2 conservan el orden de las filas independientemente de la orientación de la imagen de origen. Así, los colores oscuros y claros coinciden con el mapeo de paleta compartido al iniciar y al cambiar de paleta en vivo.
+- La salida nativa de Windows usa las máscaras de glifos de cobertura máxima del renderizador principal para celdas diminutas, conservando el aspecto de píxeles de Acid Snowstorm.
+- En Windows, la textura del preview, la cuadrícula y las dimensiones del canvas se actualizan juntas cuando cambia el tamaño de los fotogramas de la cámara nativa. Esto evita proporciones incorrectas y franjas sin cubrir en el borde derecho tras cambiar de preset.
+- En Windows, los cambios entre imagen, video y cámara completan el traspaso del control nativo antes de cargar el siguiente preview principal. Las lecturas de cámara son asíncronas y la captura está separada de la presentación en GPU, por lo que una lectura bloqueada no impide el cierre normal del hilo de trabajo.
+- Al iniciar la cámara, Windows conserva su primera sesión de captura en vez de sondear, cerrar y volver a abrir el dispositivo. La detección de controladores GPU se ejecuta fuera del hilo de la interfaz y reutiliza su instancia entre aperturas; se registran los tiempos de cada fase del inicio.
+- La ruta alternativa DirectShow elimina el sufijo de modelo USB de Chromium y escapa los separadores del nombre del dispositivo. Los diagnósticos también conservan el fallo original de captura nativa.
+- Se concedió a la ventana principal el permiso específico de Tauri necesario para leer fotogramas del puente de preview de cámara nativa de Windows. La comprobación de políticas de escritorio verifica que cada comando Tauri invocado por el frontend tenga un permiso generado y una concesión en las capacidades de la ventana principal. Esto evita que las aplicaciones empaquetadas rechacen silenciosamente un comando nuevo.
+
+### Conservado
+
+- Pop Out con una sola cámara en macOS conserva la implementación existente de AVFoundation/display-link. No se modificó el código de captura ni de presentación de macOS.
+- La salida multicámara y los dispositivos que no admiten apertura nativa conservan la alternativa de duplicación de fotogramas con límites de transferencia.
+
+## [1.0.2] - 2026-09-01
+
+### Corregido
+
+- Se serializaron los traspasos entre hilos de trabajo de Pop Out nativo en Windows/Linux antes de reutilizar la ventana de salida, para que los cambios de fuente y modo de duplicación de cámara no superpongan superficies GPU/softbuffer antiguas y nuevas.
+- Se contuvieron los errores recuperables de validación de configuración de superficies `wgpu` nativas, de modo que una superficie de Windows invalidada recurre a una alternativa en vez de activar el manejador de pánico de Rust. La pérdida del identificador de una ventana que se está cerrando se trata como parte del cierre, no como un informe de fallo, y los hilos de duplicación detenidos rechazan nuevos fotogramas.
+
+## [1.0.1] - 2026-08-31
+
+### Añadido
+
+- Se añadió un botón accesible con icono de cámara que captura la imagen actual del renderizador principal sin la superposición HTML Stats Overlay y guarda un PNG con nombre único directamente en el Escritorio, sin abrir un diálogo para guardar. La ventana principal recibe un único comando Rust específico que valida los datos PNG, limita su tamaño a 48 MB, escribe de forma atómica y devuelve solo el nombre del archivo.
+- Se añadieron varias listas de presets con nombre, entradas con identificadores estables, controles explícitos para guardar y eliminar, reordenación accesible hacia arriba y abajo, un intervalo común de 1 a 3600 segundos y reproducción en bucle, aleatoria o en orden. Las listas reutilizan la ruta de transición existente de los presets.
+- Se añadieron diagnósticos manuales al flujo existente de Reports. El usuario puede incluir una descripción opcional del problema y capturar información acotada sobre renderizado, clase de fuente, listas, cámara y salida nativa mediante la misma cola, preferencias y proceso de envío de los informes automáticos, con los mismos límites de privacidad.
+
+### Cambiado
+
+- Tipografía de lista de reproducción normalizada, tamaño de botones, espaciado y alturas de control frente a los tokens de control compacto compartidos de la aplicación en lugar de tamaños de solo diálogo.
+- La reproducción de listas de reproducción ahora utiliza el mismo motor de transición y el mismo rango de transición automatizada de 1 a 5 segundos que WTF mode. Su duración proviene del control de transición predeterminado existente, por lo que no hay ninguna configuración de lista de reproducción duplicada.
+- Al iniciar o reiniciar una lista de reproducción ahora se regresa directamente a la vista previa despejada, se informa `Transitioning to` hasta que se completa la transición compartida y se evita seleccionar el ajuste preestablecido activo cuando hay otro elemento de la lista de reproducción disponible.
+- Se agregó un contrato explícito de capacidad de salida nativa. macOS conserva su salida de cámara nativa AVFoundation, mientras que Windows y Linux seleccionan la salida de marco de espejo limitada existente en lugar de intentar una implementación de plataforma que no tienen.
+- Las fallas de los trabajadores de medios nativos, cámaras y espejos ahora ponen en cola los informes `native-output-error` limitados a través del reporte de fallas existente en lugar de existir solo como proceso stderr. Los medios de usuario, marcos, capturas de pantalla, registros arbitrarios, URL y rutas quedan excluidos.
+
+### Corregido
+
+- Se corrigió que la nueva lista de reproducción no hiciera nada en las compilaciones empaquetadas de macOS. La creación de listas de reproducción ahora utiliza el editor de nombres en línea existente en lugar de un mensaje JavaScript que la vista web de la aplicación podría suprimir.
+- Se corrigió que la cámara Pop Out se abriera en blanco en Windows. La aplicación informó previamente una apertura exitosa de la salida nativa antes de que un trabajador en segundo plano alcanzara la implementación de la cámara exclusiva de macOS y saliera; La salida de la cámara Windows ahora utiliza la ruta de espejo del fotograma actual multiplataforma.
+- Se corrigió que el flujo de trabajo vacío Reports no pudiera crear un artefacto de soporte a pedido. Reports permanece visible con una cola vacía y ahora puede capturar el estado de diagnóstico limitado actual para su revisión y envío.
+
 ## [1.0.0] - 2026-08-31
 
 ### Añadido

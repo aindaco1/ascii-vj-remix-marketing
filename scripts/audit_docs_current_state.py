@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import re
 import sys
+from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -21,6 +22,7 @@ SPANISH_CURRENT_STATE_EXCLUSIONS = {
 }
 
 FORBIDDEN_CURRENT_STATE = {
+    "stale release-candidate baseline": re.compile(r"The current source/package release candidate is", re.I),
     "legacy point-and-click reference": re.compile(r"ascii[- ]point[- ]and[- ]click|point[- ](?:and[- ])?click", re.I),
     "stale 0.9.3 release posture": re.compile(r"public 0\.9\.3 release CI|Windows 0\.9\.3 artifacts", re.I),
     "stale 0.9.5 current posture": re.compile(r"Windows 0\.9\.5 artifacts|current development docs describe 0\.9\.6 on top of the released 0\.9\.5", re.I),
@@ -73,11 +75,35 @@ SPANISH_RELEASE_CLAIMS = {
 }
 
 REQUIRED_FEATURE_MARKERS = [
-    "Sixteen project-native palettes",
+    "Seventeen project-native palettes",
     "Bayer 2x2/4x4/8x8 dithering",
     "custom typed ramps of up to 96 supported Unicode scalars",
     "Advanced Density preference exposes up to 900 columns",
+    "ASCII World Mint",
+    "ASCII City Nightshift",
+    "Multiple named preset playlists",
+    "Media Foundation on Windows",
+    "V4L2 through the bundled local FFmpeg",
+    "PNG directly to Desktop",
+    "manual current-state diagnostic",
 ]
+
+HOMEPAGE_MARKERS = {
+    "index.md": [
+        "71 built-in presets, 17 palettes",
+        "Preset playlists",
+        "Save a frame",
+        "ASCII World Mint",
+        "ASCII City Nightshift",
+    ],
+    "es/index.md": [
+        "71 presets integrados, 17 paletas",
+        "Listas de presets",
+        "Guarda un fotograma",
+        "ASCII World Mint",
+        "ASCII City Nightshift",
+    ],
+}
 
 
 def relative(path: Path) -> str:
@@ -154,8 +180,30 @@ def audit_tree(
                 errors.append(f"{relative(path)}:{line}: {label}")
 
 
+def audit_translated_source_links(errors: list[str]) -> None:
+    """Translation must not drop or scramble source and attribution links."""
+    link = re.compile(r"\[[^\[\]\n]+\]\((https?://[^)]+)\)")
+    for english in sorted(DOCS.rglob("*.md")):
+        spanish = SPANISH_DOCS / english.relative_to(DOCS)
+        if not spanish.exists():
+            errors.append(f"{relative(spanish)} is missing")
+            continue
+        expected = Counter(link.findall(english.read_text()))
+        actual = Counter(link.findall(spanish.read_text()))
+        if expected != actual:
+            errors.append(f"{relative(spanish)}: external source links differ from English")
+
+
 def main() -> int:
     errors: list[str] = []
+    for name, markers in HOMEPAGE_MARKERS.items():
+        homepage = ROOT / name
+        body = homepage.read_text(errors="replace")
+        for marker in markers:
+            if marker not in body:
+                errors.append(f"{name}: missing current homepage marker: {marker}")
+        if re.search(r"first stable desktop release|primera versión estable de escritorio|\b69\b|\b16 (?:built-in palettes|paletas integradas)\b", body):
+            errors.append(f"{name}: stale 1.0.0 homepage copy")
     try:
         release = product_value("version")
         icon_sha256 = product_value("sha256")
@@ -171,6 +219,7 @@ def main() -> int:
         FORBIDDEN_SPANISH_CURRENT_STATE,
         errors,
     )
+    audit_translated_source_links(errors)
 
     if release:
         audit_release_claims(
@@ -201,6 +250,12 @@ def main() -> int:
         for marker in REQUIRED_FEATURE_MARKERS:
             if marker not in normalized_feature_body:
                 errors.append(f"{relative(features)}: missing current feature marker: {marker}")
+
+        spanish_features = SPANISH_DOCS / "overview" / "features.md"
+        spanish_feature_body = spanish_features.read_text(errors="replace")
+        for marker in ["ASCII World Mint", "ASCII City Nightshift", "Media Foundation", "V4L2"]:
+            if marker not in spanish_feature_body:
+                errors.append(f"{relative(spanish_features)}: missing current feature marker: {marker}")
 
     if icon_sha256:
         audit_icon(icon_sha256, errors)
