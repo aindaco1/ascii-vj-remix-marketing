@@ -5,6 +5,8 @@ nav_order: 4
 lang: es
 ---
 
+<a id="reference"></a>
+
 # Referencia
 
 Las páginas de referencia conservan los comandos derivados del código fuente, la hoja de ruta, el registro de cambios y el material del mapa fuente para los desarrolladores que mantienen bifurcaciones.

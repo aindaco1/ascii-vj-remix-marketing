@@ -6,9 +6,13 @@ parent: Operaciones
 lang: es
 ---
 
+<a id="internationalization"></a>
+
 # Internacionalización
 
 Esta guía documenta los límites del idioma actual, la propiedad de cadenas y las reglas de localización segura para ASCII VJ Remix.
+
+<a id="current-baseline"></a>
 
 ## Línea de base actual
 
@@ -21,6 +25,8 @@ Esta guía documenta los límites del idioma actual, la propiedad de cadenas y l
 - La representación de glifos multilingüe se admite independientemente de la localización de la interfaz de usuario. El atlas neutral incluido cubre bloques seleccionados de latín, griego, cirílico, símbolo, CJK/Kana y Hangul, pero la interfaz de usuario de control sigue siendo en inglés.
 
 El seguimiento del trabajo prospectivo de catálogo, configuración regional y flujo de trabajo de traducción se realiza únicamente en [Roadmap](/es/docs/reference/roadmap/).
+
+<a id="current-string-ownership"></a>
 
 ## Propiedad actual de la cadena
 
@@ -39,6 +45,8 @@ El seguimiento del trabajo prospectivo de catálogo, configuración regional y f
 |Cadenas de uso macOS|`src-tauri/Info.plist`|Descripciones en inglés de permisos activos.|
 |Documentación|Archivos de rebajas|Inglés.|
 
+<a id="rules-for-user-visible-text"></a>
+
 ## Reglas para texto visible para el usuario
 
 - Mantenga las cadenas de tiempo de ejecución y los activos agrupados localmente.
@@ -52,11 +60,15 @@ El seguimiento del trabajo prospectivo de catálogo, configuración regional y f
 - Mantenga los atajos de teclado y los identificadores MIDI separados de la prosa.
 - Conserve el nombre del producto `ASCII VJ Remix` en los metadatos de la plataforma.
 
+<a id="numbers-units-and-formats"></a>
+
 ## Números, unidades y formatos
 
 Los controles actuales muestran segundos, FPS, columnas/filas, ancho/alto, porcentajes, valores normalizados, nombres de dispositivos y nombres de archivos directamente desde el estado de la aplicación o la plataforma. Las unidades técnicas y los identificadores permanecen estables en toda la interfaz.
 
 El código que agrega un valor formateado visible para el usuario mantiene el valor separado de su etiqueta y evita fragmentos de oraciones codificadas. Actualmente, el formato de números compatible con la configuración regional no está implementado.
+
+<a id="presets-wtf-audio-and-midi"></a>
 
 ## Presets, WTF, Audio y MIDI
 
@@ -67,11 +79,15 @@ El código que agrega un valor formateado visible para el usuario mantiene el va
 - Los nombres de dispositivos y archivos siguen siendo datos de plataforma/usuario en lugar de una copia de la aplicación.
 - Los identificadores de paleta, los identificadores de modo de tramado, los identificadores de estilo atlas y los identificadores de conjunto de caracteres permanecen estables incluso si sus etiquetas de visualización se localizan más adelante.
 
+<a id="multilingual-glyph-output"></a>
+
 ## Salida de glifos multilingüe
 
 La cobertura de glifos es una función de representación, no una afirmación de que la interfaz de usuario de la aplicación o el resultado generado estén traducidos. La versión 0.9.11 admite puntuación/radicales CJK, Hiragana, Katakana, CJK ideógrafos unificados U+4E00-U+9FFF y sílabas Hangul junto con los bloques de símbolos latinos, griegos, cirílicos y documentados.
 
 El renderizador trata un escalar Unicode como una celda visual. No realiza segmentación de grupos de grafemas, configuración de guiones, diseño de párrafos bidireccionales, composición de secuencias de emoji ni diseño de texto legible. Los escalares no admitidos se eliminan de las rampas escritas con comentarios de texto limitados. La extensión A y los planos suplementarios CJK siguen siendo trabajos de la hoja de ruta.
+
+<a id="tauri-and-installer-text"></a>
 
 ## Tauri y texto del instalador
 
@@ -84,6 +100,8 @@ El texto de escritorio actualmente abarca:
 
 Estas cadenas están en inglés y deben seguir siendo precisas para el comportamiento y los permisos presentes en la aplicación empaquetada.
 
+<a id="current-validation"></a>
+
 ## Validación actual
 
 Las comprobaciones generales de construcción y humo estático utilizan la interfaz de usuario en inglés actual:
@@ -95,10 +113,14 @@ npm run smoke:static
 
 No hay ningún paquete de importación/exportación de claves faltantes, claves no utilizadas, diseño local o entre localidades porque la aplicación no tiene catálogo ni configuración regional compatible adicional. Esta brecha se registra en [Testing](/es/docs/operations/testing/).
 
+<a id="current-boundaries"></a>
+
 ## Límites actuales
 
 El producto actual no incluye traducción automática, descargas de catálogos en tiempo de ejecución, documentación traducida, diseño de derecha a izquierda, ajustes preestablecidos específicos de la configuración regional ni localización de hardware/datos escritos por el usuario. Se trata de decisiones de hoja de ruta más que de capacidades actuales no documentadas.
 
+
+<a id="source-material"></a>
 
 ## Material de origen
 

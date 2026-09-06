@@ -118,10 +118,13 @@ On laptops:
 - Close Pop Out when you do not need a second output surface.
 - Prefer the built-in Demo Image or a single video when testing on battery.
 
+For installation, permissions, privacy, and troubleshooting, use the complete [User Guide](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/USER_GUIDE.md).
+
 
 
 ## Source Material
 
 This page is generated from ASCII VJ Remix source material. Primary sources:
 - [README.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/README.md)
+- [docs/USER_GUIDE.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/USER_GUIDE.md)
 - [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/CHANGELOG.md)

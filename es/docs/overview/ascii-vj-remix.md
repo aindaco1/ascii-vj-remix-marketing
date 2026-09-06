@@ -10,6 +10,8 @@ lang: es
 
 Los documentos fuente actuales describen las funciones de **1.0.3**. Las secciones siguientes proceden directamente del repositorio principal para mantener una sola referencia sobre el producto, los requisitos y las recomendaciones de hardware.
 
+<a id="what-this-project-is"></a>
+
 ## ¿Qué es este proyecto?
 
 ASCII VJ Remix combina varias ideas de herramientas de escritorio y renderizador:
@@ -20,6 +22,8 @@ ASCII VJ Remix combina varias ideas de herramientas de escritorio y renderizador
 - Utiliza una superficie de control VJ extremadamente negra, blanca, gris, rosa neón y azul neón con tipografía compacta estilo VCR y controles rectangulares nítidos.
 
 El resultado es un banco de trabajo de renderizado en vivo para salida de video celular/ASCII estilizada.
+
+<a id="system-requirements"></a>
 
 ## Requisitos del sistema
 
@@ -65,6 +69,8 @@ Notas:
 - Pop Out con una sola cámara usa captura V4L2 mediante FFmpeg local incluido y renderizado nativo Vulkan/GLES. Como muchos dispositivos V4L2 son exclusivos, el preview principal de la cámara se pausa mientras Pop Out nativo está activo y se recupera al cerrarlo.
 - El comportamiento nativo de cámara/audio/salida Linux varía según la distribución y el hardware; La aceptación de paquetes de Ubuntu y Fedora sigue siendo una prueba física.
 
+<a id="hardware-guidance"></a>
+
 ## Guía de hardware
 
 |Nivel|Hardware|
@@ -73,6 +79,8 @@ Notas:
 |Óptimo|8 o más núcleos de rendimiento, 16 a 32 GB de RAM, Apple Silicon Pro/Max o un GPU discreto reciente, decodificación de video por hardware, almacenamiento SSD, pantalla/proyector externo, hardware de captura USB o HDMI, interfaz de audio compatible con su clase.|
 
 Para el trabajo con cámara en vivo, la mejor actualización a menudo no es CPU sin formato. Utilice cámaras USB estables, puertos USB directos o un concentrador con alimentación, buena iluminación y una máquina con alimentación de CA.
+
+<a id="battery-and-heat-warning"></a>
 
 ## Advertencia de batería y calor
 
@@ -87,10 +95,15 @@ En portátiles:
 - Cierre Pop Out cuando no necesite una segunda superficie de salida.
 - Prefiera la imagen de demostración incorporada o un solo video cuando realice pruebas con batería.
 
+Para instalación, permisos, privacidad y solución de problemas, utilice la [Guía del usuario](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/USER_GUIDE.md).
 
+
+
+<a id="source-material"></a>
 
 ## Material de origen
 
 Esta página se genera a partir del material fuente de ASCII VJ Remix. Fuentes primarias:
 - [README.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/README.md)
+- [docs/USER_GUIDE.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/USER_GUIDE.md)
 - [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/CHANGELOG.md)

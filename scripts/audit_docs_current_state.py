@@ -7,6 +7,7 @@ import re
 import sys
 from collections import Counter
 from pathlib import Path
+from docs_common import public_docs
 
 ROOT = Path(__file__).resolve().parents[1]
 DOCS = ROOT / "docs"
@@ -125,7 +126,7 @@ def audit_release_claims(
     expected: str,
     errors: list[str],
 ) -> None:
-    for path in sorted(docs_root.rglob("*.md")):
+    for path in public_docs(docs_root):
         if path in exclusions:
             continue
         body = path.read_text(errors="replace")
@@ -169,7 +170,7 @@ def audit_tree(
     if not docs_root.exists():
         errors.append(f"{relative(docs_root)} directory is missing")
         return
-    for path in sorted(docs_root.rglob("*.md")):
+    for path in public_docs(docs_root):
         if path in exclusions:
             continue
         body = path.read_text(errors="replace")
@@ -181,17 +182,20 @@ def audit_tree(
 
 
 def audit_translated_source_links(errors: list[str]) -> None:
-    """Translation must not drop or scramble source and attribution links."""
-    link = re.compile(r"\[[^\[\]\n]+\]\((https?://[^)]+)\)")
-    for english in sorted(DOCS.rglob("*.md")):
+    """Translation must retain source, attribution, and internal fragment links."""
+    link = re.compile(r"\[[^\[\]\n]+\]\(([^)]+)\)")
+    for english in public_docs(DOCS):
         spanish = SPANISH_DOCS / english.relative_to(DOCS)
         if not spanish.exists():
             errors.append(f"{relative(spanish)} is missing")
             continue
         expected = Counter(link.findall(english.read_text()))
-        actual = Counter(link.findall(spanish.read_text()))
+        actual = Counter(
+            target.removeprefix("/es") if target.startswith("/es/docs/") else target
+            for target in link.findall(spanish.read_text())
+        )
         if expected != actual:
-            errors.append(f"{relative(spanish)}: external source links differ from English")
+            errors.append(f"{relative(spanish)}: source or internal links differ from English")
 
 
 def main() -> int:
@@ -261,6 +265,18 @@ def main() -> int:
         audit_icon(icon_sha256, errors)
 
     if DOCS.exists():
+        release_guide = DOCS / "operations" / "release.md"
+        release_body = release_guide.read_text() if release_guide.exists() else ""
+        for marker in ["docs/RELEASING.md", "## Evidence and Release Records", "## Published-Artifact Acceptance"]:
+            if marker not in release_body:
+                errors.append(f"{relative(release_guide)}: missing canonical release guide marker: {marker}")
+        quickstart = DOCS / "development" / "quickstart.md"
+        quickstart_body = quickstart.read_text() if quickstart.exists() else ""
+        if "npm ci" not in quickstart_body or "## First-Time Setup" not in quickstart_body:
+            errors.append(f"{relative(quickstart)}: missing canonical contributor setup")
+        features = DOCS / "overview" / "features.md"
+        if "docs/USER_GUIDE.md" not in features.read_text():
+            errors.append(f"{relative(features)}: missing canonical user guide attribution")
         roadmap = DOCS / "reference" / "roadmap.md"
         if not roadmap.exists():
             errors.append("docs/reference/roadmap.md is missing")

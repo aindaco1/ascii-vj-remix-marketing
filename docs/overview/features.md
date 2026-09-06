@@ -7,7 +7,7 @@ parent: "Overview"
 
 # Feature Set
 
-This page describes the current ASCII VJ Remix feature baseline for developers planning forks, ports, integrations, or feature work. The capability map is generated from the mother repository's README.
+This page describes the current ASCII VJ Remix feature baseline for developers planning forks, ports, integrations, or feature work. The capability map is generated from the mother repository's User Guide.
 
 ## Current Capabilities
 
@@ -53,7 +53,7 @@ This page describes the current ASCII VJ Remix feature baseline for developers p
 - Normal density is performance-guarded by shared column and total-cell limits.
   The global Advanced Density preference exposes up to 900 columns without a
   30 FPS guarantee and is never stored in visual presets.
-- Version 0.9.6 removes duplicate native source-frame uploads, reuses stable GPU
+- The renderer skips duplicate native source-frame uploads, reuses stable GPU
   resources, and bounds transition-time UI work without changing renderer math
   or quality settings.
 - The renderer exposes live controls for grid, cell size, color, gamma,
@@ -99,7 +99,7 @@ This page describes the current ASCII VJ Remix feature baseline for developers p
   exported.
 - Multiple named preset playlists can be saved with reordered stable preset
   entries, one shared hold interval, and random or in-order looping. Playlist
-  playback keeps each preset's existing transition duration authoritative.
+  playback uses the existing Default Transition control, bounded to 1–5 seconds.
 - Preset transitions crossfade instead of fading to black.
 - Transition time is configurable.
 - Presets preserve the active media source unless the user explicitly changes
@@ -175,11 +175,11 @@ and requires a manually captured and verified hardware profile.
 - The app uses narrow Tauri capabilities split by window:
   - The main control window can open selected media and manage output.
   - The output window has a minimal command surface.
-- Version 0.9.8 checks GitHub Releases metadata for signed updater packages once
+- The production app checks GitHub Releases metadata for signed updater packages once
   in the background whenever the production app opens. A current or offline
   check is silent; when a newer release exists, the top-bar Update control shows
-  it. Versions 0.9.6 and 0.9.7 require a manual DMG upgrade to 0.9.8 because a
-  missing production capability hid their Update control.
+  it. If upgrading from 0.9.6 or 0.9.7, see the
+  [legacy updater recovery notes](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/USER_GUIDE.md#upgrading-from-096-or-097).
 - The same Update control remains available for a manual recheck. Downloading,
   installation, and relaunch remain explicitly user initiated.
 - The Reports control remains visible when no crash reports are pending so the
@@ -213,11 +213,11 @@ connection label, and the buffer counter are not exposed in the normal Source
 UI.
 
 The initial hardware setup and complete controller map live in
-[docs/MIDI_UC33E.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MIDI_UC33E.md).
+[UC-33e and mioXC guide](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MIDI_UC33E.md).
 
 
 
 ## Source Material
 
 This page is generated from ASCII VJ Remix source material. Primary sources:
-- [README.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/README.md)
+- [docs/USER_GUIDE.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/USER_GUIDE.md)

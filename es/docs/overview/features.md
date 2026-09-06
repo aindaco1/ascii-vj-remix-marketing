@@ -6,11 +6,17 @@ parent: Resumen
 lang: es
 ---
 
+<a id="feature-set"></a>
+
 # Conjunto de funciones
 
-Esta página describe la línea base de funciones ASCII VJ Remix actual para desarrolladores que planean bifurcaciones, puertos, integraciones o trabajo de funciones. El mapa de capacidades se genera a partir del archivo README del repositorio principal.
+Esta página describe la línea base de funciones ASCII VJ Remix actual para desarrolladores que planean bifurcaciones, puertos, integraciones o trabajo de funciones. El mapa de capacidades se genera a partir de la Guía del usuario del repositorio principal.
+
+<a id="current-capabilities"></a>
 
 ## Capacidades actuales
+
+<a id="sources"></a>
 
 ### Fuentes
 
@@ -23,6 +29,8 @@ Esta página describe la línea base de funciones ASCII VJ Remix actual para des
 - Diseños del mezclador de cámaras: cuadrícula, fila dividida, pila e imagen en imagen.
 - Los controles de la cámara aparecen directamente debajo del panel Fuente mientras la Cámara está activa.
 - Los medios estáticos y los fotogramas de las cámaras permanecen locales. No se suben a un servidor.
+
+<a id="rendering"></a>
 
 ### Representación
 
@@ -39,9 +47,11 @@ Esta página describe la línea base de funciones ASCII VJ Remix actual para des
 - Los controles de glifo cubren profundidad, desplazamiento, inversión, color de origen/fijo, fondo, Braille, bloques de dibujo/símbolos comunes, latín extendido, griego, cirílico, marcas CJK, Hiragana, Katakana, CJK unificado U+4E00-U+9FFF, Hangul y rampas personalizadas de hasta 96 escalares Unicode compatibles.
 - El atlas neutral Unicode se genera y verifica fuera de línea, se incluye localmente y se carga en páginas delimitadas de 1024 px solo cuando los glifos seleccionados las necesitan.
 - La densidad normal está protegida por el rendimiento mediante límites de columnas compartidas y de celdas totales. La preferencia global Advanced Density expone hasta 900 columnas sin una garantía de 30 FPS y nunca se almacena en ajustes preestablecidos visuales.
-- La versión 0.9.6 elimina las cargas duplicadas del marco fuente nativo, reutiliza recursos estables GPU y limita el trabajo de la interfaz de usuario en tiempo de transición sin cambiar las matemáticas del renderizador o la configuración de calidad.
+- El renderizador omite cargas duplicadas de fotogramas de origen nativos, reutiliza recursos GPU estables y limita el trabajo de la interfaz de usuario en tiempo de transición sin cambiar las configuraciones matemáticas o de calidad del renderizador.
 - El renderizador expone controles en vivo para cuadrícula, tamaño de celda, color, gamma, brillo, contraste, saturación, combinación de fondo, cuantificación, fluctuación, posición de muestra, suavizado, FPS, comportamiento de glifo/celda y estado de rendimiento.
 - La superposición de estadísticas está habilitada de forma predeterminada y sigue siendo controlada por el usuario.
+
+<a id="presets-and-live-controls"></a>
 
 ### Presets y controles en vivo
 
@@ -56,11 +66,13 @@ Esta página describe la línea base de funciones ASCII VJ Remix actual para des
 - Los controles de paleta, mapeo, tramado ordenado, rampa de glifos y color de glifos se pueden ajustar y guardar de forma independiente a través del esquema visual preestablecido existente.
 - Las once variantes integradas de paletas y glifos incluyen ASCII City Nightshift, Braille, dibujo de cuadros, marcas CJK, Hiragana, Katakana, CJK Unified y Hangul. Las otras seis paletas se incorporan a presets existentes.
 - Los ajustes preestablecidos del usuario se pueden guardar, duplicar, actualizar, eliminar, importar y exportar.
-- Se pueden guardar varias listas de presets con nombre, reordenar sus entradas mediante identificadores estables y elegir un intervalo común y reproducción en bucle, aleatoria o en orden. La reproducción respeta la duración de transición existente de cada preset.
+- Se pueden guardar varias listas de reproducción preestablecidas con nombre con entradas preestablecidas estables reordenadas, un intervalo de espera compartido y bucles aleatorios o en orden. La reproducción de la lista de reproducción utiliza el control de transición predeterminado existente, limitado a 1 a 5 segundos.
 - Las transiciones preestablecidas se funden en lugar de fundirse en negro.
 - El tiempo de transición es configurable.
 - Los ajustes preestablecidos conservan la fuente de medios activa a menos que el usuario la cambie explícitamente.
 - WTF mode realiza una transición continua a través de configuraciones aleatorias seguras en vivo y se inclina hacia familias preestablecidas ASCII tanto extremas como tradicionales, evitando al mismo tiempo la salida de blanco puro o negro puro.
+
+<a id="audio-reactivity"></a>
 
 ### Reactividad de audio
 
@@ -74,6 +86,8 @@ Esta página describe la línea base de funciones ASCII VJ Remix actual para des
 - La modulación de audio no es persistente: afecta los parámetros de renderizado efectivos en vivo sin reescribir los ajustes preestablecidos guardados.
 - Los límites de seguridad evitan que la alta sensibilidad lleve al renderizador a pantallas de color blanco puro o negro puro.
 
+<a id="pop-out-and-external-displays"></a>
+
 ### Pop Out y pantallas externas
 
 - Pop Out crea una ventana de salida separada destinada a un proyector, una tarjeta de captura o una pantalla secundaria.
@@ -82,6 +96,8 @@ Esta página describe la línea base de funciones ASCII VJ Remix actual para des
 - La selección de visualización de salida persiste cuando Tauri puede enumerar visualizaciones.
 - La salida de una sola cámara usa captura nativa de cada plataforma: AVFoundation en macOS, Media Foundation en Windows y V4L2 mediante FFmpeg local incluido en Linux. Los fotogramas de Windows/Linux alimentan el presentador nativo `wgpu`; la duplicación acotada del fotograma actual sigue disponible cuando falla la apertura nativa o se seleccionan varias cámaras.
 - El botón con icono de cámara guarda la imagen actual del renderizador principal como PNG directamente en el Escritorio. La superposición HTML Stats Overlay queda fuera de la captura y no se abre ningún diálogo para guardar.
+
+<a id="experimental-midi-control"></a>
 
 ### Control experimental MIDI
 
@@ -96,6 +112,8 @@ Esta página describe la línea base de funciones ASCII VJ Remix actual para des
 
 MIDI sigue siendo experimental. Pasan las pruebas de mapeo automatizado, seguridad, transporte nativo y SysEx acotado. Ensure Profile on Connection permanece deshabilitado de forma predeterminada y requiere un perfil de hardware capturado y verificado manualmente.
 
+<a id="desktop-packaging-and-updates"></a>
+
 ### Paquetes y actualizaciones de escritorio
 
 - Construido con Tauri v2.
@@ -104,7 +122,7 @@ MIDI sigue siendo experimental. Pasan las pruebas de mapeo automatizado, segurid
 - La aplicación utiliza capacidades Tauri limitadas divididas por ventana:
   - La ventana de control principal puede abrir medios seleccionados y administrar la salida.
   - La ventana de salida tiene una superficie de comando mínima.
-- La versión 0.9.8 comprueba metadatos de GitHub Releases para paquetes de actualización firmados una vez en segundo plano cada vez que se abre la aplicación de producción. Una verificación actual o fuera de línea es silenciosa; cuando existe una versión más reciente, el control Update de la barra superior la muestra. Las versiones 0.9.6 y 0.9.7 requieren una actualización manual de DMG a 0.9.8 porque una capacidad de producción faltante ocultaba su control Update.
+- La aplicación de producción verifica los metadatos de las publicaciones GitHub para los paquetes de actualización firmados una vez en segundo plano cada vez que se abre la aplicación de producción. Una verificación actual o fuera de línea es silenciosa; cuando existe una versión más reciente, el control Update de la barra superior la muestra. Si actualiza desde 0.9.6 o 0.9.7, consulte las [notas de recuperación del actualizador heredado](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/USER_GUIDE.md#upgrading-from-096-or-097).
 - El mismo control Update permanece disponible para una nueva verificación manual. La descarga, la instalación y el reinicio siguen siendo iniciados explícitamente por el usuario.
 - El control Reports permanece visible aunque no haya informes de fallos pendientes, para que las preferencias `ask`, `always` y `off` siempre sean accesibles. El contador y la advertencia aparecen solo después de capturar un informe acotado y sin datos privados. El mismo diálogo permite capturar un diagnóstico manual del estado actual con una descripción opcional del problema; usa el esquema y la cola de informes existentes, sin adjuntar registros arbitrarios de la aplicación. Las compilaciones de desarrollo conservan los informes en el equipo para revisarlos y mantienen Send desactivado; solo puede enviarlos una compilación de lanzamiento con el identificador de producción. Se eliminan de la cola los informes antiguos de micrófono no disponible, ya que un dispositivo ausente o desconectado es un estado normal del hardware.
 - Los artefactos públicos macOS están firmados con ID de desarrollador, notariados, grapados y validados por Gatekeeper. Los artefactos Windows actuales son vistas previas sin firmar.
@@ -112,15 +130,19 @@ MIDI sigue siendo experimental. Pasan las pruebas de mapeo automatizado, segurid
 - Las rutas en línea intencionales se limitan al flujo de verificación/descarga del actualizador y al envío de informes de fallas revisados/desinfectados solo en producción.
 - El envío del informe de fallos pasa a través de la capa de escritorio Rust hasta el relé `https://crash.dustwave.xyz` Cloudflare Worker. La vista web no obtiene capacidad HTTP arbitraria y los medios seleccionados nunca se cargan. Las fallas del renderizador pueden adjuntar un resumen de evento limitado y desinfectado con un estado preestablecido/de fondo; No se adjuntan diagnósticos de medios locales ni registros arbitrarios.
 
+<a id="advanced-and-development-only-paths"></a>
+
 ### Rutas avanzadas y solo de desarrollo
 
 La ruta de transmisión heredada ASCILINE y el código de sesión de transmisión Rust/FFmpeg son infraestructura de desarrollo. El modo de transmisión, el selector estático/transmisión, la etiqueta de conexión y el contador de búfer no están expuestos en la interfaz de usuario de origen normal.
 
-La configuración inicial del hardware y el mapa completo del controlador se encuentran en [docs/MIDI_UC33E.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MIDI_UC33E.md).
+La configuración inicial del hardware y el mapa completo del controlador se encuentran en [UC-33e y mioXC Guide](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MIDI_UC33E.md).
 
 
+
+<a id="source-material"></a>
 
 ## Material de origen
 
 Esta página se genera a partir del material fuente de ASCII VJ Remix. Fuentes primarias:
-- [README.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/README.md)
+- [docs/USER_GUIDE.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/USER_GUIDE.md)

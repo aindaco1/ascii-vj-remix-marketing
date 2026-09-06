@@ -5,6 +5,8 @@ nav_order: 1
 lang: es
 ---
 
+<a id="overview"></a>
+
 # Resumen
 
 Estos documentos son para desarrolladores de software que desean bifurcar, inspeccionar, ampliar, empaquetar o contribuir a ASCII VJ Remix.
@@ -12,6 +14,8 @@ Estos documentos son para desarrolladores de software que desean bifurcar, inspe
 ASCII VJ Remix es un visualizador de escritorio local y un banco de trabajo de renderizado. Para los usuarios, existe para brindar a los DJ un visualizador manejable y a los VJ un control detallado de filtro de video/ASCII. Para los desarrolladores, es una aplicación de escritorio Tauri con una densa superficie de control/representación, ruta de salida nativa, adaptadores de medios locales, modulación reactiva de audio e infraestructura de lanzamiento/actualización.
 
 La página de inicio pública está escrita para DJ y VJ. Esta sección es intencionalmente técnica: describe el modelo fuente de la aplicación, la arquitectura del renderizador, los límites del empaquetado del escritorio, la postura de seguridad, las limitaciones de rendimiento, las expectativas de accesibilidad, la postura de internacionalización, el flujo de trabajo de lanzamiento y la línea base de características actual 1.0.3.
+
+<a id="start-here"></a>
 
 ## Comience aquí
 
@@ -21,11 +25,15 @@ La página de inicio pública está escrita para DJ y VJ. Esta sección es inten
 4. [Arquitectura](/es/docs/development/architecture/) y [Motor de renderizado](/es/docs/development/rendering-engine/) antes de cambiar la fuente, el renderizador, el ajuste preestablecido, el audio, la cámara o el comportamiento de Pop Out.
 5. [Seguridad](/es/docs/operations/security/), [Rendimiento](/es/docs/operations/performance/), [Pruebas](/es/docs/operations/testing/), [Accesibilidad](/es/docs/operations/accessibility/) e [Internacionalización](/es/docs/operations/internationalization/) antes de publicar una bifurcación.
 
+<a id="overview-pages"></a>
+
 ## Páginas de descripción general
 
 - [ASCII VJ Remix](/es/docs/overview/ascii-vj-remix/): alcance, linaje, línea base de lanzamiento, requisitos de plataforma y límites del proyecto.
 - [Conjunto de funciones](/es/docs/overview/features/): mapa completo de fuentes, renderizado, ajustes preestablecidos, controles en vivo, reactividad de audio, Pop Out, empaquetado, seguridad y rutas avanzadas.
 - [Línea base de lanzamiento](/es/docs/overview/changelog-baseline/): línea de lanzamiento actual y cambios de comportamiento recientes del registro de cambios.
+
+<a id="source-derived-sections"></a>
 
 ## Secciones derivadas de la fuente
 
@@ -35,10 +43,16 @@ La página de inicio pública está escrita para DJ y VJ. Esta sección es inten
 
 
 
+<a id="source-material"></a>
+
 ## Material de origen
 
 Esta página se genera a partir del material fuente de ASCII VJ Remix. Fuentes primarias:
 - [README.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/README.md)
+- [docs/README.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/README.md)
+- [docs/USER_GUIDE.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/USER_GUIDE.md)
+- [docs/RELEASING.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/RELEASING.md)
+- [docs/releases/README.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/releases/README.md)
 - [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/CHANGELOG.md)
 - [docs/RENDERING_ENGINE.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/RENDERING_ENGINE.md)
 - [docs/CONTRIBUTORS.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/CONTRIBUTORS.md)

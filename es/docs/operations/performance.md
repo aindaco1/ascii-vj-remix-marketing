@@ -6,11 +6,15 @@ parent: Operaciones
 lang: es
 ---
 
+<a id="performance"></a>
+
 # Rendimiento
 
 Esta guía documenta el modelo de rendimiento actual, el comportamiento de aceptación y las prácticas de validación para ASCII VJ Remix.
 
 El trabajo de rendimiento consiste en el ritmo de fotogramas, la salida GPU, la decodificación de medios, la latencia de la cámara, la respuesta reactiva al audio, el Pop Out nativo y el mantenimiento de la capacidad de respuesta de la interfaz de usuario de control denso mientras el renderizador está bajo carga.
+
+<a id="performance-principles"></a>
 
 ## Principios de desempeño
 
@@ -28,6 +32,8 @@ El trabajo de rendimiento consiste en el ritmo de fotogramas, la salida GPU, la 
 - Mantenga los informes de fallos fuera de la ruta de renderizado. La captura, la puesta en cola, la desinfección y el envío deben estar delimitados y no deben bloquear la presentación del fotograma ni los controles en vivo.
 - Vigila térmicas y batería. Esta aplicación puede mantener activos intencionalmente CPU, GPU, la cámara, la decodificación de medios y el análisis de audio.
 
+<a id="practical-acceptance-behavior"></a>
+
 ## Comportamiento de aceptación práctica
 
 Estos son criterios de regresión para el hardware compatible, no garantías de velocidad de fotogramas en cada máquina.
@@ -43,6 +49,8 @@ Estos son criterios de regresión para el hardware compatible, no garantías de 
 |Cambio de fuente|Los interruptores de imagen/vídeo integrados están limitados y no dejan el renderizador atascado.|
 |Controlar la interfaz de usuario|Los controles deslizantes, los botones preestablecidos, la selección de fuente y el conmutador WTF permanecen interactivos bajo la carga de renderizado.|
 |MIDI|Los controles continuos están fusionados en marcos y siguen respondiendo sin una actualización IPC/renderizado por mensaje de hardware sin formato.|
+
+<a id="renderer-performance-model"></a>
 
 ## Modelo de rendimiento del renderizador
 
@@ -69,6 +77,8 @@ Normas:
 - Conserve el tiempo de reproducción de medios activos cuando cambien los ajustes preestablecidos visuales.
 - Mantenga los cambios discretos controlados y predecibles durante las transiciones.
 
+<a id="096-measured-optimization-pass"></a>
+
 ## 0.9.6 Pase de optimización medido
 
 La versión 0.9.6 elimina el trabajo repetido de configuración/copia de las rutas activas medidas sin cambiar los sombreadores, el muestreo, las matemáticas de color, la selección de glifos, la resolución de fuente/salida o los controles de calidad.
@@ -86,6 +96,8 @@ En el mismo host, la referencia optimizada publicada 0.9.5 midió 35,8 FPS en la
 
 El arnés de humo del navegador también implementa una transición numérica de 250 ms. Requiere que la sincronización del control de fuente permanezca en no más de dos llamadas y la sincronización de cámara/visual completa en no más de una llamada mientras las actualizaciones de valores continúan durante la interpolación.
 
+<a id="098-release-build-optimization"></a>
+
 ## 0.9.8 Optimización de compilación de lanzamiento
 
 El trabajo de empaquetado Windows más lento de la versión 0.9.7 tomó aproximadamente 31 minutos. La compilación del código fuente FFmpeg tomó aproximadamente 12,5 minutos, la verificación de lanzamiento repetida aproximadamente 5,5 minutos y la compilación y empaquetado de la aplicación aproximadamente 10 minutos; esas etapas independientes fueron en su mayoría serializadas.
@@ -93,6 +105,8 @@ El trabajo de empaquetado Windows más lento de la versión 0.9.7 tomó aproxima
 La versión 0.9.8 adapta el patrón de reutilización de compilación verificada utilizado por MKV Magic. La versión CI resuelve una confirmación de etiqueta inmutable y ejecuta la compilación del código fuente FFmpeg y la compilación de la aplicación Tauri `--no-bundle` simultáneamente. También espera el CI `Desktop` normal del compromiso exacto en lugar de repetir ese conjunto dentro de cada trabajo de empaquetado. Los trabajos de paquete aceptan solo los artefactos de flujo de trabajo de corta duración coincidentes, vuelven a verificar los recursos FFmpeg y verifican la confirmación, la plataforma, la versión, el tamaño y SHA-256 del binario de la aplicación antes de que `tauri bundle` la empaquete sin una segunda compilación. La firma, las firmas de actualizadores, la certificación notarial, la inspección de paquetes, las verificaciones de activos publicados y las instalaciones/actualizaciones reales siguen siendo puertas de liberación.
 
 Esto cambia la ruta crítica de la suma de la compilación de la aplicación FFmpeg más a aproximadamente la más lenta de las dos, sin cambiar el código del procesador, los recursos enviados, las plataformas de destino, la política de firma o los formatos de salida.
+
+<a id="0911-palette-dither-unicode-and-density-pass"></a>
 
 ## 0.9.11 Paleta, tramado, Unicode y paso de densidad
 
@@ -126,6 +140,8 @@ Las mediciones de funciones locales originales seleccionaron WebGL2 y siguen sie
 
 Para la vista principal macOS Apple WebKit, los ajustes preestablecidos de glifos elegibles para aceleración utilizan la textura de rampa compacta WebGPU. Los ajustes preestablecidos que poseen explícitamente Canvas2D mantienen el límite de densidad de software normal. El barrido de todos los ajustes preestablecidos instalado resuelve 43 elementos integrados en WebGPU y 28 en Canvas2D, mantiene los 71 visibles y confirma que todos los ajustes preestablecidos elegibles para GPU se aceleran. El Pop Out nativo permanece renderizado de forma independiente en GPU. Una ejecución estructural anterior de 30 segundos mantuvo la vista principal en 30.0 FPS, la presentación nativa en 60.0 FPS, las cargas de origen en 23.5 FPS para el dispositivo 24 FPS y completó 16 fundidos cruzados sincronizados con cero GPU o fallas de transición. Estos son resultados de regresión del host de desarrollo de M1 Max, no la certificación mínima de M1/16 GB.
 
+<a id="backend-notes"></a>
+
 ## Notas de backend
 
 ### WebGPU
@@ -152,6 +168,8 @@ Esté atento a:
 - lecturas de lienzo adicionales.
 - diferencias de precisión en gamma, cuantificación y saturación.
 
+<a id="canvas2d-and-pixel-canvas"></a>
+
 ### Canvas2D y Pixel Canvas
 
 Las rutas de lienzo preservan la compatibilidad y el linaje ASCILINE. No son el camino de mayor calidad, pero deben seguir siendo funcionales.
@@ -161,6 +179,8 @@ Esté atento a:
 - Costo de representación de texto/glifo en un alto número de columnas.
 - bucles por celda en el objetivo alto FPS.
 - regresiones de compatibilidad de flujos.
+
+<a id="native-pop-out"></a>
 
 ### Nativo Pop Out
 
@@ -179,7 +199,11 @@ Normas:
 - Cargue texturas de origen en los cambios de versión del marco de origen en lugar de actualizar la pantalla; Las personas que llaman de reserva sin versión deben continuar cargando.
 - Mantenga contadores/registros disponibles para la adquisición de fotogramas, la presentación, la versión de parámetros, la versión de origen y las regresiones de ritmo.
 
+<a id="source-specific-budgets"></a>
+
 ## Presupuestos de fuentes específicas
+
+<a id="static-images"></a>
 
 ### Imágenes estáticas
 
@@ -190,6 +214,8 @@ Evitar:
 - volver a decodificar o volver a cargar la misma imagen para cada ajuste preestablecido.
 - restablecer la identidad de la fuente durante las transiciones preestablecidas.
 
+<a id="video-files"></a>
+
 ### Archivos de vídeo
 
 Los cambios de fuente de vídeo son estructurales; los cambios preestablecidos no lo son.
@@ -199,6 +225,8 @@ Evitar:
 - reiniciar el vídeo en cambios preestablecidos.
 - esperando un punto medio de transición antes de aplicar parámetros numéricos continuos.
 - haciendo relecturas innecesarias del lienzo del video.
+
+<a id="cameras"></a>
 
 ### Cámaras
 
@@ -215,6 +243,8 @@ Normas:
 - En Windows, la detección de controladores GPU nativos se ejecuta fuera del hilo de la interfaz y reutiliza su instancia entre aperturas. Los registros locales `NativeOutputStartup` separan el tiempo hasta el primer fotograma de cámara, la creación de la superficie y la preparación del dispositivo y pipeline. Los diagnósticos manuales incluyen la latencia del comando de apertura nativa; no miden el tiempo hasta el primer fotograma presentado.
 - Para multicámara, sea explícito sobre el costo de la mezcla y el diseño seleccionado.
 
+<a id="audio-reactivity"></a>
+
 ### Reactividad de audio
 
 El análisis de audio está optimizado para una respuesta en vivo estable.
@@ -226,6 +256,8 @@ Normas:
 - Mantenga los ayudantes de mezcla densa derivados de los mismos buffers del analizador limitados: las bandas medias bajas/medias altas, la presencia, el brillo y la densidad no agregan historial ilimitado ni audio sin formato IPC.
 - Modulación de abrazadera para que la alta sensibilidad no pueda generar pantallas en blanco o negro puro.
 - Reinicie la captura automáticamente cuando cambie el dispositivo de entrada seleccionado.
+
+<a id="crash-reporting"></a>
 
 ### Informe de fallos
 
@@ -241,6 +273,8 @@ Normas:
 - Intente recurrir a Canvas inmediatamente después de un error de construcción de GPU; poner en cola su diagnóstico de forma asincrónica después de que el renderizador de reemplazo esté activo.
 - En compilaciones de depuración/desarrollo, capture localmente pero rechace el envío de red.
 
+<a id="experimental-midi-control"></a>
+
 ### Control experimental MIDI
 
 - Rust mantiene una cola de eventos limitada y descarta el evento más antiguo cuando está lleno.
@@ -250,6 +284,8 @@ Normas:
 - La soft takeover evita saltos disruptivos después de cambios preestablecidos sin agregar un bucle de sondeo por enlace.
 - El monitoreo del puerto se ejecuta a una cadencia fija baja; las lecturas de eventos normales están limitadas.
 - La captura/restauración de SysEx es una operación de configuración explícita y nunca se ejecuta en el subproceso de renderizado. La restauración de paquetes tiene un ritmo para hardware más antiguo.
+
+<a id="battery-and-thermal-guidance"></a>
 
 ## Guía térmica y de batería
 
@@ -262,6 +298,8 @@ Para uso portátil:
 - Cierre Pop Out cuando no sea necesario.
 - Evite varias cámaras con batería a menos que sea necesario.
 - Trate los ventiladores y la regulación térmica como señales de rendimiento, no sólo como ruido.
+
+<a id="validation-commands"></a>
 
 ## Comandos de validación
 
@@ -335,6 +373,8 @@ npm run test:output-display
 npm run test:midi
 ```
 
+<a id="manual-performance-checks"></a>
+
 ## Comprobaciones manuales de rendimiento
 
 Antes de enviar cambios de renderizador, fuente, salida o audio, verifique manualmente:
@@ -354,6 +394,8 @@ Antes de enviar cambios de renderizador, fuente, salida o audio, verifique manua
 
 Para afirmaciones de rendimiento de compilación optimizada, utilice la aplicación creada en lugar del servidor de desarrollo o el paquete de depuración.
 
+<a id="regression-signals"></a>
+
 ## Señales de regresión
 
 Investigue inmediatamente cuando:
@@ -369,6 +411,8 @@ Investigue inmediatamente cuando:
 
 En [Roadmap](/es/docs/reference/roadmap/).] se realiza un seguimiento del trabajo prospectivo de referencia, prueba de latencia, uso compartido de texturas y panel de rendimiento.
 
+
+<a id="source-material"></a>
 
 ## Material de origen
 

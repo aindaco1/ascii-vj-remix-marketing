@@ -6,15 +6,21 @@ parent: Desarrollo
 lang: es
 ---
 
+<a id="architecture"></a>
+
 # Arquitectura
 
 Esta página reúne el contrato de arquitectura del agente del repositorio principal y las guías de renderizado en lugar de mantener aquí un modelo de propiedad paralelo.
+
+<a id="project-identity"></a>
 
 ## Identidad del proyecto
 
 ASCII VJ Remix es un laboratorio de renderizado de escritorio nativo local para macOS, Windows y Linux. El producto previsto es la aplicación de escritorio Tauri, no una aplicación web alojada ni una compilación exclusiva del navegador.
 
 El repositorio combina renderizado WebGPU/WebGL de alta calidad, rutas de compatibilidad de Canvas, infraestructura de códec y flujo derivado de ASCILINE y empaquetado de escritorio Tauri. La aplicación es una superficie de control creativa para imágenes ASCII/celulares en vivo.
+
+<a id="architecture-properties"></a>
 
 ## Propiedades de arquitectura
 
@@ -25,6 +31,8 @@ El repositorio combina renderizado WebGPU/WebGL de alta calidad, rutas de compat
 - Los ajustes preestablecidos, WTF mode, la reactividad de audio y el control MIDI componen sin bifurcar el estado del renderizador.
 - Pop Out utiliza rutas nativas de cuadros más recientes cuando están disponibles para minimizar la latencia de la cámara en vivo.
 - El comportamiento de paleta, tramado ordenado, glifo y densidad se define una vez en catálogos/matemáticas compartidos y se implementa en cada backend sin estado paralelo.
+
+<a id="high-level-data-flow"></a>
 
 ## Flujo de datos de alto nivel
 
@@ -40,6 +48,8 @@ Source selection
 ```
 
 La selección de fuente puede provenir de medios integrados, archivos seleccionados por el usuario, transmisiones de cámara, cámaras mixtas o sesiones de transmisión de desarrollo. El tiempo de ejecución del renderizador elige el mejor backend para la fuente y el entorno activos.
+
+<a id="parameter-model"></a>
 
 ## Modelo de parámetros
 
@@ -61,6 +71,8 @@ Principales grupos de parámetros:
 La superficie de control, los ajustes preestablecidos, la persistencia, los cambios de fuente, WTF mode, la reactividad de audio, la salida nativa y MIDI leen o escriben a través de este modelo.
 
 Las transiciones estáticas entre familias de renderizadores mantienen la propiedad de los medios en la capa `StaticRuntime`. Los renderizadores Canvas2D, pixel Canvas, WebGL y WebGPU pueden realizar fundidos cruzados sobre la misma fuente de video/cámara en vivo en lugar de destruir y recargar medios cuando cambian `solidMode`, `glyphMode`, `pixel` o `backend`.
+
+<a id="shared-renderer-math"></a>
 
 ### Matemáticas de renderizado compartido
 
@@ -94,6 +106,8 @@ Las funciones Canvas y Stream se nombran intencionalmente por separado de la fun
 
 `npm run test:render-math` valida los ayudantes JavaScript frente a vectores compartidos. Las pruebas de salida nativa de Rust consumen el mismo archivo vectorial para la paridad de procesamiento de color de GPU.
 
+<a id="effective-params"></a>
+
 ### Parámetros efectivos
 
 Algunas funciones afectan la representación en vivo sin cambiar el estado guardado.
@@ -108,6 +122,8 @@ base params
 ```
 
 Los parámetros efectivos no deben persistir en los ajustes preestablecidos del usuario a menos que el usuario guarde explícitamente el estado actual como un ajuste preestablecido.
+
+<a id="repository-ownership-map"></a>
 
 ## Mapa de propiedad del repositorio
 
@@ -126,8 +142,10 @@ Utilice este mapa para encontrar al probable propietario de un cambio:
 |Motor multimedia Rust, códec, sesiones FFmpeg|[src-tauri/src/media_engine/](https://github.com/aindaco1/ascii-vj-remix/tree/main/src-tauri/src/media_engine)|
 |Medios de demostración integrados y accesorios ocultos|[medios/](https://github.com/aindaco1/ascii-vj-remix/tree/main/media)|
 |Experimentos de códec/vector|[experimentos/](https://github.com/aindaco1/ascii-vj-remix/tree/main/experiments)|
-|Construir, fumar, liberar, Podman, scripts FFmpeg|[guiones/](https://github.com/aindaco1/ascii-vj-remix/tree/main/scripts)|
+|Scripts de compilación, pruebas de humo, publicación, Podman y FFmpeg|[guiones/](https://github.com/aindaco1/ascii-vj-remix/tree/main/scripts)|
 |Documentos de usuario/desarrollador|[docs/](https://github.com/aindaco1/ascii-vj-remix/tree/main/docs) y [README](/es/docs/overview/ascii-vj-remix/)|
+
+<a id="non-negotiable-constraints"></a>
 
 ## Restricciones no negociables
 
@@ -145,7 +163,26 @@ Utilice este mapa para encontrar al probable propietario de un cambio:
 - La infraestructura de transmisión existe pero no es un modo de fuente visible normal. Mantenga oculta su interfaz de usuario; La productización prospectiva pertenece a la hoja de ruta.
 - La seguridad, el rendimiento, la accesibilidad y la orientación de i18n se encuentran en documentos de práctica dedicados en `docs/`; actualizarlos cuando cambien los supuestos arquitectónicos.
 
+<a id="behavior-and-ownership-constraints"></a>
 
+## Restricciones de comportamiento y propiedad
+
+Utilice la [Guía del usuario](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/USER_GUIDE.md) para conocer el comportamiento actual y el [Motor de renderizado](/es/docs/development/rendering-engine/) para conocer los contratos detallados. Al editar:
+
+- Conserve el estado de perfil limpio Demo Image / Classic Camera ASCII y mantenga la preferencia de backend en Auto. Los perfiles existentes conservan su configuración.
+- Mantenga la propiedad de backend preestablecida en `renderers/shared/preset-backend-contract.js` (71 en total, 43 acelerados, 28 Canvas explícitos). Los cambios intencionales deben actualizar el contrato y la evidencia visible de la matriz preestablecida en conjunto. La identidad de la plataforma no debe reasignar la propiedad de forma preventiva.
+- Mantenga un modelo de parámetro canónico. Los ajustes preestablecidos guardados, los parámetros efectivos en vivo, la selección de fuente, las transiciones, WTF, audio, MIDI y la salida nativa deben coincidir. Las transiciones preestablecidas preservan la identidad de la fuente y la reproducción.
+- Amplíe las políticas de paleta compartida, conjunto de caracteres, atlas de glifos y cuadrícula. Mantenga Advanced Density global y fuera de los ajustes preestablecidos; no agregue límites por renderizador ni búsqueda de fuentes del sistema en tiempo de ejecución. Lea la guía del renderizador antes de cambiar los límites.
+- Reutilizar recursos GPU y versiones del marco fuente; no reduzca la calidad visual ni la resolución para obtener una mejora del rendimiento.
+- Mantenga acotados los datos de análisis de audio y excluya el audio sin procesar de IPC y de los diagnósticos. Conserve los límites de seguridad y evite reescribir los presets guardados durante la modulación.
+- Mantenga el control del UC-33e en la ruta DIN mioXC documentada. MIDI apunta al comportamiento visual, de audio, preestablecido y WTF; no debe apuntar a la fuente, la cámara, Pop Out, la visualización de salida, el archivo, el actualizador ni las acciones de informe. Lea [MIDI_UC33E](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MIDI_UC33E.md) antes de cambiar la política de mapeo o hardware.
+- Conserve la interfaz de usuario densa en negro, blanco y gris con acentos de estado en rosa y azul. No reduzca la densidad de control ni agregue texto de marketing explicativo dentro de la aplicación.
+- Mantenga Reports accesible con una cola vacía. Los diagnósticos del renderizador siguen el [contrato de seguridad](/es/docs/operations/security/#crash-reporting); no adjunte diagnósticos de medios locales ni registros arbitrarios.
+- Mantenga la selección de backend en el control central y los diagnósticos de backend resueltos en el Stats Overlay propiedad del usuario, sin una lectura duplicada en la barra superior.
+
+
+
+<a id="source-material"></a>
 
 ## Material de origen
 

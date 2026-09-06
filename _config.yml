@@ -63,4 +63,5 @@ exclude:
   - assets/css/home.scss
   - Gemfile.lock
   - scripts/
-  - README-source-notes.md
+  - README.md
+  - docs/maintenance/

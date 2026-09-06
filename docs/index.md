@@ -38,6 +38,10 @@ The public homepage is written for DJs and VJs. This section is intentionally te
 
 This page is generated from ASCII VJ Remix source material. Primary sources:
 - [README.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/README.md)
+- [docs/README.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/README.md)
+- [docs/USER_GUIDE.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/USER_GUIDE.md)
+- [docs/RELEASING.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/RELEASING.md)
+- [docs/releases/README.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/releases/README.md)
 - [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/CHANGELOG.md)
 - [docs/RENDERING_ENGINE.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/RENDERING_ENGINE.md)
 - [docs/CONTRIBUTORS.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/CONTRIBUTORS.md)

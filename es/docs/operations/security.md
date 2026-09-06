@@ -6,11 +6,15 @@ parent: Operaciones
 lang: es
 ---
 
+<a id="security"></a>
+
 # Seguridad
 
 Esta guía documenta el modelo de seguridad actual, las compensaciones aceptadas y las prácticas de validación para ASCII VJ Remix.
 
 El perfil de riesgo de ASCII VJ Remix es una aplicación de escritorio Tauri local que maneja medios locales, cámaras, micrófonos, audio del sistema, ventanas de salida nativas, sidecars FFmpeg incluidos, artefactos de actualización firmados e informes de fallos revisados/desinfectados.
+
+<a id="security-principles"></a>
 
 ## Principios de seguridad
 
@@ -24,6 +28,8 @@ El perfil de riesgo de ASCII VJ Remix es una aplicación de escritorio Tauri loc
 - Mantenga los secretos de firma de lanzamiento, firma de actualizador y certificación notarial fuera del repositorio.
 - El identificador del paquete de producción es `com.asciline.remix`; cambiarlo crea una migración de concesión de privacidad macOS.
 - Mantener el desarrollo local en `com.asciline.remix.dev`; nunca firme ni instale una compilación de desarrollo ad-hoc con el identificador de producción.
+
+<a id="security-architecture"></a>
 
 ## Arquitectura de seguridad
 
@@ -46,6 +52,8 @@ El perfil de riesgo de ASCII VJ Remix es una aplicación de escritorio Tauri loc
 |Experimental MIDI y UC-33e SysEx|Comandos Rust solo de la ventana principal, lista de puertos permitidos mioXC, colas acotadas y límites de paquetes|Medio|Los perfiles permanecen locales y no pueden apuntar a fuentes, cámaras, Pop Out ni pantallas de salida. La verificación de restauración física del banco completo sigue incompleta.|
 |Registros e informes de humo.|Artefactos de prueba/desarrollador local|Bajo a Medio|No registre rutas de archivos privados, audio sin formato ni valores ambientales confidenciales a menos que sea necesario para una depuración explícita.|
 
+<a id="release-security-posture"></a>
+
 ## Liberar la postura de seguridad
 
 La línea de lanzamiento actual incluye estas reglas de refuerzo de seguridad:
@@ -63,6 +71,8 @@ La línea de lanzamiento actual incluye estas reglas de refuerzo de seguridad:
 - La salida nativa del modo Glifo trata `charset` y las rampas personalizadas como datos que no son de confianza. Las rampas resueltas están restringidas a la cobertura BMP admitida, desinfectadas como escalares Unicode y limitadas a 96 identificadores antes de alcanzar los buffers de renderizado. Mantenga `fontFamily` fuera de las rutas de carga de fuentes nativas o de búsqueda de recursos.
 - El atlas de glifos neutrales se genera fuera de línea a partir de una fuente anclada y con suma de verificación que se conserva con sus archivos de licencia. El código de ejecución puede cargar sólo las 16 páginas del atlas incluidas; nunca resuelve las fuentes del sistema ni los recursos de fuentes remotos.
 - Las auditorías de dependencia cubren npm y Rust. Las advertencias `cargo audit` de la pila transitiva GTK/WebKit actual de Tauri se rastrean como riesgo del marco de escritorio ascendente; Los avisos directos/transitivos procesables deben corregirse antes del lanzamiento cuando haya una actualización disponible.
+
+<a id="tauri-runtime-policy"></a>
 
 ## Política de tiempo de ejecución Tauri
 
@@ -82,6 +92,8 @@ Al agregar un comando Tauri:
 3. Otorgue el comando solo a la ventana que lo necesita.
 4. Evite devolver rutas sin formato del sistema de archivos a la vista web a menos que la interfaz de usuario necesite mostrar un nombre de archivo seleccionado por el usuario.
 5. Agregue o actualice una prueba/verificación cuando el comando cambie la postura de seguridad de la aplicación.
+
+<a id="crash-reporting"></a>
 
 ## Informe de fallos
 
@@ -128,6 +140,8 @@ Las fallas del escritor de diagnóstico de medios local de mejor esfuerzo no son
 
 El canario de aceptación de producción opcional está codificado y se niega a ejecutarse cuando ya hay un informe de usuario pendiente o la preferencia es `off`. Nunca debe expandirse a una ruta de carga de registros general.
 
+<a id="local-media-and-file-access"></a>
+
 ## Acceso a archivos y medios locales
 
 Los archivos personalizados deben permanecer detrás de la selección explícita del usuario.
@@ -140,6 +154,8 @@ Normas:
 - No envíe rutas de medios a análisis o registros remotos.
 - Los archivos preestablecidos/de perfil importados deben analizarse y validarse como datos, no ejecutarse.
 - Las exportaciones preestablecidas actuales excluyen los campos de origen y multimedia, incluidos los archivos multimedia privados y las rutas multimedia absolutas.
+
+<a id="camera-microphone-and-system-audio"></a>
 
 ## Cámara, micrófono y sistema de audio
 
@@ -172,6 +188,8 @@ Reglas de desarrollo:
 - Mantenga los marcos de entidades delimitados. No envíe buffers de audio ilimitados sin procesar a través de IPC cuando los vectores de características sean suficientes. La reactividad de audio utiliza características derivadas como RMS, bandas, transitorio/flujo, presencia, brillo, densidad, pulso y fase.
 - Evite los bucles de reintento automático de captura que siguen solicitando o capturando después de que el usuario niega el acceso.
 
+<a id="updater-and-release-secrets"></a>
+
 ## Actualizador y secretos de lanzamiento
 
 El actualizador es la ruta en línea intencional. Dice:
@@ -195,6 +213,8 @@ Requisitos de seguridad:
 
 La firma de ID de desarrollador de Apple agrega más secretos. Los certificados, contraseñas, claves API y contraseñas de llavero CI se encuentran en secretos GitHub, mientras que las credenciales de prueba locales permanecen fuera del repositorio. Las herramientas inactivas Windows Authenticode siguen el mismo límite: los valores secretos permanecen en secretos GitHub y los identificadores de Azure no secretos usan variables del repositorio GitHub cuando esas herramientas están habilitadas explícitamente.
 
+<a id="ffmpeg-and-codec-sidecars"></a>
+
 ## FFmpeg y sidecars de códec
 
 Los sidecars FFmpeg se incluyen para mantener la funcionalidad multimedia independiente. También son un límite importante para la cadena de suministro y las licencias.
@@ -216,6 +236,8 @@ npm run check:ffmpeg-resources
 npm run check:ffmpeg-release
 ```
 
+<a id="presets-and-midi-data"></a>
+
 ## Preajustes y datos MIDI
 
 Los ajustes preestablecidos y los mapas MIDI son datos locales, pero aún pueden dañar la aplicación si la ruta de importación confía en ellos.
@@ -231,6 +253,8 @@ Reglas de importación:
 - No incluya rutas de medios absolutas privadas en los paquetes exportados de forma predeterminada.
 - Las listas de reproducción preestablecidas almacenan solo un nombre limitado, metadatos de tiempo/modo e identificaciones preestablecidas estables. No duplican configuraciones visuales ni conservan campos de fuente/medios.
 
+<a id="midi-and-sysex-rules"></a>
+
 ### MIDI y reglas SysEx
 
 - El adaptador nativo acepta sólo nombres de puertos de entrada/salida que contengan `mioXC`; No se admite USB UC-33e directo.
@@ -241,6 +265,8 @@ Reglas de importación:
 - Garantizar la conexión envía como máximo una vez por reconexión física y no debe realizar un bucle mientras la interfaz permanece conectada.
 - MIDI Los objetivos de aprendizaje deben provenir del registro de objetivos visuales, de audio o de acción incluidos en la lista permitida. No agregue fuente, cámara, Pop Out, pantalla de salida, actualizador, archivo ni destinos de informes de fallas.
 - Los perfiles capturados y las asignaciones aprendidas permanecen locales y no deben contener rutas de medios, fotogramas, audio sin procesar, credenciales ni datos de red.
+
+<a id="security-validation"></a>
 
 ## Validación de seguridad
 
@@ -278,6 +304,8 @@ npm run test:ffmpeg-policy
 npm run check:ffmpeg-resources
 ```
 
+<a id="known-risks"></a>
+
 ## Riesgos conocidos
 
 - Las indicaciones de privacidad de macOS siguen siendo sensibles a la ruta de la aplicación, el identificador del paquete y la identidad de firma. Las identidades de producción y desarrollo están aisladas, pero una construcción de desarrollo deliberadamente ad hoc aún recibe subvenciones específicas para esa construcción.
@@ -288,6 +316,8 @@ npm run check:ffmpeg-resources
 
 El posible fortalecimiento de la seguridad, la firma Windows, la exposición de la transmisión y el trabajo del perfil MIDI se rastrean en el [Roadmap](/es/docs/reference/roadmap/).
 
+<a id="reporting-security-issues"></a>
+
 ## Informar problemas de seguridad
 
 Informar problemas de seguridad de forma privada a:
@@ -296,6 +326,8 @@ Informar problemas de seguridad de forma privada a:
 
 Incluya el sistema operativo, la versión de la aplicación, el tipo de fuente, si Pop Out estaba activo y cualquier permiso relevante o estado del actualizador.
 
+
+<a id="source-material"></a>
 
 ## Material de origen
 

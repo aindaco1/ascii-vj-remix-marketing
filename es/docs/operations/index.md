@@ -5,9 +5,13 @@ nav_order: 3
 lang: es
 ---
 
+<a id="operations"></a>
+
 # Operaciones
 
 Los documentos de operaciones cubren las prácticas que mantienen las bifurcaciones confiables: límites de medios locales, permisos de escritorio, rendimiento del renderizador, puertas de lanzamiento, accesibilidad e internacionalización.
+
+<a id="operations-pages"></a>
 
 ## Páginas de operaciones
 

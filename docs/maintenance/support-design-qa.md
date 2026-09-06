@@ -2,6 +2,9 @@
 
 Date: 2026-08-25
 
+Historical review record; this result applies to the reviewed build and date.
+See [Site Maintenance](README.md) for current support contracts and validation.
+
 ## Visual target
 
 - Existing production design system: `https://asciivj.com/support/`

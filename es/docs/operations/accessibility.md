@@ -6,11 +6,15 @@ parent: Operaciones
 lang: es
 ---
 
+<a id="accessibility"></a>
+
 # Accesibilidad
 
 Esta guía documenta la línea base de accesibilidad actual y las reglas aplicadas a los cambios en la superficie de control.
 
 La interfaz de usuario de control sigue sujeta a los requisitos de teclado, etiquetado, contraste y enfoque. El resultado renderizado son medios creativos que pueden ser intencionalmente de alto contraste, animados, nerviosos y visualmente intensos.
+
+<a id="current-baseline"></a>
 
 ## Línea de base actual
 
@@ -34,6 +38,8 @@ Limitaciones conocidas:
 - La densa superficie de control de VJ tiene muchos controles deslizantes y botones que necesitan un mayor enfoque y cobertura de etiquetado con el tiempo.
 - La salida visual puede incluir movimientos rápidos, alto contraste, fluctuaciones y cambios de color por diseño.
 
+<a id="accessibility-principles"></a>
+
 ## Principios de accesibilidad
 
 - Conserve la densidad del control sin sacrificar la visibilidad del enfoque ni las etiquetas legibles.
@@ -46,6 +52,8 @@ Limitaciones conocidas:
 - Mantenga educadas las actualizaciones de estado en vivo a menos que el usuario deba actuar de inmediato.
 - No permita que los cambios estéticos reduzcan el contraste o el tamaño objetivo.
 - Mantenga los controles de la ventana de salida mínimos y predecibles.
+
+<a id="critical-interaction-surfaces"></a>
 
 ## Superficies de interacción críticas
 
@@ -63,6 +71,8 @@ Las superficies de accesibilidad de mayor riesgo son:
 10. Estado del dispositivo MIDI, estado de toma de control suave, acciones SysEx y aprendizaje MIDI.
 11. Preferencia de diálogo de informes, recuento pendiente, acciones de envío y descarte.
 12. Controles de paleta, mapeo, tramado ordenado, modo de densidad, conjunto de caracteres, rampa escrita y color de glifo.
+
+<a id="ui-control-rules"></a>
 
 ## Reglas de control de la interfaz de usuario
 
@@ -82,6 +92,8 @@ Utilice estas reglas para el nuevo trabajo de UI:
 - El texto de estado/error aparece cerca del control de activación y utiliza un estado apropiado o una región de alerta cuando es dinámico.
 - Los diálogos se cierran con Escape y restablecen el foco en su control de activación.
 - Los controles deshabilitados o irrelevantes se ocultan o deshabilitan constantemente, coincidiendo con el modelo de perilla condicional.
+
+<a id="keyboard-expectations"></a>
 
 ## Expectativas del teclado
 
@@ -104,6 +116,8 @@ Para controles de aprendizaje y mapeo MIDI:
 - La instalación/restauración debe identificar que se sobrescriben las 33 memorias del UC-33e.
 - No se debe requerir el uso del controlador físico para desconectar MIDI, cancelar el aprendizaje, eliminar una anulación o restablecer el mapa integrado.
 
+<a id="motion-flashing-and-visual-intensity"></a>
+
 ## Movimiento, parpadeo e intensidad visual
 
 ASCII VJ Remix está diseñado para imágenes extremas, mientras que la interfaz de usuario de control sigue siendo legible y operable.
@@ -111,6 +125,8 @@ ASCII VJ Remix está diseñado para imágenes extremas, mientras que la interfaz
 Regla actual:
 
 - La aplicación puede generar imágenes intensas cuando el usuario selecciona ajustes preestablecidos extremos o WTF mode, pero los controles deben permanecer legibles y operables.
+
+<a id="color-and-contrast"></a>
 
 ## Color y contraste
 
@@ -129,6 +145,8 @@ Normas:
 - Los estados de error y advertencia necesitan diferencias de texto/icono/estado, no solo color.
 - El logotipo/color heredado azul claro no es el acento principal de la interfaz de usuario.
 
+<a id="current-automated-coverage"></a>
+
 ## Cobertura automatizada actual
 
 Las comprobaciones actuales cubren un subconjunto específico de las interacciones preestablecidas/de control:
@@ -141,6 +159,8 @@ npm run smoke:static
 El humo estático verifica el filtrado preestablecido en vivo, Escape-to-clear, restauración de enfoque para el menú adicional preestablecido, texto descriptivo Advanced Density y geometría de selección visible consistente en el tamaño de ventana mínimo admitido.
 
 No hay un teclado dedicado, un hacha, una instantánea ARIA, un orden de enfoque, un movimiento reducido o un conjunto de contraste automatizado. Esas lagunas también se resumen en [Testing](/es/docs/operations/testing/); El trabajo prospectivo de accesibilidad vive en el [Roadmap](/es/docs/reference/roadmap/).
+
+<a id="manual-accessibility-checklist"></a>
 
 ## Lista de verificación de accesibilidad manual
 
@@ -161,6 +181,8 @@ Antes de enviar cambios significativos en la interfaz de usuario:
 - Confirmar que la superposición de estadísticas no bloquea los controles esenciales.
 - Confirme que se puede acceder al panel MIDI mediante el teclado en la aplicación de escritorio, Learn expone el estado presionado y que el cambio de opciones de dispositivo/perfil no atrapa el foco.
 
+<a id="accepted-limits"></a>
+
 ## Límites aceptados
 
 - La salida de vídeo/ASCII renderizada es un medio artístico y puede no ser adecuada para todos los espectadores en todos los modos.
@@ -169,6 +191,8 @@ Antes de enviar cambios significativos en la interfaz de usuario:
 
 Estos límites no eximen a los controles de la aplicación de los requisitos de teclado, contraste, etiquetado y enfoque.
 
+
+<a id="source-material"></a>
 
 ## Material de origen
 

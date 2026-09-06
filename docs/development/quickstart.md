@@ -7,8 +7,6 @@ parent: "Development"
 
 # Quickstart
 
-## Prerequisites
-
 Use the source repository as the working tree:
 
 ```bash
@@ -16,88 +14,79 @@ git clone https://github.com/aindaco1/ascii-vj-remix.git
 cd ascii-vj-remix
 ```
 
+## Prerequisites
+
+Minimum development tools:
+
+- Node.js 24 or newer.
+- npm.
+- Rust stable toolchain with Cargo.
+- Git.
+- A current browser. Chromium is preferred for WebGPU testing.
+
+Platform-specific desktop prerequisites:
+
+- macOS: Xcode command line tools.
+- Windows: Visual Studio Build Tools with the C++ workload and WebView2
+  runtime.
+- Linux: WebKitGTK 4.1 development packages, appindicator, ALSA development
+  headers, librsvg, OpenSSL, patchelf, and build tools.
+
+Optional but useful:
+
+- Podman for the reproducible Linux dev shell and Python/OpenCV experiments.
+- FFmpeg/ffprobe for media-engine development.
+- Playwright dependencies for browser smoke tests.
+- GitHub CLI for release secret management.
+
+## First-Time Setup
+
 Install JavaScript dependencies:
 
 ```bash
-npm install
+npm ci
 ```
 
-For desktop work, install the Tauri prerequisites for the target OS. Linux development also needs the WebKitGTK/WebView stack required by Tauri v2.
+Run the browser dev server:
 
-## Common Local Commands
+```bash
+npm run dev
+```
 
-| Command | Source script |
-| --- | --- |
-| `npm run dev` | `vite --host 127.0.0.1 --port 8010` |
-| `npm run dev:vite` | `vite --host 127.0.0.1 --port 1420 --strictPort` |
-| `npm run build` | `vite build && node scripts/copy_static_assets.mjs` |
-| `npm run preview` | `vite preview --host 127.0.0.1 --port 8010` |
-| `npm run check` | `npm run check:offline` |
-| `npm run check:offline` | `npm run build && node scripts/check_offline_bundle.mjs` |
-| `npm run check:desktop` | `npm run check:offline && npm run check:tauri-policy && npm run check:icons && npm run check:glyph-atlas && npm run test:release-build-reuse && npm run test:render-math && npm run test:preset-backend-contract && npm run test:preset-playlists && npm run test:canvas-readback && npm run test:renderer-fallback && npm run test:media-source-policy && npm run test:audio-reactive && npm run test:midi && npm run test:crash-report-ui && npm run test:crash-relay && npm run test:output-display && npm run test:desktop-updater && npm run test:updater-manifest && npm run test:macos-artifacts && npm run test:macos-secret-args && npm run test:windows-secret-args && npm run test:ffmpeg-policy && npm run check:ffmpeg-resources && npm run test:rust && npm run tauri:build:dev -- --debug --no-bundle` |
-| `npm run check:release` | `npm run check:offline && npm run check:tauri-policy && npm run check:icons && npm run check:glyph-atlas && npm run test:release-build-reuse && npm run test:render-math && npm run test:preset-backend-contract && npm run test:preset-playlists && npm run test:canvas-readback && npm run test:renderer-fallback && npm run test:media-source-policy && npm run test:audio-reactive && npm run test:midi && npm run test:crash-report-ui && npm run test:crash-relay && npm run test:output-display && npm run test:desktop-updater && npm run test:updater-manifest && npm run test:macos-artifacts && npm run test:macos-secret-args && npm run test:windows-secret-args && npm run test:ffmpeg-policy && npm run check:release-runtime && npm run test:rust` |
-| `npm run check:bundle` | `node scripts/check_tauri_bundle.mjs` |
-| `npm run check:bundle:debug` | `node scripts/check_tauri_bundle.mjs --profile debug --expected-bundle-id com.asciline.remix.dev` |
-| `npm run check:bundle:release` | `node scripts/check_tauri_bundle.mjs --profile release --expected-bundle-id com.asciline.remix` |
-| `npm run check:ffmpeg-resources` | `node scripts/check_ffmpeg_resources.mjs` |
-| `npm run check:icons` | `node scripts/check_app_icons.mjs` |
-| `npm run check:glyph-atlas` | `node scripts/check_glyph_atlas.mjs` |
-| `npm run check:ffmpeg-release` | `node scripts/check_ffmpeg_resources.mjs --require-current-platform` |
-| `npm run check:release-runtime` | `npm run test:ffmpeg-source-build && npm run check:ffmpeg-release` |
-| `npm run check:macos-notarization` | `node scripts/check_macos_notarization.mjs --profile release` |
-| `npm run check:windows-authenticode` | `node scripts/check_windows_authenticode.mjs --profile release` |
-| `npm run check:windows-gui` | `node scripts/check_windows_gui_subsystem.mjs --profile release` |
-| `npm run check:media` | `npm run test:frame-prep && npm run test:decode-resize && npm run media:pipeline-preview -- media/<bundled-test-fixture>.mp4 96 54 12 5 false && npm run media:pipeline-preview -- media/<bundled-test-fixture>.mp4 96 54 12 5 true && npm run media:native-session-preview -- media/<bundled-test-fixture>.mp4 96 54 12 5 false 4 && npm run media:native-session-preview -- media/<bundled-test-fixture>.mp4 96 54 12 5 true 4` |
-| `npm run check:tauri-policy` | `node scripts/check_tauri_policy.mjs` |
-| `npm run release:version:check` | `node scripts/check_release_version.mjs` |
-| `npm run release:secrets:check` | `node scripts/check_github_release_secrets.mjs` |
-| `npm run release:secrets:check:notarized` | `node scripts/check_github_release_secrets.mjs --require-notarization` |
-| `npm run release:secrets:check:public` | `node scripts/check_github_release_secrets.mjs --require-public-signing` |
-| `npm run release:secrets:set:macos` | `node scripts/set_macos_notarization_secrets.mjs` |
-| `npm run release:secrets:set:windows` | `node scripts/set_windows_artifact_signing_secrets.mjs` |
-| `npm run smoke:static` | `npm run build && node scripts/smoke_static_pages.mjs` |
-| `npm run smoke:native-output` | `node scripts/smoke_native_output_perf.mjs` |
-| `npm run smoke:ui-perf` | `node scripts/smoke_ui_perf.mjs` |
-| `npm run smoke:primary-presets` | `node scripts/smoke_primary_presets.mjs` |
-| `npm run smoke:release-install` | `node scripts/smoke_tauri_release_install.mjs` |
-| `npm run test:decode-resize` | `node scripts/check_decode_resize_parity.mjs` |
-| `npm run test:desktop-updater` | `node scripts/test_desktop_updater.mjs` |
-| `npm run test:ffmpeg-policy` | `node scripts/test_ffmpeg_resource_policy.mjs` |
-| `npm run test:ffmpeg-source-build` | `node scripts/test_ffmpeg_source_build_config.mjs` |
-| `npm run test:frame-prep` | `node scripts/check_frame_prep_parity.mjs` |
-| `npm run test:output-display` | `node scripts/test_output_display_placement.mjs` |
-| `npm run test:updater-manifest` | `node scripts/test_tauri_update_manifest.mjs` |
-| `npm run test:macos-identity` | `node scripts/test_macos_app_identity.mjs` |
-| `npm run test:macos-dmg-layout` | `node scripts/test_macos_dmg_layout.mjs` |
-| `npm run test:macos-artifacts` | `npm run test:macos-identity && npm run test:macos-dmg-layout` |
-| `npm run test:macos-secret-args` | `node scripts/test_macos_notarization_secret_args.mjs` |
-| `npm run test:windows-secret-args` | `node scripts/test_windows_artifact_signing_secret_args.mjs` |
-| `npm run test:audio-reactive` | `node scripts/test_audio_reactive.mjs` |
-| `npm run test:midi` | `node scripts/test_midi_mapping.mjs` |
-| `npm run test:media-source-policy` | `node scripts/test_media_source_policy.mjs` |
-| `npm run test:native-output-log` | `node scripts/analyze_native_output_log.mjs` |
-| `npm run test:render-math` | `node scripts/test_render_math.mjs` |
-| `npm run test:preset-backend-contract` | `node scripts/test_preset_backend_contract.mjs` |
-| `npm run test:preset-playlists` | `node scripts/test_preset_playlists.mjs` |
-| `npm run test:canvas-readback` | `node scripts/test_canvas_readback.mjs` |
-| `npm run test:renderer-fallback` | `node scripts/test_renderer_fallback.mjs` |
-| `npm run test:release-build-reuse` | `node scripts/test_release_build_reuse.mjs` |
-| `npm run test:crash-report-ui` | `node scripts/test_crash_report_ui.mjs` |
-| `npm run test:crash-relay` | `npm --prefix crash-relay test` |
-| `npm run test:vectors` | `node scripts/test_vectors.mjs` |
-| `npm run test:rust` | `node scripts/cargo_env.mjs test --manifest-path src-tauri/Cargo.toml` |
-| `npm run tauri` | `node scripts/tauri_env.mjs` |
-| `npm run tauri:dev` | `node scripts/tauri_env.mjs dev --config src-tauri/tauri.dev.conf.json` |
-| `npm run tauri:build` | `node scripts/tauri_env.mjs build` |
-| `npm run tauri:build:dev` | `node scripts/tauri_env.mjs build --config src-tauri/tauri.dev.conf.json` |
+Open:
+
+```text
+http://127.0.0.1:8010/
+```
+
+Run the static smoke test:
+
+```bash
+npm run smoke:static
+```
+
+Run the desktop app in development mode:
+
+```bash
+npm run tauri:dev
+```
+
+Run the main desktop validation gate:
+
+```bash
+npm run check:desktop
+```
+
+On macOS workspaces stored under iCloud Drive, the Tauri build helper redirects
+target output to `/private/tmp/ascii-vj-remix-tauri-target` so iCloud extended
+attributes do not break app signing. You can override the build directory with
+`ASCILINE_TAURI_TARGET_DIR` or `CARGO_TARGET_DIR`.
 
 ## First Verification Path
 
-1. Install dependencies with `npm install`.
-2. Run the source repo's focused checks before changing behavior.
-3. For renderer changes, inspect [Rendering Engine](/docs/development/rendering-engine/) and run renderer-specific checks from [Commands](/docs/reference/commands/).
-4. For desktop packaging or permissions changes, inspect Tauri config, capabilities, macOS plist/entitlements, and release notes.
-5. For user-facing controls, check accessibility and i18n expectations before shipping copy or UI changes.
+Choose the [recommended check set](/docs/operations/testing/#recommended-check-sets) for the change. Use [Contributing](/docs/development/contributing/) for development identity, local signing, FFmpeg, and Podman, and [Commands](/docs/reference/commands/) for the complete npm script catalog.
+
+For packaging, signing, publication, or updater work, follow [Release and Updates](/docs/operations/release/).
 
 ## Development Boundary
 
@@ -108,6 +97,6 @@ Do not add hosted fonts, CDNs, online decoders, telemetry, or hosted runtime dep
 ## Source Material
 
 This page is generated from ASCII VJ Remix source material. Primary sources:
-- [README.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/README.md)
 - [docs/CONTRIBUTORS.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/CONTRIBUTORS.md)
-- [docs/AGENTS.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/AGENTS.md)
+- [docs/TESTING.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/TESTING.md)
+- [docs/RELEASING.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/RELEASING.md)

@@ -28,6 +28,7 @@ jobs:
         with:
           ruby-version: "3.3"
           bundler-cache: true
+      - run: python3 -m unittest discover -s scripts -p 'test_*.py'
       - run: bundle exec jekyll build --trace
       - run: python3 scripts/audit_docs_current_state.py
       - run: python3 scripts/audit_links.py

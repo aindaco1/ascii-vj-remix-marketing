@@ -51,6 +51,9 @@ def main() -> int:
         parsed[page.resolve()] = parser
 
     errors: list[str] = []
+    for internal in ["docs/maintenance", "es/docs/maintenance", "README.md", "README-source-notes.md", "design-qa.md"]:
+        if (SITE / internal).exists():
+            errors.append(f"repository-only documentation leaked into _site: {internal}")
     for page, parser in parsed.items():
         for href in parser.hrefs:
             url = urlparse(href)

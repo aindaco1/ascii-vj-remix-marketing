@@ -6,11 +6,15 @@ parent: Operaciones
 lang: es
 ---
 
+<a id="testing"></a>
+
 # Pruebas
 
 Esta guía documenta las verificaciones automatizadas actuales, las rutas de verificación manual y las brechas de cobertura conocidas para ASCII VJ Remix.
 
 Las pruebas se centran en paquetes fuera de línea, inicio del renderizador, cambio de fuente, salida nativa, comportamiento de medios/cámara/audio, permisos Tauri, sidecars FFmpeg, artefactos de lanzamiento y manifiestos de actualización.
+
+<a id="quick-reference"></a>
 
 ## Referencia rápida
 
@@ -63,9 +67,11 @@ Para cambios de documentación únicamente:
 git diff --check
 ```
 
+<a id="test-categories"></a>
+
 ## Categorías de prueba
 
-|Área|Cheques actuales|
+|Área|Comprobaciones actuales|
 | --- | --- |
 |Tiempo de ejecución sin conexión|`npm run check:offline`, `scripts/check_offline_bundle.mjs`|
 |Arnés de interfaz de usuario estática|`npm run smoke:static`, que incluye activación, limpieza de perfil predeterminada, búsqueda de ajustes preestablecidos en vivo, edición/guardado/reordenamiento/controles de bucle de listas de reproducción, interfaz de usuario de captura de pantalla nativa accesible, geometría de selección alineada, salida visible, errores de WebGL, finalización de páginas de glifos y comprobaciones de aspecto para cada ajuste preestablecido de Demo Image integrado.|
@@ -90,13 +96,21 @@ git diff --check
 |Ajustes preestablecidos primarios instalados|`npm run smoke:primary-presets`, los 71 integrados en Demo Image con visibilidad primaria por ajuste preestablecido, familia de backend, estado de ejecución, error GPU y verificaciones de aspecto|
 |Lanzamiento de instalación/actualización|`npm run smoke:release-install`|
 
-## Conjuntos de cheques recomendados
+<a id="recommended-check-sets"></a>
+
+## Conjuntos de comprobaciones recomendados
+
+<a id="documentation-only"></a>
 
 ### Sólo documentación
 
 ```bash
 git diff --check
 ```
+
+Para guías movidas o divididas, verifique también los enlaces de archivos relativos, los anclajes de encabezado y las referencias de flujo de trabajo/script a las rutas anteriores. Incluya los nuevos archivos en la validación del enlace; `git diff --check` solo detecta errores de espacios en blanco. El [índice de documentación](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/README.md#maintaining-documentation) define la propiedad.
+
+<a id="frontend-ui-css-presets-sources-audio-ui"></a>
 
 ### Interfaz de usuario frontal, CSS, ajustes preestablecidos, fuentes, interfaz de usuario de audio
 
@@ -106,6 +120,8 @@ npm run smoke:static
 ```
 
 Agregue comprobaciones manuales para cambio de fuente, transiciones preestablecidas, WTF mode y reactividad de audio cuando cambia el comportamiento.
+
+<a id="renderer-backend-changes"></a>
 
 ### Cambios en el backend del renderizador
 
@@ -119,6 +135,8 @@ npm run check:media
 ```
 
 También compare manualmente la salida de WebGPU y WebGL2 para determinar los estados representativos de desactivación de funciones, paleta/difusor, Braille, CJK/Kana, Hangul y de rampa personalizada escrita. Registre el backend real; un backend solicitado que retrocede no es evidencia del backend solicitado.
+
+<a id="native-output-or-pop-out-changes"></a>
 
 ### Salida nativa o cambios Pop Out
 
@@ -166,6 +184,8 @@ npm run bench:density
 
 `bench:density` es una puerta de liberación: sale de un valor distinto de cero cuando falla cualquier humo de UI infantil, cuando su informe no es aceptado o cuando el RSS constante crece más que el valor mayor de 64 MB y 25 por ciento después del calentamiento. Una ejecución de macOS cuyas ventanas están en segundo plano puede ser útil para probar la vida útil de la memoria, pero su velocidad de fotogramas limitada no debe registrarse como aceptación del rendimiento de la ventana visible.
 
+<a id="midi-uc-33e-or-sysex-changes"></a>
+
 ### Cambios en MIDI, UC-33e o SysEx
 
 ```bash
@@ -177,6 +197,8 @@ npm run smoke:static
 ```
 
 La sonda física verifica que CoreMIDI pueda enumerar y abrir simultáneamente ambas direcciones del mioXC. No reemplaza el barrido de control y la lista de verificación de captura/restauración de banco completo en [MIDI_UC33E](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MIDI_UC33E.md).
+
+<a id="tauri-commands-permissions-or-capabilities"></a>
 
 ### Tauri Comandos, permisos o capacidades
 
@@ -201,6 +223,8 @@ La matriz preestablecida estática también verifica la propiedad del backend: e
 
 El mismo humo genera muestras de colores conocidas a través de WebGL2 real y las compara con el asignador de paletas compartido para las 17 paletas en los modos más cercano y de luminancia, incluidos los cambios de paleta en vivo y de inicio. También verifica que las cargas de paletas conserven la configuración de orientación de la imagen de origen.
 
+<a id="ffmpeg-and-media-engine"></a>
+
 ### FFmpeg y motor de medios
 
 ```bash
@@ -219,10 +243,17 @@ npm run test:ffmpeg-source-build
 npm run check:ffmpeg-release
 ```
 
+<a id="release-and-updater"></a>
+
 ### Lanzamiento y actualizador
 
+La [Guía de actualización y lanzamiento](/es/docs/operations/release/) posee empaquetado, firma, publicación, repeticiones de aceptación de etiquetas inmutables y configuración de gancho de humo de CI. Utilice estas comprobaciones para validar los cambios de versión:
+
 ```bash
+npm run check:desktop
 npm run test:desktop-updater
+npm run test:updater-manifest
+npm run check:bundle:debug
 npm run check:release
 npm run bundle:release
 npm run smoke:release-install
@@ -233,13 +264,13 @@ Ejecute `npm run ffmpeg:build-sidecar` antes que `npm run check:release` en un c
 
 El humo de lanzamiento descarga artefactos de los lanzamientos GitHub y verifica el diseño del instalador, los activos incluidos, los paquetes de actualización firmados, el comportamiento de `latest.json`, los controles empaquetados visibles Update y Reports y la ausencia de una lectura de backend duplicada en la barra superior. En macOS, verifica el DMG descargado, lo monta como de solo lectura en una raíz temporal privada, valida el diseño exacto de la aplicación a las aplicaciones e inspecciona la aplicación montada antes del salto del actualizador.
 
-Si la publicación del artefacto se realiza correctamente pero un ejecutor posterior a la publicación expone un defecto en las herramientas de aceptación, ejecute el flujo de trabajo `Release Acceptance` con la etiqueta inmutable existente después de corregir las herramientas. Reutiliza los bytes publicados y no reconstruye ni reemplaza los activos de lanzamiento. Updater-hop smoke usa `0.9.0` como la versión anterior mínima predeterminada porque las versiones anteriores de `0.1.x` se firmaron con una clave de actualización diferente.
-
 La prueba del controlador verifica que la disponibilidad de producción permita exactamente una verificación silenciosa por lanzamiento, que los resultados actuales/fuera de línea no anuncien el estado, que una actualización disponible no se instale automáticamente y que la ruta manual existente aún realice nuevas verificaciones e instalaciones activadas por el usuario.
 
-Las versiones 0.9.6 y 0.9.7 se enviaron sin la capacidad de nombre de aplicación de la ventana principal utilizada por la puerta de disponibilidad del actualizador, por lo que su control Update puede parpadear y luego desaparecer. Instale 0.9.8 manualmente desde el DMG notariado. Reinicie 0.9.8 y confirme que la verificación de inicio de la versión actual permanece silenciosa mientras el control Update permanece visible, luego use el control y confirme que informa `Up to date`. Para la versión 0.9.10, inicie la aplicación 0.9.9 instalada y confirme que la verificación de antecedentes aparezca en la versión 0.9.10 sin descargarla automáticamente. Después de la instalación aprobada por el usuario, confirme que el ícono de la nueva aplicación esté presente, que Reports permanezca visible en su estado vacío o de recuento pendiente y que la lectura del backend del lado derecho esté ausente.
+Para una verificación manual del actualizador, inicie la versión compatible anterior instalada, confirme que la verificación de antecedentes muestre la versión de destino sin descargarla automáticamente y luego realice la acción de instalación explícita. Verifique la versión de destino y el ícono de la aplicación después del reinicio, la visibilidad de Reports con una cola vacía/pendiente y la ausencia de la lectura duplicada del backend en la barra superior. Registre las versiones de origen y de destino y las identidades de los artefactos. La recuperación del control heredado faltante-Update se documenta en la [Guía del usuario](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/USER_GUIDE.md#upgrading-from-096-or-097).
 
 En macOS, Release Smoke extrae las cargas útiles actuales y anteriores de `.app.tar.gz`, requiere `com.asciline.remix`, ID de equipo `PWT3Q52LZ2`, tiempo de ejecución reforzado, aceptación de Gatekeeper y exactamente el mismo requisito designado, luego ejecuta la aplicación anterior a través del actualizador y revalida el paquete reemplazado. La aprobación interactiva del TCC en sí sigue siendo una verificación manual.
+
+<a id="manual-smoke-checklist"></a>
 
 ## Lista de verificación manual de humo
 
@@ -264,10 +295,15 @@ En macOS, Release Smoke extrae las cargas útiles actuales y anteriores de `.app
 17. Cierre Pop Out y confirme que se establezca el uso de CPU/GPU.
 18. Con una cámara seleccionada en Windows, capture un diagnóstico manual mientras Pop Out está abierto y confirme que `cameraFallbackActive` sea falso. Confirme que la salida en vivo se mantiene fluida mientras cambia los ajustes preestablecidos y FPS. Con `exclusiveCameraActive`, confirme los avances de la vista previa principal a través de `nativeOutputPreview`, su FPS aceptado es distinto de cero y la vista previa normal de la cámara se restaura después de cerrar con `previewRestoreSucceeded` aumentando. Si se activa la copia de seguridad del espejo, confirme que `nativeOutputAdapter.nativeCameraFailureReason` explica el motivo y se volverá a adquirir la vista previa.
 19. Repita la prueba de una sola cámara en Ubuntu con AppImage/deb y Fedora con rpm. La vista previa de la cámara principal puede pausarse mientras V4L2 sea propiedad del Pop Out nativo; confirme que se restaure después del cierre. Si se activa la reserva, confirme que se vuelva a adquirir la vista previa y que el informe incluya el espejo distinto de cero aceptado FPS.
+20. Con Pop Out abierto, repita Cámara → Demo Image → Demo Video → Cámara, luego cierre y vuelva a abrir Pop Out. Compruebe la apariencia de celda diminuta de Acid Snowstorm y el borde derecho de Arcade Rain en comparación con la vista principal; cambie el tamaño y cambie FPS y ajustes preestablecidos mientras ambas superficies son visibles. Mantenga una cámara funcionando durante al menos dos minutos. Registre los tiempos en frío y repita los tiempos del primer fotograma visible por separado de los tiempos de finalización de comandos.
+
+<a id="hardware-and-platform-checks"></a>
 
 ## Comprobaciones de hardware y plataforma
 
 La aplicación depende del hardware real y de las pilas de medios del sistema operativo. Las pruebas automatizadas no cubren todas las combinaciones de hardware y plataforma.
+
+La decisión de lanzamiento [1.0.3](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/releases/RELEASE_1.0.3.md#release-decision--2026-09-04) registra la aceptación del propietario de Windows y el aplazamiento explícito de las pruebas de la cámara física de Ubuntu/Fedora. Que la brecha de cobertura Linux permanece abierta en el expediente documentado; ejecute las comprobaciones de una sola cámara en la [lista de verificación manual de humo](#manual-smoke-checklist) en los artefactos instalados exactos antes de registrar la aceptación. Las comprobaciones de paquetes de CI y Hyper-V no cierran la cobertura de la cámara física.
 
 Matrices manuales importantes:
 
@@ -289,6 +325,8 @@ Al informar los resultados del hardware, incluya:
 - fuente de audio.
 - nombres de dispositivos de cámara y resolución solicitada/FPS.
 
+<a id="podman-checks"></a>
+
 ## Comprobaciones de Podman
 
 Podman es principalmente para un shell de desarrollo reproducible similar a Linux y trabajo heredado de Python/OpenCV/vector. No es el tiempo de ejecución de producción.
@@ -304,24 +342,15 @@ scripts/podman_codec_tests.sh
 
 La imagen de Podman tiene como valor predeterminado el Nodo 24. Utilice `NODE_MAJOR=26` solo cuando pruebe explícitamente una línea base de Nodo más nueva.
 
+<a id="ci-and-release-behavior"></a>
+
 ## CI y comportamiento de liberación
 
-Lanzamiento de CI:
+La [Guía de lanzamiento y actualización](/es/docs/operations/release/#build-and-package) documenta el requisito previo de confirmación exacta del escritorio, las compilaciones paralelas de la aplicación/FFmpeg, la transferencia de entrada inmutable, la firma de la plataforma, la publicación y la aceptación posterior a la publicación. [Security](/es/docs/operations/security/#release-security-posture) posee las restricciones de seguridad.
 
-- requiere una ejecución exitosa de la inserción principal `Desktop` para la confirmación de lanzamiento exacta.
-- Compile la aplicación y cree FFmpeg simultáneamente en macOS, Windows y Linux, luego verifique y reutilice esas entradas exactas para empaquetar solo en paquetes.
-- verificar el comportamiento del paquete sin conexión.
-- verificar la política Tauri.
-- construir/comprobar sidecars FFmpeg.
-- ejecute Rust y pruebas de medios.
-- generar fragmentos del manifiesto del actualizador.
-- fusionar fragmentos en `latest.json`.
-- cargue instaladores, paquetes de actualización, firmas y `latest.json`.
-- valide la firma de ID del desarrollador macOS, la certificación notarial, el grapado y la aceptación del Gatekeeper antes de publicar los artefactos macOS.
-- publica artefactos Windows como vistas previas sin firmar; la ruta Windows firmada inactiva incluye el firmante de Authenticode y la validación de marca de tiempo.
-- marca el ejecutable de la versión Windows como una aplicación GUI e inicia FFmpeg/ffprobe sin consolas secundarias visibles.
-- ejecute comprobaciones de humo de instalación y de interfaz de usuario de actualización visible después de la publicación.
-- ejecute el actualizador macOS de identidad/humo de reemplazo en `macos-26`.
+Mantenga separados los resultados locales, de CI, de artefactos publicados, de aplicaciones instaladas y de plataforma física al informar la validación. La evidencia histórica por versión se encuentra en [registros de publicación](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/releases/README.md).
+
+<a id="known-gaps"></a>
 
 ## Brechas conocidas
 
@@ -334,6 +363,8 @@ Lanzamiento de CI:
 
 El seguimiento del lanzamiento potencial, la plataforma, la accesibilidad, la localización y la cobertura de rendimiento se realiza en [Roadmap](/es/docs/reference/roadmap/).
 
+
+<a id="source-material"></a>
 
 ## Material de origen
 

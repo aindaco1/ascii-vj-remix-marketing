@@ -184,6 +184,40 @@ Use this map to find the likely owner of a change:
   practice docs under `docs/`; update them when architectural assumptions
   change.
 
+## Behavior and Ownership Constraints
+
+Use the [User Guide](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/USER_GUIDE.md) for current behavior and
+[Rendering Engine](/docs/development/rendering-engine/) for the detailed contracts. When editing:
+
+- Preserve the clean-profile Demo Image / Classic Camera ASCII state and keep
+  backend preference on Auto. Existing profiles retain their settings.
+- Keep preset backend ownership in
+  `renderers/shared/preset-backend-contract.js` (71 total, 43 accelerated,
+  28 explicit Canvas). Intentional changes must update the contract and visible
+  preset-matrix evidence together. Platform identity must not preemptively
+  reassign ownership.
+- Keep one canonical parameter model. Saved presets, live effective params,
+  source selection, transitions, WTF, audio, MIDI, and native output must agree.
+  Preset transitions preserve source identity and playback.
+- Extend shared palette, character-set, glyph-atlas, and grid policies. Keep
+  Advanced Density global and out of presets; do not add per-renderer limits or
+  runtime system-font lookup. Read the renderer guide before changing bounds.
+- Reuse GPU resources and source-frame versions; do not reduce visual quality
+  or resolution to obtain a performance improvement.
+- Keep audio feature frames bounded and raw audio out of IPC and diagnostics.
+  Preserve safe clamps and avoid rewriting saved presets during modulation.
+- Keep UC-33e control on the documented mioXC DIN path. MIDI targets visual,
+  audio, preset, and WTF behavior; it must not target source, Camera, Pop Out,
+  output-display, file, updater, or report actions. Read [MIDI_UC33E](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MIDI_UC33E.md)
+  before changing mapping or hardware policy.
+- Preserve the dense black/white/grey UI with pink/blue state accents. Do not
+  reduce control density or add explanatory marketing text inside the app.
+- Keep Reports reachable with an empty queue. Renderer diagnostics follow the
+  bounded [security contract](/docs/operations/security/#crash-reporting); do not attach local
+  media diagnostics or arbitrary logs.
+- Keep backend selection in the center control and resolved-backend diagnostics
+  in the user-owned Stats Overlay, without a duplicate top-bar readout.
+
 
 
 ## Source Material

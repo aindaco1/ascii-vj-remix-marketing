@@ -4,9 +4,10 @@
 require "fileutils"
 require "digest"
 require "pathname"
+require "json"
 
 ROOT = Pathname(__dir__).join("..").expand_path
-SOURCE_ROOT = Pathname(ENV.fetch("ASCII_VJ_SOURCE", "/Users/aindaco1/Library/Mobile Documents/com~apple~CloudDocs/ascii-vj-remix")).expand_path
+SOURCE_ROOT = Pathname(ENV.fetch("ASCII_VJ_SOURCE", ROOT.join("../ascii-vj-remix").to_s)).expand_path
 SOURCE_REPO = ENV.fetch("ASCII_VJ_REPO", "aindaco1/ascii-vj-remix")
 BLOB_BASE = "https://github.com/#{SOURCE_REPO}/blob/main/"
 TREE_BASE = "https://github.com/#{SOURCE_REPO}/tree/main/"
@@ -15,6 +16,10 @@ ICON_DESTINATION = "assets/images/ascii-vj-remix-app-icon.png"
 
 SOURCE_FILES = {
   readme: "README.md",
+  index: "docs/README.md",
+  user_guide: "docs/USER_GUIDE.md",
+  releasing: "docs/RELEASING.md",
+  release_records: "docs/releases/README.md",
   changelog: "CHANGELOG.md",
   rendering: "docs/RENDERING_ENGINE.md",
   contributors: "docs/CONTRIBUTORS.md",
@@ -63,7 +68,19 @@ ALIASES = {
   "docs/TESTING.md" => "/docs/operations/testing/",
   "docs/ACCESSIBILITY.md" => "/docs/operations/accessibility/",
   "docs/I18N.md" => "/docs/operations/internationalization/",
+  "docs/RELEASING.md" => "/docs/operations/release/",
   "docs/ROADMAP.md" => "/docs/reference/roadmap/"
+}.freeze
+
+# These guides are excerpted across pages. Only mirrored sections get local
+# links; other anchors keep pointing to the complete upstream guide.
+SECTION_ALIASES = {
+  "README.md#what-this-project-is" => "/docs/overview/ascii-vj-remix/#what-this-project-is",
+  "README.md#current-capabilities" => "/docs/overview/features/#current-capabilities",
+  "docs/USER_GUIDE.md#current-capabilities" => "/docs/overview/features/#current-capabilities",
+  "docs/USER_GUIDE.md#system-requirements" => "/docs/overview/ascii-vj-remix/#system-requirements",
+  "docs/USER_GUIDE.md#hardware-guidance" => "/docs/overview/ascii-vj-remix/#hardware-guidance",
+  "docs/USER_GUIDE.md#battery-and-heat-warning" => "/docs/overview/ascii-vj-remix/#battery-and-heat-warning"
 }.freeze
 
 module SyncAsciiDocs
@@ -91,7 +108,8 @@ module SyncAsciiDocs
   end
 
   def released_version(markdown)
-    markdown[/^##\s+\[([^\]]+)\]\s+-\s+(?!Unreleased\b)/, 1] || "current"
+    markdown[/^##\s+\[([^\]]+)\]\s+-\s+\d{4}-\d{2}-\d{2}\s*$/, 1] ||
+      raise("No dated release found in CHANGELOG.md")
   end
 
   def released_date(markdown, version)
@@ -112,7 +130,7 @@ module SyncAsciiDocs
       body = section(markdown, heading)
       raise "Missing section #{heading.inspect} in #{source}" if body.empty?
 
-      "## #{heading}\n\n#{rewrite_links(body, source)}"
+      "## #{heading}\n\n#{rewrite_links(body, source, excerpt: true)}"
     end.join("\n\n")
   end
 
@@ -127,18 +145,14 @@ module SyncAsciiDocs
   end
 
   def command_rows(package_json)
-    scripts = package_json.scan(/"([^"]+)"\s*:\s*"([^"]+)"/)
-    return [] if scripts.empty?
-    scripts.select { |name, _| name.match?(/^(dev|build|preview|test|check|tauri|release|smoke|lint|format|podman|sync|verify)/) }
-           .map do |name, value|
-             public_value = value.gsub(%r{media/point-click-test(?:-30s)?\.mp4}, "media/<bundled-test-fixture>.mp4")
-             "| `npm run #{name}` | `#{public_value.gsub('|', '\\|')}` |"
-           end
+    JSON.parse(package_json).fetch("scripts").map do |name, value|
+      public_value = value.gsub(%r{media/point-click-test(?:-30s)?\.mp4}, "media/<bundled-test-fixture>.mp4")
+      "| `npm run #{name}` | `#{public_value.gsub('|', '\\|')}` |"
+    end
   end
 
   def package_json
-    path = SOURCE_ROOT.join("package.json")
-    path.file? ? path.read : ""
+    read_source("package.json")
   end
 
   def page_description(title)
@@ -164,7 +178,6 @@ module SyncAsciiDocs
   end
 
   def pages
-    readme = read_source("README.md")
     changelog = read_source("CHANGELOG.md")
     version = released_version(changelog)
     pkg = package_json
@@ -207,18 +220,22 @@ module SyncAsciiDocs
 
         Current source docs describe the **#{version}** feature set. The sections below are selected directly from the mother repository so product identity, requirements, and hardware guidance do not drift into a second hand-maintained contract.
 
-        #{source_sections("README.md", ["What This Project Is", "System Requirements", "Hardware Guidance", "Battery and Heat Warning"])}
+        #{source_sections("README.md", ["What This Project Is"])}
 
-        #{source_note(["README.md", "CHANGELOG.md"])}
+        #{source_sections("docs/USER_GUIDE.md", ["System Requirements", "Hardware Guidance", "Battery and Heat Warning"])}
+
+        For installation, permissions, privacy, and troubleshooting, use the complete [User Guide](#{source_link("docs/USER_GUIDE.md")}).
+
+        #{source_note(["README.md", "docs/USER_GUIDE.md", "CHANGELOG.md"])}
       MD
       features: <<~MD,
         # Feature Set
 
-        This page describes the current ASCII VJ Remix feature baseline for developers planning forks, ports, integrations, or feature work. The capability map is generated from the mother repository's README.
+        This page describes the current ASCII VJ Remix feature baseline for developers planning forks, ports, integrations, or feature work. The capability map is generated from the mother repository's User Guide.
 
-        #{source_sections("README.md", ["Current Capabilities"])}
+        #{source_sections("docs/USER_GUIDE.md", ["Current Capabilities"])}
 
-        #{source_note(["README.md"])}
+        #{source_note(["docs/USER_GUIDE.md"])}
       MD
       release_baseline: <<~MD,
         # Release Baseline
@@ -243,13 +260,12 @@ module SyncAsciiDocs
         - [Quickstart](/docs/development/quickstart/) — local setup, install, build, and verification commands.
         - [Architecture](/docs/development/architecture/) — ownership map, product boundary, and desktop/runtime architecture.
         - [Rendering Engine](/docs/development/rendering-engine/) — source flow, backend selection, params, audio modulation, Pop Out, and stream paths.
-        - [Contributing](/docs/development/contributing/) — contribution workflow, release/updater notes, and FFmpeg sidecar policy.
+        - [Contributing](/docs/development/contributing/) — local development, app identity, contribution workflow, FFmpeg, and Podman.
         - [Agent Guide](/docs/development/agent-guide/) — context-loading and safety guidance for LLM coding agents.
+        - [Release and Updates](/docs/operations/release/) — packaging, signing, publication, and artifact acceptance.
       MD
       quickstart: <<~MD,
         # Quickstart
-
-        ## Prerequisites
 
         Use the source repository as the working tree:
 
@@ -258,31 +274,19 @@ module SyncAsciiDocs
         cd ascii-vj-remix
         ```
 
-        Install JavaScript dependencies:
-
-        ```bash
-        npm install
-        ```
-
-        For desktop work, install the Tauri prerequisites for the target OS. Linux development also needs the WebKitGTK/WebView stack required by Tauri v2.
-
-        ## Common Local Commands
-
-        #{commands.empty? ? "| Command | Purpose |\n| --- | --- |\n| `npm run dev` | Start the development server when defined by the source repo. |\n| `npm run build` | Build the frontend when defined by the source repo. |" : "| Command | Source script |\n| --- | --- |\n" + commands.join("\n")}
+        #{source_sections("docs/CONTRIBUTORS.md", ["Prerequisites", "First-Time Setup"])}
 
         ## First Verification Path
 
-        1. Install dependencies with `npm install`.
-        2. Run the source repo's focused checks before changing behavior.
-        3. For renderer changes, inspect [Rendering Engine](/docs/development/rendering-engine/) and run renderer-specific checks from [Commands](/docs/reference/commands/).
-        4. For desktop packaging or permissions changes, inspect Tauri config, capabilities, macOS plist/entitlements, and release notes.
-        5. For user-facing controls, check accessibility and i18n expectations before shipping copy or UI changes.
+        Choose the [recommended check set](/docs/operations/testing/#recommended-check-sets) for the change. Use [Contributing](/docs/development/contributing/) for development identity, local signing, FFmpeg, and Podman, and [Commands](/docs/reference/commands/) for the complete npm script catalog.
+
+        For packaging, signing, publication, or updater work, follow [Release and Updates](/docs/operations/release/).
 
         ## Development Boundary
 
         Do not add hosted fonts, CDNs, online decoders, telemetry, or hosted runtime dependencies. Keep runtime assets bundled locally and selected user media local.
 
-        #{source_note(["README.md", "docs/CONTRIBUTORS.md", "docs/AGENTS.md"])}
+        #{source_note(["docs/CONTRIBUTORS.md", "docs/TESTING.md", "docs/RELEASING.md"])}
       MD
       architecture: <<~MD,
         # Architecture
@@ -293,7 +297,7 @@ module SyncAsciiDocs
 
         #{source_sections("docs/RENDERING_ENGINE.md", ["Architecture Properties", "High-Level Data Flow", "Parameter Model"])}
 
-        #{source_sections("docs/AGENTS.md", ["Repository Ownership Map", "Non-Negotiable Constraints"])}
+        #{source_sections("docs/AGENTS.md", ["Repository Ownership Map", "Non-Negotiable Constraints", "Behavior and Ownership Constraints"])}
 
         #{source_note(["docs/AGENTS.md", "docs/RENDERING_ENGINE.md"])}
       MD
@@ -319,19 +323,7 @@ module SyncAsciiDocs
       testing: copied_page("Testing", "docs/TESTING.md", "Operations", 3),
       accessibility: copied_page("Accessibility", "docs/ACCESSIBILITY.md", "Operations", 4),
       internationalization: copied_page("Internationalization", "docs/I18N.md", "Operations", 5),
-      release: <<~MD,
-        # Release and Updates
-
-        Current source docs describe the **#{version}** release line. Release mechanics and security posture are copied from their canonical mother-repository guides.
-
-        See the [v#{version} release](https://github.com/#{SOURCE_REPO}/releases/tag/v#{version}) for published installers, updater packages, and platform-validation notes.
-
-        #{source_sections("docs/SECURITY.md", ["Release Security Posture"])}
-
-        #{source_sections("docs/CONTRIBUTORS.md", ["Release and Updater Work"])}
-
-        #{source_note(["docs/SECURITY.md", "docs/CONTRIBUTORS.md", "CHANGELOG.md"])}
-      MD
+      release: copied_page("Release and Updates", "docs/RELEASING.md", "Operations", 6),
       reference_index: <<~MD,
         # Reference
 
@@ -345,7 +337,7 @@ module SyncAsciiDocs
       commands: <<~MD,
         # Commands
 
-        Commands are read from `package.json` when available. Use source scripts as the authority; these docs are regenerated by `scripts/sync_ascii_docs.rb`.
+        Commands are read from the complete `package.json` scripts object. Use source scripts as the authority; these docs are regenerated by `scripts/sync_ascii_docs.rb`.
 
         Bundled media fixture paths are generalized in this public reference. Use `package.json` when inspecting the exact script implementation.
 
@@ -369,10 +361,14 @@ module SyncAsciiDocs
 
         | Source | Destination / use |
         | --- | --- |
-        | `README.md` | Product scope, feature set, requirements, packaging, support/contact, and developer entry point. |
+        | `README.md` | Product scope and lineage; upstream installation and first-run entry point. |
+        | `docs/README.md` | Upstream documentation ownership and navigation. |
+        | `docs/USER_GUIDE.md` | Detailed feature set, system requirements, hardware, and thermal guidance. Full usage, permissions, and troubleshooting remain linked upstream. |
         | `CHANGELOG.md` | Current release baseline, recent behavior changes, security notes, and validation expectations. |
         | `docs/RENDERING_ENGINE.md` | Source flow, parameter model, renderer backends, effective params, Pop Out, audio, and stream paths. |
-        | `docs/CONTRIBUTORS.md` | Setup, contribution workflow, release/updater notes, FFmpeg sidecar policy. |
+        | `docs/CONTRIBUTORS.md` | Quickstart, local app identity, contribution workflow, FFmpeg, and Podman. |
+        | `docs/RELEASING.md` | Reusable packaging, signing, publication, updater, and artifact acceptance procedure. |
+        | `docs/releases/README.md` | Linked index of historical release records; not current procedure or live acceptance status. |
         | `docs/AGENTS.md` | Agent context-loading order, constraints, ownership map, and safe-working guidance. |
         | `docs/SECURITY.md` | Local-first boundary, Tauri capabilities, crash reporting, updater, media, and secrets handling. |
         | `docs/PERFORMANCE.md` | Renderer/output latency, camera, FPS, and performance validation. |
@@ -382,6 +378,12 @@ module SyncAsciiDocs
         | `docs/ROADMAP.md` | Prospective direction only. |
         | `package.json` | NPM command reference. |
         | `src-tauri/icons/icon.png` | Approved canonical app icon copied into the marketing site. |
+
+        ## Guide Ownership
+
+        The [upstream documentation index](#{source_link("docs/README.md")}) owns the full guide map, including MIDI, character-preset credits, Linux VM QA, component docs, and benchmark evidence. These specialized guides remain linked to their canonical source files.
+
+        [Release records](#{source_link("docs/releases/README.md")}) preserve dated decisions and evidence. Use [Release and Updates](/docs/operations/release/) for the current procedure, [Testing](/docs/operations/testing/) for verification, and [Roadmap](/docs/reference/roadmap/) for prospective work.
 
         ## Regenerate Docs
 
@@ -405,15 +407,28 @@ module SyncAsciiDocs
     content + source_note([source])
   end
 
-  def rewrite_links(content, current_src)
+  def rewrite_links(content, current_src, excerpt: false)
     content.gsub(/\]\(([^)]+)\)/) do |match|
       target = Regexp.last_match(1)
-      next match if target.start_with?("http://", "https://", "mailto:", "#")
+      next match if target.match?(%r{\A(?:[a-z][a-z0-9+.-]*:|//)}i)
+      if target.start_with?("#")
+        next match unless excerpt
+
+        replacement = SECTION_ALIASES["#{current_src}#{target}"] || "#{source_link(current_src)}#{target}"
+        next match.sub("(#{target})", "(#{replacement})")
+      end
       path, suffix = target.split(/(?=[?#])/, 2)
       suffix ||= ""
       current_dir = Pathname(current_src).dirname
       normalized = current_dir.join(path).cleanpath.to_s.sub(%r{\A\./}, "")
-      replacement = ALIASES[normalized] || (SOURCE_ROOT.join(normalized).exist? ? source_link(normalized) : target)
+      section_target = SECTION_ALIASES["#{normalized}#{suffix}"]
+      next match.sub("(#{target})", "(#{section_target})") if section_target
+
+      # The overview only includes selected README sections.
+      local_target = ALIASES[normalized] unless normalized == "README.md" && !suffix.empty?
+      replacement = local_target || (SOURCE_ROOT.join(normalized).exist? ? source_link(normalized) : nil)
+      raise "Unresolved source link #{target.inspect} in #{current_src}" unless replacement
+
       match.sub("(#{target})", "(#{replacement}#{suffix})")
     end
   end
@@ -423,6 +438,8 @@ module SyncAsciiDocs
     SOURCE_FILES.each_value { |file| read_source(file) }
     changelog = read_source("CHANGELOG.md")
     version = released_version(changelog)
+    # Resolve every source section/link before mutating generated pages or data.
+    generated_pages = pages
     icon_sha256 = sync_app_icon
     product_data = ROOT.join("_data/product.yml")
     product_data.dirname.mkpath
@@ -435,10 +452,10 @@ module SyncAsciiDocs
         sha256: #{icon_sha256.inspect}
     YAML
     DOCS.each do |path, title, parent, nav_order, key|
-      write_page(path, title, parent, nav_order, pages.fetch(key))
+      write_page(path, title, parent, nav_order, generated_pages.fetch(key))
     end
     puts "Synced #{DOCS.length} docs pages from #{SOURCE_ROOT}"
   end
 end
 
-SyncAsciiDocs.run
+SyncAsciiDocs.run if $PROGRAM_NAME == __FILE__

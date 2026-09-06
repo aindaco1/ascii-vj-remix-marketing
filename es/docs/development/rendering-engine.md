@@ -6,6 +6,8 @@ parent: Desarrollo
 lang: es
 ---
 
+<a id="rendering-engine"></a>
+
 # Motor de renderizado
 
 Este documento describe cómo ASCII VJ Remix procesa fuentes en salida visual ASCII/celda en contextos de navegador y escritorio Tauri.
@@ -17,6 +19,8 @@ Documentos de práctica relacionados:
 - [Prueba](/es/docs/operations/testing/) para el renderizador actual, los medios, la salida nativa y la matriz de validación de versiones.
 - [Accesibilidad](/es/docs/operations/accessibility/) e [Internacionalización](/es/docs/operations/internationalization/) para reglas de UX de superficie de control que afectan los controles orientados al renderizador.
 
+<a id="architecture-properties"></a>
+
 ## Propiedades de arquitectura
 
 - La salida WebGPU/WebGL es el objetivo de calidad visual.
@@ -26,6 +30,8 @@ Documentos de práctica relacionados:
 - Los ajustes preestablecidos, WTF mode, la reactividad de audio y el control MIDI componen sin bifurcar el estado del renderizador.
 - Pop Out utiliza rutas nativas de cuadros más recientes cuando están disponibles para minimizar la latencia de la cámara en vivo.
 - El comportamiento de paleta, tramado ordenado, glifo y densidad se define una vez en catálogos/matemáticas compartidos y se implementa en cada backend sin estado paralelo.
+
+<a id="high-level-data-flow"></a>
 
 ## Flujo de datos de alto nivel
 
@@ -42,7 +48,11 @@ Source selection
 
 La selección de fuente puede provenir de medios integrados, archivos seleccionados por el usuario, transmisiones de cámara, cámaras mixtas o sesiones de transmisión de desarrollo. El tiempo de ejecución del renderizador elige el mejor backend para la fuente y el entorno activos.
 
+<a id="source-layer"></a>
+
 ## Capa de origen
+
+<a id="built-in-media"></a>
 
 ### Medios integrados
 
@@ -53,11 +63,15 @@ Los elementos incorporados visibles son:
 
 Los archivos multimedia adicionales incluidos permanecen ocultos como accesorios de desarrollo para pruebas de paridad y pruebas de humo de rendimiento.
 
+<a id="custom-files"></a>
+
 ### Archivos personalizados
 
 El modo de explorador utiliza las API de archivos del explorador y las URL de blobs. El modo Tauri utiliza un comando de diálogo nativo y registra el archivo seleccionado bajo una identificación de medio local de sesión. Esa identificación de medio está expuesta a la vista web a través del protocolo de activos de Tauri. Los archivos MKV utilizan inmediatamente la ruta de marco sin formato FFmpeg incluida. Otros videos seleccionados prueban primero el decodificador de la plataforma y vuelven a intentarlo a través de FFmpeg incluido si ese decodificador rechaza el archivo.
 
 El límite de seguridad importante es que el renderizador reciba una URL de medio reproducible o una identificación registrada. No obtiene acceso amplio al sistema de archivos.
+
+<a id="cameras"></a>
 
 ### Cámaras
 
@@ -113,6 +127,8 @@ Fuentes de audio de escritorio Tauri:
 
 La capa de audio genera vectores de características delimitados, no búferes de audio sin formato ni marcos visuales sin formato.
 
+<a id="stream-sessions"></a>
+
 ### Sesiones de transmisión
 
 Las sesiones de transmisión son desarrollo e infraestructura avanzada. No son una fuente normal de cara al usuario.
@@ -141,6 +157,8 @@ registered media id
 
 La interfaz de usuario de origen normal oculta el modo de transmisión. El trabajo de productización potencial se rastrea en [Roadmap](/es/docs/reference/roadmap/).
 
+<a id="parameter-model"></a>
+
 ## Modelo de parámetros
 
 La aplicación mantiene un objeto de parámetro canónico, comúnmente denominado en el código `params`.
@@ -161,6 +179,8 @@ Principales grupos de parámetros:
 La superficie de control, los ajustes preestablecidos, la persistencia, los cambios de fuente, WTF mode, la reactividad de audio, la salida nativa y MIDI leen o escriben a través de este modelo.
 
 Las transiciones estáticas entre familias de renderizadores mantienen la propiedad de los medios en la capa `StaticRuntime`. Los renderizadores Canvas2D, pixel Canvas, WebGL y WebGPU pueden realizar fundidos cruzados sobre la misma fuente de video/cámara en vivo en lugar de destruir y recargar medios cuando cambian `solidMode`, `glyphMode`, `pixel` o `backend`.
+
+<a id="shared-renderer-math"></a>
 
 ### Matemáticas de renderizado compartido
 
@@ -194,6 +214,8 @@ Las funciones Canvas y Stream se nombran intencionalmente por separado de la fun
 
 `npm run test:render-math` valida los ayudantes JavaScript frente a vectores compartidos. Las pruebas de salida nativa de Rust consumen el mismo archivo vectorial para la paridad de procesamiento de color de GPU.
 
+<a id="effective-params"></a>
+
 ### Parámetros efectivos
 
 Algunas funciones afectan la representación en vivo sin cambiar el estado guardado.
@@ -209,6 +231,8 @@ base params
 
 Los parámetros efectivos no deben persistir en los ajustes preestablecidos del usuario a menos que el usuario guarde explícitamente el estado actual como un ajuste preestablecido.
 
+<a id="backend-selection"></a>
+
 ## Selección de back-end
 
 El backend `auto` intenta primero la ruta viable de mayor calidad.
@@ -223,6 +247,8 @@ Prioridad típica del navegador:
 El usuario puede anular el backend manualmente. Los controles que no se aplican al backend activo están ocultos o deshabilitados.
 
 La elección del backend se resuelve una vez por construcción del renderizador en `renderers/gpu/ascii/renderer/backend-policy.js`; no se evalúa en el bucle del cuadro. Sólo un backend de Canvas seleccionado explícitamente pasa por alto la construcción GPU. La identidad de la plataforma y el agente de usuario no cambian la propiedad preestablecida: las vistas empaquetadas macOS, Windows y Linux intentan el mismo orden de reserva WebGPU, WebGL2 y luego Canvas. La selección de backend nativa de Pop Out es independiente y no cambia.
+
+<a id="webgpu-renderer"></a>
 
 ## Renderizador WebGPU
 
@@ -262,6 +288,8 @@ Los ArrayBuffers/DataViews uniformes, las vistas de textura y los grupos de enla
 
 El renderizador de glifos decodifica solo las páginas del atlas que necesita la rampa activa, luego empaqueta hasta 96 máscaras escalares Unicode y sus cinco niveles de cobertura máxima en una textura RGBA de 768x62 de dos filas. Mantener el ancho compacto por debajo de 1024 píxeles evita el límite de carga amplia Apple WebKit y al mismo tiempo conserva la búsqueda de texturas en tiempo constante en el paso del fragmento. Las páginas de Atlas se generan sin conexión, se agrupan localmente y se cargan a través de sus URL de activos. Las actualizaciones de audio/transición en vivo comparan una clave de entrada de glifo compacta antes de resolver rampas o tocar recursos del atlas.
 
+<a id="webgl2-renderer"></a>
+
 ## Renderizador WebGL2
 
 El backend WebGL2 refleja el modelo visual WebGPU lo más fielmente posible:
@@ -283,6 +311,8 @@ El valor predeterminado visual de perfil limpio y la preferencia del renderizado
 
 Las pruebas físicas de Windows 11 con WebView2 detectaron un fallo específico: el renderizador GPU se inicializaba y sus contadores avanzaban, pero el atlas de glifos se veía en blanco, mientras que la salida de celdas sólidas o píxeles seguía visible. La solución anterior enviaba todos los previews de glifos de Windows a Canvas2D, dejando unos siete presets acelerados. La textura compacta de la rampa activa sustituyó aquella ruta problemática, por lo que la línea 1.0 abandona esa asignación general a Canvas2D. La matriz actual de Windows debe conservar 43 presets acelerados y 28 presets explícitos de Canvas. Un fallo real al crear el renderizador sigue recurriendo a Canvas2D.
 
+<a id="canvas-renderers"></a>
+
 ## Renderizadores de lienzo
 
 Las rutas de lienzo conservan la compatibilidad con ASCILINE y el comportamiento de reserva de bajo nivel.
@@ -299,6 +329,8 @@ Estos caminos son importantes para:
 - entornos donde falla la inicialización de GPU.
 
 El respaldo de Canvas sigue siendo funcional aunque no sea la ruta de mayor calidad.
+
+<a id="static-runtime"></a>
 
 ## Tiempo de ejecución estático
 
@@ -332,6 +364,8 @@ Cuando el Pop Out nativo está activo, el controlador arma un contrato de transi
 
 Para una interpolación numérica no estructural, solo los controles cuyos valores cambian se sincronizan durante los cuadros de animación. Las listas de fuentes, las opciones de dispositivos de cámara, la visibilidad, los medidores, la persistencia y la superficie de control completa se concilian en el límite estatal final. Esta es únicamente una optimización del trabajo de la interfaz de usuario; Los parámetros de renderizado efectivos y la sincronización nativa/Pop Out aún avanzan durante la interpolación.
 
+<a id="stream-runtime"></a>
+
 ## Tiempo de ejecución de la transmisión
 
 `StreamRuntime` maneja secuencias de cuadros codificados estilo ASCILINE.
@@ -350,6 +384,8 @@ Las tramas de flujo transportan metadatos INIT y mensajes de framebuffer. El dec
 
 El modo de transmisión está oculto de la interfaz de usuario de origen normal y se conserva como infraestructura de desarrollo.
 
+<a id="adaptive-codec"></a>
+
 ## Códec adaptativo
 
 El códec adaptativo existe para reducir el ancho de banda en comparación con enviar el framebuffer completo en cada cuadro.
@@ -367,6 +403,8 @@ Reglas de compatibilidad:
 - Los clientes heredados existentes aún pueden recibir marcos sin formato.
 - Los decodificadores JS y Rust deben seguir siendo compatibles con los vectores generados por Python.
 - Los cambios de códec requieren pruebas vectoriales.
+
+<a id="rustffmpeg-media-pipeline"></a>
 
 ## Canalización de medios Rust/FFmpeg
 
@@ -399,6 +437,8 @@ Modos de preparación de fotogramas:
 - Modo de píxel: celdas `[B, G, R]`.
 
 La ruta Rust complementa, en lugar de reemplazar, el renderizador estático WebGPU/WebGL. Proporciona preparación de medios empaquetados estilo flujo e integración de decodificador nativo. Los identificadores de fuente incluidos resuelven sólo los recursos de demostración MP4 y WebM enviados; no amplían el protocolo de activos ni exponen caminos arbitrarios.
+
+<a id="native-output-renderer"></a>
 
 ## Representador de salida nativo
 
@@ -439,6 +479,8 @@ Reglas de diseño de salida nativas:
 - El comportamiento del renderizador principal no debe retroceder cuando Pop Out está abierto.
 - el respaldo del navegador debe permanecer disponible.
 
+<a id="audio-reactive-modulation"></a>
+
 ## Modulación audio-reactiva
 
 El análisis de audio actualiza los parámetros de renderizado efectivos a la velocidad de fotogramas.
@@ -472,6 +514,8 @@ Los objetivos de modulación son controles visuales seguros para la vida:
 - compensaciones de muestra.
 
 Los controles estructurales como la fuente, el backend, la asignación de cuadrícula y los dispositivos de cámara no se modulan por tiempo porque provocarían una rotación del renderizador.
+
+<a id="presets-wtf-mode-and-midi"></a>
 
 ## Presets, modo WTF y MIDI
 
@@ -513,6 +557,8 @@ UC-33e DIN output
 
 Consulte [UC-33e y mioXC MIDI Control](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MIDI_UC33E.md) para ver el mapa físico.
 
+<a id="packaging-and-offline-runtime"></a>
+
 ## Empaquetado y tiempo de ejecución sin conexión
 
 El renderizador no debe depender de los recursos en línea en tiempo de ejecución.
@@ -529,24 +575,16 @@ Los activos empaquetados incluyen:
 
 El CSP de producción bloquea el acceso remoto arbitrario al tiempo de ejecución HTTP(S). El protocolo de activos tiene un alcance limitado y una sesión local para los medios seleccionados por el usuario.
 
+<a id="validation"></a>
+
 ## Validación
 
-La matriz de validación mantenida se encuentra en [Testing](/es/docs/operations/testing/). Los comandos principales de renderizado, salida, códec y medios son:
-
-```bash
-npm run smoke:static
-npm run test:output-display
-npm run smoke:native-output
-npm run smoke:ui-perf
-npm run test:vectors
-npm run test:frame-prep
-npm run test:decode-resize
-npm run check:media
-npm run test:rust
-```
+La matriz de validación mantenida y los comandos se encuentran en [Testing](/es/docs/operations/testing/). Utilice sus [verificaciones de backend del renderizador](/es/docs/operations/testing/#renderer-backend-changes), [verificaciones de salida nativas](/es/docs/operations/testing/#native-output-or-pop-out-changes) y [verificaciones de medios](/es/docs/operations/testing/#ffmpeg-and-media-engine) para las rutas afectadas.
 
 El seguimiento del trabajo potencial de renderizado, cámara, transmisión, audio y MIDI solo se realiza en [Roadmap](/es/docs/reference/roadmap/).
 
+
+<a id="source-material"></a>
 
 ## Material de origen
 

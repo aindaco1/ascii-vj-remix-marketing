@@ -6,9 +6,13 @@ parent: Referencia
 lang: es
 ---
 
+<a id="changelog"></a>
+
 # Registro de cambios
 
 ## [1.0.3] - 2026-09-02
+
+<a id="added"></a>
 
 ### Añadido
 
@@ -19,12 +23,16 @@ lang: es
 - Se añadieron métricas acotadas de tiempos, transferencia y FPS aceptados de la duplicación de fotogramas a los informes manuales para medir su comportamiento en equipos físicos.
 - Se añadió un puente de preview de cámara nativa exclusivo de Windows para dispositivos que rechazan dos clientes de captura. Un único cliente de Media Foundation alimenta tanto Pop Out nativo como un preview binario JPEG del último fotograma, limitado a 640x360 y 30 FPS, para el renderizador principal WebGPU existente.
 
+<a id="changed"></a>
+
 ### Cambiado
 
 - Windows abre una única sesión de cámara con Media Foundation y mantiene el preview principal en vivo mediante el puente de preview nativo; Linux conserva su flujo exclusivo V4L2. Las sesiones exclusivas esperan a que termine el hilo de trabajo nativo antes de reintentar la captura del navegador, con un número limitado de reaperturas.
 - La selección de cámara en Windows acepta el identificador de modelo USB que Chromium añade al nombre cuando coincide sin ambigüedad con el nombre descriptivo de Media Foundation. Los diagnósticos manuales conservan el motivo del fallo de apertura nativa cuando se necesita recurrir a la duplicación de fotogramas.
 - La duplicación de cámara alternativa en Windows/Linux usa el último fotograma, un perfil de 640x360 y una única solicitud en curso, con un máximo de 30 FPS. Las demás rutas de duplicación conservan sus dimensiones anteriores y su límite de 15 FPS.
 - Los diagnósticos manuales conservan el tipo de informe y la superficie revisados al pasar por el relé e incluyen el estado de la salida nativa en las incidencias generadas en GitHub. Los informes de Windows conservan el motivo del fallo de apertura compartida, los FPS aceptados por el puente de preview, la tasa de transferencia codificada y los tiempos de lectura, codificación y decodificación.
+
+<a id="fixed"></a>
 
 ### Corregido
 
@@ -36,12 +44,16 @@ lang: es
 - La ruta alternativa DirectShow elimina el sufijo de modelo USB de Chromium y escapa los separadores del nombre del dispositivo. Los diagnósticos también conservan el fallo original de captura nativa.
 - Se concedió a la ventana principal el permiso específico de Tauri necesario para leer fotogramas del puente de preview de cámara nativa de Windows. La comprobación de políticas de escritorio verifica que cada comando Tauri invocado por el frontend tenga un permiso generado y una concesión en las capacidades de la ventana principal. Esto evita que las aplicaciones empaquetadas rechacen silenciosamente un comando nuevo.
 
+<a id="preserved"></a>
+
 ### Conservado
 
 - Pop Out con una sola cámara en macOS conserva la implementación existente de AVFoundation/display-link. No se modificó el código de captura ni de presentación de macOS.
 - La salida multicámara y los dispositivos que no admiten apertura nativa conservan la alternativa de duplicación de fotogramas con límites de transferencia.
 
 ## [1.0.2] - 2026-09-01
+
+<a id="fixed-1"></a>
 
 ### Corregido
 
@@ -50,11 +62,15 @@ lang: es
 
 ## [1.0.1] - 2026-08-31
 
+<a id="added-1"></a>
+
 ### Añadido
 
 - Se añadió un botón accesible con icono de cámara que captura la imagen actual del renderizador principal sin la superposición HTML Stats Overlay y guarda un PNG con nombre único directamente en el Escritorio, sin abrir un diálogo para guardar. La ventana principal recibe un único comando Rust específico que valida los datos PNG, limita su tamaño a 48 MB, escribe de forma atómica y devuelve solo el nombre del archivo.
 - Se añadieron varias listas de presets con nombre, entradas con identificadores estables, controles explícitos para guardar y eliminar, reordenación accesible hacia arriba y abajo, un intervalo común de 1 a 3600 segundos y reproducción en bucle, aleatoria o en orden. Las listas reutilizan la ruta de transición existente de los presets.
 - Se añadieron diagnósticos manuales al flujo existente de Reports. El usuario puede incluir una descripción opcional del problema y capturar información acotada sobre renderizado, clase de fuente, listas, cámara y salida nativa mediante la misma cola, preferencias y proceso de envío de los informes automáticos, con los mismos límites de privacidad.
+
+<a id="changed-1"></a>
 
 ### Cambiado
 
@@ -64,6 +80,8 @@ lang: es
 - Se agregó un contrato explícito de capacidad de salida nativa. macOS conserva su salida de cámara nativa AVFoundation, mientras que Windows y Linux seleccionan la salida de marco de espejo limitada existente en lugar de intentar una implementación de plataforma que no tienen.
 - Las fallas de los trabajadores de medios nativos, cámaras y espejos ahora ponen en cola los informes `native-output-error` limitados a través del reporte de fallas existente en lugar de existir solo como proceso stderr. Los medios de usuario, marcos, capturas de pantalla, registros arbitrarios, URL y rutas quedan excluidos.
 
+<a id="fixed-2"></a>
+
 ### Corregido
 
 - Se corrigió que la nueva lista de reproducción no hiciera nada en las compilaciones empaquetadas de macOS. La creación de listas de reproducción ahora utiliza el editor de nombres en línea existente en lugar de un mensaje JavaScript que la vista web de la aplicación podría suprimir.
@@ -72,12 +90,16 @@ lang: es
 
 ## [1.0.0] - 2026-08-31
 
+<a id="added-2"></a>
+
 ### Añadido
 
 - Se agregó búsqueda en vivo de nombres preestablecidos con secciones Built-in y My Presets separadas y ordenadas alfabéticamente de forma independiente, estado de resultados, borrado del teclado y estados sin resultados.
 - Se agregaron paquetes de solicitud de extracción de perfil de lanzamiento para control de calidad físico: un instalador de desarrollo Windows sin firmar y con el actualizador deshabilitado más paquetes de desarrollo AppImage, deb y rpm Linux retenidos durante 14 días. Cada conjunto de paquetes incluye los recursos FFmpeg/ffprobe anclados, construidos en plataforma y verificados.
 - Se agregó una guía de aceptación y arranque de Hyper-V no destructiva para máquinas virtuales de prueba Ubuntu 26.04.1 y Fedora 44 x86_64 en Windows 11 Pro.
 - Se agregó una puerta de subsistema PE que rechaza un ejecutable en modo de lanzamiento Windows a menos que esté marcado como una aplicación gráfica.
+
+<a id="changed-2"></a>
 
 ### Cambiado
 
@@ -86,6 +108,8 @@ lang: es
 - Se estandarizaron los anchos y alturas de los selectores, las columnas de las etiquetas, el espaciado entre filas y la presentación de valores; se eliminó el control redundante Atlas Style de una opción.
 - Se etiquetó Advanced Density con su límite de `Up to 900 columns` y la advertencia de que no garantiza 30 FPS directamente en la fila de control.
 - Ejecutores de aceptación de compilación y lanzamiento de Linux fijados en Ubuntu 24.04.
+
+<a id="fixed-3"></a>
 
 ### Corregido
 
@@ -111,14 +135,20 @@ La versión 1.0.0 completa la primera versión de escritorio estable con un fluj
 
 ## [0.10.0] - 2026-08-29
 
+<a id="added-3"></a>
+
 ### Añadido
 
 - Se agregaron diagnósticos de renderizador limitados al flujo de trabajo Reports existente. Una creación fallida del procesador registra los backends preestablecidos, solicitados y resueltos, el resultado alternativo, la clase de origen, el resumen de errores y hasta ocho eventos recientes del procesador sin adjuntar medios, capturas de pantalla, rutas locales o registros arbitrarios.
 - Las solicitudes de extracción del mismo repositorio ahora retienen un instalador de desarrollo Windows sin firmar y deshabilitado por el actualizador durante 14 días después de que pasa la puerta de escritorio Windows, lo que permite el control de calidad físico sin reemplazar la aplicación de producción.
 
+<a id="changed-3"></a>
+
 ### Cambiado
 
 - Se reemplazó la insignia del encabezado `VJ` de solo texto con el ícono canónico de neón de la aplicación de reproducción y píxeles, preservando al mismo tiempo la huella de la barra superior existente.
+
+<a id="fixed-4"></a>
 
 ### Corregido
 
@@ -129,6 +159,8 @@ La versión 1.0.0 completa la primera versión de escritorio estable con un fluj
 La versión 0.10.0 hace que los ajustes preestablecidos de glifos Windows sean confiables a través de una ruta de compatibilidad limitada con Canvas2D, extiende las fallas del renderizador al flujo de trabajo existente de Reports limitado por privacidad y reemplaza la insignia `VJ` del encabezado principal con el ícono de la aplicación canónica. La versión 0.9.12 restaura todos los ajustes preestablecidos integrados en la vista principal de la aplicación mientras conserva la relación de aspecto de origen y la ruta nativa Pop Out.
 
 ## [0.9.12] - 2026-08-28
+
+<a id="fixed-5"></a>
 
 ### Corregido
 
@@ -143,6 +175,8 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 
 ## [0.9.11] - 2026-08-28
 
+<a id="added-4"></a>
+
 ### Añadido
 
 - Se agregaron 16 paletas integradas nativas del proyecto compartidas por controles, ajustes preestablecidos, Canvas, WebGL2, WebGPU y salida nativa `wgpu`: Signal Court, Ember Gold, Prism Armor, Verdigris Clay, Forest Kiln, Blush Lichen, Solar Standard, Primary Rite, Jewel Circuit, Spectrum Vault, Soft Voltage, Midnight Scan, Moss Ultraviolet, Cyan Fog, Dark Parade y Sea Glass Array.
@@ -151,6 +185,8 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 - Se agregó un atlas de glifos neutros deterministas y agrupados localmente con ASCII, Braille, bloques, dibujos de cuadros, formas, flechas, símbolos matemáticos y técnicos, latín extendido, griego, cirílico, puntuación/radicales CJK, Hiragana, Katakana, CJK ideogramas unificados U+4E00-U+9FFF y sílabas Hangul.
 - Se agregaron diez ajustes preestablecidos de paleta/glifo e incorporó las paletas restantes a los ajustes preestablecidos existentes sin agregar el paquete de paleta o la importación JSON de paleta.
 - Se agregó una preferencia global Advanced Density que expone hasta 900 columnas fuera de los ajustes preestablecidos visuales y elimina claramente la garantía de 30 FPS.
+
+<a id="changed-4"></a>
 
 ### Cambiado
 
@@ -162,6 +198,8 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 - Se reajustaron los ajustes preestablecidos integrados que anteriormente solicitaban de 700 a 900 columnas en el sobre de densidad normal medido. Advanced Density sigue estando disponible como preferencia explícita de la máquina.
 - WTF extendido, reactividad de audio y MIDI a través de las rutas de parámetros canónicos existentes para el comportamiento de paleta, tramado y glifo.
 
+<a id="performance"></a>
+
 ### Rendimiento
 
 - El techo acelerado normal es de 640 columnas y 160.000 celdas en total; el techo del software es de 120 columnas y 6.000 celdas. Advanced Density permite hasta 900 columnas y 500.000 celdas sin promesa de velocidad de fotogramas.
@@ -169,6 +207,8 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 - La carga de trabajo completa de Signal Court/Bayer 4/CJK midió 37,9, 40,1 y 37,0 FPS para las mismas fases, con una peor fase P95 de 31,6 ms y aproximadamente 446 MB de RSS máximo. El Pop Out nativo presentó cerca de 60 FPS con cero fallas en GPU.
 - Una ejecución de oclusión prefijada desatendida de 15 minutos aumentó de 156,5 MB a 9.411,9 MB de RSS constante. La repetición fija comenzó en 156,1 MB y finalizó en 155,5 MB, con un pico de inicio de 446,1 MB y sin fallas de sincronización nativa. La limitación de la ventana de fondo hizo que la memoria repetida fuera evidencia en lugar de evidencia FPS.
 - Estas cifras son evidencia local de un host más rápido que el piso, no de la aceptación física de M1/16 GB o Windows integrado-GPU.
+
+<a id="validation"></a>
 
 ### Validación
 
@@ -180,14 +220,20 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 
 ## [0.9.10] - 2026-08-26
 
+<a id="changed-5"></a>
+
 ### Cambiado
 
 - Se reemplazó el ícono de la aplicación de televisión heredada con la nueva marca de reproducción y píxel de neón en los recursos macOS, Windows, Linux, iOS y Android generados por Tauri.
 - Se agregó una fuente de ícono RGBA canónica de 1024px y un comando de generación única; Los archivos de íconos específicos de la plataforma son resultados generados en lugar de fuentes de arte independientes.
 
+<a id="fixed-6"></a>
+
 ### Corregido
 
 - La aceptación de la interfaz de usuario de la versión publicada ahora reconoce ambos estados válidos de Reports: la etiqueta `Reports` vacía y la etiqueta de recuento pendiente. Un informe pendiente válido ya no hace que la aceptación de Windows o Linux rechace artefactos de lanzamiento inmutables que de otro modo funcionarían.
+
+<a id="validation-1"></a>
 
 ### Validación
 
@@ -196,16 +242,22 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 
 ## [0.9.9] - 2026-08-26
 
+<a id="fixed-7"></a>
+
 ### Corregido
 
 - El control Reports de la barra superior ahora permanece visible en las compilaciones Tauri cuando la cola de fallos está vacía, por lo que los usuarios pueden revisar las preferencias existentes `ask`, `always` y `off` sin esperar a que se produzca un error. Los informes pendientes aún añaden un recuento y un estado de advertencia; Enviar y Descartar permanecen deshabilitados con una cola vacía.
 - Se eliminó la lectura duplicada del backend del lado derecho de la barra superior. El selector de backend central sigue siendo el control canónico, mientras que el Stats Overlay, propiedad del usuario, continúa informando el backend en tiempo de ejecución resuelto.
 - Los detectores de humo de la interfaz de usuario del actualizador empaquetado ahora se vinculan antes de la inicialización del dispositivo, por lo que las solicitudes tempranas de humo no pueden acelerar el inicio de la cámara o el audio.
 
+<a id="security"></a>
+
 ### Seguridad
 
 - Los informes siguen conteniendo únicamente datos de accidentes limitados y desinfectados. Los diagnósticos de medios locales y los registros arbitrarios no se adjuntan ni envían.
 - Se agregó un canario de aceptación de retransmisión de fallas de producción opcional que se niega a ejecutarse cuando algún informe de usuario ya está pendiente y envía solo una carga útil sintética codificada.
+
+<a id="validation-2"></a>
 
 ### Validación
 
@@ -214,15 +266,21 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 
 ## [0.9.8] - 2026-08-26
 
+<a id="fixed-8"></a>
+
 ### Corregido
 
 - Se restauró el control de producción Update y la verificación de inicio automático otorgando a la ventana principal el permiso limitado `core:app:allow-name` utilizado para verificar la identidad de la aplicación de producción. El permiso faltante provocó que el área de control y estado parpadeara y luego desapareciera en 0.9.6 y 0.9.7.
 - Las fallas de disponibilidad del actualizador ahora registran su causa en lugar de fallar silenciosamente.
 
+<a id="changed-6"></a>
+
 ### Cambiado
 
 - La versión CI ahora resuelve una confirmación de etiqueta inmutable, requiere el flujo de trabajo de inserción principal `Desktop` exacto para que esa confirmación tenga éxito y crea el tiempo de ejecución FFmpeg y el binario de la aplicación Tauri en paralelo.
 - La agrupación restaura los artefactos exactos del flujo de trabajo de un día. FFmpeg mantiene sus comprobaciones de fuente/hash/recursos anclados, mientras que la transferencia binaria de la aplicación verifica la confirmación, la plataforma, la versión, el tamaño de bytes y SHA-256 antes de que Tauri la empaquete sin volver a compilarla.
+
+<a id="validation-3"></a>
 
 ### Validación
 
@@ -231,25 +289,35 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 
 ## [0.9.7] - 2026-08-26
 
+<a id="added-5"></a>
+
 ### Añadido
 
 - La aplicación de escritorio de producción ahora realiza una verificación de metadatos de versión sin bloqueo para los paquetes de actualización firmados cada vez que se abre. Las comprobaciones de versión actual y de inicio fuera de línea permanecen silenciosas; Aparece una versión más nueva a través del control Update de la barra superior existente. Una regresión de la capacidad de producción impidió que ese control permaneciera disponible hasta la corrección 0.9.8.
 - El control manual Update permanece disponible para una nueva verificación inmediata, y la descarga, instalación y reinicio siguen siendo iniciados explícitamente por el usuario.
+
+<a id="fixed-9"></a>
 
 ### Corregido
 
 - Las descargas de fuentes de versiones ahora reintentan fallas de transporte transitorias limitadas y promueven solo archivos tar FFmpeg completados antes de la verificación SHA-256 anclada.
 - El envío automático de lanzamiento de escritorio ahora reintenta fallas transitorias de la API GitHub con retroceso limitado.
 
+<a id="security-1"></a>
+
 ### Seguridad
 
 - Las comprobaciones automáticas reutilizan el punto final del actualizador Tauri existente y los artefactos firmados. No envían medios, cámaras, audio, ajustes preestablecidos, MIDI, informes de fallas o datos de ruta local, y las versiones de desarrollo continúan deshabilitando los puntos finales del actualizador de producción.
+
+<a id="validation-4"></a>
 
 ### Validación
 
 - Se agregó cobertura determinista del actualizador-controlador para una verificación por inicio, resultados silenciosos actuales/fuera de línea, descubrimiento de actualizaciones sin instalación automática, respaldo manual, progreso de descarga y transferencia de reinicio.
 
 ## [0.9.6] - 2026-08-17
+
+<a id="changed-7"></a>
 
 ### Cambiado
 
@@ -262,10 +330,14 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 - Los comandos normales de desarrollo y depuración de paquetes de Tauri ahora usan `ASCII VJ Remix Dev` con el identificador de paquete `com.asciline.remix.dev`. El nombre de producción y el identificador `com.asciline.remix` siguen siendo exclusivos del embalaje de lanzamiento.
 - macOS DMG mantiene Tauri como su único empaquetador, hace explícito el diseño estándar de aplicación a aplicaciones y documenta el DMG como el instalador manual principal. El `.app.tar.gz` sigue siendo un artefacto de actualización.
 
+<a id="fixed-10"></a>
+
 ### Corregido
 
 - Se corrigió la guía de puesta en servicio del UC-33e para usar el modo de botón extendido 146 para distintos valores de presión/liberación. Una asignación CC estándar simple alterna entre dos valores y no proporciona los límites momentáneos esperados por la aplicación.
 - Se aclaró que Control Select es el único botón físico `SELECT` y se agregaron pasos exactos de programación, almacenamiento, captura/restauración de SysEx y verificación en el panel frontal.
+
+<a id="performance-1"></a>
 
 ### Rendimiento
 
@@ -273,6 +345,8 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 - Las fases constantes de construcción optimizada se mantuvieron con calidad equivalente y sin regresión: la referencia 0.9.5 publicada midió 35,8 FPS principal / 39,3 FPS con Pop Out, mientras que el candidato 0.9.6 final midió 38,6 / 39,0 FPS y mantuvo 35,9 FPS durante su reparación. fase de transición numérica.
 - El arnés de humo estático ahora afirma que una transición numérica no realiza más de dos sincronizaciones de control de fuente y una sincronización de cámara/visual completa, en lugar de repetir el trabajo completo de la interfaz de usuario durante toda la interpolación.
 - El código del sombreador de renderizado, el muestreo, el procesamiento del color, la matemática de glifos, la resolución de salida, el código fuente FPS y los controles de calidad no se modifican.
+
+<a id="security-2"></a>
 
 ### Seguridad
 
@@ -282,6 +356,8 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 - La validación de la versión extrae la carga útil real del actualizador `.app.tar.gz` y verifica que su identidad y el requisito designado coincidan con el paquete de aplicaciones notariadas.
 - La validación de la versión verifica la integridad de DMG, monta la imagen como de solo lectura en una raíz temporal privada, acepta solo la aplicación, el enlace exacto `/Applications` y los metadatos Tauri revisados (el ícono de volumen requerido más un `.DS_Store` regular opcional) y aplica la estructura de la aplicación existente y las comprobaciones de identidad de producción a la copia montada.
 - El humo de lanzamiento publicado ahora requiere y revalida el DMG descargado antes de realizar el salto de actualización. La publicación se niega a reemplazar los bytes de artefactos existentes para la misma etiqueta de versión.
+
+<a id="validation-5"></a>
 
 ### Validación
 
@@ -295,6 +371,8 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 - Creó y montó una aplicación local 0.9.6/canario DMG optimizado y pasó la verificación de paquete/recurso/diseño compartido. Este artefacto local está firmado ad hoc; El canario final firmado y certificado por notario con la identificación del desarrollador sigue siendo necesario antes de la publicación.
 
 ## [0.9.5] - 2026-08-04
+
+<a id="added-6"></a>
 
 ### Añadido
 
@@ -310,6 +388,8 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 - Se agregó captura de SysEx de banco completo limitada y restauración de ritmo a través de la conexión DIN de retorno mioXC, además de Ensure Profile on Connection opcional.
 - Se agregó una sonda física de descubrimiento/conexión mioXC y un mapa de controlador imprimible completo en `docs/MIDI_UC33E.md`.
 
+<a id="changed-8"></a>
+
 ### Cambiado
 
 - El glifo nativo Pop Out ahora consume la rampa de caracteres compartidos resueltos y la acepta solo cuando está en el espacio, es única, está delimitada y está completamente cubierta por el atlas de glifos integrado fijo.
@@ -319,12 +399,16 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 - Los cambios preestablecidos visuales rearman la toma de control suave para que los controles UC-33e no motorizados no puedan saltar a través del valor de software activo.
 - MIDI está restringido intencionalmente a parámetros visuales, configuraciones audio-reactivas, ajustes preestablecidos visuales y WTF mode. No puede cambiar fuentes, cámara, Pop Out ni pantallas de salida.
 
+<a id="security-3"></a>
+
 ### Seguridad
 
 - Los comandos MIDI y SysEx se otorgan únicamente a la ventana de control principal. La ventana de salida de solo presentación no recibe permisos MIDI.
 - El adaptador nativo inicial acepta solo puertos cuyos nombres contengan `mioXC`.
 - Las colas MIDI, los recuentos de paquetes SysEx, los bytes decodificados, las asignaciones almacenadas y las ranuras preestablecidas están delimitadas y validadas.
 - Los perfiles de controlador capturados permanecen locales y no contienen rutas de medios, marcos, audio, credenciales ni datos de red.
+
+<a id="validation-6"></a>
 
 ### Validación
 
@@ -339,6 +423,8 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 
 ## [0.9.3] - 2026-06-26
 
+<a id="added-7"></a>
+
 ### Añadido
 
 - Se agregaron futuras herramientas de firma Windows a través de Azure Artifact Signing y Windows `signCommand` de Tauri; la ruta de lanzamiento activa 0.9.3 Windows sigue siendo una vista previa sin firmar.
@@ -348,6 +434,8 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 - Se agregaron controles audiorreactivos para cantidad de transitorio/flujo, cantidad de presencia, amortiguación de densidad y nivel de ruido.
 - Se agregaron medidores de flujo y densidad, además de un ajuste preestablecido audio-reactivo de Dense Mix Control.
 - Se agregaron canales de funciones de audio limitados para medios bajos, medios altos, presencia, brillo y densidad en las rutas de audio nativas y del navegador.
+
+<a id="changed-9"></a>
 
 ### Cambiado
 
@@ -364,16 +452,22 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 - Los ajustes preestablecidos tradicionales de Canvas2D ASCII ahora utilizan de forma predeterminada la fluctuación de imagen estática visible y migran las copias guardadas con fluctuación cero de esas funciones integradas.
 - WTF mode ahora permite que los anclajes ASCII/glifo usen su backend Canvas2D nuevamente, por lo que las transiciones aleatorias de sólido a glifo son visibles en lugar de convertirse en variantes de celda sólida de GPU.
 
+<a id="fixed-11"></a>
+
 ### Corregido
 
 - Se corrigió un modo WTF `ReferenceError` cuando los ajustes preestablecidos de sólidos/píxeles desviaban el siguiente objetivo aleatorio hacia los ajustes preestablecidos de anclaje ASCII tradicionales.
 - Se corrigieron los permisos de limpieza del detector de eventos Tauri para la ventana principal y se hizo que el rechazo nativo de la limpieza del detector cercano Pop Out fuera seguro, evitando los informes de fallas de `event.unlisten not allowed`.
+
+<a id="security-4"></a>
 
 ### Seguridad
 
 - La firma futura Windows utiliza credenciales de firma de ámbito ambiental y no confirma archivos de certificado, secretos de cliente ni material de firma privado.
 - La reactividad de audio todavía envía solo vectores de características acotados a través de IPC; El audio sin formato, los fotogramas, los archivos multimedia y las rutas permanecen locales.
 - Las comprobaciones de firma de versiones y de firmas de actualizadores ahora tratan la distribución pública de macOS como una ruta cerrada ante fallas. Los artefactos Windows 0.9.3 son vistas previas explícitamente sin firmar.
+
+<a id="validation-7"></a>
 
 ### Validación
 
@@ -389,6 +483,8 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 
 ## [0.9.2] - 2026-06-25
 
+<a id="added-8"></a>
+
 ### Añadido
 
 - Se agregó un informe de fallas solo de producción para errores de front-end, rechazos no controlados, fallas del comando Tauri e informes de gancho de pánico Rust.
@@ -396,6 +492,8 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 - Se agregó un relé de fallas Cloudflare Worker en `crash.dustwave.xyz` que limita la ingesta, desinfecta cargas útiles, informes de huellas digitales y crea o actualiza problemas agregados de GitHub a través de una aplicación GitHub.
 - Se agregó una plantilla de informe de fallas GitHub y un flujo de trabajo de implementación de retransmisión de fallas.
 - Se agregaron vectores matemáticos de renderizador compartido que cubren el procesamiento de color GPU y el comportamiento de color heredado de Canvas/stream.
+
+<a id="changed-10"></a>
 
 ### Cambiado
 
@@ -405,11 +503,15 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 - El lienzo del navegador y las imágenes de la transmisión se conservan intencionalmente. El trabajo de consolidación 0.9.2 extrae primero los ayudantes y pruebas compartidos en lugar de cambiar la salida numérica.
 - Los ayudantes de color/hash/conjunto de caracteres del renderizador ahora se encuentran en `renderers/shared/` para su reutilización por el código de la aplicación y las pruebas.
 
+<a id="security-5"></a>
+
 ### Seguridad
 
 - Los informes de fallos se delimitan y desinfectan antes del almacenamiento o envío local. No se incluyen archivos multimedia, fotogramas, audio sin formato, rutas completas, tokens, cookies ni valores de entorno privado.
 - El envío de informes de fallas en la red está deshabilitado para compilaciones que no son de producción o de depuración.
 - Las credenciales GitHub residen únicamente en los secretos Cloudflare Worker; No hay ningún token GitHub integrado en la aplicación de escritorio.
+
+<a id="validation-8"></a>
 
 ### Validación
 
@@ -417,6 +519,8 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 - `npm run check:desktop` y `npm run check:release` ahora incluyen retransmisión de fallos y comprobaciones matemáticas del renderizador.
 
 ## [0.9.1] - 2026-06-24
+
+<a id="added-9"></a>
 
 ### Añadido
 
@@ -432,6 +536,8 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
   - La representación de prueba/respaldo del software nativo utiliza la misma lógica de rampa de glifos.
 - Se agregó cobertura Rust para el análisis de metadatos de glifos nativos, diseño de representación uniforme y salida de máscara de glifos.
 
+<a id="changed-11"></a>
+
 ### Cambiado
 
 - Los ajustes preestablecidos de ASCII tradicionales seleccionan Canvas2D para la vista previa principal, de modo que los glifos sean visibles inmediatamente en la imagen de demostración, el video de demostración, los medios personalizados y las fuentes de la cámara, mientras que el Pop Out nativo representa máscaras de glifos coincidentes.
@@ -442,6 +548,8 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 - Redacción de diagnóstico de medios reforzada para rutas locales integradas y tamaño de mensaje de diagnóstico limitado.
 
 ## [0.9.0] - 2026-06-23
+
+<a id="added-10"></a>
 
 ### Añadido
 
@@ -490,6 +598,8 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 - Se agregaron pruebas estáticas de humo del navegador, pruebas de visualización de resultados, pruebas de manifiesto del actualizador, comprobaciones de políticas de recursos FFmpeg, comprobaciones de paridad de medios y pruebas Rust.
 - Se agregaron documentos de práctica de proyectos para seguridad, rendimiento, pruebas, accesibilidad e internacionalización.
 
+<a id="changed-12"></a>
+
 ### Cambiado
 
 - La interfaz de usuario de origen normal ahora expone fuentes locales estáticas en lugar de un selector estático/transmisión visible.
@@ -501,6 +611,8 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 - La aplicación ahora está documentada como una herramienta creativa independiente y local en lugar de solo como una bifurcación del servidor de transmisión ASCILINE.
 - El tema de la interfaz de usuario ahora utiliza superficies negras y grafito con acentos activos blancos, estados listo/encendido en azul neón y estados de advertencia/WTF/actualización en rosa neón en lugar de la paleta anterior predominantemente azul, al tiempo que conserva la densidad de control compacta y los acentos de estado de alto contraste.
 
+<a id="development-and-release"></a>
+
 ### Desarrollo y lanzamiento
 
 - Node.js 24 es el tiempo de ejecución básico de JavaScript.
@@ -509,6 +621,8 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 - La clave privada del actualizador es intencionalmente externa y debe proporcionarse a través de `TAURI_SIGNING_PRIVATE_KEY`.
 - La clave del actualizador está protegida por contraseña; La automatización de lanzamientos ahora también requiere `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`.
 - Las compilaciones locales de macOS pueden utilizar una identidad autofirmada estable para una mejor reutilización de los permisos TCC durante el desarrollo.
+
+<a id="known-limitations"></a>
 
 ### Limitaciones conocidas
 
@@ -519,6 +633,8 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 - La compatibilidad con MKV depende de la ruta del decodificador de plataforma activa.
 - El comportamiento de captura de audio del sistema/pantalla varía según el sistema operativo y el navegador.
 
+
+<a id="source-material"></a>
 
 ## Material de origen
 

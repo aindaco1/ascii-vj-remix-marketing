@@ -1,58 +1,42 @@
 # ascii-vj-remix-marketing
 
-Marketing site and developer documentation for ASCII VJ Remix.
+Marketing site and developer documentation for [ASCII VJ Remix](https://asciivj.com),
+built with Jekyll and `just-the-docs`.
 
-Canonical site: `https://asciivj.com`
-
-Built with Jekyll and `just-the-docs`, following the architecture of `pool-marketing-docs`.
-
-## Local preview
+## Local Preview
 
 ```bash
 bundle install
 bundle exec jekyll serve
 ```
 
-## Production build
+## Documentation Map
 
-```bash
-bundle exec jekyll build --trace
-python3 scripts/audit_docs_current_state.py
-python3 scripts/audit_links.py
-python3 scripts/audit_seo.py
-python3 scripts/audit_support.py
-python3 scripts/audit_performance.py
-```
+- [`docs/index.md`](docs/index.md): public developer documentation. English pages
+  are generated from the [mother repository](https://github.com/aindaco1/ascii-vj-remix).
+- [`es/docs/index.md`](es/docs/index.md): generated Spanish developer documentation.
+- [`docs/maintenance/README.md`](docs/maintenance/README.md): site maintenance,
+  source refresh, localization, validation, and shared support/download contracts.
+- [`docs/maintenance/source-notes.md`](docs/maintenance/source-notes.md): dated
+  source-ingestion evidence and claims policy.
+- [`docs/maintenance/support-design-qa.md`](docs/maintenance/support-design-qa.md):
+  historical support-page design review.
 
-The performance audit protects the homepage's inline critical CSS, route-scoped
-animation, content-addressed assets, responsive video metadata, and optimized
-font/video size budgets.
+Keep the root README as the repository entry point and any license file at the
+root. `index.md` and `support.md` are website routes and stay in place. Internal
+guides belong in `docs/maintenance/`, which is excluded from the public build,
+search, sitemap, translation, and current-product claims audits. Component
+documentation and required third-party notices stay beside their components.
 
-## Dust Wave Support contract
+## Refresh and Validate
 
-`_data/support.yml` is the single source for the support brand and checkout options. The English and Spanish support pages render that data with `_includes/support-options.html`, so provider configuration stays shared while ASCII VJ Remix keeps its own visual language. The contract intentionally supports one customer-chosen one-time amount (suggested at $10) and one fixed $5/month option.
+The mother repository owns technical behavior. This repository owns public
+marketing copy, documentation presentation, localization, and deployment.
+Edit upstream guides or the import templates, then regenerate; do not hand-edit
+generated English or Spanish pages.
 
-`scripts/audit_support.py` validates both built support pages, localized UTM attribution, the two required cadences, and direct Stripe-hosted checkout links. Production validation rejects Stripe test links. During a deliberate test-mode preview, use:
-
-```bash
-SUPPORT_ALLOW_TEST_LINKS=1 python3 scripts/audit_support.py
-```
-
-The homepage's single latest-download action is rendered by `_includes/download-latest-button.html`. It derives the macOS DMG, Windows installer, and Linux AppImage URLs from `_data/product.yml`, then `assets/js/site.js` chooses the visitor's desktop platform. Mobile and unknown platforms keep the GitHub latest-release page as a safe fallback. The committed performance audit checks both localized pages and every generated artifact URL.
-
-When checkout resources change, create and verify the replacement Product, Prices, and localized Payment Links first; then update `_data/support.yml` in a coordinated release. Do not archive an old recurring Price or Product while existing subscriptions still depend on it.
-
-## Refresh from the source project
-
-The mother repository owns technical behavior and source documentation. This
-repository owns the public marketing copy, documentation presentation,
-localization pipeline, and deployment. `scripts/sync_ascii_docs.rb` selects or
-copies canonical source sections for the product overview, feature baseline,
-release notes, architecture, operations guides, command reference, roadmap,
-changelog, and approved app icon; do not hand-edit the generated English pages.
-
-Refresh the generated product documentation, release label, and icon from the
-local ASCII VJ Remix checkout:
+The default source is the sibling `../ascii-vj-remix` checkout. Override it with
+`ASCII_VJ_SOURCE=/absolute/path/to/ascii-vj-remix` when needed.
 
 ```bash
 ruby scripts/sync_ascii_docs.rb
@@ -63,27 +47,8 @@ python3 scripts/audit_links.py
 python3 scripts/audit_seo.py
 python3 scripts/audit_support.py
 python3 scripts/audit_performance.py
+git diff --check
 ```
 
-Review generated changes before publishing. The source changelog may include an
-unreleased section; the marketing site's release badge intentionally selects the
-newest dated release instead.
-
-Verify that release and its platform assets on GitHub Releases before publishing
-the site. The product-data date comes from the changelog and can differ from the
-date the downloads were published.
-
-Reviewed Spanish passages live in `scripts/spanish-docs-overrides.json`, keyed by
-the complete English source paragraph or table cell. The translation script
-applies them before its local cache or translation service, preserving corrected
-technical meanings and attribution links across regeneration. Add new reviewed
-entries when the source wording changes; do not edit generated Spanish pages.
-
-`_data/product.yml` records the synced release and canonical icon SHA-256.
-`scripts/audit_docs_current_state.py` checks current-release claims, required
-renderer feature markers, and the copied icon's dimensions/hash so a version-only
-sync cannot relabel stale release copy.
-
-## Source repo
-
-- `/Users/aindaco1/Library/Mobile Documents/com~apple~CloudDocs/ascii-vj-remix`
+See the [maintenance guide](docs/maintenance/README.md) for source ownership,
+translation overrides, pipeline tests, release verification, and publishing.

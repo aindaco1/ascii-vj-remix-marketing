@@ -708,20 +708,10 @@ protocol is scoped narrowly and session-locally for user-selected media.
 
 ## Validation
 
-The maintained validation matrix lives in [Testing](/docs/operations/testing/). The primary
-renderer, output, codec, and media commands are:
-
-```bash
-npm run smoke:static
-npm run test:output-display
-npm run smoke:native-output
-npm run smoke:ui-perf
-npm run test:vectors
-npm run test:frame-prep
-npm run test:decode-resize
-npm run check:media
-npm run test:rust
-```
+The maintained validation matrix and commands live in [Testing](/docs/operations/testing/).
+Use its [renderer backend checks](/docs/operations/testing/#renderer-backend-changes),
+[native output checks](/docs/operations/testing/#native-output-or-pop-out-changes), and
+[media checks](/docs/operations/testing/#ffmpeg-and-media-engine) for the affected paths.
 
 Prospective renderer, camera, stream, audio, and MIDI work is tracked only in
 the [Roadmap](/docs/reference/roadmap/).

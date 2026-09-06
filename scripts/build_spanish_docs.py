@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 import re
 import sys
+import subprocess
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from json import dumps, loads
@@ -13,6 +14,7 @@ from threading import Lock, get_ident
 from urllib.error import HTTPError
 from urllib.parse import urlencode
 from urllib.request import urlopen
+from docs_common import public_docs
 
 ROOT = Path(__file__).resolve().parent.parent
 SOURCE_DIR = ROOT / "docs"
@@ -59,10 +61,6 @@ BODY_OVERRIDES = {
     "### Validation": "### Validación",
     "### Preserved": "### Conservado",
     "## Source Material": "## Material de origen",
-}
-
-ANCHOR_OVERRIDES = {
-    "#release-and-updater-work": "#trabajo-de-lanzamiento-y-actualización",
 }
 
 MONTH_OVERRIDES = {
@@ -227,7 +225,7 @@ def protect_text(text: str) -> tuple[str, list[str]]:
         r"(?<![\w/])(?:[A-Za-z0-9_.-]+/)*[A-Za-z0-9_.-]+\.(?:css|html|js|json|lock|md|mjs|py|rb|rs|scss|sh|toml|ts|tsx|yaml|yml)(?![\w/])",
         working,
     )
-    working = protect(r"\]\((?:https?://|/|mailto:)[^)]+\)", working)
+    working = protect(r"\]\((?:https?://|/|mailto:|#)[^)]+\)", working)
     working = protect(r"https?://\S+", working)
     working = protect(r"mailto:\S+", working)
     return working, placeholders
@@ -463,8 +461,6 @@ def rewrite_docs_links(text: str) -> str:
     text = text.replace('href="/docs/', 'href="/es/docs/')
     text = text.replace('"/docs/', '"/es/docs/')
     text = text.replace(" /docs/", " /es/docs/")
-    for source, target in ANCHOR_OVERRIDES.items():
-        text = text.replace(source, target)
     return text
 
 
@@ -676,6 +672,36 @@ def dump_page(data: dict, body: str) -> str:
     return f"---\n{front_matter}\n---\n{body}"
 
 
+def preserve_heading_links(english: str, spanish: str) -> str:
+    """Keep English fragment links valid alongside native Spanish heading IDs."""
+    result = subprocess.run(
+        ["bundle", "exec", "ruby", str(ROOT / "scripts" / "docs_heading_ids.rb")],
+        input=dumps([english, spanish]), text=True, capture_output=True,
+        check=True, cwd=ROOT,
+    )
+    english_ids, spanish_ids = loads(result.stdout)
+    if len(english_ids) != len(spanish_ids):
+        raise ValueError("Translation changed the Markdown heading structure")
+
+    output = []
+    heading_index = 0
+    fence = ""
+    for line in spanish.splitlines():
+        stripped = line.lstrip()
+        if stripped.startswith(("```", "~~~")):
+            marker = stripped[:3]
+            fence = "" if fence == marker else (fence or marker)
+        elif not fence and re.match(r"^#{1,6}\s+", line):
+            source_id = english_ids[heading_index]
+            if source_id not in spanish_ids:
+                output.extend([f'<a id="{source_id}"></a>', ""])
+            heading_index += 1
+        output.append(line)
+    if heading_index != len(english_ids):
+        raise ValueError("Unsupported Markdown heading layout for translated aliases")
+    return "\n".join(output) + "\n"
+
+
 def translate_page(path: Path) -> None:
     relative_path = path.relative_to(SOURCE_DIR)
     target_path = TARGET_DIR / relative_path
@@ -695,7 +721,7 @@ def translate_page(path: Path) -> None:
 
     data["lang"] = "es"
 
-    translated_body = translate_body(body)
+    translated_body = preserve_heading_links(body, translate_body(body))
     target_path.write_text(dump_page(data, translated_body))
 
 
@@ -712,7 +738,7 @@ def main() -> int:
         if value.strip()
     }
 
-    paths = list(SOURCE_DIR.rglob("*.md"))
+    paths = public_docs(SOURCE_DIR)
     if requested_files:
         paths = [
             path

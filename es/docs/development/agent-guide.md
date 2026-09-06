@@ -6,20 +6,26 @@ parent: Desarrollo
 lang: es
 ---
 
+<a id="agent-guide"></a>
+
 # Guía para agentes
 
 Este documento es para agentes codificadores LLM que trabajan en ASCII VJ Remix. Explica qué contexto cargar primero, qué restricciones del proyecto son más importantes y qué archivos suelen poseer cada tipo de cambio.
+
+<a id="fast-context-load"></a>
 
 ## Carga rápida de contexto
 
 Léalos en orden antes de realizar cambios no triviales:
 
-1. [README](/es/docs/overview/ascii-vj-remix/): descripción general del producto, conjunto de funciones actuales para el usuario, notas de instalación, requisitos del sistema, licencia/soporte/información de contacto.
-2. [Changelog](/es/docs/reference/changelog/): línea base de características de la versión actual y expectativas de comportamiento recientes.
+1. [README](/es/docs/overview/ascii-vj-remix/): descripción general del producto, conceptos básicos de instalación, primera ejecución y versión fuente/lanzamiento actual. La [Guía del usuario](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/USER_GUIDE.md) posee el conjunto completo de funciones, requisitos del sistema, permisos y solución de problemas.
+2. [Changelog](/es/docs/reference/changelog/): cambios recientes publicados y no publicados.
 3. [Roadmap](/es/docs/reference/roadmap/): solo trabajos potenciales.
-4. [Motor de renderizado](/es/docs/development/rendering-engine/): flujo de origen, backends de renderizado, arquitectura de salida nativa, motor de medios, reactividad de audio e integración de MIDI.
-5. [Guía del colaborador](/es/docs/development/contributing/): configuración de desarrollo, comandos de prueba, notas de versión/actualización, política complementaria de FFmpeg y flujo de trabajo de contribución.
-6. Documentos de práctica del proyecto cuando sea relevante: [Security](/es/docs/operations/security/), [Performance](/es/docs/operations/performance/), [Testing](/es/docs/operations/testing/), [Accessibility](/es/docs/operations/accessibility/) e [Internationalization](/es/docs/operations/internationalization/).
+4. [Motor de renderizado](/es/docs/development/rendering-engine/): flujo de origen, backends de renderizado, salida nativa, motor de medios, reactividad de audio e integración de MIDI.
+5. [Guía del colaborador](/es/docs/development/contributing/): configuración, identidad de la aplicación local, FFmpeg, Podman y flujo de trabajo de contribución.
+6. [Pruebas](/es/docs/operations/testing/): selección de comprobaciones y verificación manual. Consulte las guías de [Seguridad](/es/docs/operations/security/), [Rendimiento](/es/docs/operations/performance/), [Accesibilidad](/es/docs/operations/accessibility/) e [Internacionalización](/es/docs/operations/internationalization/) que correspondan al comportamiento afectado.
+
+El [índice de documentación](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/README.md) enlaza todas las guías mantenidas. Para tareas de empaquetado, firma, publicación o actualización, consulte también la [Guía de lanzamiento y actualizaciones](/es/docs/operations/release/). Los [registros de versiones](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/releases/README.md) conservan evidencia histórica y no sustituyen las guías actuales.
 
 Para el trabajo con MIDI, mapeo UC-33e o SysEx, lea también [UC-33e y mioXC MIDI Control](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MIDI_UC33E.md).
 
@@ -39,11 +45,15 @@ Para trabajos de renderizado o Pop Out, inspeccione también:
 - [Salida nativa GPU presentador](https://github.com/aindaco1/ascii-vj-remix/blob/main/src-tauri/src/native_output/gpu.rs)
 - [Módulo de cámara nativo](https://github.com/aindaco1/ascii-vj-remix/blob/main/src-tauri/src/native_output/native_camera.rs)
 
+<a id="project-identity"></a>
+
 ## Identidad del proyecto
 
 ASCII VJ Remix es un laboratorio de renderizado de escritorio nativo local para macOS, Windows y Linux. El producto previsto es la aplicación de escritorio Tauri, no una aplicación web alojada ni una compilación exclusiva del navegador.
 
 El repositorio combina renderizado WebGPU/WebGL de alta calidad, rutas de compatibilidad de Canvas, infraestructura de códec y flujo derivado de ASCILINE y empaquetado de escritorio Tauri. La aplicación es una superficie de control creativa para imágenes ASCII/celulares en vivo.
+
+<a id="non-negotiable-constraints"></a>
 
 ## Restricciones no negociables
 
@@ -61,59 +71,24 @@ El repositorio combina renderizado WebGPU/WebGL de alta calidad, rutas de compat
 - La infraestructura de transmisión existe pero no es un modo de fuente visible normal. Mantenga oculta su interfaz de usuario; La productización prospectiva pertenece a la hoja de ruta.
 - La seguridad, el rendimiento, la accesibilidad y la orientación de i18n se encuentran en documentos de práctica dedicados en `docs/`; actualizarlos cuando cambien los supuestos arquitectónicos.
 
-## Línea de base actual orientada al usuario
+<a id="behavior-and-ownership-constraints"></a>
 
-La versión actual del código fuente y los paquetes es 1.0.3, que también es la versión pública estable. El registro de cambios recoge el historial de versiones; la hoja de ruta contiene únicamente trabajo futuro.
+## Restricciones de comportamiento y propiedad
 
-Fuentes:
+Utilice la [Guía del usuario](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/USER_GUIDE.md) para conocer el comportamiento actual y el [Motor de renderizado](/es/docs/development/rendering-engine/) para conocer los contratos detallados. Al editar:
 
-- La imagen de demostración es la fuente de inicio predeterminada.
-- El vídeo de demostración es la única fuente de vídeo integrada visible.
-- Se pueden seleccionar imágenes y videos locales personalizados.
-- La cámara es una fuente de primera clase.
-- Se pueden combinar varias cámaras localmente cuando el sistema operativo o el tiempo de ejecución admiten la captura simultánea.
-- Los controles de la cámara aparecen directamente debajo de Fuente mientras la cámara está activa.
+- Conserve el estado de perfil limpio Demo Image / Classic Camera ASCII y mantenga la preferencia de backend en Auto. Los perfiles existentes conservan su configuración.
+- Mantenga la propiedad de backend preestablecida en `renderers/shared/preset-backend-contract.js` (71 en total, 43 acelerados, 28 Canvas explícitos). Los cambios intencionales deben actualizar el contrato y la evidencia visible de la matriz preestablecida en conjunto. La identidad de la plataforma no debe reasignar la propiedad de forma preventiva.
+- Mantenga un modelo de parámetro canónico. Los ajustes preestablecidos guardados, los parámetros efectivos en vivo, la selección de fuente, las transiciones, WTF, audio, MIDI y la salida nativa deben coincidir. Las transiciones preestablecidas preservan la identidad de la fuente y la reproducción.
+- Amplíe las políticas de paleta compartida, conjunto de caracteres, atlas de glifos y cuadrícula. Mantenga Advanced Density global y fuera de los ajustes preestablecidos; no agregue límites por renderizador ni búsqueda de fuentes del sistema en tiempo de ejecución. Lea la guía del renderizador antes de cambiar los límites.
+- Reutilizar recursos GPU y versiones del marco fuente; no reduzca la calidad visual ni la resolución para obtener una mejora del rendimiento.
+- Mantenga acotados los datos de análisis de audio y excluya el audio sin procesar de IPC y de los diagnósticos. Conserve los límites de seguridad y evite reescribir los presets guardados durante la modulación.
+- Mantenga el control del UC-33e en la ruta DIN mioXC documentada. MIDI apunta al comportamiento visual, de audio, preestablecido y WTF; no debe apuntar a la fuente, la cámara, Pop Out, la visualización de salida, el archivo, el actualizador ni las acciones de informe. Lea [MIDI_UC33E](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MIDI_UC33E.md) antes de cambiar la política de mapeo o hardware.
+- Conserve la interfaz de usuario densa en negro, blanco y gris con acentos de estado en rosa y azul. No reduzca la densidad de control ni agregue texto de marketing explicativo dentro de la aplicación.
+- Mantenga Reports accesible con una cola vacía. Los diagnósticos del renderizador siguen el [contrato de seguridad](/es/docs/operations/security/#crash-reporting); no adjunte diagnósticos de medios locales ni registros arbitrarios.
+- Mantenga la selección de backend en el control central y los diagnósticos de backend resueltos en el Stats Overlay propiedad del usuario, sin una lectura duplicada en la barra superior.
 
-Representación:
-
-- WebGPU es el principal objetivo de calidad.
-- WebGL2 es el principal respaldo integrado de GPU.
-- Canvas2D y Pixel Canvas siguen siendo alternativas de compatibilidad.
-- Las vistas de escritorio empaquetadas prueban WebGPU para cada ajuste preestablecido elegible para aceleración, luego WebGL2 y Canvas2D a través del respaldo limitado compartido. No utilice la plataforma de alojamiento ni la identidad del agente de usuario para reasignar de forma preventiva la propiedad preestablecida.
-- La salida nativa Pop Out usa `wgpu` cuando esté disponible, con Metal en macOS y los backends GPU correspondientes en Windows/Linux.
-- El renderizador activo está controlado por un modelo de parámetro canónico.
-- Classic Camera ASCII posee el estado visual de perfil limpio, no la preferencia de renderizado global. Mantenga el backend predeterminado en Auto; los integrados lo heredan a menos que declaren explícitamente un backend de compatibilidad.
-- Mantenga el contrato de backend integrado 71/43/28 centralizado en `renderers/shared/preset-backend-contract.js`: 71 ajustes preestablecidos de Canvas en total, 43 acelerados y 28 explícitos. Cualquier cambio intencional de propiedad debe actualizar el contrato y su evidencia visible de matriz preestablecida en conjunto.
-- El Pop Out nativo conserva los parámetros del modo glifo y del conjunto de caracteres para los ajustes preestablecidos ASCII tradicionales.
-- Diecisiete paletas nativas del proyecto, mapeo más cercano/de luminancia y difuminado Bayer 2x2/4x4/8x8 utilizan el catálogo de paletas compartido y la LUT de 32x32x32 en caché.
-- El atlas Unicode generado neutral cubre los bloques BMP comunes aprobados en dieciséis páginas de 1024px. La caché de páginas decodificadas del navegador tiene un límite de cuatro; La salida nativa y del navegador GPU utiliza identificadores escalares Unicode y una rampa máxima de 96 identificadores. La vista previa de WebGPU compacta la rampa activa y los mips de cobertura en una textura RGBA de dos filas; WebGL2 y la salida nativa conservan los recursos del atlas paginado.
-- La densidad normal está limitada por la columna acelerada/software compartida y los límites totales de celdas. Advanced Density es global, permite hasta 900 columnas sin una garantía de 30 FPS y nunca debe almacenarse en ajustes preestablecidos visuales.
-- El catálogo de conjunto de caracteres compartido incluye 23 rampas de luminancia derivadas de ascii.today acreditadas y ajustes preestablecidos de solo lectura coincidentes.
-- La salida de glifos nativos utiliza recursos de rampa/atlas paginados delimitados; `fontFamily` son metadatos de interfaz de usuario/vista previa, no un receptor de carga de fuentes nativo.
-- Reutilice recursos estables WebGPU/WebGL, mantenga las cargas de fuentes nativas vinculadas a las versiones del marco de origen y no intercambie calidad/resolución por rendimiento.
-
-Comportamiento en vivo:
-
-- Los ajustes preestablecidos son de solo lectura a menos que los cree el usuario.
-- Las transiciones preestablecidas son fundidos cruzados suaves, no fundidos a negro.
-- Los ajustes preestablecidos conservan la fuente de medios activa a menos que se cambien explícitamente.
-- WTF mode se ejecuta indefinidamente mientras está activo y realiza transiciones a través de configuraciones aleatorias seguras en vivo, incluidos anclajes de ajustes preestablecidos ASCII tradicionales.
-- La reactividad de audio está habilitada de forma predeterminada, comienza desde el micrófono/entrada de forma predeterminada y modula los parámetros efectivos en vivo sin reescribir los ajustes preestablecidos guardados.
-- La reactividad de audio utiliza vectores de características acotados, incluidos RMS, bandas, transitorios/flujo, presencia, brillo, densidad, pulso y fase. No envíe buffers de audio sin procesar a través de IPC o diagnósticos.
-- Los límites de seguridad evitan que las salidas de negro puro o blanco puro entren en estados aleatorios o controlados por audio.
-- El equipo experimental MIDI es el UC-33e a través de ambas direcciones DIN de un mioXC; No se admite UC USB directo.
-- MIDI utiliza cuatro páginas con dirección de canal, toma de control suave, espacios preestablecidos numéricos, anulaciones de aprendizaje de MIDI y captura/restauración de banco completo limitado de SysEx.
-- MIDI apunta únicamente al comportamiento visual/audio/preestablecido/WTF. No agregue acciones de fuente, cámara, Pop Out, visualización de salida, archivo, actualizador o informe de fallas.
-- Lea [MIDI_UC33E](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MIDI_UC33E.md) antes de cambiar las asignaciones o la política de hardware.
-
-Interfaz de usuario:
-
-- El tema actual es negro/blanco/gris extremo con detalles en rosa neón y azul neón.
-- El diseño es intencionadamente denso.
-- No reduzca la densidad de control al cambiar el estilo visual.
-- Evite agregar texto de marketing explicativo dentro de la interfaz de usuario de la aplicación.
-- Mantenga accesible el control Reports de la barra superior con una cola vacía; El estado pendiente es aditivo. Las fallas del renderizador pueden adjuntar el resumen del evento del renderizador desinfectado y delimitado definido por el contrato de seguridad. No adjunte diagnósticos de medios locales ni registros arbitrarios.
-- Mantenga la selección de backend en el control central. Los diagnósticos de backend resueltos pertenecen al Stats Overlay propiedad del usuario, no a una lectura duplicada de la barra superior.
+<a id="repository-ownership-map"></a>
 
 ## Mapa de propiedad del repositorio
 
@@ -132,8 +107,10 @@ Utilice este mapa para encontrar al probable propietario de un cambio:
 |Motor multimedia Rust, códec, sesiones FFmpeg|[src-tauri/src/media_engine/](https://github.com/aindaco1/ascii-vj-remix/tree/main/src-tauri/src/media_engine)|
 |Medios de demostración integrados y accesorios ocultos|[medios/](https://github.com/aindaco1/ascii-vj-remix/tree/main/media)|
 |Experimentos de códec/vector|[experimentos/](https://github.com/aindaco1/ascii-vj-remix/tree/main/experiments)|
-|Construir, fumar, liberar, Podman, scripts FFmpeg|[guiones/](https://github.com/aindaco1/ascii-vj-remix/tree/main/scripts)|
+|Scripts de compilación, pruebas de humo, publicación, Podman y FFmpeg|[guiones/](https://github.com/aindaco1/ascii-vj-remix/tree/main/scripts)|
 |Documentos de usuario/desarrollador|[docs/](https://github.com/aindaco1/ascii-vj-remix/tree/main/docs) y [README](/es/docs/overview/ascii-vj-remix/)|
+
+<a id="working-safely"></a>
 
 ## Trabajar con seguridad
 
@@ -153,75 +130,19 @@ Al editar:
 - Preservar el modelo de capacidad y permisos limitados de Tauri.
 - Mantenga los activos de tiempo de ejecución agrupados localmente.
 - Utilice scripts de compilación existentes en lugar de comandos de compilación ad hoc cuando sea posible.
-- Update documenta al cambiar el comportamiento del producto, el comportamiento de la versión, la arquitectura del renderizador o los requisitos de configuración.
+- Actualice la documentación cuando cambie el comportamiento del producto, el proceso de publicación, la arquitectura del renderizador o los requisitos de configuración.
 
-## Comandos de validación comunes
+<a id="validation-and-packaging"></a>
 
-Elija el conjunto más pequeño que cubra el cambio.
+## Validación y empaquetado
 
-Sólo documentación:
+Utilice [Pruebas: conjuntos de comprobaciones recomendados](/es/docs/operations/testing/#recommended-check-sets) para elegir las comprobaciones mínimas que cubran el cambio. Los cambios de documentación requieren `git diff --check`; si mueve archivos, también debe validar enlaces, anclas y referencias a rutas. Distinga entre comprobaciones locales, paquetes de CI, pruebas de humo de la aplicación instalada y aceptación en hardware físico.
 
-```bash
-git diff --check
-```
+Utilice [Guía del colaborador](/es/docs/development/contributing/) para comandos de compilación locales y [identidad de desarrollo macOS](/es/docs/development/contributing/#macos-permissions-during-development). Las compilaciones locales normales utilizan `ASCII VJ Remix Dev` / `com.asciline.remix.dev` y las pruebas de permisos requieren una firma local estable. La guía para colaboradores también posee el comportamiento del directorio de compilación de iCloud y el flujo de generación de íconos canónicos.
 
-Para una selección de pruebas más amplia, lea [Testing](/es/docs/operations/testing/).
+Utilice la [Guía de lanzamiento y actualizaciones](/es/docs/operations/release/) para la configuración de paquetes, firmas, secretos, recursos de FFmpeg y validación de artefactos publicados. El empaquetado con actualizador habilitado requiere la clave de firma y su contraseña; la falta de secretos no justifica reducir las comprobaciones de publicación. Nunca incluya esos secretos en el repositorio. Esa guía y [Seguridad](/es/docs/operations/security/) definen la firma pública de macOS y los actuales paquetes preliminares sin firmar de Windows.
 
-Comportamiento de interfaz/UI/fuente:
-
-```bash
-npm run build
-npm run smoke:static
-```
-
-Comportamiento Rust/Tauri:
-
-```bash
-npm run test:rust
-npm run check:desktop
-```
-
-Comportamiento MIDI:
-
-```bash
-npm run test:midi
-npm run midi:probe -- --connect
-npm run test:rust
-```
-
-Construcción optimizada de la aplicación macOS:
-
-```bash
-npm run tauri:build:dev -- --bundles app
-```
-
-Embalaje de lanzamiento:
-
-```bash
-npm run ffmpeg:build-sidecar
-npm run check:release
-npm run bundle:release
-```
-
-Nota de compilación de lanzamiento local esperada:
-
-- Los artefactos públicos macOS están firmados con ID de desarrollador, notariados, grapados y validados por Gatekeeper. Los artefactos Windows actuales son vistas previas sin firmar. Las compilaciones locales normales utilizan `ASCII VJ Remix Dev` / `com.asciline.remix.dev`; el iniciador local requiere una identidad estable antes de realizar la prueba de permiso.
-- Si `TAURI_SIGNING_PRIVATE_KEY` o `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` están ausentes mientras los artefactos del actualizador están habilitados, el paquete de versiones fallará al firmar el actualizador. Las rutas de validación locales están documentadas en la guía para contribuyentes; nunca confirme ninguno de los archivos.
-
-## Tauri y notas de embalaje
-
-- Tauri v2 es el shell del escritorio.
-- Las compilaciones de producción realizan una verificación de actualización sin bloqueo por lanzamiento. Una verificación de antecedentes actual o fallida permanece en silencio; descargar/instalar sigue siendo una acción explícita del usuario a través del control Update existente.
-- `src-tauri/tauri.conf.json` es la configuración base de producción multiplataforma; su identidad ad hoc macOS se utiliza únicamente en rutas de empaquetado explícitas y no certificadas por notario.
-- `src-tauri/tauri.dev.conf.json` aísla los comandos locales normales del nombre de producción, el identificador del paquete y el actualizador.
-- `src-tauri/tauri.notarized.conf.json` es para compilaciones de lanzamiento de macOS certificadas por ID de desarrollador.
-- `assets/branding/ascii-vj-remix-app-icon-1024.png` es el ícono de la aplicación canónica. Ejecute `npm run icons:generate` en lugar de editar archivos de plataforma en `src-tauri/icons/` de forma independiente; `npm run check:icons` verifica el conjunto generado completo.
-- `src-tauri/tauri.windows-signed.conf.json` y su asistente Authenticode existen pero están inactivos. La ruta de lanzamiento actual de Windows utiliza la configuración sin firmar predeterminada.
-- macOS se integra en los espacios de trabajo de iCloud Drive y redirige la salida de destino a `/private/tmp/ascii-vj-remix-tauri-target` a través de scripts auxiliares para evitar que los atributos extendidos de iCloud rompan el código de diseño.
-- Los artefactos del actualizador de versiones están firmados con una clave minisign. La clave pública está comprometida; la clave privada pertenece a los secretos de acciones GitHub.
-- Los sidecars FFmpeg deben ser revisados, locales y verificados por políticas. La aplicación empaquetada no descarga FFmpeg, códecs, recursos de renderizado ni fuentes en tiempo de ejecución.
-
-Consulte la [Guía del colaborador: Trabajo de publicación y actualización](/es/docs/development/contributing/#trabajo-de-lanzamiento-y-actualización) para conocer el procedimiento completo de publicación/actualización.
+<a id="renderer-mental-model"></a>
 
 ## Modelo mental del renderizador
 
@@ -248,24 +169,27 @@ Implicaciones importantes:
 
 Consulte [Motor de renderizado](/es/docs/development/rendering-engine/) para obtener detalles de arquitectura más profundos.
 
+<a id="documentation-update-rules"></a>
+
 ## Reglas de actualización de documentación
 
-Cuando el comportamiento cambie, actualice el documento duradero más cercano:
+Consulte la distribución de responsabilidades del [índice de documentación](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/README.md). Actualice la guía mantenida que corresponda y enlace a ella, en lugar de duplicar procedimientos:
 
-- Función de cara al usuario o comportamiento de instalación: [README](/es/docs/overview/ascii-vj-remix/).
-- Comportamiento de versiones actuales e inéditas: [Changelog](/es/docs/reference/changelog/).
-- Solo trabajo prospectivo: [Roadmap](/es/docs/reference/roadmap/).
-- Arquitectura de renderizador, flujo de medios, salida nativa, modulación de audio, arquitectura MIDI: [Rendering Engine](/es/docs/development/rendering-engine/).
-- Compilación, prueba, lanzamiento, FFmpeg, Podman o flujo de trabajo del colaborador: [Guía del colaborador](/es/docs/development/contributing/).
-- Modelo de seguridad, medios locales, permisos, firma del actualizador o capacidades Tauri: [Security](/es/docs/operations/security/).
-- Representador sensible al rendimiento, Pop Out, cámara, audio o comportamiento de la fuente: [Performance](/es/docs/operations/performance/).
-- Selección de cheques y verificación manual: [Testing](/es/docs/operations/testing/).
-- Comportamiento del teclado/enfoque/contraste/etiqueta de control: [Accesibilidad](/es/docs/operations/accessibility/).
-- Cadena visible para el usuario, configuración regional o arquitectura de traducción: [Internacionalización](/es/docs/operations/internationalization/).
-- Supuestos de incorporación de agentes: este archivo.
+- Descripción general del producto, conceptos básicos de instalación, primera ejecución: [root README](/es/docs/overview/ascii-vj-remix/).
+- Comportamiento detallado del usuario, requisitos, permisos y solución de problemas: [Guía del usuario](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/USER_GUIDE.md).
+- Cambios publicados/inéditos: [Changelog](/es/docs/reference/changelog/).
+- Propuestas y trabajos futuros: [Roadmap](/es/docs/reference/roadmap/).
+- Renderizado/medios/salida/audio/arquitectura MIDI: [Motor de renderizado](/es/docs/development/rendering-engine/).
+- Configuración local, identidad de desarrollo, FFmpeg/Podman, contribuciones: [Guía del colaborador](/es/docs/development/contributing/).
+- Procedimiento de empaquetado, firma, publicación, actualización: [Guía de lanzamiento](/es/docs/operations/release/).
+- Decisiones y pruebas específicas de la versión: [registros de publicación](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/releases/README.md).
+- Seguridad, rendimiento, selección de comprobaciones, accesibilidad y propiedad de cadenas: la guía práctica correspondiente vinculada anteriormente.
+- Incorporación de agentes y propiedad de la fuente: este archivo.
 
-Mantenga la atención en la aplicación nativa de Documentos. Los documentos del estado actual utilizan el tiempo presente y describen el comportamiento verificado. No incluya propuestas, futuros candidatos, trabajos diferidos o planes de liberación completos en esos documentos. Coloque los trabajos potenciales en [Roadmap](/es/docs/reference/roadmap/) y mantenga el historial de lanzamientos en [Changelog](/es/docs/reference/changelog/).
+Las guías del estado actual describen el comportamiento verificado en tiempo presente. Mantenga las propuestas en la hoja de ruta y los planes completados en los registros de publicación. Las pruebas pueden indicar brechas de cobertura conocidas, pero una fila histórica pendiente no debe convertirse en un reclamo sobre el estado de liberación actual. Mantenga la aplicación nativa de documentos enfocada y preserve los límites de evidencia de fuente/CI/artefacto/aplicación instalada/plataforma física.
 
+
+<a id="source-material"></a>
 
 ## Material de origen
 

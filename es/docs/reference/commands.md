@@ -6,9 +6,11 @@ parent: Referencia
 lang: es
 ---
 
+<a id="commands"></a>
+
 # Comandos
 
-Los comandos se leen desde `package.json` cuando están disponibles. Utilice scripts fuente como autoridad; Estos documentos son regenerados por `scripts/sync_ascii_docs.rb`.
+Los comandos se leen del objeto de scripts `package.json` completo. Utilice scripts fuente como autoridad; Estos documentos son regenerados por `scripts/sync_ascii_docs.rb`.
 
 Las rutas de dispositivos de medios agrupados se generalizan en esta referencia pública. Utilice `package.json` cuando inspeccione la implementación exacta del script.
 
@@ -35,16 +37,37 @@ Las rutas de dispositivos de medios agrupados se generalizan en esta referencia 
 |`npm run check:windows-gui`|`node scripts/check_windows_gui_subsystem.mjs --profile release`|
 |`npm run check:media`|`npm run test:frame-prep && npm run test:decode-resize && npm run media:pipeline-preview -- media/<bundled-test-fixture>.mp4 96 54 12 5 false && npm run media:pipeline-preview -- media/<bundled-test-fixture>.mp4 96 54 12 5 true && npm run media:native-session-preview -- media/<bundled-test-fixture>.mp4 96 54 12 5 false 4 && npm run media:native-session-preview -- media/<bundled-test-fixture>.mp4 96 54 12 5 true 4`|
 |`npm run check:tauri-policy`|`node scripts/check_tauri_policy.mjs`|
+|`npm run bundle:debug`|`npm run tauri:build:dev -- --debug && npm run check:bundle:debug`|
+|`npm run bundle:test`|`npm run check:ffmpeg-release && npm run tauri:build:dev -- --bundles nsis,msi && node scripts/check_tauri_bundle.mjs --profile release --expected-bundle-id com.asciline.remix.dev && npm run check:windows-gui`|
+|`npm run bundle:test:linux`|`npm run check:ffmpeg-release && npm run tauri:build:dev -- --bundles appimage,deb,rpm && node scripts/check_tauri_bundle.mjs --profile release --expected-bundle-id com.asciline.remix.dev`|
+|`npm run bundle:release`|`npm run ffmpeg:build-sidecar && npm run check:release && npm run tauri:build && npm run check:bundle:release`|
+|`npm run desktop:run-local`|`bash scripts/run_local_desktop_app.sh`|
+|`npm run desktop:run-local:foreground`|`ASCILINE_FOREGROUND=1 bash scripts/run_local_desktop_app.sh`|
+|`npm run desktop:run-local:reset`|`ASCILINE_RESET_TCC=1 bash scripts/run_local_desktop_app.sh`|
+|`npm run desktop:codesign:local`|`bash scripts/create_local_codesign_identity.sh`|
+|`npm run ffmpeg:stage`|`node scripts/stage_ffmpeg_sidecars.mjs`|
+|`npm run ffmpeg:build-sidecar`|`bash scripts/build_ffmpeg_sidecar.sh`|
+|`npm run ffmpeg:sign:macos`|`node scripts/sign_macos_ffmpeg_sidecars.mjs`|
+|`npm run icons:generate`|`node scripts/tauri_env.mjs icon assets/branding/ascii-vj-remix-app-icon-1024.png --output src-tauri/icons`|
+|`npm run glyphs:generate`|`node scripts/generate_glyph_atlas.mjs`|
+|`npm run macos:notarize-dmg`|`node scripts/notarize_macos_dmg.mjs`|
 |`npm run release:version:check`|`node scripts/check_release_version.mjs`|
 |`npm run release:secrets:check`|`node scripts/check_github_release_secrets.mjs`|
 |`npm run release:secrets:check:notarized`|`node scripts/check_github_release_secrets.mjs --require-notarization`|
 |`npm run release:secrets:check:public`|`node scripts/check_github_release_secrets.mjs --require-public-signing`|
 |`npm run release:secrets:set:macos`|`node scripts/set_macos_notarization_secrets.mjs`|
 |`npm run release:secrets:set:windows`|`node scripts/set_windows_artifact_signing_secrets.mjs`|
+|`npm run updater:secret:set`|`node scripts/set_tauri_updater_secret.mjs`|
+|`npm run updater:secret:check`|`node scripts/set_tauri_updater_secret.mjs --dry-run`|
+|`npm run media:decode-preview`|`node scripts/cargo_env.mjs run --manifest-path src-tauri/Cargo.toml --example decode_preview --`|
+|`npm run media:native-session-preview`|`node scripts/cargo_env.mjs run --manifest-path src-tauri/Cargo.toml --example native_session_preview --`|
+|`npm run media:pipeline-preview`|`node scripts/cargo_env.mjs run --manifest-path src-tauri/Cargo.toml --example pipeline_preview --`|
+|`npm run midi:probe`|`node scripts/cargo_env.mjs run --manifest-path src-tauri/Cargo.toml --example midi_probe --`|
 |`npm run smoke:static`|`npm run build && node scripts/smoke_static_pages.mjs`|
 |`npm run smoke:native-output`|`node scripts/smoke_native_output_perf.mjs`|
 |`npm run smoke:ui-perf`|`node scripts/smoke_ui_perf.mjs`|
 |`npm run smoke:primary-presets`|`node scripts/smoke_primary_presets.mjs`|
+|`npm run bench:density`|`node scripts/benchmark_renderer_density.mjs`|
 |`npm run smoke:release-install`|`node scripts/smoke_tauri_release_install.mjs`|
 |`npm run test:decode-resize`|`node scripts/check_decode_resize_parity.mjs`|
 |`npm run test:desktop-updater`|`node scripts/test_desktop_updater.mjs`|
@@ -77,6 +100,8 @@ Las rutas de dispositivos de medios agrupados se generalizan en esta referencia 
 |`npm run tauri:build`|`node scripts/tauri_env.mjs build`|
 |`npm run tauri:build:dev`|`node scripts/tauri_env.mjs build --config src-tauri/tauri.dev.conf.json`|
 
+<a id="command-guidance"></a>
+
 ## Guía de comando
 
 - Utilice controles específicos antes de las puertas de lanzamiento amplias durante el desarrollo.
@@ -85,6 +110,8 @@ Las rutas de dispositivos de medios agrupados se generalizan en esta referencia 
 - Mantenga los secretos y el material de firma fuera de fuentes comprometidas.
 
 
+
+<a id="source-material"></a>
 
 ## Material de origen
 

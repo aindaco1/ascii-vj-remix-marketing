@@ -7,59 +7,39 @@ parent: "Operations"
 
 # Release and Updates
 
-Current source docs describe the **1.0.3** release line. Release mechanics and security posture are copied from their canonical mother-repository guides.
+This guide owns the reusable packaging, signing, publication, and updater
+procedure for maintainers. Run commands from the repository root. Use
+[Testing](/docs/operations/testing/#release-and-updater) to select validation checks and
+[Security](/docs/operations/security/#release-security-posture) for the release security model.
 
-See the [v1.0.3 release](https://github.com/aindaco1/ascii-vj-remix/releases/tag/v1.0.3) for published installers, updater packages, and platform-validation notes.
+Version-specific decisions and evidence are kept in
+[release records](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/releases/README.md). They are historical snapshots, not the
+current release procedure.
 
-## Release Security Posture
+## Evidence and Release Records
 
-The current release line includes these security hardening rules:
+Record the exact version, commit or tag, artifact filename/hash, and tested
+platform when collecting release evidence. Keep these stages distinct:
 
-- Production CSP allows only the app origin, Tauri IPC, and the Tauri asset
-  protocol needed for selected local media. Localhost HTTP/WebSocket endpoints
-  exist only in the development CSP; stream mode is not a production source.
-- Crash report submission is implemented in Rust, not webview `fetch`, so the
-  production CSP does not gain arbitrary remote `connect-src` access.
-- GitHub Actions updater signing secrets are scoped to the updater-secret check
-  and Tauri packaging steps. Do not place `TAURI_SIGNING_PRIVATE_KEY`,
-  `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`, Apple certificate values, or keychain
-  passwords in job-level workflow environment blocks.
-- Public macOS release CI fails closed when Apple Developer ID signing or
-  notarization is incomplete. Public macOS artifacts are signed, notarized,
-  stapled, and Gatekeeper-validated; current Windows artifacts are unsigned
-  previews.
-- Public macOS artifacts must retain Team ID `PWT3Q52LZ2` and the stable
-  identifier/team designated requirement. CI validates both the built app and
-  the extracted updater archive and rejects ad-hoc or code-hash-only identity.
-- Local launch tooling requires the separate `ASCII VJ Remix Dev` identity and
-  a stable local signing certificate. It never synchronizes into the production
-  application path.
-- GitHub Actions macOS jobs are pinned to `macos-26` instead of
-  `macos-latest`. The native `wgpu`/`apple-metal` stack needs the macOS 26
-  Metal SDK, and the moving `macos-latest` alias can select an older SDK.
-- Frontend app state retains the derived playback URL or media id instead of the
-  selected local path. Diagnostics redact file and asset URLs before writing
-  `/tmp/asciline-media-diagnostics.log`.
-- Tauri media registrations and asset grants are session-local. The
-  `forget_media_file` command revokes a path grant after its final registration
-  is removed; persisted custom-source metadata does not preserve path access
-  across app restarts.
-- Preset imports must be bounded, schema-checked, clamped through the shared
-  control metadata, and stripped of source/media fields before they can affect
-  renderer state.
-- Glyph-mode native output treats `charset` and custom ramps as untrusted data.
-  Resolved ramps are restricted to supported BMP coverage, sanitized as Unicode
-  scalars, and capped at 96 ids before reaching renderer buffers. Keep
-  `fontFamily` out of native font-loading or resource-lookup paths.
-- The neutral glyph atlas is generated offline from a pinned, checksummed source
-  retained with its license files. Runtime code may load only the 16 bundled
-  atlas pages; it never resolves system fonts or remote font resources.
-- Dependency audits cover npm and Rust. `cargo audit` warnings from
-  Tauri's current GTK/WebKit transitive stack are tracked as upstream desktop
-  framework risk; actionable direct/transitive advisories must be fixed before
-  release when an upgrade is available.
+1. Source metadata and local checks.
+2. CI jobs for the exact candidate or tagged commit.
+3. Packaged artifacts, signing, and published bytes.
+4. Installed-app and updater acceptance against those artifacts.
+5. Physical hardware and manual interaction results.
 
-## Release and Updater Work
+A successful build or publication does not establish physical-platform
+acceptance. Record an owner-approved deferral with its scope; link the remaining
+check from [Testing](/docs/operations/testing/#hardware-and-platform-checks) and the
+[Roadmap](/docs/reference/roadmap/#distribution-and-platform-validation).
+
+Create version-specific records under `docs/releases/`, identify the evidence
+stage and date, and add them to the [release index](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/releases/README.md). Preserve
+recorded pending rows as historical evidence; do not silently mark them passed
+because a later release shipped. Durable product behavior belongs in the user
+and architecture guides, and release history belongs in the
+[Changelog](/docs/reference/changelog/).
+
+## Release Workflow
 
 ASCII VJ Remix desktop builds must remain standalone at runtime. The Tauri
 updater is an intentional online path: the production app invokes it once in
@@ -81,6 +61,8 @@ that the app versions match with `npm run release:version:check`, creates
 `vX.Y.Z` when that tag does not already exist, and dispatches the desktop
 release workflow with that tag. If the tag already exists, it skips release
 dispatch so repeated pushes do not overwrite a published version accidentally.
+
+## Updater Signing
 
 The GitHub Releases updater reads:
 
@@ -121,11 +103,12 @@ after the npm script if the defaults are wrong.
 notarization readiness. The current Windows release path publishes unsigned
 preview artifacts and does not require Windows signing secrets.
 
-For an updater-disabled local development bundle:
+## Local Packaging and App Identity
 
-```bash
-npm run bundle:debug
-```
+For updater-disabled local bundles, use the
+[contributor commands](/docs/development/contributing/#common-commands). On macOS, follow
+[Permissions During Development](/docs/development/contributing/#macos-permissions-during-development)
+for stable development signing.
 
 Production-shaped release packaging still requires the updater key and must not
 be installed as a local permission-testing build.
@@ -137,14 +120,7 @@ production updates. Public macOS release builds use
 `src-tauri/tauri.notarized.conf.json` and fail if Developer ID signing and
 notarization credentials are missing.
 
-`scripts/run_local_desktop_app.sh` requires the stable local identity by
-default. Override `ASCILINE_CODESIGN_IDENTITY` only when deliberately testing a
-different stable signing identity:
-
-```bash
-npm run desktop:codesign:local
-npm run desktop:run-local -- --build
-```
+## macOS Release Signing
 
 Developer ID signing and notarization require Apple Developer Program
 membership, a base64 Developer ID Application `.p12`, its password, a CI
@@ -176,6 +152,8 @@ npm run release:secrets:set:macos -- \
 When `--keychain-password-file` is omitted, the script generates a random
 temporary keychain password and stores it in `KEYCHAIN_PASSWORD`.
 
+## Windows Signing Tooling
+
 The repository contains an inactive Azure Artifact Signing path in
 `src-tauri/tauri.windows-signed.conf.json`, which invokes
 `src-tauri/windows-artifact-sign.cmd`; that wrapper calls
@@ -201,20 +179,11 @@ required Windows signing secret; keep it out of shell history and chat logs.
 Provider selection and Windows signing rollout remain roadmap decisions; the
 inactive tooling does not describe the current distribution posture.
 
-Use these checks before publishing release changes:
+## Build and Package
 
-```bash
-npm run check:desktop
-npm run test:desktop-updater
-npm run test:updater-manifest
-npm run check:bundle:debug
-```
-
-On this macOS iCloud Drive workspace, Tauri build output is redirected to
-`/private/tmp/ascii-vj-remix-tauri-target` to avoid iCloud extended attributes
-breaking `codesign`. Normal CI and non-iCloud workspaces continue to use
-`src-tauri/target`. Override with `ASCILINE_TAURI_TARGET_DIR` or
-`CARGO_TARGET_DIR` when needed.
+Choose the checks in [Testing: Release and Updater](/docs/operations/testing/#release-and-updater).
+Local build-directory overrides are documented in
+[Contributor Guide: First-Time Setup](/docs/development/contributing/#first-time-setup).
 
 Local release builds run `npm run ffmpeg:build-sidecar` before
 `npm run check:release`. Public release CI keeps the same pinned official FFmpeg
@@ -231,6 +200,8 @@ permissions. Runtime hashes and camera-input availability are still verified.
 CI may download official source during release builds, but the packaged app
 never downloads FFmpeg, codecs, or renderer assets at runtime.
 
+## Published-Artifact Acceptance
+
 The release workflow also runs `scripts/smoke_tauri_release_install.mjs` on
 macOS, Windows, and Linux after publishing. It downloads artifacts from GitHub
 Releases instead of reusing local build directories, catching missing assets,
@@ -238,17 +209,23 @@ bad `latest.json` URLs, installer layout issues, a hidden Update control, and
 broken signed updater downloads. macOS additionally extracts consecutive
 updater archives, requires the DMG to contain the real app, exact
 `/Applications` link, and reviewed Tauri Finder metadata; validates the
-downloaded DMG and mounted app; extracts
-consecutive updater archives; requires the stable production designated
+downloaded DMG and mounted app; requires the stable production designated
 requirement; performs a true updater self-replacement; and validates the
 resulting app identity. Release upload does not replace already-published
-artifact bytes for the same tag. CI-only smoke hooks are inactive unless these
-environment variables are set:
+artifact bytes for the same tag.
+
+If a post-publication runner exposes an acceptance-tooling defect, correct the
+tooling and run the `Release Acceptance` workflow against the existing immutable
+tag. It reuses the published bytes without rebuilding or replacing assets.
 
 The updater-hop smoke defaults to `ASCILINE_UPDATER_SMOKE_MIN_VERSION=0.9.0`.
 Older `0.1.x` releases used an incompatible updater signing key, so they can be
 kept as historical releases but cannot be used as a cryptographic updater-hop
 baseline for the current app line.
+
+### CI Smoke Hooks
+
+These hooks are inactive unless explicitly enabled through environment variables.
 
 - `ASCILINE_DESKTOP_SMOKE=launch`: bounded launch smoke with a report.
 - `ASCILINE_DESKTOP_SMOKE=updater-ui`: requires the packaged production Update
@@ -270,10 +247,7 @@ The true app-driven updater hop needs a previous release that already contains
 direct install and updater download smoke.
 
 
-
 ## Source Material
 
 This page is generated from ASCII VJ Remix source material. Primary sources:
-- [docs/SECURITY.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/SECURITY.md)
-- [docs/CONTRIBUTORS.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/CONTRIBUTORS.md)
-- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/CHANGELOG.md)
+- [docs/RELEASING.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/RELEASING.md)
