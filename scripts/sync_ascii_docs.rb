@@ -23,6 +23,7 @@ SOURCE_FILES = {
   changelog: "CHANGELOG.md",
   rendering: "docs/RENDERING_ENGINE.md",
   contributors: "docs/CONTRIBUTORS.md",
+  shared_desktop: "docs/SHARED_DESKTOP_MIGRATION.md",
   agents: "docs/AGENTS.md",
   security: "docs/SECURITY.md",
   performance: "docs/PERFORMANCE.md",
@@ -43,6 +44,7 @@ DOCS = [
   ["docs/development/rendering-engine.md", "Rendering Engine", "Development", 3, :rendering_engine],
   ["docs/development/contributing.md", "Contributing", "Development", 4, :contributing],
   ["docs/development/agent-guide.md", "Agent Guide", "Development", 5, :agent_guide],
+  ["docs/development/shared-desktop-services.md", "Shared Desktop Services", "Development", 6, :shared_desktop],
   ["docs/operations/index.md", "Operations", nil, 3, :operations_index],
   ["docs/operations/security.md", "Security", "Operations", 1, :security],
   ["docs/operations/performance.md", "Performance", "Operations", 2, :performance],
@@ -62,6 +64,7 @@ ALIASES = {
   "CHANGELOG.md" => "/docs/reference/changelog/",
   "docs/RENDERING_ENGINE.md" => "/docs/development/rendering-engine/",
   "docs/CONTRIBUTORS.md" => "/docs/development/contributing/",
+  "docs/SHARED_DESKTOP_MIGRATION.md" => "/docs/development/shared-desktop-services/",
   "docs/AGENTS.md" => "/docs/development/agent-guide/",
   "docs/SECURITY.md" => "/docs/operations/security/",
   "docs/PERFORMANCE.md" => "/docs/operations/performance/",
@@ -191,7 +194,7 @@ module SyncAsciiDocs
 
         ASCII VJ Remix is a local-first desktop visualizer and renderer workbench. For users, it exists to give DJs a manageable visualizer and VJs fine-grained ASCII/video filter control. For developers, it is a Tauri desktop application with a dense renderer/control surface, native output path, local media adapters, audio-reactive modulation, and release/update infrastructure.
 
-        The public homepage is written for DJs and VJs. This section is intentionally technical: it describes the app's source model, renderer architecture, desktop packaging boundary, security posture, performance constraints, accessibility expectations, internationalization posture, release workflow, and current #{version} feature baseline.
+        These guides follow merged changes on the mother repository's `main` branch. The [Release Baseline](/docs/overview/changelog-baseline/) identifies the latest dated release, **#{version}**. Changes after that release are labeled separately; source, CI, desktop publication, relay deployment, and hardware acceptance are distinct.
 
         ## Start Here
 
@@ -218,7 +221,7 @@ module SyncAsciiDocs
       product_overview: <<~MD,
         # ASCII VJ Remix
 
-        Current source docs describe the **#{version}** feature set. The sections below are selected directly from the mother repository so product identity, requirements, and hardware guidance do not drift into a second hand-maintained contract.
+        These sections follow the mother repository's `main` branch. See the [Release Baseline](/docs/overview/changelog-baseline/) for **#{version}** release notes. Product identity, requirements, and hardware guidance are selected directly from their canonical guides.
 
         #{source_sections("README.md", ["What This Project Is"])}
 
@@ -240,9 +243,11 @@ module SyncAsciiDocs
       release_baseline: <<~MD,
         # Release Baseline
 
-        Current docs describe the **#{version}** feature set. The newest dated changelog entry is the release authority; the Unreleased section is intentionally excluded.
+        The latest dated changelog entry is **#{version}**. This page excludes Unreleased entries; the [Changelog](/docs/reference/changelog/) retains them when present. Other developer guides follow merged `main`, which can include changes after the published desktop tag.
 
         [Download v#{version} and read its publication and platform-validation notes](https://github.com/#{SOURCE_REPO}/releases/tag/v#{version}). The changelog date records the source release entry; GitHub Releases records when the downloads were published.
+
+        For the release's shared-service maintenance context, see [Shared Desktop Services](/docs/development/shared-desktop-services/). That guide distinguishes later relay/dependency changes from the published desktop artifacts.
 
         ## #{version} Release Notes
 
@@ -262,6 +267,7 @@ module SyncAsciiDocs
         - [Rendering Engine](/docs/development/rendering-engine/) — source flow, backend selection, params, audio modulation, Pop Out, and stream paths.
         - [Contributing](/docs/development/contributing/) — local development, app identity, contribution workflow, FFmpeg, and Podman.
         - [Agent Guide](/docs/development/agent-guide/) — context-loading and safety guidance for LLM coding agents.
+        - [Shared Desktop Services](/docs/development/shared-desktop-services/) — pinned Platform dependencies, updater/relay ownership, validation, and rollback.
         - [Release and Updates](/docs/operations/release/) — packaging, signing, publication, and artifact acceptance.
       MD
       quickstart: <<~MD,
@@ -304,6 +310,7 @@ module SyncAsciiDocs
       rendering_engine: copied_page("Rendering Engine", "docs/RENDERING_ENGINE.md", "Development", 3),
       contributing: copied_page("Contributing", "docs/CONTRIBUTORS.md", "Development", 4),
       agent_guide: copied_page("Agent Guide", "docs/AGENTS.md", "Development", 5),
+      shared_desktop: copied_page("Shared Desktop Services", "docs/SHARED_DESKTOP_MIGRATION.md", "Development", 6),
       operations_index: <<~MD,
         # Operations
 
@@ -367,6 +374,7 @@ module SyncAsciiDocs
         | `CHANGELOG.md` | Current release baseline, recent behavior changes, security notes, and validation expectations. |
         | `docs/RENDERING_ENGINE.md` | Source flow, parameter model, renderer backends, effective params, Pop Out, audio, and stream paths. |
         | `docs/CONTRIBUTORS.md` | Quickstart, local app identity, contribution workflow, FFmpeg, and Podman. |
+        | `docs/SHARED_DESKTOP_MIGRATION.md` | Shared Desktop Services: package ownership, validation, rollback, and post-release source changes. Exact pins remain in the linked `platform-desktop.json`. |
         | `docs/RELEASING.md` | Reusable packaging, signing, publication, updater, and artifact acceptance procedure. |
         | `docs/releases/README.md` | Linked index of historical release records; not current procedure or live acceptance status. |
         | `docs/AGENTS.md` | Agent context-loading order, constraints, ownership map, and safe-working guidance. |

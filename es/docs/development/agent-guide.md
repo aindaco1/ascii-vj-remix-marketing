@@ -78,7 +78,7 @@ El repositorio combina renderizado WebGPU/WebGL de alta calidad, rutas de compat
 Utilice la [Guía del usuario](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/USER_GUIDE.md) para conocer el comportamiento actual y el [Motor de renderizado](/es/docs/development/rendering-engine/) para conocer los contratos detallados. Al editar:
 
 - Conserve el estado de perfil limpio Demo Image / Classic Camera ASCII y mantenga la preferencia de backend en Auto. Los perfiles existentes conservan su configuración.
-- Mantenga la propiedad de backend preestablecida en `renderers/shared/preset-backend-contract.js` (71 en total, 43 acelerados, 28 Canvas explícitos). Los cambios intencionales deben actualizar el contrato y la evidencia visible de la matriz preestablecida en conjunto. La identidad de la plataforma no debe reasignar la propiedad de forma preventiva.
+- Mantenga la propiedad de backend preestablecida en `renderers/shared/preset-backend-contract.js` (79 en total, 51 acelerados, 28 Canvas explícitos). Los cambios intencionales deben actualizar el contrato y la evidencia visible de la matriz preestablecida en conjunto. La identidad de la plataforma no debe reasignar la propiedad de forma preventiva.
 - Mantenga un modelo de parámetro canónico. Los ajustes preestablecidos guardados, los parámetros efectivos en vivo, la selección de fuente, las transiciones, WTF, audio, MIDI y la salida nativa deben coincidir. Las transiciones preestablecidas preservan la identidad de la fuente y la reproducción.
 - Amplíe las políticas de paleta compartida, conjunto de caracteres, atlas de glifos y cuadrícula. Mantenga Advanced Density global y fuera de los ajustes preestablecidos; no agregue límites por renderizador ni búsqueda de fuentes del sistema en tiempo de ejecución. Lea la guía del renderizador antes de cambiar los límites.
 - Reutilizar recursos GPU y versiones del marco fuente; no reduzca la calidad visual ni la resolución para obtener una mejora del rendimiento.
@@ -135,6 +135,8 @@ Al editar:
 <a id="validation-and-packaging"></a>
 
 ## Validación y empaquetado
+
+`npm test` ejecuta las comprobaciones estáticas/de escritorio existentes además de Jev en vivo en evidencia de componentes sintéticos incorporados. Utilice `-- --offline` explícitamente para omitir la evaluación alojada. Mantenga Jev solo para desarrollo y reutilice la entrada anclada de Plataforma Test Core; consulte [Pruebas de desarrollo Jev](/es/docs/operations/testing/#jev-development-testing). Nunca pase diagnósticos o medios privados a este evaluador ni interprete su resultado como visual, hardware nativo o aceptación de versión.
 
 Utilice [Pruebas: conjuntos de comprobaciones recomendados](/es/docs/operations/testing/#recommended-check-sets) para elegir las comprobaciones mínimas que cubran el cambio. Los cambios de documentación requieren `git diff --check`; si mueve archivos, también debe validar enlaces, anclas y referencias a rutas. Distinga entre comprobaciones locales, paquetes de CI, pruebas de humo de la aplicación instalada y aceptación en hardware físico.
 

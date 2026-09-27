@@ -28,6 +28,12 @@ sibling `../ascii-vj-remix`; set `ASCII_VJ_SOURCE` to use another checkout and
 fetch or update the source checkout. Inspect its branch, commit, and working
 tree before refreshing.
 
+Public developer guides follow merged `main`, while the release badge and
+download links use the newest dated changelog entry. Clearly label post-release
+source changes in their canonical upstream guide. Verify the published tag
+separately; a newer source pin or relay adapter is not part of an older desktop
+artifact. Correct stale upstream facts at their source before importing them.
+
 The [public Source Map](../reference/source-map.md) documents the imported files:
 
 - Root upstream `README.md` supplies product identity and lineage.
@@ -36,6 +42,9 @@ The [public Source Map](../reference/source-map.md) documents the imported files
   troubleshooting remain linked upstream, along with the README's install steps.
 - `docs/CONTRIBUTORS.md` supplies Quickstart and local development procedures.
   The complete npm script catalog is generated from `package.json` in Commands.
+- `docs/SHARED_DESKTOP_MIGRATION.md` supplies Shared Desktop Services. Exact
+  dependency versions remain owned by its linked `platform-desktop.json`;
+  component-specific relay contracts remain in the upstream relay README.
 - `docs/RELEASING.md` supplies Release and Updates. `docs/releases/` contains
   historical evidence and stays linked upstream; pending historical rows do not
   become current release claims.

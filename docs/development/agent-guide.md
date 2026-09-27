@@ -98,7 +98,7 @@ Use the [User Guide](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/U
 - Preserve the clean-profile Demo Image / Classic Camera ASCII state and keep
   backend preference on Auto. Existing profiles retain their settings.
 - Keep preset backend ownership in
-  `renderers/shared/preset-backend-contract.js` (71 total, 43 accelerated,
+  `renderers/shared/preset-backend-contract.js` (79 total, 51 accelerated,
   28 explicit Canvas). Intentional changes must update the contract and visible
   preset-matrix evidence together. Platform identity must not preemptively
   reassign ownership.
@@ -167,6 +167,13 @@ When editing:
   architecture, or setup requirements.
 
 ## Validation and Packaging
+
+`npm test` runs the existing desktop/static checks plus live Jev on built-in
+synthetic component evidence. Use `-- --offline` explicitly to skip hosted
+evaluation. Keep Jev development-only and reuse the pinned Platform Test Core
+entry; see [Jev development testing](/docs/operations/testing/#jev-development-testing).
+Never pass private diagnostics or media to this evaluator or interpret its
+result as visual, native hardware, or release acceptance.
 
 Use [Testing: Recommended Check Sets](/docs/operations/testing/#recommended-check-sets) to
 select the smallest checks that cover the change. Documentation-only changes

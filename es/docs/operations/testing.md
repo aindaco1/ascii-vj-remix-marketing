@@ -19,9 +19,14 @@ Las pruebas se centran en paquetes fuera de línea, inicio del renderizador, cam
 ## Referencia rápida
 
 ```bash
+npm test                         # Desktop gate, static smoke, live synthetic Jev review
+npm test -- --offline            # Same deterministic checks, explicitly skip Jev
+npm run test:jev -- --dry-run     # Preview requests without credentials or network
+npm run test:jev-harness          # Offline evaluator and workflow regression tests
 npm run build                    # Vite production build plus local asset copy
 npm run check:offline            # Build and verify bundled/offline assets
 npm run smoke:static             # Static UI/renderer smoke harness
+npm run test:smoke-diagnostics    # Failure capture, bounded waits, and artifact-write failures
 npm run check:tauri-policy       # Production CSP and local-only runtime policy
 npm run check:icons              # Canonical source and generated platform icons
 npm run check:glyph-atlas        # Unicode atlas manifest, dimensions, source, hashes
@@ -67,6 +72,44 @@ Para cambios de documentación únicamente:
 git diff --check
 ```
 
+<a id="jev-development-testing"></a>
+
+## Pruebas de desarrollo Jev
+
+`npm test` es la entrada habitual para las pruebas de desarrollo. Ejecuta las pruebas del evaluador Jev, las comprobaciones de `check:desktop`, `smoke:static` y, por último, la evaluación de Jev alojada. Si falla un paso, se detiene el proceso; Jev nunca invalida un fallo determinista. Estas comprobaciones compilan un binario de desarrollo, pero no lo empaquetan, instalan, etiquetan ni publican. `npm test -- --offline`, también disponible como `npm run test:offline`, omite solo la evaluación alojada e indica que no se ejecutó la evaluación semántica. Los comandos específicos y las comprobaciones de publicación conservan su comportamiento. Desktop CI prueba el evaluador sin conexión y no dispone de credenciales de Jev.
+
+El evaluador usa los helpers existentes de fallback e informes del renderizador, la captura de diagnósticos de las pruebas de humo y el controlador de actualizaciones con entradas sintéticas fijas. Seis resultados comprueban las diferencias entre recuperación y fallo, inicialización y carga del documento, ausencia de diagnóstico y fallo original, y actualización disponible e instalación correcta o comprobación fallida. Primero se ejecutan las aserciones exactas. Catorce controles positivos y negativos etiquetados preceden a los seis casos de comportamiento. Son simulaciones de componentes: no prueban cámaras reales, presentación nativa, calidad de imagen ni transacciones reales del actualizador. Las pruebas de humo en navegador se ejecutan por separado. El comando Jev no acepta informes arbitrarios, capturas, archivos de código, medios del usuario, datos de cámara o audio ni registros privados.
+
+<a id="setup-and-commands"></a>
+
+### Configuración y comandos
+
+```bash
+git submodule update --init shared/dust-wave-platform
+npm ci
+npm run test:jev -- --dry-run
+npm run test:jev
+npm test
+```
+
+Configure `CLOUDFLARE_ACCOUNT_ID` en el entorno o coloque solo el ID de cuenta en el `.ascii-vj-development.json` ignorado como `{"cloudflare_account_id":"YOUR_ACCOUNT_ID"}`. Configure `CLOUDFLARE_API_TOKEN` en el entorno o utilice un inicio de sesión de Wrangler existente. El adaptador utiliza la dependencia Wrangler anclada del repositorio; `--wrangler-auth` selecciona explícitamente ese inicio de sesión. No se guarda ningún token en la configuración o en los informes. La falta de autenticación es un error, nunca un pase silencioso sin conexión.
+
+El comando alojado envía como máximo 20 solicitudes con 20 preguntas atómicas y un límite total de 64.000 bytes. Las solicitudes son secuenciales, tienen un tiempo máximo de 45 segundos y se detienen ante el primer error del proveedor, sin reintentos ni compras de créditos. Revisa la vista previa exacta antes de ampliar el corpus; el uso se factura a la cuenta configurada del proveedor. Los límites de solicitudes no garantizan un precio concreto. Jev utiliza [preguntas tipadas](https://docs.typesafe.ai/introduction) a través de Cloudflare, con cabeceras que solicitan omitir caché y registros; esas cabeceras no demuestran la política de retención del proveedor.
+
+<a id="results-and-shared-ownership"></a>
+
+### Resultados y propiedad compartida
+
+Cada ejecución crea un directorio nuevo, excluido de Git, en `jev-results/<timestamp>/`, o en la ubicación nueva indicada con `--output-dir`. Conserva solicitudes, hashes del código, respuestas parciales y originales, el `report.json` final y `review.md`. Rechaza directorios de salida existentes. Las simulaciones no intentan acceder a la red, permanecen incompletas y se identifican como `dry-run`. Los códigos de salida son 0 para éxito o vista previa, 1 para fallo o revisión y 2 para error de configuración o proveedor. `releaseAccepted` siempre es false.
+
+Los resultados casi empatados, con margen inferior a 0,10, las respuestas inciertas, las versiones no reconocidas del evaluador o los controles con respuestas conocidas incorrectas requieren revisión y producen un código de salida distinto de cero. Inicialmente solo se reconoce `jev-1.13.0`. El margen es provisional para estos casos etiquetados por ingeniería; no hereda la calibración de CutNotes ni demuestra fiabilidad general. No cambies los prompts ni los umbrales solo para obtener un resultado positivo. Usa los controles observados como pruebas de regresión y reserva ejemplos nuevos antes de afirmar que hay calibración tras modificar los prompts.
+
+La primera ejecución local detectó un falso positivo en un control negativo de captura de diagnósticos y solicitó revisión correctamente. La pregunta general sobre distinguir fallos se sustituyó por el requisito explícito de conservar el arranque del renderizador como fallido; se fijaron dos formulaciones nuevas antes de repetir la evaluación. Sin cambiar el umbral, la nueva ejecución superó los 14 controles y los seis casos de comportamiento en Jev 1.13.0. Se conservan ambas ejecuciones como evidencia local. Esta verificación es limitada y no demuestra calibración independiente ni aceptación en hardware físico. El [registro de verificación de la integración](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/testing/JEV_EVALUATION.md) conserva los resultados exactos, los hashes y los límites de limpieza.
+
+La construcción de solicitudes, el transporte de Cloudflare, la validación de respuestas y la decisión de solicitar revisión reutilizan Platform Test Core mediante la entrada pública `test-core/jev`. [platform-desktop.json](https://github.com/aindaco1/ascii-vj-remix/blob/main/platform-desktop.json) define el commit inmutable actual y las versiones exactas de los paquetes. La integración original usaba Test Core 0.3.0 de [Platform PR 46](https://github.com/aindaco1/dust-wave-platform/pull/46); sus resultados fechados permanecen en el registro de verificación. El adaptador rechaza una copia de Platform con otra revisión o cambios locales. ASCII VJ mantiene su corpus, autenticación, límites, informes y ejecución de comandos. No importa otro proyecto vecino, copia un cliente del modelo, añade una dependencia npm, llama al modelo desde la app ni cambia la versión de la app. No se copia el repositorio compartido en `dist`. El evaluador verifica Test Core 0.3.1, pero todavía escribe `0.3.0` en el campo `testCoreVersion` del informe. Hasta que se corrija ese metadato, usa `platformCommit`, los hashes del código y el manifiesto para verificar la procedencia de las dependencias.
+
+Para revertir únicamente Jev, elimina conjuntamente sus cuatro scripts de prueba, comandos, paso de pruebas de CI y documentación. Conserva el submódulo de Platform y el manifiesto: el actualizador y el relay también los usan. Consulta la [migración de servicios de escritorio compartidos](/es/docs/development/shared-desktop-services/#independent-rollback) para revertir esa integración por separado. No se requiere migración de la aplicación ni de datos.
+
 <a id="test-categories"></a>
 
 ## Categorías de prueba
@@ -93,7 +136,7 @@ git diff --check
 |Módulos Rust/Tauri|`npm run test:rust`|
 |Rendimiento de salida nativa|`npm run smoke:native-output`, `npm run test:native-output-log`|
 |Rendimiento de la interfaz de usuario|`npm run smoke:ui-perf`, `npm run bench:density` con transiciones/valores predeterminados fijos, configuración de funciones, percentiles de fase, reemplazos de renderizador y restablecimientos de fotogramas|
-|Ajustes preestablecidos primarios instalados|`npm run smoke:primary-presets`, los 71 integrados en Demo Image con visibilidad primaria por ajuste preestablecido, familia de backend, estado de ejecución, error GPU y verificaciones de aspecto|
+|Ajustes preestablecidos primarios instalados|`npm run smoke:primary-presets`, los 79 presets integrados sobre Demo Image, comprobando visibilidad de la vista principal, familia de backend, estado de ejecución, errores de GPU y proporciones en cada preset|
 |Lanzamiento de instalación/actualización|`npm run smoke:release-install`|
 
 <a id="recommended-check-sets"></a>
@@ -121,6 +164,10 @@ npm run smoke:static
 
 Agregue comprobaciones manuales para cambio de fuente, transiciones preestablecidas, WTF mode y reactividad de audio cuando cambia el comportamiento.
 
+La prueba de humo estática muestra la versión del navegador y el nombre de su ejecutable. Si falla, conserva el error original, la fase actual, un conjunto acotado de errores de consola y de página, solicitudes fallidas y errores HTTP, y el estado de arranque de cada página de prueba. Las URL omiten credenciales, parámetros de consulta y fragmentos. La captura de estado y de pantalla tiene tiempos máximos de espera para que una página bloqueada no impida registrar el fallo. El navegador se cierra tanto al terminar correctamente como al fallar.
+
+Cada ejecución fallida guarda `failure.json` y, si es posible, capturas de las páginas en una carpeta con fecha y hora dentro de `tmp-smoke-static/`. Usa `SMOKE_DIAGNOSTICS_DIR` para elegir otro directorio padre. Estos contextos nuevos del navegador contienen casos sintéticos; el diagnóstico no vuelca el almacenamiento, las variables de entorno ni el DOM completo. El job de Windows Desktop sube los diagnósticos como un artefacto separado que se conserva siete días. Esto no relaja los tiempos máximos de arranque, las comprobaciones de renderizado visible ni el contrato 79/51/28 de asignación de presets.
+
 <a id="renderer-backend-changes"></a>
 
 ### Cambios en el backend del renderizador
@@ -136,9 +183,13 @@ npm run check:media
 
 También compare manualmente la salida de WebGPU y WebGL2 para determinar los estados representativos de desactivación de funciones, paleta/difusor, Braille, CJK/Kana, Hangul y de rampa personalizada escrita. Registre el backend real; un backend solicitado que retrocede no es evidencia del backend solicitado.
 
+La prueba de humo estática también fuerza un `SecurityError` al cargar una imagen externa en WebGL2 (#35), compara los píxeles y la orientación recuperados con la carga directa y verifica que las construcciones repetidas reutilicen una sola lectura autorizada sin abandonar WebGL2. `test:canvas-readback` comprueba por separado el rechazo de imágenes con restricciones de origen y la exclusión de vídeo de este reintento. Estos casos sintéticos no reproducen la imagen privada del informe original.
+
 <a id="native-output-or-pop-out-changes"></a>
 
 ### Salida nativa o cambios Pop Out
+
+`smoke:native-output` exige una presentación real de la GPU, aplica parámetros y ciclos de paleta en vivo, cierra mediante el observador habitual de ventanas y exige otra presentación tras reabrir. El informe distingue la respuesta al comando del tiempo hasta la primera presentación. En las PR, CI de Windows y Linux lo ejecuta sobre el binario de desarrollo optimizado tras empaquetarlo, con los binarios auxiliares de FFmpeg verificados. Linux usa una pantalla virtual Xvfb. Esto prueba el renderizador nativo y el ciclo de vida de la ventana; la matriz de cámara y pantalla físicas que aparece más abajo se valida por separado. Usa `ASCILINE_NATIVE_OUTPUT_REPORT_PATH` para conservar el informe JSON. macOS también comprueba la cadencia de display-link con el analizador de registros existente.
 
 ```bash
 npm run test:output-display
@@ -219,9 +270,9 @@ La aceptación manual del informe debe comenzar con una cola vacía: ingrese una
 
 La prueba 2026-08-29 Windows 11 estableció que Signal Court y Midnight Scan CJK podían inicializarse en blanco tanto en WebGPU como en WebGL2, mientras que la ruta sólida/píxel de Neon Sledgehammer permanecía visible y la cámara se abría sin un informe de diagnóstico de medios falso. La regla general de glifo a lienzo Windows ahora se eliminó después de la reparación de la textura de glifo compacto. Vuelva a verificar los ajustes preestablecidos representativos de ASCII, Braille, CJK, Hangul, sólidos y de píxeles en el instalador de reemplazo antes de fusionarlos.
 
-La matriz preestablecida estática también verifica la propiedad del backend: el estado limpio y las funciones integradas sin un backend de compatibilidad explícita retienen Auto y se resuelven en WebGPU/WebGL2 en el tiempo de ejecución de humo Chromium capaz. El barrido preestablecido empaquetado por separado requiere el contrato de propiedad de Canvas centralizado 71 en total / 43 acelerado / 28 explícito. El carril CI Windows ejecuta toda la matriz visible; La aceptación física de Windows también debe confirmar que los 43 ajustes preestablecidos acelerados se resuelven en WebGPU en la máquina RTX de destino y permanecen visibles.
+La matriz estática de presets también verifica la asignación de backends: los perfiles limpios y los presets sin backend de compatibilidad explícito conservan Auto y usan WebGPU/WebGL2 en el entorno Chromium compatible de las pruebas. El barrido de presets de la app empaquetada exige por separado el contrato de 79 presets: 51 acelerados y 28 con Canvas explícito. CI de Windows ejecuta la matriz visible completa; las pruebas en hardware Windows deben confirmar además que los 51 presets acelerados usan WebGPU y siguen visibles en la máquina RTX de referencia.
 
-El mismo humo genera muestras de colores conocidas a través de WebGL2 real y las compara con el asignador de paletas compartido para las 17 paletas en los modos más cercano y de luminancia, incluidos los cambios de paleta en vivo y de inicio. También verifica que las cargas de paletas conserven la configuración de orientación de la imagen de origen.
+La misma prueba renderiza muestras de color conocidas mediante WebGL2 real y las compara con el mapeo compartido de las 21 paletas en los modos de color más cercano y luminancia, tanto al arrancar como al cambiar de paleta. También verifica que cargar una paleta conserve la orientación de la imagen de origen.
 
 <a id="ffmpeg-and-media-engine"></a>
 

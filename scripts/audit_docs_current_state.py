@@ -51,6 +51,9 @@ FORBIDDEN_SPANISH_CURRENT_STATE = {
 }
 
 ENGLISH_RELEASE_CLAIMS = {
+    "dated release baseline": re.compile(
+        r"The latest dated changelog entry is \*\*([0-9]+\.[0-9]+\.[0-9]+)\*\*"
+    ),
     "current docs feature set": re.compile(
         r"Current (?:source )?docs describe the \*\*([0-9]+\.[0-9]+\.[0-9]+)\*\*"
     ),
@@ -76,7 +79,12 @@ SPANISH_RELEASE_CLAIMS = {
 }
 
 REQUIRED_FEATURE_MARKERS = [
-    "Seventeen project-native palettes",
+    "Twenty-one project-native palettes",
+    "Tidal Glass",
+    "Ember Grotto",
+    "Fern After Rain",
+    "Violet Dusk",
+    "Color cycling",
     "Bayer 2x2/4x4/8x8 dithering",
     "custom typed ramps of up to 96 supported Unicode scalars",
     "Advanced Density preference exposes up to 900 columns",
@@ -91,14 +99,14 @@ REQUIRED_FEATURE_MARKERS = [
 
 HOMEPAGE_MARKERS = {
     "index.md": [
-        "71 built-in presets, 17 palettes",
+        "79 built-in presets, 21 palettes",
         "Preset playlists",
         "Save a frame",
         "ASCII World Mint",
         "ASCII City Nightshift",
     ],
     "es/index.md": [
-        "71 presets integrados, 17 paletas",
+        "79 presets integrados, 21 paletas",
         "Listas de presets",
         "Guarda un fotograma",
         "ASCII World Mint",
@@ -257,7 +265,8 @@ def main() -> int:
 
         spanish_features = SPANISH_DOCS / "overview" / "features.md"
         spanish_feature_body = spanish_features.read_text(errors="replace")
-        for marker in ["ASCII World Mint", "ASCII City Nightshift", "Media Foundation", "V4L2"]:
+        for marker in ["ASCII World Mint", "ASCII City Nightshift", "Media Foundation", "V4L2",
+                       "Tidal Glass", "Ember Grotto", "Fern After Rain", "Violet Dusk"]:
             if marker not in spanish_feature_body:
                 errors.append(f"{relative(spanish_features)}: missing current feature marker: {marker}")
 
@@ -272,8 +281,20 @@ def main() -> int:
                 errors.append(f"{relative(release_guide)}: missing canonical release guide marker: {marker}")
         quickstart = DOCS / "development" / "quickstart.md"
         quickstart_body = quickstart.read_text() if quickstart.exists() else ""
-        if "npm ci" not in quickstart_body or "## First-Time Setup" not in quickstart_body:
+        if any(marker not in quickstart_body for marker in [
+            "npm ci", "## First-Time Setup", "git submodule update --init shared/dust-wave-platform"
+        ]):
             errors.append(f"{relative(quickstart)}: missing canonical contributor setup")
+        for filename, markers in {
+            "development/shared-desktop-services.md": ["docs/SHARED_DESKTOP_MIGRATION.md", "## Shared-Service Maintenance", "platform-desktop.json"],
+            "operations/testing.md": ["## Jev Development Testing", "npm test -- --offline", "platform-desktop.json"],
+            "development/rendering-engine.md": ["## Indexed Palette Cycling", "79 total, 51 accelerated, 28 explicit Canvas"],
+        }.items():
+            path = DOCS / filename
+            body = path.read_text() if path.exists() else ""
+            for marker in markers:
+                if marker not in body:
+                    errors.append(f"{relative(path)}: missing current development marker: {marker}")
         features = DOCS / "overview" / "features.md"
         if "docs/USER_GUIDE.md" not in features.read_text():
             errors.append(f"{relative(features)}: missing canonical user guide attribution")

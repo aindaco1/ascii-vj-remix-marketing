@@ -7,6 +7,10 @@ parent: "Development"
 
 # Contributing
 
+The [shared desktop migration](/docs/development/shared-desktop-services/) records the pinned
+Platform packages, original Dust Wave relay additions licensed under MIT, and
+independent rollback. Upstream ASCILINE code is excluded from that extraction.
+
 This guide is for people who want to build, test, document, or extend ASCII VJ
 Remix.
 
@@ -60,6 +64,7 @@ Optional but useful:
 Install JavaScript dependencies:
 
 ```bash
+git submodule update --init shared/dust-wave-platform
 npm ci
 ```
 
@@ -92,6 +97,11 @@ Run the main desktop validation gate:
 ```bash
 npm run check:desktop
 ```
+
+Use `npm test` for standard development testing: the existing desktop gate,
+static browser smoke, and live Jev review of synthetic behavior evidence.
+`npm test -- --offline` explicitly skips the hosted review. See
+[Jev development testing](/docs/operations/testing/#jev-development-testing) for local setup.
 
 On macOS workspaces stored under iCloud Drive, the Tauri build helper redirects
 target output to `/private/tmp/ascii-vj-remix-tauri-target` so iCloud extended
@@ -312,10 +322,15 @@ ASCILINE_FFMPEG=/path/to/ffmpeg
 ASCILINE_FFPROBE=/path/to/ffprobe
 ```
 
-On macOS and Windows, the Podman wrappers reuse a healthy default Podman
-connection before starting `podman-machine-default`. This avoids colliding with
-another checkout's already-running VM. Set `ASCILINE_PODMAN_MACHINE` only when
-the fallback machine has a different name.
+The Podman wrappers use the executable on PATH and the selected default
+engine, preserving `CONTAINER_HOST` and `CONTAINER_CONNECTION`. They never
+start, stop, or restart shared VMs. Start/select one at the host level (or use a
+login service) before launching projects. `ASCILINE_PODMAN_MACHINE` remains an
+optional explicit connection override when neither standard endpoint is set.
+Use distinct `HOST_PORT` values for concurrent services. A busy port fails
+without killing its owner; each runner uses its own process-specific container
+name. VM upgrades/restarts belong to an idle maintenance window across all
+projects. Run `bash scripts/test-podman-env.sh` for safe failure coverage.
 
 Preview the media pipeline:
 
@@ -370,8 +385,28 @@ references; `git diff --check` alone does not check links.
 
 ## License
 
-The repository uses the upstream ASCILINE license text: MIT License with an
-Anti-Advertisement Restriction. See [LICENSE](https://github.com/aindaco1/ascii-vj-remix/blob/main/LICENSE).
+This fork retains the MIT License with an Anti-Advertisement Restriction in
+[LICENSE](https://github.com/aindaco1/ascii-vj-remix/blob/main/LICENSE). It is not the standard MIT license. Its text is unchanged
+from upstream commit
+[`95a3029679b0761663171f5b9afcf28a086a8b3c`](https://github.com/YusufB5/ASCILINE/blob/95a3029679b0761663171f5b9afcf28a086a8b3c/LICENSE)
+(May 3, 2026), which is present in this fork's history. The SHA-256 of both files
+is `7fb645f1d4eafa849eaf8332b0e32ab0c9d4f6b4c42a648c45e5edaf783e159b`.
+
+Upstream adopted a different license notice on September 3, 2026 in
+[`9921b0dfddfebdcaa7081cfca918fc668a330e06`](https://github.com/YusufB5/ASCILINE/blob/9921b0dfddfebdcaa7081cfca918fc668a330e06/LICENSE):
+AGPL-3.0-or-later for its Python engine/server and standard MIT for its JavaScript
+client SDK/decoders. Yusuf reported that change in
+[#38](https://github.com/aindaco1/ascii-vj-remix/issues/38). On September 16, 2026,
+the fork maintainer chose to retain the existing license and document this
+provenance; no upstream code or new license text was imported in that review.
+
+Before importing later upstream code, record the exact revision, affected files,
+and their applicable notices and review compatibility with this fork. Do not
+assume the current upstream notice describes this fork, or assign its new SDK
+license to the older copied code without checking provenance. Bundled third-party
+assets and sidecars retain their own notices (including
+[Unifont](https://github.com/aindaco1/ascii-vj-remix/blob/main/third_party/unifont/README.md) and
+[FFmpeg](https://github.com/aindaco1/ascii-vj-remix/blob/main/src-tauri/resources/ffmpeg/README.md)).
 
 Contributions must be compatible with that license and with the project's
 local-first runtime policy.

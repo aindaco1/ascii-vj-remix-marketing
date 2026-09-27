@@ -10,7 +10,7 @@ These docs are for software developers who want to fork, inspect, extend, packag
 
 ASCII VJ Remix is a local-first desktop visualizer and renderer workbench. For users, it exists to give DJs a manageable visualizer and VJs fine-grained ASCII/video filter control. For developers, it is a Tauri desktop application with a dense renderer/control surface, native output path, local media adapters, audio-reactive modulation, and release/update infrastructure.
 
-The public homepage is written for DJs and VJs. This section is intentionally technical: it describes the app's source model, renderer architecture, desktop packaging boundary, security posture, performance constraints, accessibility expectations, internationalization posture, release workflow, and current 1.0.3 feature baseline.
+These guides follow merged changes on the mother repository's `main` branch. The [Release Baseline](/docs/overview/changelog-baseline/) identifies the latest dated release, **1.0.6**. Changes after that release are labeled separately; source, CI, desktop publication, relay deployment, and hardware acceptance are distinct.
 
 ## Start Here
 
@@ -45,6 +45,7 @@ This page is generated from ASCII VJ Remix source material. Primary sources:
 - [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/CHANGELOG.md)
 - [docs/RENDERING_ENGINE.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/RENDERING_ENGINE.md)
 - [docs/CONTRIBUTORS.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/CONTRIBUTORS.md)
+- [docs/SHARED_DESKTOP_MIGRATION.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/SHARED_DESKTOP_MIGRATION.md)
 - [docs/AGENTS.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/AGENTS.md)
 - [docs/SECURITY.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/SECURITY.md)
 - [docs/PERFORMANCE.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/PERFORMANCE.md)

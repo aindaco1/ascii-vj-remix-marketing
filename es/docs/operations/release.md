@@ -87,6 +87,12 @@ La configuración base conserva `bundle.macOS.signingIdentity = "-"` para los va
 
 ## macOS Firma de lanzamiento
 
+La versión mínima de macOS compatible se define en `bundle.macOS.minimumSystemVersion`, dentro de `src-tauri/tauri.conf.json` (13.0). Los scripts de Tauri/Cargo y de compilación de FFmpeg la usan como `MACOSX_DEPLOYMENT_TARGET`; el script de los binarios auxiliares también establece los flags de versión mínima del compilador y del enlazador. Compilar con el SDK de Xcode 27 no debe elevar silenciosamente ese mínimo a la versión del sistema usado para compilar.
+
+`check:ffmpeg-resources` inspecciona los comandos de carga Mach-O que indican la versión mínima de macOS. `check:bundle` contrasta `LSMinimumSystemVersion`, el ejecutable de la app y los binarios auxiliares de macOS de los nuevos paquetes con el mismo mínimo. Si fallan estas comprobaciones, recompila los binarios auxiliares antiguos. Estos metadatos verifican el empaquetado; aún hacen falta pruebas en macOS 13 para demostrar la compatibilidad de las API con ese sistema.
+
+La configuración de compilación release de Cargo conserva los símbolos de las dependencias usadas al compilar. Esto evita el error de dyld de macOS 27 `mis-aligned LINKEDIT string pool` al cargar macros procedimentales de Rust; `E0463` puede ocultar el error del cargador. La configuración no modifica la optimización ni la eliminación de símbolos del ejecutable distribuido.
+
 La firma y certificación de ID de desarrollador requieren membresía del Programa de Desarrolladores de Apple, una aplicación de ID de desarrollador base64 `.p12`, su contraseña, una contraseña de llavero CI y credenciales API de App Store Connect o credenciales de notarización de ID de Apple. Verifique la preparación o cargue las credenciales de la API de App Store Connect con:
 
 ```bash

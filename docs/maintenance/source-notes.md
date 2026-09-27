@@ -43,3 +43,48 @@ maintaining parallel technical descriptions.
 - Consolidated website procedures in this directory, retained existing public
   routes, and reduced Quickstart to canonical setup plus links to check selection
   and the full command reference.
+
+
+## 2026-09-27 developer documentation refresh
+
+- Compared the previous `0d19eac669752b3661bafe07b156ad083effc9e9` ingestion
+  with fetched `origin/main` at `8dc3a0553145d18da1c82f4c3baf60b9d3d85584`.
+  The source checkout matched that commit before the documentation corrections below.
+- Verified GitHub's latest public release is [v1.0.6](https://github.com/aindaco1/ascii-vj-remix/releases/tag/v1.0.6),
+  published September 25, 2026 at 11:50 UTC, with 14 assets covering macOS,
+  Windows, Linux and the updater. The tag resolves to
+  `55545b67c4376f190fcc6f89ab57f6e12d65eb87`. This is publication evidence;
+  installers, updater transactions and physical hardware were not retested here.
+- Reviewed the 1.0.4 color-cycling implementation, shared palette/preset contracts,
+  renderer resource reuse and native presentation checks; the 1.0.5 macOS floor,
+  static-image recovery, selected Podman engine and license-provenance changes;
+  and the Jev development commands and shared desktop migration in 1.0.6.
+- Checked the live source exports: 21 palettes and 79 presets, with 51 eligible
+  for acceleration and 28 explicitly using Canvas. Corrected the upstream User
+  Guide's old palette count and labeled the earlier 71-preset performance sweep
+  as historical instead of turning it into new acceptance evidence.
+- Corrected the upstream README's old package version and Testing's old Platform
+  pin/rollback description. Exact current pins stay in `platform-desktop.json`.
+  Documented the existing Jev `testCoreVersion` metadata mismatch without changing
+  the evaluator or running hosted evaluation.
+- Grouped the later Record relay adapter and compatible Desktop Core 0.2.0 pin
+  under 1.0.6 shared-service maintenance, as requested. The shared dependency diff
+  changes relay issue markers and grouping initialization; the desktop updater
+  helpers are unchanged. The published desktop tag/installers are unchanged.
+- Added Shared Desktop Services through the existing importer, refreshed English
+  and Spanish guides and commands, and updated the shared release metadata plus
+  factual homepage counts/summary. Canonical documentation corrections are
+  committed upstream at `caefa8ec9708ff782af9a6a1a4b7946a8953046c` for reproducible source refreshes.
+- Removed the stale, untracked `es/docs/operations/release 2.md` iCloud copy at
+  the user’s request; checked both repositories for additional source/document
+  conflict copies and found none.
+- Validation: all 10 documentation-pipeline tests, the production Jekyll build,
+  current-state audit, internal-link audit (52 HTML pages), SEO audit, support
+  audit, and performance audit passed. Re-running both generators produced
+  identical files. `git diff --check` passed in both repositories, and changed
+  upstream documentation paths resolve locally.
+- Visually reviewed the generated Shared Desktop Services page in English and
+  Spanish and verified the language switch. These checks preceded publication.
+  The website deployment is tracked by the Pages workflow for the publishing
+  commit; this documentation refresh does not rebuild the desktop release or
+  deploy the relay.

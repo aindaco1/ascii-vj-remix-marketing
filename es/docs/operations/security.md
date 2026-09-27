@@ -99,6 +99,10 @@ Al agregar un comando Tauri:
 
 Los informes de fallas se aceptan por preferencia y son solo de producción para el envío de la red. Las compilaciones de depuración/desarrollo pueden capturar informes locales para realizar pruebas, pero Rust se niega a enviarlos.
 
+El relay compartido también tiene adaptadores con activación independiente para Podcast Visualizer, MKV Magic, Auto Subtitle, CutNotes, Road Notice, Paper y Record. Cada uno mantiene un esquema acotado de campos permitidos y un repositorio de destino fijo, y reutiliza la agregación serializada de incidencias. No amplían los datos admitidos por los informes de ASCII VJ. La [guía del relay](https://github.com/aindaco1/ascii-vj-remix/blob/main/crash-relay/README.md) define los esquemas de cada ruta, la evidencia de despliegue y los límites de deduplicación; la [guía de migración](/es/docs/development/shared-desktop-services/) documenta los paquetes compartidos y los cambios posteriores a la última versión de escritorio.
+
+El adaptador de MKV Magic usa una entrada con activación independiente y una página de revisión del mismo origen en el navegador. Solo una acción explícita de Send envía la proyección de campos permitidos, limitada a 4 KiB; no se aceptan registros sin filtrar, medios, mensajes arbitrarios, credenciales ni incidentes completos de fallo. La página elimina los datos del fragmento antes de renderizar y usa CSP con nonce, no-referrer y no-store. Comparte la agregación serializada y el escritor de GitHub, pero no el código de la aplicación ni los permisos de escritorio. La app principal de MKV sigue sin permisos de red. El acceso al repositorio y las pruebas sintéticas sobre el despliegue se validan por separado; consulta la guía del relay para la retención y reversión.
+
 El reportero de accidentes puede capturar:
 
 - eventos front-end `error`.

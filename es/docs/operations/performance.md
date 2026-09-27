@@ -138,7 +138,7 @@ El atlas fuente Unicode está dividido en dieciséis páginas en escala de grise
 
 Las mediciones de funciones locales originales seleccionaron WebGL2 y siguen siendo evidencia de regresión GPU del navegador, no evidencia de aceptación para la vista previa del glifo Apple WebKit instalada.
 
-Para la vista principal macOS Apple WebKit, los ajustes preestablecidos de glifos elegibles para aceleración utilizan la textura de rampa compacta WebGPU. Los ajustes preestablecidos que poseen explícitamente Canvas2D mantienen el límite de densidad de software normal. El barrido de todos los ajustes preestablecidos instalado resuelve 43 elementos integrados en WebGPU y 28 en Canvas2D, mantiene los 71 visibles y confirma que todos los ajustes preestablecidos elegibles para GPU se aceleran. El Pop Out nativo permanece renderizado de forma independiente en GPU. Una ejecución estructural anterior de 30 segundos mantuvo la vista principal en 30.0 FPS, la presentación nativa en 60.0 FPS, las cargas de origen en 23.5 FPS para el dispositivo 24 FPS y completó 16 fundidos cruzados sincronizados con cero GPU o fallas de transición. Estos son resultados de regresión del host de desarrollo de M1 Max, no la certificación mínima de M1/16 GB.
+Para la vista principal macOS Apple WebKit, los ajustes preestablecidos de glifos elegibles para aceleración utilizan la textura de rampa compacta WebGPU. Los ajustes preestablecidos que poseen explícitamente Canvas2D mantienen el límite de densidad de software normal. El barrido anterior instalado de 71 ajustes preestablecidos resolvió 43 elementos integrados en WebGPU y 28 en Canvas2D, mantuvo los 71 visibles y confirmó que todos los ajustes preestablecidos elegibles para GPU fueron acelerados. Estas son medidas históricas; el contrato actual 79/51/28 se define en [Testing](/es/docs/operations/testing/#renderer-backend-changes). El Pop Out nativo permanece renderizado de forma independiente en GPU. Una ejecución estructural anterior de 30 segundos mantuvo la vista principal en 30.0 FPS, la presentación nativa en 60.0 FPS, las cargas de origen en 23.5 FPS para el dispositivo 24 FPS y completó 16 fundidos cruzados sincronizados con cero GPU o fallas de transición. Estos son resultados de regresión del host de desarrollo de M1 Max, no la certificación mínima de M1/16 GB.
 
 <a id="backend-notes"></a>
 
@@ -410,6 +410,18 @@ Investigue inmediatamente cuando:
 - El uso de CPU/GPU aumenta después de cerrar Pop Out.
 
 En [Roadmap](/es/docs/reference/roadmap/).] se realiza un seguimiento del trabajo prospectivo de referencia, prueba de latencia, uso compartido de texturas y panel de rendimiento.
+
+<a id="104-resource-and-startup-work"></a>
+
+## 1.0.4 Recursos y trabajo inicial
+
+La primera vista previa ya no espera a la enumeración independiente de MIDI/dispositivo ni al envío del informe de fallos. El sondeo de la capacidad del renderizador se superpone a la carga de origen y las solicitudes simultáneas comparten un sondeo pendiente. El calentamiento nativo de GPU comienza después de la primera configuración de vista previa, en un trabajador, por lo que no compite con la selección inicial del controlador en el subproceso de la interfaz de usuario.
+
+Las canalizaciones WebGPU se compilan de forma asincrónica y se comparten por dispositivo/tipo de fuente y formato de lienzo. La salida nativa comparte un adaptador/dispositivo/cola compatible y canalizaciones inmutables entre aperturas; la pérdida del dispositivo invalida ese caché y una superficie no compatible solicita un adaptador compatible. La creación de la superficie Windows aún se envía al subproceso de interfaz de usuario requerido. La ventana/superficie, la cámara, las texturas, las cargas y los buffers de fotogramas siguen siendo propiedad de cada presentador y se liberan al cerrar. Las salvaguardas existentes de adquisición antes de carga y de último fotograma permanecen activas.
+
+La reutilización de la búsqueda de la paleta del navegador tiene un límite de 16 tablas (512 KiB); La reutilización nativa tiene un límite de 16 tablas (2 MiB más claves pequeñas). El orden de luminancia nativo se calcula una vez por instantánea de parámetro y el inicio del vídeo utiliza una sonda para geometría/FPS. Las actualizaciones en vivo de la tabla de visualización reutilizan los buffers y nunca reconstruyen estos recursos. La inicialización fallida del renderizador ahora destruye recursos parciales y WebGL2 también libera su búfer cuádruple/VAO.
+
+La prueba de humo de rendimiento de la interfaz de usuario ahora informa la finalización/fallo real de la interfaz de usuario con un tiempo de espera limitado. La expiración del temporizador por sí sola nunca es una medida pasajera. Los resultados locales exactos y las limitaciones de la plataforma pertenecen al registro de versión [1.0.4](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/releases/RELEASE_1.0.4.md).
 
 
 <a id="source-material"></a>

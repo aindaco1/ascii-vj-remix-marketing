@@ -58,7 +58,7 @@ nav_exclude: true
   <div class="stack-list">
     <article class="card"><h3>Video and camera input</h3><p>Use clips or live camera sources as raw material, then turn them into ASCII, cell, pixel, and glyph-based visuals.</p></article>
     <article class="card"><h3>Sound-reactive motion</h3><p>Let rhythm, brightness, density, and frequency bands move the image so the visuals respond to the set instead of sitting still.</p></article>
-    <article class="card"><h3>Palette, dither, and glyph control</h3><p>Combine 17 built-in palettes with Bayer dithering, glyph depth and color controls, multilingual character sets, and custom Unicode ramps.</p></article>
+    <article class="card"><h3>Palette, dither, and glyph control</h3><p>Combine 21 built-in palettes with Bayer dithering, glyph depth and color controls, multilingual character sets, and custom Unicode ramps.</p></article>
     <article class="card"><h3>Performance-aware density</h3><p>Stay inside shared renderer guardrails by default, or explicitly enable Advanced Density for grids up to 900 columns without a 30 FPS guarantee.</p></article>
     <article class="card"><h3>Preset playlists</h3><p>Save a sequence of looks, reorder it, and loop it in order or at random. Set a shared hold interval and let the presets crossfade while your source keeps playing.</p></article>
     <article class="card"><h3>Save a frame</h3><p>Capture the current visual as a PNG straight to your Desktop, with the Stats Overlay left out of the image.</p></article>
@@ -67,12 +67,12 @@ nav_exclude: true
 
 <section class="section-band" aria-labelledby="release-heading">
   <p class="kicker">Latest release</p>
-  <h2 id="release-heading">What changed in v{{ site.data.product.latest_release.version }}.</h2>
+  <h2 id="release-heading">Current release: v{{ site.data.product.latest_release.version }}.</h2>
   <div class="release-summary">
     <img class="release-app-icon" src="{{ site.data.product.app_icon.path | relative_url }}?v={{ site.data.product.app_icon.path | asset_fingerprint }}" width="512" height="512" alt="ASCII VJ Remix neon play-and-pixel app icon" loading="lazy" decoding="async">
     <div>
-      <p class="section-intro">v{{ site.data.product.latest_release.version }} improves camera Pop Out on Windows and Linux and adds two animated ASCII looks. Windows source switching and preview sizing are more reliable, and WebGL2 palette colors stay consistent when you change looks.</p>
-      <p class="section-intro"><strong>71 built-in presets, 17 palettes.</strong> Find a look by name, tune the glyphs and color, or save a playlist that moves through your favorites.</p>
+      <p class="section-intro">v{{ site.data.product.latest_release.version }} shares the foundations for updates and reviewed diagnostics while preserving the existing controls. Recent releases also add eight pixel/glyph looks with color cycling, improve renderer startup and Pop Out reuse, and correct the macOS packaging target.</p>
+      <p class="section-intro"><strong>79 built-in presets, 21 palettes.</strong> Find a look by name, tune the glyphs and color, or save a playlist that moves through your favorites.</p>
     </div>
   </div>
   <div class="card-grid">

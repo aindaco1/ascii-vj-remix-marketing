@@ -43,7 +43,7 @@ Esta página describe la línea base de funciones ASCII VJ Remix actual para des
   - D3D12 en Windows.
   - Vulkan/GLES en Linux.
 - El Pop Out nativo conserva los parámetros del modo glifo y del conjunto de caracteres para los ajustes preestablecidos ASCII tradicionales en lugar de aplanarlos en celdas sólidas.
-- Diecisiete paletas del proyecto, el mapeo por color más cercano o luminancia y el dithering ordenado Bayer 2x2/4x4/8x8 comparten los mismos parámetros y tablas de consulta entre los renderizadores del navegador, Canvas y la salida nativa.
+- Veintiuna paletas del proyecto, el mapeo por color más cercano o luminancia y el dithering ordenado Bayer 2x2/4x4/8x8 comparten los mismos parámetros y tablas de consulta entre los renderizadores del navegador, Canvas y la salida nativa.
 - Los controles de glifo cubren profundidad, desplazamiento, inversión, color de origen/fijo, fondo, Braille, bloques de dibujo/símbolos comunes, latín extendido, griego, cirílico, marcas CJK, Hiragana, Katakana, CJK unificado U+4E00-U+9FFF, Hangul y rampas personalizadas de hasta 96 escalares Unicode compatibles.
 - El atlas neutral Unicode se genera y verifica fuera de línea, se incluye localmente y se carga en páginas delimitadas de 1024 px solo cuando los glifos seleccionados las necesitan.
 - La densidad normal está protegida por el rendimiento mediante límites de columnas compartidas y de celdas totales. La preferencia global Advanced Density expone hasta 900 columnas sin una garantía de 30 FPS y nunca se almacena en ajustes preestablecidos visuales.
@@ -64,13 +64,23 @@ Esta página describe la línea base de funciones ASCII VJ Remix actual para des
 - Built-in y My Presets se muestran como secciones separadas, ordenadas alfabéticamente de forma independiente con una búsqueda de nombre en vivo. El nombre anterior Point & Click Default ahora se muestra como Dense Color ASCII; su identificación preestablecida estable no cambia.
 - El conjunto de caracteres, la familia de fuentes, la paleta y otras selecciones comparten la misma geometría de control, por lo que el ajuste ASCII tradicional permanece alineado en la densa barra lateral.
 - Los controles de paleta, mapeo, tramado ordenado, rampa de glifos y color de glifos se pueden ajustar y guardar de forma independiente a través del esquema visual preestablecido existente.
-- Las once variantes integradas de paletas y glifos incluyen ASCII City Nightshift, Braille, dibujo de cuadros, marcas CJK, Hiragana, Katakana, CJK Unified y Hangul. Las otras seis paletas se incorporan a presets existentes.
+- Las once variantes integradas de paletas y glifos incluyen ASCII City Nightshift, Braille, dibujo de cajas, marcas CJK, Hiragana, Katakana, CJK Unified y Hangul. Otras seis paletas sin ciclos de color se incorporan a presets existentes. Las cuatro paletas con ciclos de color se describen a continuación.
 - Los ajustes preestablecidos del usuario se pueden guardar, duplicar, actualizar, eliminar, importar y exportar.
 - Se pueden guardar varias listas de reproducción preestablecidas con nombre con entradas preestablecidas estables reordenadas, un intervalo de espera compartido y bucles aleatorios o en orden. La reproducción de la lista de reproducción utiliza el control de transición predeterminado existente, limitado a 1 a 5 segundos.
 - Las transiciones preestablecidas se funden en lugar de fundirse en negro.
 - El tiempo de transición es configurable.
 - Los ajustes preestablecidos conservan la fuente de medios activa a menos que el usuario la cambie explícitamente.
 - WTF mode realiza una transición continua a través de configuraciones aleatorias seguras en vivo y se inclina hacia familias preestablecidas ASCII tanto extremas como tradicionales, evitando al mismo tiempo la salida de blanco puro o negro puro.
+
+<a id="pixel-art-and-color-cycling"></a>
+
+### Pixel art y ciclos de color
+
+Ocho presets originales combinan píxeles sólidos y glifos en cuatro paletas: Tidal Glass, Ember Grotto, Fern After Rain y Violet Dusk. Transforman la cámara, el vídeo o la imagen activos sin interrumpir su reproducción. Busca el nombre de una familia en Presets.
+
+En el panel Color, elige una paleta con ciclos de color y configura **Color cycling** en Classic, con pasos discretos, o Blend, con transiciones suaves. **Cycle speed** va de −4× a 4×: cero congela la fase actual y los valores negativos invierten el sentido. **Cycle amount** mezcla los colores animados con la paleta fija. Start/Stop pausa y reanuda el ciclo. Las sombras y luces fijas y las formas de los glifos permanecen estables mientras cambian los rangos de color seleccionados. Los presets anteriores usan Off de forma predeterminada.
+
+Estos looks originales están inspirados en [Mark Ferrari](https://www.markferrari.com/image-archives), [Living Worlds](https://www.effectgames.com/demos/worlds/) y [ejemplos de ciclo de color de Amiga](https://amiga.lychesis.net/specials/ColorCycling.html). No incluyen imágenes de esos artistas ni animaciones de escenas de autor.
 
 <a id="audio-reactivity"></a>
 

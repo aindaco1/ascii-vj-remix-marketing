@@ -17,9 +17,14 @@ release artifacts, and updater manifests.
 ## Quick Reference
 
 ```bash
+npm test                         # Desktop gate, static smoke, live synthetic Jev review
+npm test -- --offline            # Same deterministic checks, explicitly skip Jev
+npm run test:jev -- --dry-run     # Preview requests without credentials or network
+npm run test:jev-harness          # Offline evaluator and workflow regression tests
 npm run build                    # Vite production build plus local asset copy
 npm run check:offline            # Build and verify bundled/offline assets
 npm run smoke:static             # Static UI/renderer smoke harness
+npm run test:smoke-diagnostics    # Failure capture, bounded waits, and artifact-write failures
 npm run check:tauri-policy       # Production CSP and local-only runtime policy
 npm run check:icons              # Canonical source and generated platform icons
 npm run check:glyph-atlas        # Unicode atlas manifest, dimensions, source, hashes
@@ -65,6 +70,102 @@ For documentation-only changes:
 git diff --check
 ```
 
+## Jev Development Testing
+
+`npm test` is the standard development entrypoint. It runs the Jev harness tests,
+the existing `check:desktop` gate, `smoke:static`, then live Jev review. A failed
+step stops the workflow; Jev never overrides a deterministic failure. The gate
+builds a development binary but does not package, install, tag, or release it.
+`npm test -- --offline` (also `npm run test:offline`) skips only live Jev.
+It reports that semantic evaluation did not run. Existing focused commands and
+release gates retain their behavior. Hosted Desktop CI checks the harness
+offline and has no Jev credentials.
+
+The evaluator uses the existing renderer fallback/report helpers, smoke-failure
+diagnostics, and updater controller with fixed synthetic inputs. Six captured
+outputs check recovery versus failure, initialization versus document loading,
+missing diagnostic state versus the original failure, and update availability
+versus successful installation or an unsuccessful check. Exact assertions run
+first. Fourteen labeled positive/negative controls precede the six behavior cases.
+These are component simulations; they do not exercise real camera hardware,
+native presentation, image quality, or a real updater transaction. Browser smoke
+still runs separately. No arbitrary report, screenshot, source file, user media,
+camera/audio data, or private log is accepted by the Jev command.
+
+### Setup and commands
+
+```bash
+git submodule update --init shared/dust-wave-platform
+npm ci
+npm run test:jev -- --dry-run
+npm run test:jev
+npm test
+```
+
+Set `CLOUDFLARE_ACCOUNT_ID` in the environment, or put only the account ID in the
+ignored `.ascii-vj-development.json` as
+`{"cloudflare_account_id":"YOUR_ACCOUNT_ID"}`. Set `CLOUDFLARE_API_TOKEN` in the
+environment or use an existing Wrangler login. The adapter uses the repository's
+pinned Wrangler dependency; `--wrangler-auth` explicitly selects that login.
+No token is saved in configuration or reports. Missing authentication is an
+error, never a silent offline pass.
+
+The live command sends at most 20 requests / 20 atomic questions, capped at
+64,000 total request bytes. Requests are sequential with a 45-second timeout,
+stop on the first provider error, and never retry or purchase credits. Review
+the exact preview before expanding the corpus; live usage is billed by the
+configured provider account. Request limits are not a guarantee of a dollar
+price. Jev uses [typed questions](https://docs.typesafe.ai/introduction) through
+Cloudflare, with cache/log-skip request headers; those headers do not establish
+the provider's retention policy.
+
+### Results and shared ownership
+
+Each run creates a new ignored `jev-results/<timestamp>/` directory, or a new
+directory supplied with `--output-dir`. It retains requests, source hashes,
+incremental/raw answers, final `report.json`, and `review.md`. Existing output
+directories are rejected. Dry runs have zero network attempts, remain incomplete,
+and explicitly say `dry-run`. Exit codes are 0 for pass/preview, 1 for fail/review,
+and 2 for setup/provider error. `releaseAccepted` is always false.
+
+Near ties (margin below 0.10), uncertain answers, unrecognized judge versions,
+or incorrect known-answer controls require review and make development testing
+nonzero. Only `jev-1.13.0` is initially recognized. The margin is provisional for
+these engineering-labeled fixtures, not inherited CutNotes calibration or proof
+of general reliability. Do not change prompts or thresholds merely to make a
+run green. Treat observed controls as regressions; use fresh held-out examples
+before claiming calibration after prompt changes.
+
+The first local run caught a false pass on a negative diagnostic-capture control
+and correctly returned review. Its broad "distinguishes failures" question was
+replaced with the explicit requirement to retain renderer startup as failed;
+two fresh phrasings were fixed before the revised run. With the threshold
+unchanged, that run passed all 14 controls and six behavior cases on Jev 1.13.0.
+Both runs remain in local evidence. This is a small local verification, not
+independent calibration or physical-platform acceptance.
+The [integration verification record](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/testing/JEV_EVALUATION.md) preserves the
+exact results, evidence hashes and cleanup boundaries.
+
+Request construction, Cloudflare transport, response validation, and review
+routing reuse Platform Test Core through the public `test-core/jev` entry.
+[platform-desktop.json](https://github.com/aindaco1/ascii-vj-remix/blob/main/platform-desktop.json) owns the current immutable
+commit and exact package versions. The original integration used Test Core 0.3.0
+from [Platform PR 46](https://github.com/aindaco1/dust-wave-platform/pull/46);
+its dated results remain in the integration verification record.
+The adapter rejects a different or dirty Platform checkout. ASCII VJ owns only
+its corpus, authentication, budgets, reports, and command orchestration. There
+is no sibling-project import or copied model client, new npm dependency, runtime
+model call, or app version change. The shared checkout is not copied into `dist`.
+The evaluator currently verifies Test Core 0.3.1 but still writes `0.3.0` to the
+report's `testCoreVersion` field. Use the recorded `platformCommit`, source hashes,
+and manifest for dependency provenance until that metadata field is corrected.
+
+To roll back Jev alone, remove its four test scripts, commands, CI harness step,
+and documentation together. Retain the Platform submodule and manifest: the
+updater and relay also depend on them. Use the
+[shared desktop migration](/docs/development/shared-desktop-services/#independent-rollback)
+for that integration's separate rollback. No application/data migration is involved.
+
 ## Test Categories
 
 | Area | Current Checks |
@@ -89,7 +190,7 @@ git diff --check
 | Rust/Tauri modules | `npm run test:rust` |
 | Native output performance | `npm run smoke:native-output`, `npm run test:native-output-log` |
 | UI performance | `npm run smoke:ui-perf`, `npm run bench:density` with fixed defaults/transitions, feature configuration, phase percentiles, renderer replacements, and frame resets |
-| Installed primary presets | `npm run smoke:primary-presets`, all 71 built-ins on Demo Image with per-preset primary visibility, backend-family, running-state, GPU-error, and aspect checks |
+| Installed primary presets | `npm run smoke:primary-presets`, all 79 built-ins on Demo Image with per-preset primary visibility, backend-family, running-state, GPU-error, and aspect checks |
 | Release install/update | `npm run smoke:release-install` |
 
 ## Recommended Check Sets
@@ -115,6 +216,21 @@ npm run smoke:static
 Add manual checks for source switching, preset transitions, WTF mode, and audio
 reactivity when behavior changes.
 
+The static smoke prints its browser version and executable name. On failure it
+prints the original error, current phase, bounded console/page errors, failed
+requests and HTTP errors, and explicit startup state for each test page. Request
+URLs omit credentials, queries, and fragments. State capture and screenshots
+have bounded waits so an unresponsive page cannot suppress the failure report.
+The browser is closed on both success and failure.
+
+Each failed invocation saves `failure.json` and best-effort page screenshots in
+a timestamped folder under `tmp-smoke-static/`. Set `SMOKE_DIAGNOSTICS_DIR` to
+choose another parent directory. These fresh browser contexts contain synthetic
+smoke fixtures; diagnostics do not dump storage, environment variables, or the
+full DOM. The Windows Desktop job uploads failure diagnostics as a separate
+artifact retained for seven days. This does not relax startup timeouts, visible
+renderer checks, or the 79/51/28 preset ownership contract.
+
 ### Renderer Backend Changes
 
 ```bash
@@ -131,7 +247,24 @@ palette/dither, Braille, CJK/Kana, Hangul, and typed custom-ramp states. Record
 the actual backend; a requested backend that falls back is not evidence for the
 requested backend.
 
+The static smoke also forces `SecurityError` at WebGL2's external-image upload
+boundary (#35), compares recovered pixels/orientation with the direct upload,
+and verifies repeated construction reuses one authorized readback while staying
+on WebGL2. `test:canvas-readback` separately verifies rejection of tainted images
+and exclusion of video from this retry. The original reporter's private image
+is not captured by these synthetic fixtures.
+
 ### Native Output or Pop Out Changes
+
+`smoke:native-output` requires a real GPU presentation, applies live params and
+palette cycling, closes through the normal window watcher, and requires another
+presentation after reopening. Its report separates command response from first
+presentation time. Windows and Linux PR CI run it against the optimized
+development binary after packaging, with the verified bundled FFmpeg sidecars.
+Linux uses Xvfb for a virtual display. This tests the native renderer and window lifecycle;
+the physical camera/display matrix below remains separate. Set
+`ASCILINE_NATIVE_OUTPUT_REPORT_PATH` to retain a JSON report. macOS additionally
+checks display-link pacing with the existing log analyzer.
 
 ```bash
 npm run test:output-display
@@ -277,13 +410,13 @@ installer before merging.
 The static preset matrix also verifies backend ownership: clean state and
 built-ins without an explicit compatibility backend retain Auto and resolve to
 WebGPU/WebGL2 in the capable Chromium smoke runtime. The packaged preset sweep
-separately requires the centralized 71 total / 43 accelerated / 28 explicit
+separately requires the centralized 79 total / 51 accelerated / 28 explicit
 Canvas ownership contract. The Windows CI lane runs the full visible matrix;
-physical Windows acceptance must additionally confirm the 43 accelerated
+physical Windows acceptance must additionally confirm the 51 accelerated
 presets resolve to WebGPU on the target RTX machine and remain visible.
 
 The same smoke renders known color swatches through actual WebGL2 and compares
-them with the shared palette mapper for all 17 palettes in nearest and luminance
+them with the shared palette mapper for all 21 palettes in nearest and luminance
 modes, including startup and live palette changes. It also verifies that palette
 uploads preserve the source-image orientation setting.
 

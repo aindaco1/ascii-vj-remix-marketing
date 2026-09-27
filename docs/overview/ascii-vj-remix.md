@@ -7,7 +7,7 @@ parent: "Overview"
 
 # ASCII VJ Remix
 
-Current source docs describe the **1.0.3** feature set. The sections below are selected directly from the mother repository so product identity, requirements, and hardware guidance do not drift into a second hand-maintained contract.
+These sections follow the mother repository's `main` branch. See the [Release Baseline](/docs/overview/changelog-baseline/) for **1.0.6** release notes. Product identity, requirements, and hardware guidance are selected directly from their canonical guides.
 
 ## What This Project Is
 
@@ -42,6 +42,10 @@ output windows all increase load.
 
 Notes:
 
+- The published 1.0.4 FFmpeg/ffprobe sidecars were built with a macOS 26
+  minimum, so FFmpeg-dependent media paths do not meet the macOS 13 support
+  target in that release. Version 1.0.5 corrects the build target; older-OS runtime
+  acceptance remains tracked in [#30](https://github.com/aindaco1/ascii-vj-remix/issues/30).
 - Intel Mac support is not the current release target. It may work from source
   if you build a compatible bundle yourself, but it is not the tested path.
 - Camera, microphone, and audio capture require explicit macOS privacy grants.

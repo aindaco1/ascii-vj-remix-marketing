@@ -137,6 +137,24 @@ Crash reporting is opt-in by preference and production-only for network
 submission. Debug/dev builds can capture local reports for testing, but Rust
 refuses to submit them.
 
+The shared relay also has separately gated adapters for Podcast Visualizer,
+MKV Magic, Auto Subtitle, CutNotes, Road Notice, Paper, and Record. Each owns a
+bounded allowlisted schema and fixed repository routing while reusing serialized
+issue aggregation. These adapters do not broaden the ASCII desktop report
+contract. The [relay guide](https://github.com/aindaco1/ascii-vj-remix/blob/main/crash-relay/README.md) owns route-specific schemas,
+deployment evidence, and deduplication limits; the
+[migration guide](/docs/development/shared-desktop-services/) records shared package ownership
+and changes after the latest desktop release.
+
+The MKV Magic adapter uses a separately gated intake and a same-origin
+browser review page. A fixed 4 KiB allowlisted projection is submitted only by an
+explicit Send action; no raw logs, media, arbitrary messages, credentials, or full
+crash incidents are accepted. The page clears fragment data before rendering and
+uses nonce CSP/no-referrer/no-store. It shares the serialized aggregation and
+GitHub writer, not application code or desktop permissions. MKV's main app remains
+without network entitlements. Repository access and deployed synthetic acceptance
+are separate gates; see the relay guide for retention and rollback.
+
 The crash reporter can capture:
 
 - frontend `error` events.

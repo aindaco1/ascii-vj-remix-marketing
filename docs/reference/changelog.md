@@ -7,6 +7,64 @@ parent: "Reference"
 
 # Changelog
 
+## [1.0.6] - 2026-09-25
+
+- Share Tauri progress/manifest helpers, reviewed-report sender, serialized aggregation and GitHub issue reconciliation through the pinned Dust Wave Platform dependency. Preserve existing update consent and product-specific diagnostics behavior. See the [migration record](/docs/development/shared-desktop-services/).
+
+## [1.0.5] - 2026-09-16
+
+### Fixed
+
+- Pin the app and FFmpeg build target to the documented macOS 13.0 minimum.
+  Reject newly packaged binaries whose Mach-O minimum exceeds that floor;
+  previously published 1.0.4 FFmpeg sidecars targeted macOS 26 (#30).
+- Preserve compile-time Rust macro symbols so Xcode 27 release builds do not
+  fail with an unloadable macro library / `E0463` error on macOS 27 (#30).
+- Clarify this fork's retained license provenance and distinguish upstream's
+  later AGPL engine / MIT client split (#38).
+- Add a real WebGL regression for the static-image upload recovery shipped in
+  1.0.4, checking pixel parity, orientation, and cached readback (#35).
+- Use the selected shared Podman engine without restarting VMs that other
+  projects depend on; preserve explicit endpoints and fail with a diagnostic (#39).
+
+## [1.0.4] - 2026-09-15
+
+### Added
+
+- Eight original pixel/glyph presets in Tidal Glass, Ember Grotto, Fern After
+  Rain, and Violet Dusk, inspired by classic indexed-color game art.
+- Classic and smooth color cycling with signed speed, phase-preserving pause,
+  and amount controls. Camera, video, and still-image sources use the existing
+  renderer and preset workflows across all backends.
+- Shared 256-color/eight-range validation, fixed glyph luminance, native/browser
+  transport synchronization, and golden palette/clock vectors.
+- Recurring Xcode 27 compiler/SDK coverage alongside the stable release lane (#36).
+
+### Performance and Fixes
+
+- Move independent device/optional integration startup off the first-frame path;
+  share capability discovery and compile WebGPU pipelines asynchronously.
+- Warm and reuse native GPU devices/pipelines across Pop Out opens with device
+  loss/surface compatibility checks; preserve Windows single-camera ownership,
+  preview bridge, Linux exclusive capture, and bounded fallback behavior.
+- Cache bounded palette lookups, reuse display buffers, compute native luminance
+  order once per snapshot, and avoid duplicate video probing.
+- Retry failed static external-image uploads through browser-authorized pixel
+  readback, preserve row orientation, and release partially initialized renderer
+  resources (#35). Tainted images remain rejected.
+- Require an actual completion result from native UI performance smokes.
+- Include recent FFmpeg executable-mode restoration, Windows checkout-line-ending
+  tolerance, and CI smoke-failure diagnostics.
+
+### Shared Report Relay
+
+- Include reviewed Podcast Visualizer, MKV Magic, Auto Subtitle, CutNotes and
+  Fine Me Not adapters through the existing bounded intake/aggregation path.
+- Include canonical fingerprinting, safe provider-failure classification,
+  reopening only closed groups, bounded GitHub requests, and retry-receipt
+  retention/cleanup fixes. Relay deployment acceptance is recorded separately
+  from desktop artifacts.
+
 ## [1.0.3] - 2026-09-02
 
 ### Added

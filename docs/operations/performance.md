@@ -200,9 +200,11 @@ WebKit glyph preview.
 
 For the primary macOS Apple WebKit view, acceleration-eligible glyph presets
 use the compact WebGPU ramp texture. Presets that explicitly own Canvas2D keep
-the normal software density ceiling. The installed all-preset sweep resolves
-43 built-ins to WebGPU and 28 to Canvas2D, keeps all 71 visible, and confirms
-every GPU-eligible preset is accelerated. Native Pop Out remains independently
+the normal software density ceiling. The earlier 71-preset installed sweep resolved
+43 built-ins to WebGPU and 28 to Canvas2D, kept all 71 visible, and confirmed
+every GPU-eligible preset was accelerated. These are historical measurements;
+the current 79/51/28 contract is defined in [Testing](/docs/operations/testing/#renderer-backend-changes).
+Native Pop Out remains independently
 GPU-rendered. An earlier 30-second structural run held the primary view at 30.0 FPS,
 native presentation at 60.0 FPS, source uploads at 23.5 FPS for the 24 FPS
 fixture, and completed 16 synchronized crossfades with zero GPU or transition
@@ -511,6 +513,33 @@ Investigate immediately when:
 
 Prospective benchmark, latency-test, texture-sharing, and performance-dashboard
 work is tracked in the [Roadmap](/docs/reference/roadmap/).
+
+## 1.0.4 Resource and Startup Work
+
+The first preview no longer waits for independent MIDI/device enumeration or
+crash-report submission. Renderer capability probing overlaps source loading,
+and concurrent requests share one pending probe. Native GPU warming starts after
+the first preview setup, on a worker, so it does not compete with initial driver
+selection on the UI thread.
+
+WebGPU pipelines compile asynchronously and are shared per device/source kind
+and canvas format. Native output shares a compatible adapter/device/queue and
+immutable pipelines across opens; device loss invalidates that cache, and an
+unsupported surface requests a compatible adapter. Windows surface creation
+still dispatches to its required UI thread. Window/surface, camera, textures,
+uploads and frame buffers remain owned by each presenter and are released on
+close. Existing acquire-before-upload and latest-frame safeguards remain active.
+
+Browser palette lookup reuse is capped at 16 tables (512 KiB); native reuse is
+capped at 16 tables (2 MiB plus small keys). Native luminance order is computed
+once per parameter snapshot, and video startup uses one probe for geometry/FPS.
+Live display-table updates reuse buffers and never rebuild these resources.
+Failed renderer initialization now destroys partial resources, and WebGL2 also
+releases its quad buffer/VAO.
+
+The UI performance smoke now reports actual UI completion/failure with a bounded
+timeout. Timer expiry alone is never a passing measurement. Exact local results
+and platform limitations belong in the [1.0.4 release record](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/releases/RELEASE_1.0.4.md).
 
 
 ## Source Material

@@ -15,4 +15,5 @@ Development docs cover how to work on the app without breaking its local-first d
 - [Rendering Engine](/docs/development/rendering-engine/) — source flow, backend selection, params, audio modulation, Pop Out, and stream paths.
 - [Contributing](/docs/development/contributing/) — local development, app identity, contribution workflow, FFmpeg, and Podman.
 - [Agent Guide](/docs/development/agent-guide/) — context-loading and safety guidance for LLM coding agents.
+- [Shared Desktop Services](/docs/development/shared-desktop-services/) — pinned Platform dependencies, updater/relay ownership, validation, and rollback.
 - [Release and Updates](/docs/operations/release/) — packaging, signing, publication, and artifact acceptance.

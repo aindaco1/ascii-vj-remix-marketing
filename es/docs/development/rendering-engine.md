@@ -309,7 +309,7 @@ El valor predeterminado visual de perfil limpio y la preferencia del renderizado
 
 `StaticRuntime` trata la construcción de GPU como una operación recuperable. Si el renderizador WebGPU/WebGL2 solicitado no se puede inicializar, crea el renderizador Canvas equivalente tanto para el inicio inicial como para las transiciones preestablecidas en vivo. Un retroceso fallido del Canvas deja activa la superficie de transición anterior.
 
-Las pruebas físicas de Windows 11 con WebView2 detectaron un fallo específico: el renderizador GPU se inicializaba y sus contadores avanzaban, pero el atlas de glifos se veía en blanco, mientras que la salida de celdas sólidas o píxeles seguía visible. La solución anterior enviaba todos los previews de glifos de Windows a Canvas2D, dejando unos siete presets acelerados. La textura compacta de la rampa activa sustituyó aquella ruta problemática, por lo que la línea 1.0 abandona esa asignación general a Canvas2D. La matriz actual de Windows debe conservar 43 presets acelerados y 28 presets explícitos de Canvas. Un fallo real al crear el renderizador sigue recurriendo a Canvas2D.
+Las pruebas físicas de Windows 11 con WebView2 detectaron un fallo específico: el renderizador GPU se inicializaba y sus contadores avanzaban, pero el atlas de glifos se veía en blanco, mientras que la salida de celdas sólidas o píxeles seguía visible. La solución anterior enviaba todas las vistas previas de glifos de Windows a Canvas2D, dejando unos siete presets acelerados. La textura compacta de la rampa activa sustituyó aquella ruta problemática, por lo que la línea 1.0 abandona esa asignación general a Canvas2D. La matriz actual de Windows debe conservar 51 presets acelerados y 28 presets explícitos de Canvas. Un fallo real al crear el renderizador sigue recurriendo a Canvas2D.
 
 <a id="canvas-renderers"></a>
 
@@ -582,6 +582,18 @@ El CSP de producción bloquea el acceso remoto arbitrario al tiempo de ejecució
 La matriz de validación mantenida y los comandos se encuentran en [Testing](/es/docs/operations/testing/). Utilice sus [verificaciones de backend del renderizador](/es/docs/operations/testing/#renderer-backend-changes), [verificaciones de salida nativas](/es/docs/operations/testing/#native-output-or-pop-out-changes) y [verificaciones de medios](/es/docs/operations/testing/#ffmpeg-and-media-engine) para las rutas afectadas.
 
 El seguimiento del trabajo potencial de renderizado, cámara, transmisión, audio y MIDI solo se realiza en [Roadmap](/es/docs/reference/roadmap/).
+
+<a id="indexed-palette-cycling"></a>
+
+## Ciclos de paleta indexada
+
+`renderers/shared/palette-contract.json` define los límites de 256 colores y ocho rangos. Las paletas contienen colores base inmutables y rangos inclusivos sin solapamiento. La tabla de consulta de fuente a índice usa siempre los colores base; otra tabla RGBA anima sus entradas RGB. El canal alfa conserva la luminancia base para que los ciclos no alteren la máscara del glifo. Off es el valor predeterminado de compatibilidad. El catálogo contiene 21 paletas y el contrato define 79 presets: 51 acelerados y 28 con Canvas explícito.
+
+`palette-cycling.js` define la validación de rangos, el módulo con signo, la consulta clásica o interpolada, la intensidad y la integración temporal de la velocidad. `cell-color.wgsl.js` aporta el procesamiento de color WGSL compartido entre navegador y renderizador nativo. El evaluador de Rust consume el mismo contrato JSON y los mismos vectores de referencia; WebGL2 consulta una textura RGBA32F de 256×1, mientras Canvas y el renderizador nativo por software evalúan la misma tabla de colores una vez por fotograma.
+
+La app mantiene un único reloj monótono compartido por ambos lados de una transición y por Pop Out en el navegador. El estado nativo incluye una muestra del reloj del emisor; al sincronizar, Rust adapta ese punto de referencia a su reloj local, también al reabrir o reanudar. La latencia del IPC es la incertidumbre restante de fase. Las rampas de velocidad integran la curva de suavizado existente sin reiniciar el tiempo. Los relojes de ejecución se excluyen de los ajustes guardados, las importaciones y exportaciones y las definiciones de presets.
+
+Las tablas de búsqueda, canalizaciones, datos de glifos y texturas de origen siguen siendo independientes de la tabla de visualización cíclica. La salida nativa/del navegador recibe los mismos controles; la salida reflejada recibe píxeles ya renderizados y no aplica ningún segundo ciclo.
 
 
 <a id="source-material"></a>

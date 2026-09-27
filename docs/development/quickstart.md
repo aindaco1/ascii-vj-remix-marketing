@@ -44,6 +44,7 @@ Optional but useful:
 Install JavaScript dependencies:
 
 ```bash
+git submodule update --init shared/dust-wave-platform
 npm ci
 ```
 
@@ -76,6 +77,11 @@ Run the main desktop validation gate:
 ```bash
 npm run check:desktop
 ```
+
+Use `npm test` for standard development testing: the existing desktop gate,
+static browser smoke, and live Jev review of synthetic behavior evidence.
+`npm test -- --offline` explicitly skips the hosted review. See
+[Jev development testing](/docs/operations/testing/#jev-development-testing) for local setup.
 
 On macOS workspaces stored under iCloud Drive, the Tauri build helper redirects
 target output to `/private/tmp/ascii-vj-remix-tauri-target` so iCloud extended

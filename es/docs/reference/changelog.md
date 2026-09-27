@@ -10,9 +10,54 @@ lang: es
 
 # Registro de cambios
 
-## [1.0.3] - 2026-09-02
+## [1.0.6] - 2026-09-25
+
+- Comparta los asistentes de progreso/manifiesto de Tauri, el remitente del informe revisado, la agregación serializada y la conciliación de problemas de GitHub a través de la dependencia anclada de Dust Wave Platform. Conserve el consentimiento de actualización existente y el comportamiento de diagnóstico específico del producto. Consulte el [registro de migración](/es/docs/development/shared-desktop-services/).
+
+## [1.0.5] - 2026-09-16
+
+<a id="fixed"></a>
+
+### Corregido
+
+- Fije la aplicación y el objetivo de compilación FFmpeg al mínimo documentado de macOS 13.0. Rechazar binarios recién empaquetados cuyo mínimo Mach-O exceda ese piso; Los sidecars FFmpeg 1.0.4 publicados anteriormente tenían como objetivo macOS 26 ​​(#30).
+- Conserve los símbolos de macro Rust en tiempo de compilación para que las versiones de Xcode 27 no fallen con una biblioteca de macros descargable/error `E0463` en macOS 27 (#30).
+- Aclare el origen de la licencia retenida de esta bifurcación y distinga la división posterior del motor AGPL/cliente MIT de upstream (#38).
+- Agregue una regresión WebGL real para la recuperación de carga de imágenes estáticas incluida en 1.0.4, verificando la paridad de píxeles, la orientación y la lectura en caché (#35).
+- Utilice el motor Podman compartido seleccionado sin reiniciar las máquinas virtuales de las que dependen otros proyectos; preservar puntos finales explícitos y fallar con un diagnóstico (#39).
+
+## [1.0.4] - 2026-09-15
 
 <a id="added"></a>
+
+### Añadido
+
+- Ocho ajustes preestablecidos de píxeles/glifos originales en Tidal Glass, Ember Grotto, Fern After Rain y Violet Dusk, inspirados en el arte clásico de los juegos de colores indexados.
+- Ciclo de color clásico y suave con velocidad con signos, pausa para preservar la fase y controles de cantidad. Las fuentes de cámara, vídeo e imágenes fijas utilizan el renderizador existente y los flujos de trabajo preestablecidos en todos los backends.
+- Validación compartida de 256 colores/ocho rangos, luminancia de glifo fija, sincronización de transporte nativo/navegador y vectores de paleta/reloj dorados.
+- Cobertura recurrente del compilador/SDK de Xcode 27 junto con la línea de lanzamiento estable (n.º 36).
+
+<a id="performance-and-fixes"></a>
+
+### Rendimiento y correcciones
+
+- Mueva el dispositivo independiente/inicio de integración opcional fuera de la ruta del primer fotograma; compartir el descubrimiento de capacidades y compilar canalizaciones WebGPU de forma asincrónica.
+- Calentar y reutilizar dispositivos/canalizaciones nativas GPU en Pop Out se abre con comprobaciones de compatibilidad de superficie/pérdida de dispositivo; preservar la propiedad de una sola cámara de Windows, el puente de vista previa, la captura exclusiva de Linux y el comportamiento de reserva limitado.
+- Almacene en caché las búsquedas de paletas delimitadas, reutilice los búferes de visualización, calcule el orden de luminancia nativo una vez por instantánea y evite la duplicación de pruebas de vídeo.
+- Vuelva a intentar las cargas fallidas de imágenes externas estáticas mediante la lectura de píxeles autorizada por el navegador, conserve la orientación de las filas y libere los recursos del renderizador parcialmente inicializados (#35). Las imágenes contaminadas siguen siendo rechazadas.
+- Requerir un resultado de finalización real de los humos de rendimiento de la interfaz de usuario nativa.
+- Incluye restauración reciente del modo ejecutable FFmpeg, tolerancia de fin de línea de pago Windows y diagnóstico de falla de humo de CI.
+
+<a id="shared-report-relay"></a>
+
+### Retransmisión de informes compartidos
+
+- Incluya los adaptadores Podcast Visualizer, MKV Magic, Auto Subtitle, CutNotes y Fine Me Not revisados ​​a través de la ruta de entrada/agregación limitada existente.
+- Incluya huellas digitales canónicas, clasificación segura de fallas de proveedores, reapertura solo de grupos cerrados, solicitudes GitHub limitadas y correcciones de retención/limpieza de reintentos de recepción. La aceptación de la implementación de retransmisión se registra por separado de los artefactos de escritorio.
+
+## [1.0.3] - 2026-09-02
+
+<a id="added-1"></a>
 
 ### Añadido
 
@@ -32,7 +77,7 @@ lang: es
 - La duplicación de cámara alternativa en Windows/Linux usa el último fotograma, un perfil de 640x360 y una única solicitud en curso, con un máximo de 30 FPS. Las demás rutas de duplicación conservan sus dimensiones anteriores y su límite de 15 FPS.
 - Los diagnósticos manuales conservan el tipo de informe y la superficie revisados al pasar por el relé e incluyen el estado de la salida nativa en las incidencias generadas en GitHub. Los informes de Windows conservan el motivo del fallo de apertura compartida, los FPS aceptados por el puente de preview, la tasa de transferencia codificada y los tiempos de lectura, codificación y decodificación.
 
-<a id="fixed"></a>
+<a id="fixed-1"></a>
 
 ### Corregido
 
@@ -53,7 +98,7 @@ lang: es
 
 ## [1.0.2] - 2026-09-01
 
-<a id="fixed-1"></a>
+<a id="fixed-2"></a>
 
 ### Corregido
 
@@ -62,7 +107,7 @@ lang: es
 
 ## [1.0.1] - 2026-08-31
 
-<a id="added-1"></a>
+<a id="added-2"></a>
 
 ### Añadido
 
@@ -80,7 +125,7 @@ lang: es
 - Se agregó un contrato explícito de capacidad de salida nativa. macOS conserva su salida de cámara nativa AVFoundation, mientras que Windows y Linux seleccionan la salida de marco de espejo limitada existente en lugar de intentar una implementación de plataforma que no tienen.
 - Las fallas de los trabajadores de medios nativos, cámaras y espejos ahora ponen en cola los informes `native-output-error` limitados a través del reporte de fallas existente en lugar de existir solo como proceso stderr. Los medios de usuario, marcos, capturas de pantalla, registros arbitrarios, URL y rutas quedan excluidos.
 
-<a id="fixed-2"></a>
+<a id="fixed-3"></a>
 
 ### Corregido
 
@@ -90,7 +135,7 @@ lang: es
 
 ## [1.0.0] - 2026-08-31
 
-<a id="added-2"></a>
+<a id="added-3"></a>
 
 ### Añadido
 
@@ -109,7 +154,7 @@ lang: es
 - Se etiquetó Advanced Density con su límite de `Up to 900 columns` y la advertencia de que no garantiza 30 FPS directamente en la fila de control.
 - Ejecutores de aceptación de compilación y lanzamiento de Linux fijados en Ubuntu 24.04.
 
-<a id="fixed-3"></a>
+<a id="fixed-4"></a>
 
 ### Corregido
 
@@ -135,7 +180,7 @@ La versión 1.0.0 completa la primera versión de escritorio estable con un fluj
 
 ## [0.10.0] - 2026-08-29
 
-<a id="added-3"></a>
+<a id="added-4"></a>
 
 ### Añadido
 
@@ -148,7 +193,7 @@ La versión 1.0.0 completa la primera versión de escritorio estable con un fluj
 
 - Se reemplazó la insignia del encabezado `VJ` de solo texto con el ícono canónico de neón de la aplicación de reproducción y píxeles, preservando al mismo tiempo la huella de la barra superior existente.
 
-<a id="fixed-4"></a>
+<a id="fixed-5"></a>
 
 ### Corregido
 
@@ -160,7 +205,7 @@ La versión 0.10.0 hace que los ajustes preestablecidos de glifos Windows sean c
 
 ## [0.9.12] - 2026-08-28
 
-<a id="fixed-5"></a>
+<a id="fixed-6"></a>
 
 ### Corregido
 
@@ -175,7 +220,7 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 
 ## [0.9.11] - 2026-08-28
 
-<a id="added-4"></a>
+<a id="added-5"></a>
 
 ### Añadido
 
@@ -227,7 +272,7 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 - Se reemplazó el ícono de la aplicación de televisión heredada con la nueva marca de reproducción y píxel de neón en los recursos macOS, Windows, Linux, iOS y Android generados por Tauri.
 - Se agregó una fuente de ícono RGBA canónica de 1024px y un comando de generación única; Los archivos de íconos específicos de la plataforma son resultados generados en lugar de fuentes de arte independientes.
 
-<a id="fixed-6"></a>
+<a id="fixed-7"></a>
 
 ### Corregido
 
@@ -242,7 +287,7 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 
 ## [0.9.9] - 2026-08-26
 
-<a id="fixed-7"></a>
+<a id="fixed-8"></a>
 
 ### Corregido
 
@@ -266,7 +311,7 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 
 ## [0.9.8] - 2026-08-26
 
-<a id="fixed-8"></a>
+<a id="fixed-9"></a>
 
 ### Corregido
 
@@ -289,14 +334,14 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 
 ## [0.9.7] - 2026-08-26
 
-<a id="added-5"></a>
+<a id="added-6"></a>
 
 ### Añadido
 
 - La aplicación de escritorio de producción ahora realiza una verificación de metadatos de versión sin bloqueo para los paquetes de actualización firmados cada vez que se abre. Las comprobaciones de versión actual y de inicio fuera de línea permanecen silenciosas; Aparece una versión más nueva a través del control Update de la barra superior existente. Una regresión de la capacidad de producción impidió que ese control permaneciera disponible hasta la corrección 0.9.8.
 - El control manual Update permanece disponible para una nueva verificación inmediata, y la descarga, instalación y reinicio siguen siendo iniciados explícitamente por el usuario.
 
-<a id="fixed-9"></a>
+<a id="fixed-10"></a>
 
 ### Corregido
 
@@ -330,7 +375,7 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 - Los comandos normales de desarrollo y depuración de paquetes de Tauri ahora usan `ASCII VJ Remix Dev` con el identificador de paquete `com.asciline.remix.dev`. El nombre de producción y el identificador `com.asciline.remix` siguen siendo exclusivos del embalaje de lanzamiento.
 - macOS DMG mantiene Tauri como su único empaquetador, hace explícito el diseño estándar de aplicación a aplicaciones y documenta el DMG como el instalador manual principal. El `.app.tar.gz` sigue siendo un artefacto de actualización.
 
-<a id="fixed-10"></a>
+<a id="fixed-11"></a>
 
 ### Corregido
 
@@ -372,7 +417,7 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 
 ## [0.9.5] - 2026-08-04
 
-<a id="added-6"></a>
+<a id="added-7"></a>
 
 ### Añadido
 
@@ -423,7 +468,7 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 
 ## [0.9.3] - 2026-06-26
 
-<a id="added-7"></a>
+<a id="added-8"></a>
 
 ### Añadido
 
@@ -452,7 +497,7 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 - Los ajustes preestablecidos tradicionales de Canvas2D ASCII ahora utilizan de forma predeterminada la fluctuación de imagen estática visible y migran las copias guardadas con fluctuación cero de esas funciones integradas.
 - WTF mode ahora permite que los anclajes ASCII/glifo usen su backend Canvas2D nuevamente, por lo que las transiciones aleatorias de sólido a glifo son visibles en lugar de convertirse en variantes de celda sólida de GPU.
 
-<a id="fixed-11"></a>
+<a id="fixed-12"></a>
 
 ### Corregido
 
@@ -483,7 +528,7 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 
 ## [0.9.2] - 2026-06-25
 
-<a id="added-8"></a>
+<a id="added-9"></a>
 
 ### Añadido
 
@@ -520,7 +565,7 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 
 ## [0.9.1] - 2026-06-24
 
-<a id="added-9"></a>
+<a id="added-10"></a>
 
 ### Añadido
 
@@ -549,7 +594,7 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 
 ## [0.9.0] - 2026-06-23
 
-<a id="added-10"></a>
+<a id="added-11"></a>
 
 ### Añadido
 

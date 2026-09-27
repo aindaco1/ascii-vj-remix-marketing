@@ -44,10 +44,11 @@ class SourceSyncTests(unittest.TestCase):
             ruby("SyncAsciiDocs.released_version(input)", "## [Unreleased]\n")
 
     def test_reorganized_and_excerpted_links(self):
-        source = "[Release](RELEASING.md#build-and-package) [Requirements](USER_GUIDE.md#system-requirements)"
+        source = "[Release](RELEASING.md#build-and-package) [Requirements](USER_GUIDE.md#system-requirements) [Shared](SHARED_DESKTOP_MIGRATION.md#shared-service-maintenance)"
         result = ruby('SyncAsciiDocs.rewrite_links(input, "docs/AGENTS.md")', source)
         self.assertIn("/docs/operations/release/#build-and-package", result)
         self.assertIn("/docs/overview/ascii-vj-remix/#system-requirements", result)
+        self.assertIn("/docs/development/shared-desktop-services/#shared-service-maintenance", result)
         result = ruby('SyncAsciiDocs.rewrite_links(input, "docs/USER_GUIDE.md", excerpt: true)',
                       "[Recovery](#upgrading-from-096-or-097)")
         self.assertIn("/blob/main/docs/USER_GUIDE.md#upgrading-from-096-or-097", result)
@@ -86,6 +87,13 @@ class SourceSyncTests(unittest.TestCase):
 
 
 class TranslationTests(unittest.TestCase):
+    def test_cycling_preset_names_and_shared_packages_are_protected(self):
+        source = "Tidal Glass, Ember Grotto, Fern After Rain, Violet Dusk, Jev, Dust Wave Platform, Test Core, Desktop Core, Release Core"
+        protected, tokens = protect_text(source)
+        self.assertNotIn("Tidal Glass", protected)
+        self.assertNotIn("Desktop Core", protected)
+        self.assertEqual(restore_text(protected, tokens), source)
+
     def test_maintenance_never_enters_public_scope(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)

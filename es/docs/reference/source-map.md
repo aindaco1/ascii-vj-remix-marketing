@@ -20,6 +20,7 @@ El script de sincronización utiliza los siguientes archivos fuente del reposito
 |`CHANGELOG.md`|Línea de base de la versión actual, cambios de comportamiento recientes, notas de seguridad y expectativas de validación.|
 |`docs/RENDERING_ENGINE.md`|Flujo de origen, modelo de parámetros, backends de renderizado, parámetros efectivos, Pop Out, audio y rutas de transmisión.|
 |`docs/CONTRIBUTORS.md`|Inicio rápido, identidad de la aplicación local, flujo de trabajo de contribución, FFmpeg y Podman.|
+|`docs/SHARED_DESKTOP_MIGRATION.md`|Servicios de escritorio compartido: propiedad del paquete, validación, reversión y cambios de fuente posteriores al lanzamiento. Los pines exactos permanecen en el `platform-desktop.json` vinculado.|
 |`docs/RELEASING.md`|Procedimiento mantenido de empaquetado, firma, publicación, actualización y aceptación de artefactos.|
 |`docs/releases/README.md`|Índice vinculado de registros históricos de publicaciones; procedimiento no actual o estado de aceptación en vivo.|
 |`docs/AGENTS.md`|Orden de carga de contexto del agente, restricciones, mapa de propiedad y orientación para trabajar de forma segura.|

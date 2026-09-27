@@ -10,6 +10,8 @@ lang: es
 
 # Cómo contribuir
 
+La [migración de servicios de escritorio compartidos](/es/docs/development/shared-desktop-services/) documenta las versiones fijadas de los paquetes de Platform, las aportaciones originales de Dust Wave al relay autorizadas bajo licencia MIT y su reversión independiente. La extracción excluye el código original de ASCILINE.
+
 Esta guía está dirigida a personas que desean crear, probar, documentar o ampliar ASCII VJ Remix.
 
 El proyecto es un laboratorio de renderizado Tauri nativo local. Trate esto como una restricción al contribuir: evite las dependencias del tiempo de ejecución en línea, mantenga el acceso amplio al sistema de archivos fuera de la aplicación y preserve la calidad del renderizador cada vez que se agregue una función solo de escritorio.
@@ -63,6 +65,7 @@ Opcional pero útil:
 Instale las dependencias JavaScript:
 
 ```bash
+git submodule update --init shared/dust-wave-platform
 npm ci
 ```
 
@@ -95,6 +98,8 @@ Ejecute las comprobaciones principales de la aplicación de escritorio:
 ```bash
 npm run check:desktop
 ```
+
+Usa `npm test` como entrada habitual de pruebas de desarrollo: ejecuta las comprobaciones de escritorio existentes, las pruebas de humo estáticas en navegador y la evaluación de Jev sobre evidencia sintética de comportamiento. `npm test -- --offline` omite expresamente la evaluación alojada. Consulta [Pruebas de desarrollo con Jev](/es/docs/operations/testing/#jev-development-testing) para la configuración local.
 
 En los espacios de trabajo macOS almacenados en iCloud Drive, el asistente de compilación Tauri redirige la salida de destino a `/private/tmp/ascii-vj-remix-tauri-target` para que los atributos extendidos de iCloud no interrumpan la firma de la aplicación. Puede anular el directorio de compilación con `ASCILINE_TAURI_TARGET_DIR` o `CARGO_TARGET_DIR`.
 
@@ -280,7 +285,7 @@ ASCILINE_FFMPEG=/path/to/ffmpeg
 ASCILINE_FFPROBE=/path/to/ffprobe
 ```
 
-En macOS y Windows, los contenedores Podman reutilizan una conexión Podman predeterminada en buen estado antes de iniciar `podman-machine-default`. Esto evita colisionar con la máquina virtual que ya se está ejecutando en otro proceso de pago. Configure `ASCILINE_PODMAN_MACHINE` solo cuando la máquina alternativa tenga un nombre diferente.
+Los scripts de Podman usan el ejecutable disponible en PATH y el motor predeterminado seleccionado, respetando `CONTAINER_HOST` y `CONTAINER_CONNECTION`. Nunca inician, detienen ni reinician máquinas virtuales compartidas. Inicia o selecciona el motor en el host, o mediante un servicio al iniciar sesión, antes de abrir los proyectos. `ASCILINE_PODMAN_MACHINE` permite elegir una conexión explícita cuando no se ha definido ninguno de los endpoints estándar. Usa valores distintos de `HOST_PORT` para servicios simultáneos. Si el puerto está ocupado, el script falla sin terminar el proceso que lo usa; cada ejecución asigna a su contenedor un nombre propio del proceso. Programa las actualizaciones y reinicios de la máquina virtual cuando todos los proyectos estén inactivos. Ejecuta `bash scripts/test-podman-env.sh` para comprobar los casos de fallo seguro.
 
 Vista previa del canal de medios:
 
@@ -332,7 +337,11 @@ Elija el [conjunto de comprobaciones recomendado](/es/docs/operations/testing/#r
 
 ## Licencia
 
-El repositorio utiliza el texto de licencia ascendente ASCILINE: Licencia MIT con restricción antipublicidad. Consulte [LICENSE](https://github.com/aindaco1/ascii-vj-remix/blob/main/LICENSE).
+Esta bifurcación conserva la licencia MIT con una restricción antipublicidad en [LICENSE](https://github.com/aindaco1/ascii-vj-remix/blob/main/LICENSE). No es la licencia estándar del MIT. Su texto no ha cambiado desde la confirmación ascendente [`95a3029679b0761663171f5b9afcf28a086a8b3c`](https://github.com/YusufB5/ASCILINE/blob/95a3029679b0761663171f5b9afcf28a086a8b3c/LICENSE) (3 de mayo de 2026), que está presente en el historial de esta bifurcación. El SHA-256 de ambos archivos es `7fb645f1d4eafa849eaf8332b0e32ab0c9d4f6b4c42a648c45e5edaf783e159b`.
+
+Upstream adoptó un aviso de licencia diferente el 3 de septiembre de 2026 en [`9921b0dfddfebdcaa7081cfca918fc668a330e06`](https://github.com/YusufB5/ASCILINE/blob/9921b0dfddfebdcaa7081cfca918fc668a330e06/LICENSE): AGPL-3.0-o posterior para su motor/servidor Python y MIT estándar para su SDK/decodificadores de cliente JavaScript. Yusuf informó ese cambio en [#38](https://github.com/aindaco1/ascii-vj-remix/issues/38). El 16 de septiembre de 2026, el mantenedor de la bifurcación decidió conservar la licencia existente y documentar esta procedencia; En esa revisión no se importó ningún código ascendente ni ningún texto de licencia nuevo.
+
+Antes de importar código ascendente posterior, registre la revisión exacta, los archivos afectados y sus avisos aplicables y revise la compatibilidad con esta bifurcación. No asuma que el aviso actual describe esta bifurcación ni asigne su nueva licencia de SDK al código copiado anterior sin verificar su procedencia. Los activos y sidecars de terceros incluidos conservan sus propios avisos (incluidos [Unifont](https://github.com/aindaco1/ascii-vj-remix/blob/main/third_party/unifont/README.md) y [FFmpeg](https://github.com/aindaco1/ascii-vj-remix/blob/main/src-tauri/resources/ffmpeg/README.md)).
 
 Las contribuciones deben ser compatibles con esa licencia y con la política de tiempo de ejecución local primero del proyecto.
 

@@ -8,7 +8,7 @@ lang: es
 
 # ASCII VJ Remix
 
-Los documentos fuente actuales describen las funciones de **1.0.3**. Las secciones siguientes proceden directamente del repositorio principal para mantener una sola referencia sobre el producto, los requisitos y las recomendaciones de hardware.
+Estas secciones siguen la rama `main` del repositorio principal. Consulte las notas de la versión [Línea base de lanzamiento](/es/docs/overview/changelog-baseline/) para **1.0.6**. La identidad del producto, los requisitos y la guía de hardware se seleccionan directamente de sus guías canónicas.
 
 <a id="what-this-project-is"></a>
 
@@ -38,6 +38,7 @@ Estos requisitos son una guía práctica para el renderizador actual, no un cont
 
 Notas:
 
+- Los sidecars FFmpeg/ffprobe 1.0.4 publicados se crearon con un mínimo de macOS 26, por lo que las rutas de medios dependientes de FFmpeg no cumplen con el objetivo de compatibilidad de macOS 13 en esa versión. La versión 1.0.5 corrige el objetivo de compilación; La aceptación del tiempo de ejecución de sistemas operativos antiguos sigue estando registrada en [#30](https://github.com/aindaco1/ascii-vj-remix/issues/30).
 - La compatibilidad con Intel Mac no es el objetivo de lanzamiento actual. Puede funcionar desde el código fuente si usted mismo crea un paquete compatible, pero no es la ruta probada.
 - La cámara, el micrófono y la captura de audio requieren concesiones de privacidad explícitas macOS.
 - Las versiones públicas de macOS están firmadas con el ID del desarrollador, certificadas ante notario, grapadas y aceptadas por Gatekeeper. Las compilaciones locales o de prueba pueden requerir el flujo normal de macOS, hacer clic con el botón derecho en Abrir o Abrir de todos modos.

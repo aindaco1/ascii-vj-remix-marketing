@@ -49,6 +49,7 @@ Opcional pero útil:
 Instale las dependencias JavaScript:
 
 ```bash
+git submodule update --init shared/dust-wave-platform
 npm ci
 ```
 
@@ -81,6 +82,8 @@ Ejecute las comprobaciones principales de la aplicación de escritorio:
 ```bash
 npm run check:desktop
 ```
+
+Usa `npm test` como entrada habitual de pruebas de desarrollo: ejecuta las comprobaciones de escritorio existentes, las pruebas de humo estáticas en navegador y la evaluación de Jev sobre evidencia sintética de comportamiento. `npm test -- --offline` omite expresamente la evaluación alojada. Consulta [Pruebas de desarrollo con Jev](/es/docs/operations/testing/#jev-development-testing) para la configuración local.
 
 En los espacios de trabajo macOS almacenados en iCloud Drive, el asistente de compilación Tauri redirige la salida de destino a `/private/tmp/ascii-vj-remix-tauri-target` para que los atributos extendidos de iCloud no interrumpan la firma de la aplicación. Puede anular el directorio de compilación con `ASCILINE_TAURI_TARGET_DIR` o `CARGO_TARGET_DIR`.
 

@@ -20,4 +20,5 @@ Los documentos de desarrollo cubren cómo trabajar en la aplicación sin romper 
 - [Motor de renderizado](/es/docs/development/rendering-engine/): flujo de origen, selección de backend, parámetros, modulación de audio, Pop Out y rutas de flujo.
 - [Contribuyendo](/es/docs/development/contributing/): desarrollo local, identidad de la aplicación, flujo de trabajo de contribución, FFmpeg y Podman.
 - [Guía del agente](/es/docs/development/agent-guide/): carga de contexto y guía de seguridad para agentes de codificación LLM.
+- [Servicios de escritorio compartido](/es/docs/development/shared-desktop-services/): dependencias de plataforma fijadas, propiedad del actualizador/retransmisión, validación y reversión.
 - [Lanzamiento y actualizaciones](/es/docs/operations/release/): empaquetado, firma, publicación y aceptación de artefactos.

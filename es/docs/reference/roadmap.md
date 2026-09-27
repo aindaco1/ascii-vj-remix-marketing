@@ -16,6 +16,8 @@ Este documento contiene únicamente trabajos prospectivos. No es una descripció
 
 ## Distribución y Validación de Plataforma
 
+- Completar la aceptación de [macOS 27 (#30)](https://github.com/aindaco1/ascii-vj-remix/issues/30), incluida la regresión en tiempo de ejecución de macOS 13, captura física/MIDI/permisos y comprobaciones de visualización externa, y promoción de cadena de herramientas/artefactos Xcode 27 firmados. La evidencia publicada actual y los límites restantes se encuentran en el registro [1.0.4](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/releases/RELEASE_1.0.4.md#issue-review--2026-09-16).
+
 - Agregue firma Authenticode y marca de tiempo para los instaladores Windows cuando exista un proveedor de firma sostenible y una política de lanzamiento.
 - Valide el comportamiento de Windows SmartScreen en máquinas limpias después de que comience la distribución firmada.
 - Ejecute pruebas de humo de instalación, lanzamiento y actualización en máquinas Windows y Linux físicas o virtuales representativas.

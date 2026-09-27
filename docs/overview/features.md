@@ -41,7 +41,7 @@ This page describes the current ASCII VJ Remix feature baseline for developers p
   - Vulkan/GLES on Linux.
 - Native Pop Out preserves glyph-mode and character-set params for traditional
   ASCII presets instead of flattening them into solid cells.
-- Seventeen project-native palettes, nearest-color/luminance mapping, and ordered
+- Twenty-one project-native palettes, nearest-color/luminance mapping, and ordered
   Bayer 2x2/4x4/8x8 dithering share one parameter and lookup-table contract
   across browser, Canvas, and native output paths.
 - Glyph controls cover depth, offset, reverse, source/fixed color, background,
@@ -94,7 +94,8 @@ This page describes the current ASCII VJ Remix feature baseline for developers p
   independently tunable and saved through the existing visual-preset schema.
 - Eleven built-in palette/glyph variants include ASCII City Nightshift, Braille,
   box drawing, CJK marks, Hiragana, Katakana, CJK Unified, and Hangul looks. The
-  other six palettes are incorporated into existing presets.
+  six additional non-cycling palettes are incorporated into existing presets.
+  The four cycling palettes are covered below.
 - User presets can be saved, duplicated, updated, deleted, imported, and
   exported.
 - Multiple named preset playlists can be saved with reordered stable preset
@@ -107,6 +108,24 @@ This page describes the current ASCII VJ Remix feature baseline for developers p
 - WTF mode continuously transitions through randomized live-safe settings and
   leans into both extreme and traditional ASCII preset families while avoiding
   pure white or pure black output.
+
+### Pixel Art and Color Cycling
+
+Eight original presets pair solid pixels and glyphs in four palettes: Tidal
+Glass, Ember Grotto, Fern After Rain, and Violet Dusk. They transform the active
+camera, video, or image and preserve its playback. Search a family name in Presets.
+
+In the Color panel, choose a cycling palette and set **Color cycling** to
+Classic (stepped) or Blend (smooth). **Cycle speed** runs from −4× to 4×;
+zero freezes the current phase and negative values reverse it. **Cycle amount**
+blends the moving colors with the fixed palette. Start/Stop pauses and resumes
+cycling. Fixed shadows/highlights and glyph shapes remain stable while the
+selected color ranges move. Older presets default to cycling Off.
+
+These original looks are inspired by [Mark Ferrari](https://www.markferrari.com/image-archives),
+[Living Worlds](https://www.effectgames.com/demos/worlds/), and the
+[Amiga color-cycling examples](https://amiga.lychesis.net/specials/ColorCycling.html).
+They do not include those artists' images or authored scene animations.
 
 ### Audio Reactivity
 

@@ -17,6 +17,7 @@ The sync script uses the following source files from the ASCII VJ Remix reposito
 | `CHANGELOG.md` | Current release baseline, recent behavior changes, security notes, and validation expectations. |
 | `docs/RENDERING_ENGINE.md` | Source flow, parameter model, renderer backends, effective params, Pop Out, audio, and stream paths. |
 | `docs/CONTRIBUTORS.md` | Quickstart, local app identity, contribution workflow, FFmpeg, and Podman. |
+| `docs/SHARED_DESKTOP_MIGRATION.md` | Shared Desktop Services: package ownership, validation, rollback, and post-release source changes. Exact pins remain in the linked `platform-desktop.json`. |
 | `docs/RELEASING.md` | Reusable packaging, signing, publication, updater, and artifact acceptance procedure. |
 | `docs/releases/README.md` | Linked index of historical release records; not current procedure or live acceptance status. |
 | `docs/AGENTS.md` | Agent context-loading order, constraints, ownership map, and safe-working guidance. |

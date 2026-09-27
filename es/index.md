@@ -59,7 +59,7 @@ nav_exclude: true
   <div class="stack-list">
     <article class="card"><h3>Video y cámara</h3><p>Usa clips o cámaras en vivo como material base y conviértelos en visuales ASCII, de celda, pixel y glyph.</p></article>
     <article class="card"><h3>Movimiento reactivo al sonido</h3><p>Deja que ritmo, brillo, densidad y bandas de frecuencia muevan la imagen para que los visuales respondan al set.</p></article>
-    <article class="card"><h3>Control de paleta, dithering y glifos</h3><p>Combina 17 paletas integradas con dithering Bayer, controles de profundidad y color de glifos, conjuntos multilingües y rampas Unicode personalizadas.</p></article>
+    <article class="card"><h3>Control de paleta, dithering y glifos</h3><p>Combina 21 paletas integradas con dithering Bayer, controles de profundidad y color de glifos, conjuntos multilingües y rampas Unicode personalizadas.</p></article>
     <article class="card"><h3>Densidad consciente del rendimiento</h3><p>Mantente dentro de los límites compartidos del renderizador o activa Densidad avanzada para usar hasta 900 columnas sin garantía de 30 FPS.</p></article>
     <article class="card"><h3>Listas de presets</h3><p>Guarda una secuencia de looks, cambia su orden y repítela en orden o al azar. Define cuánto dura cada preset y deja que las transiciones avancen mientras tu fuente sigue reproduciéndose.</p></article>
     <article class="card"><h3>Guarda un fotograma</h3><p>Captura el visual actual como PNG directamente en tu Escritorio, sin incluir la superposición de estadísticas.</p></article>
@@ -68,12 +68,12 @@ nav_exclude: true
 
 <section class="section-band" aria-labelledby="release-heading">
   <p class="kicker">Última versión</p>
-  <h2 id="release-heading">Qué cambió en v{{ site.data.product.latest_release.version }}.</h2>
+  <h2 id="release-heading">Versión actual: v{{ site.data.product.latest_release.version }}.</h2>
   <div class="release-summary">
     <img class="release-app-icon" src="{{ site.data.product.app_icon.path | relative_url }}?v={{ site.data.product.app_icon.path | asset_fingerprint }}" width="512" height="512" alt="Icono de la app ASCII VJ Remix con símbolo de reproducción y píxeles de neón" loading="lazy" decoding="async">
     <div>
-      <p class="section-intro">v{{ site.data.product.latest_release.version }} mejora Pop Out con cámara en Windows y Linux y añade dos looks ASCII animados. En Windows, el cambio de fuente y las proporciones del preview son más fiables; en WebGL2, los colores de las paletas se mantienen al cambiar de look.</p>
-      <p class="section-intro"><strong>71 presets integrados, 17 paletas.</strong> Busca un look por nombre, ajusta los glifos y el color o guarda una lista que recorra tus favoritos.</p>
+      <p class="section-intro">v{{ site.data.product.latest_release.version }} comparte la infraestructura de actualizaciones y diagnósticos revisados, conservando los controles existentes. Las versiones recientes también añaden ocho looks de píxeles y glifos con ciclos de color, mejoran el arranque del renderizador y la reutilización de Pop Out, y corrigen la versión mínima de macOS en el empaquetado.</p>
+      <p class="section-intro"><strong>79 presets integrados, 21 paletas.</strong> Busca un look por nombre, ajusta los glifos y el color o guarda una lista que recorra tus favoritos.</p>
     </div>
   </div>
   <div class="card-grid">
