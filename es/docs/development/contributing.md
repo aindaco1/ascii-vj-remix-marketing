@@ -103,6 +103,14 @@ Usa `npm test` como entrada habitual de pruebas de desarrollo: ejecuta las compr
 
 En los espacios de trabajo macOS almacenados en iCloud Drive, el asistente de compilación Tauri redirige la salida de destino a `/private/tmp/ascii-vj-remix-tauri-target` para que los atributos extendidos de iCloud no interrumpan la firma de la aplicación. Puede anular el directorio de compilación con `ASCILINE_TAURI_TARGET_DIR` o `CARGO_TARGET_DIR`.
 
+<a id="build-cleanup"></a>
+
+## Limpieza de compilaciones
+
+Conserve la aplicación Dev instalada, la caché optimizada de compilación `release`, `node_modules`, el paquete `dist` actual y los recursos preparados de FFmpeg para desarrollo y pruebas locales. Una vez detenidos los procesos de compilación y prueba, puede eliminar el árbol generado `debug` y los resultados obsoletos de las pruebas de humo. La siguiente compilación de depuración recrea su caché; `npm run tauri:dev` y `npm run check:desktop` siguen siendo los comandos habituales.
+
+Cuando una versión publicada supere la aceptación de instaladores y actualizaciones, elimine las copias obsoletas de paquetes de CI y las ramas de publicación ya integradas. Conserve los instaladores de desarrollo actuales, la evidencia de publicación versionada, las identidades de firma, la configuración local, los archivos, preferencias e informes del usuario y los paquetes publicados que sirven como punto de partida para probar actualizaciones. Revise por separado el ciclo de vida de otros worktrees administrados antes de archivarlos.
+
 <a id="common-commands"></a>
 
 ## Comandos comunes

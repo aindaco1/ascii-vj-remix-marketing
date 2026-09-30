@@ -123,6 +123,8 @@ base params
 
 Los parámetros efectivos no deben persistir en los ajustes preestablecidos del usuario a menos que el usuario guarde explícitamente el estado actual como un ajuste preestablecido.
 
+La consulta de características de audio y la sincronización de la salida reactiva tienen una frecuencia objetivo de 120 Hz, con una sola lectura nativa en curso. Se ignoran las lecturas duplicadas y las respuestas de sesiones detenidas. Los analizadores FFT del navegador no añaden suavizado: ambas rutas de captura usan la misma envolvente de ataque inmediato y caída según el tiempo transcurrido. Smoothing en cero omite la envolvente. La entrada nativa solicita búferes de 128 muestras por canal dentro del rango admitido por el dispositivo y conserva el búfer predeterminado como alternativa. El historial de pulsos y su caída dependen del tiempo, no del número de callbacks. En funcionamiento estable, Pop Out consume estos parámetros efectivos sin aplicar la modulación de audio dos veces. Las transiciones nativas preparadas reciben extremos sin modular y mantienen su respuesta de audio nativa directa mientras se suspende la sincronización de parámetros.
+
 <a id="repository-ownership-map"></a>
 
 ## Mapa de propiedad del repositorio
@@ -170,7 +172,7 @@ Utilice este mapa para encontrar al probable propietario de un cambio:
 Utilice la [Guía del usuario](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/USER_GUIDE.md) para conocer el comportamiento actual y el [Motor de renderizado](/es/docs/development/rendering-engine/) para conocer los contratos detallados. Al editar:
 
 - Conserve el estado de perfil limpio Demo Image / Classic Camera ASCII y mantenga la preferencia de backend en Auto. Los perfiles existentes conservan su configuración.
-- Mantenga la propiedad de backend preestablecida en `renderers/shared/preset-backend-contract.js` (79 en total, 51 acelerados, 28 Canvas explícitos). Los cambios intencionales deben actualizar el contrato y la evidencia visible de la matriz preestablecida en conjunto. La identidad de la plataforma no debe reasignar la propiedad de forma preventiva.
+- Mantenga la asignación de backends de presets en `renderers/shared/preset-backend-contract.js` (90 en total, 62 acelerados y 28 asignados explícitamente a Canvas). Los cambios intencionales deben actualizar tanto el contrato como la evidencia de la matriz visual de presets. La plataforma no debe cambiar esa asignación de forma preventiva.
 - Mantenga un modelo de parámetro canónico. Los ajustes preestablecidos guardados, los parámetros efectivos en vivo, la selección de fuente, las transiciones, WTF, audio, MIDI y la salida nativa deben coincidir. Las transiciones preestablecidas preservan la identidad de la fuente y la reproducción.
 - Amplíe las políticas de paleta compartida, conjunto de caracteres, atlas de glifos y cuadrícula. Mantenga Advanced Density global y fuera de los ajustes preestablecidos; no agregue límites por renderizador ni búsqueda de fuentes del sistema en tiempo de ejecución. Lea la guía del renderizador antes de cambiar los límites.
 - Reutilizar recursos GPU y versiones del marco fuente; no reduzca la calidad visual ni la resolución para obtener una mejora del rendimiento.

@@ -26,8 +26,8 @@ Las rutas de dispositivos de medios agrupados se generalizan en esta referencia 
 |`npm run preview`|`vite preview --host 127.0.0.1 --port 8010`|
 |`npm run check`|`npm run check:offline`|
 |`npm run check:offline`|`npm run build && node scripts/check_offline_bundle.mjs`|
-|`npm run check:desktop`|`npm run check:offline && npm run test:smoke-diagnostics && npm run check:tauri-policy && npm run check:icons && npm run check:glyph-atlas && npm run test:release-build-reuse && npm run test:render-math && npm run test:palette-cycling && npm run test:preset-backend-contract && npm run test:preset-playlists && npm run test:canvas-readback && npm run test:renderer-fallback && npm run test:renderer-resources && npm run test:media-source-policy && npm run test:audio-reactive && npm run test:midi && npm run test:crash-report-ui && npm run test:crash-relay && npm run test:output-display && npm run test:desktop-updater && npm run test:updater-manifest && npm run test:macos-artifacts && npm run test:macos-secret-args && npm run test:windows-secret-args && npm run test:ffmpeg-policy && npm run check:ffmpeg-resources && npm run test:rust && npm run tauri:build:dev -- --debug --no-bundle`|
-|`npm run check:release`|`npm run check:offline && npm run check:tauri-policy && npm run check:icons && npm run check:glyph-atlas && npm run test:release-build-reuse && npm run test:render-math && npm run test:palette-cycling && npm run test:preset-backend-contract && npm run test:preset-playlists && npm run test:canvas-readback && npm run test:renderer-fallback && npm run test:renderer-resources && npm run test:media-source-policy && npm run test:audio-reactive && npm run test:midi && npm run test:crash-report-ui && npm run test:crash-relay && npm run test:output-display && npm run test:desktop-updater && npm run test:updater-manifest && npm run test:macos-artifacts && npm run test:macos-secret-args && npm run test:windows-secret-args && npm run test:ffmpeg-policy && npm run check:release-runtime && npm run test:rust`|
+|`npm run check:desktop`|`npm run check:offline && npm run test:smoke-diagnostics && npm run check:tauri-policy && npm run check:icons && npm run check:glyph-atlas && npm run test:release-build-reuse && npm run test:spatial && npm run test:render-math && npm run test:palette-cycling && npm run test:preset-backend-contract && npm run test:preset-playlists && npm run test:canvas-readback && npm run test:renderer-fallback && npm run test:renderer-resources && npm run test:media-source-policy && npm run test:audio-reactive && npm run test:midi && npm run test:crash-report-ui && npm run test:crash-relay && npm run test:output-display && npm run test:desktop-updater && npm run test:updater-manifest && npm run test:macos-artifacts && npm run test:macos-secret-args && npm run test:windows-secret-args && npm run test:ffmpeg-policy && npm run check:ffmpeg-resources && npm run test:rust && npm run tauri:build:dev -- --debug --no-bundle`|
+|`npm run check:release`|`npm run check:offline && npm run check:tauri-policy && npm run check:icons && npm run check:glyph-atlas && npm run test:release-build-reuse && npm run test:spatial && npm run test:render-math && npm run test:palette-cycling && npm run test:preset-backend-contract && npm run test:preset-playlists && npm run test:canvas-readback && npm run test:renderer-fallback && npm run test:renderer-resources && npm run test:media-source-policy && npm run test:audio-reactive && npm run test:midi && npm run test:crash-report-ui && npm run test:crash-relay && npm run test:output-display && npm run test:desktop-updater && npm run test:updater-manifest && npm run test:macos-artifacts && npm run test:macos-secret-args && npm run test:windows-secret-args && npm run test:ffmpeg-policy && npm run check:release-runtime && npm run test:rust`|
 |`npm run check:bundle`|`node scripts/check_tauri_bundle.mjs`|
 |`npm run check:bundle:debug`|`node scripts/check_tauri_bundle.mjs --profile debug --expected-bundle-id com.asciline.remix.dev`|
 |`npm run check:bundle:release`|`node scripts/check_tauri_bundle.mjs --profile release --expected-bundle-id com.asciline.remix`|
@@ -85,7 +85,7 @@ Las rutas de dispositivos de medios agrupados se generalizan en esta referencia 
 |`npm run test:macos-artifacts`|`npm run test:macos-identity && npm run test:macos-dmg-layout && node scripts/test_macos_deployment_target.mjs`|
 |`npm run test:macos-secret-args`|`node scripts/test_macos_notarization_secret_args.mjs`|
 |`npm run test:windows-secret-args`|`node scripts/test_windows_artifact_signing_secret_args.mjs`|
-|`npm run test:audio-reactive`|`node scripts/test_audio_reactive.mjs`|
+|`npm run test:audio-reactive`|`node scripts/test_audio_reactive.mjs && node scripts/test_audio_lifecycle.mjs`|
 |`npm run test:midi`|`node scripts/test_midi_mapping.mjs`|
 |`npm run test:media-source-policy`|`node scripts/test_media_source_policy.mjs`|
 |`npm run test:native-output-log`|`node scripts/analyze_native_output_log.mjs`|
@@ -105,7 +105,9 @@ Las rutas de dispositivos de medios agrupados se generalizan en esta referencia 
 |`npm run tauri:build`|`node scripts/tauri_env.mjs build`|
 |`npm run tauri:build:dev`|`node scripts/tauri_env.mjs build --config src-tauri/tauri.dev.conf.json`|
 |`npm run test:palette-cycling`|`node scripts/test_palette_cycling.mjs`|
-|`npm run test:renderer-resources`|`node scripts/test_renderer_resources.mjs`|
+|`npm run test:renderer-resources`|`node scripts/test_renderer_resources.mjs && node scripts/test_webgpu_video_lifecycle.mjs`|
+|`npm run test:spatial`|`node scripts/test_spatial.mjs`|
+|`npm run smoke:spatial`|`node scripts/smoke_spatial.mjs`|
 
 <a id="command-guidance"></a>
 

@@ -68,20 +68,20 @@ nav_exclude: true
 
 <section class="section-band" aria-labelledby="release-heading">
   <p class="kicker">Última versión</p>
-  <h2 id="release-heading">Versión actual: v{{ site.data.product.latest_release.version }}.</h2>
+  <h2 id="release-heading">v{{ site.data.product.latest_release.version }}: Spatial ASCII.</h2>
   <div class="release-summary">
     <img class="release-app-icon" src="{{ site.data.product.app_icon.path | relative_url }}?v={{ site.data.product.app_icon.path | asset_fingerprint }}" width="512" height="512" alt="Icono de la app ASCII VJ Remix con símbolo de reproducción y píxeles de neón" loading="lazy" decoding="async">
     <div>
-      <p class="section-intro">v{{ site.data.product.latest_release.version }} comparte la infraestructura de actualizaciones y diagnósticos revisados, conservando los controles existentes. Las versiones recientes también añaden ocho looks de píxeles y glifos con ciclos de color, mejoran el arranque del renderizador y la reutilización de Pop Out, y corrigen la versión mínima de macOS en el empaquetado.</p>
-      <p class="section-intro"><strong>79 presets integrados, 21 paletas.</strong> Busca un look por nombre, ajusta los glifos y el color o guarda una lista que recorra tus favoritos.</p>
+      <p class="section-intro">Once looks nuevos, escenas espaciales y fractales opcionales, y una respuesta al audio más rápida. Convierte tus imágenes, videos y cámaras en calles, salas abovedadas o mundos recursivos, con niebla, reflejos y estelas.</p>
+      <p class="section-intro"><strong>90 presets integrados, 21 paletas.</strong> Busca un look por nombre, ajusta los glifos y el color o guarda una lista que recorra tus favoritos.</p>
     </div>
   </div>
   <div class="card-grid">
-    <article class="card pink"><h3>Dos vistas de cámara en vivo</h3><p>En Windows, una sola captura nativa alimenta el preview principal y Pop Out. Cambia entre cámara, imagen y video con mayor fiabilidad, con las proporciones del preview corregidas y el aspecto de celdas diminutas de Acid Snowstorm.</p></article>
-    <article class="card"><h3>ASCII World Mint</h3><p>Caracteres finos de color menta sobre un fondo verde azulado oscuro, con un jitter suave que mantiene las imágenes fijas en movimiento incluso sin reactividad al audio.</p></article>
-    <article class="card pink"><h3>ASCII City Nightshift</h3><p>Caracteres densos de terminal, sombras casi negras y luces ámbar y verde salvia. El jitter continuo lleva ese look de ciudad nocturna a imágenes, video o una cámara.</p></article>
+    <article class="card pink"><h3>Elige cuándo entrar en una escena</h3><p>Todos los presets integrados empiezan en Flat Media. Elige un modo visual en Space / Motion para explorar escenas como Neon Night Drive o Mandelbox Passage y guarda tu propio look.</p></article>
+    <article class="card"><h3>Ilumina las tomas oscuras</h3><p>Activa Bright Output para resaltar los colores y glifos oscuros. Empieza desactivado y conserva tu elección entre presets y sesiones. Añade Edge Etching o Phosphor Echo para marcar contornos o crear estelas que se desvanecen.</p></article>
+    <article class="card pink"><h3>Controles que responden en vivo</h3><p>Los ataques de audio responden más rápido, Stop cancela el inicio de la captura y los ajustes manuales o MIDI se conservan durante las transiciones. El video sigue reproduciéndose mientras cambias el look.</p></article>
   </div>
-  <p class="release-link"><a href="{{ '/es/docs/overview/changelog-baseline/' | relative_url }}">Leer la base de la versión v{{ site.data.product.latest_release.version }}</a></p>
+  <p class="release-link"><a href="{{ '/es/docs/overview/changelog-baseline/' | relative_url }}">Ver las novedades de v{{ site.data.product.latest_release.version }}</a></p>
 </section>
 
 <section class="section-band" aria-labelledby="workflow-heading">

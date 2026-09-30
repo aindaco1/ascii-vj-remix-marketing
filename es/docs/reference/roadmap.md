@@ -16,6 +16,8 @@ Este documento contiene únicamente trabajos prospectivos. No es una descripció
 
 ## Distribución y Validación de Plataforma
 
+- Complete las comprobaciones físicas pendientes de la [versión 1.1.0 Spatial ASCII aprobada por el responsable](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/releases/RELEASE_1.1.0.md#release-decision--2026-09-29): rendimiento en el hardware mínimo de referencia, cámaras, audio y GPU en Windows/Linux, alineación de pantallas externas, MIDI físico y latencia del sonido a la pantalla.
+
 - Completar la aceptación de [macOS 27 (#30)](https://github.com/aindaco1/ascii-vj-remix/issues/30), incluida la regresión en tiempo de ejecución de macOS 13, captura física/MIDI/permisos y comprobaciones de visualización externa, y promoción de cadena de herramientas/artefactos Xcode 27 firmados. La evidencia publicada actual y los límites restantes se encuentran en el registro [1.0.4](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/releases/RELEASE_1.0.4.md#issue-review--2026-09-16).
 
 - Agregue firma Authenticode y marca de tiempo para los instaladores Windows cuando exista un proveedor de firma sostenible y una política de lanzamiento.

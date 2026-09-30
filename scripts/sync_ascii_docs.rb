@@ -81,6 +81,7 @@ SECTION_ALIASES = {
   "README.md#what-this-project-is" => "/docs/overview/ascii-vj-remix/#what-this-project-is",
   "README.md#current-capabilities" => "/docs/overview/features/#current-capabilities",
   "docs/USER_GUIDE.md#current-capabilities" => "/docs/overview/features/#current-capabilities",
+  "docs/USER_GUIDE.md#spatial-visuals-and-trails-110" => "/docs/overview/features/#spatial-visuals-and-trails-110",
   "docs/USER_GUIDE.md#system-requirements" => "/docs/overview/ascii-vj-remix/#system-requirements",
   "docs/USER_GUIDE.md#hardware-guidance" => "/docs/overview/ascii-vj-remix/#hardware-guidance",
   "docs/USER_GUIDE.md#battery-and-heat-warning" => "/docs/overview/ascii-vj-remix/#battery-and-heat-warning"
@@ -236,7 +237,7 @@ module SyncAsciiDocs
 
         This page describes the current ASCII VJ Remix feature baseline for developers planning forks, ports, integrations, or feature work. The capability map is generated from the mother repository's User Guide.
 
-        #{source_sections("docs/USER_GUIDE.md", ["Current Capabilities"])}
+        #{source_sections("docs/USER_GUIDE.md", ["Current Capabilities", "Spatial visuals and trails (1.1.0)"])}
 
         #{source_note(["docs/USER_GUIDE.md"])}
       MD
@@ -247,7 +248,7 @@ module SyncAsciiDocs
 
         [Download v#{version} and read its publication and platform-validation notes](https://github.com/#{SOURCE_REPO}/releases/tag/v#{version}). The changelog date records the source release entry; GitHub Releases records when the downloads were published.
 
-        For the release's shared-service maintenance context, see [Shared Desktop Services](/docs/development/shared-desktop-services/). That guide distinguishes later relay/dependency changes from the published desktop artifacts.
+        See the [Feature Set](/docs/overview/features/) for current controls and the upstream [release records](#{source_link("docs/releases/README.md")}) for version-specific validation and platform coverage.
 
         ## #{version} Release Notes
 

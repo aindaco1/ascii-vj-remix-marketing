@@ -49,6 +49,7 @@ Esta página describe la línea base de funciones ASCII VJ Remix actual para des
 - La densidad normal está protegida por el rendimiento mediante límites de columnas compartidas y de celdas totales. La preferencia global Advanced Density expone hasta 900 columnas sin una garantía de 30 FPS y nunca se almacena en ajustes preestablecidos visuales.
 - El renderizador omite cargas duplicadas de fotogramas de origen nativos, reutiliza recursos GPU estables y limita el trabajo de la interfaz de usuario en tiempo de transición sin cambiar las configuraciones matemáticas o de calidad del renderizador.
 - El renderizador expone controles en vivo para cuadrícula, tamaño de celda, color, gamma, brillo, contraste, saturación, combinación de fondo, cuantificación, fluctuación, posición de muestra, suavizado, FPS, comportamiento de glifo/celda y estado de rendimiento.
+- **Color → Bright output** empieza desactivado. Actívelo para iluminar tomas oscuras; se conserva cualquier elección guardada. Eleva los colores oscuros antes de seleccionar los glifos, de modo que las cámaras, imágenes y videos con poca luz producen colores más brillantes y glifos más densos. La elección se conserva al reiniciar, cambiar de preset, reproducir listas o usar WTF. Déjelo desactivado para mantener la respuesta de color original; los controles Brightness y Gamma siguen funcionando. El negro puro permanece negro. Con una paleta, se iluminan los colores resultantes sin alterar su tabla de búsqueda ni los rangos de los ciclos de color; los glifos de color fijo mantienen el color elegido.
 - La superposición de estadísticas está habilitada de forma predeterminada y sigue siendo controlada por el usuario.
 
 <a id="presets-and-live-controls"></a>
@@ -69,8 +70,9 @@ Esta página describe la línea base de funciones ASCII VJ Remix actual para des
 - Se pueden guardar varias listas de reproducción preestablecidas con nombre con entradas preestablecidas estables reordenadas, un intervalo de espera compartido y bucles aleatorios o en orden. La reproducción de la lista de reproducción utiliza el control de transición predeterminado existente, limitado a 1 a 5 segundos.
 - Las transiciones preestablecidas se funden en lugar de fundirse en negro.
 - El tiempo de transición es configurable.
+- Editar un control visual durante una transición la detiene en el aspecto actual y conserva el cambio. El look interrumpido pasa a ser Custom y el material seleccionado sigue reproduciéndose. Los controles visuales MIDI siguen la misma regla.
 - Los ajustes preestablecidos conservan la fuente de medios activa a menos que el usuario la cambie explícitamente.
-- WTF mode realiza una transición continua a través de configuraciones aleatorias seguras en vivo y se inclina hacia familias preestablecidas ASCII tanto extremas como tradicionales, evitando al mismo tiempo la salida de blanco puro o negro puro.
+- WTF pasa continuamente entre ajustes aleatorios seguros para uso en vivo, combinando familias de presets ASCII extremos y tradicionales y evitando una salida completamente blanca o negra. Cada transición elige Flat Media con una probabilidad del 80 %; el 20 % restante se reparte entre los diez modos espaciales, con un 2 % para cada uno. Son probabilidades por transición, por lo que pueden aparecer varios looks planos o espaciales seguidos.
 
 <a id="pixel-art-and-color-cycling"></a>
 
@@ -92,7 +94,10 @@ Estos looks originales están inspirados en [Mark Ferrari](https://www.markferra
 - El audio del sistema/pantalla se admite cuando el sistema operativo proporciona una pista de audio a la aplicación de escritorio.
 - Las compilaciones de escritorio Tauri incluyen rutas de captura de audio nativas para funciones de audio de entrada/sistema.
 - Pistas de análisis de audio RMS, graves, medios-bajos, medios, medios-altos, agudos, presencia, brillo, densidad, energía transitoria, pulso de ritmo y movimiento espectral.
+- Los ataques responden inmediatamente a cada nueva lectura de audio. Smoothing controla cuánto tarda en decaer la respuesta; póngalo en cero para obtener la respuesta más directa. El hardware de captura y la pantalla siguen aportando cierta latencia.
 - Los controles de amortiguación de mezcla densa y de nivel de ruido ayudan a que las canciones ocupadas se mantengan reactivas sin fijar la vibración y la respuesta de ritmo al máximo.
+- Cambiar un control deslizante de audio muestra **Custom** en el selector de presets de audio. Seleccionar cualquier preset de audio, incluso el mismo, restaura todos sus ajustes. La fuente de audio, el dispositivo de entrada y el look visual se conservan.
+- Stop cancela tanto el inicio de captura pendiente como la reactividad activa. Los cambios de audio también se aplican durante las transiciones de presets de Pop Out.
 - La modulación de audio no es persistente: afecta los parámetros de renderizado efectivos en vivo sin reescribir los ajustes preestablecidos guardados.
 - Los límites de seguridad evitan que la alta sensibilidad lleve al renderizador a pantallas de color blanco puro o negro puro.
 
@@ -147,6 +152,40 @@ MIDI sigue siendo experimental. Pasan las pruebas de mapeo automatizado, segurid
 La ruta de transmisión heredada ASCILINE y el código de sesión de transmisión Rust/FFmpeg son infraestructura de desarrollo. El modo de transmisión, el selector estático/transmisión, la etiqueta de conexión y el contador de búfer no están expuestos en la interfaz de usuario de origen normal.
 
 La configuración inicial del hardware y el mapa completo del controlador se encuentran en [UC-33e y mioXC Guide](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MIDI_UC33E.md).
+
+<a id="spatial-visuals-and-trails-110"></a>
+
+## Visuales espaciales y estelas (1.1.0)
+
+Todos los presets integrados empiezan en **Space / Motion → Visual mode → Flat media**, incluido Ashen Ruins. Aplican el tratamiento de color, glifos o celdas sólidas directamente al material de entrada. Ashen Ruins empieza con un aspecto monocromático claro de celdas sólidas. Los once presets nuevos siguen disponibles; sus ajustes de cámara y escena se cargan, pero solo se aplican al elegir manualmente un modo espacial. Volver a seleccionar un preset integrado restaura Flat Media. Los presets personalizados guardados conservan su modo y no se migran los ajustes existentes. La versión 1.1.0 está disponible en [GitHub Releases](https://github.com/aindaco1/ascii-vj-remix/releases/tag/v1.1.0) y mediante el actualizador de la aplicación de producción. Consulte el [registro de publicación](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/releases/RELEASE_1.1.0.md#published-artifacts-and-acceptance) para conocer la validación de instaladores y actualizaciones y las comprobaciones físicas pendientes.
+
+|Preset|Visual mode opcional|Escena al activarlo|
+| --- | --- | --- |
+|Neon Night Drive|City streets|Recorrido rápido y bajo entre calles, edificios altos, pavimento mojado y lluvia|
+|Media Corridor|Media corridor|Túnel estrecho y simétrico de pantallas, lente angular y glifos de bloque|
+|Wet Coast|Wet coast|Recorrido lento por la costa, agua abierta, edificios bajos y textura Braille|
+|Neon Cathedral|Vaulted hall|Vista ascendente de una nave con columnas altas, techo inclinado y glifos finos|
+|Orbital Chamber|Orbitals|Esfera coloreada con el material de entrada y anillo inclinado giratorio|
+|Ashen Ruins|Recursive ruins|Arquitectura monocromática, pasajes abiertos y niebla clara en la distancia|
+|Fractal Dive|Mandelbrot dive|Zoom giratorio de Mandelbrot con color y distorsión de contornos derivados de la fuente|
+|Mandelbulb Bloom|Mandelbulb|Vista orbital de un fractal orgánico con textura Braille en la superficie|
+|Mandelbox Passage|Mandelbox|Cubos recursivos y arquitectura plegada|
+|Edge Etching|Flat media|Glifos de líneas orientadas sobre los bordes marcados de la imagen|
+|Phosphor Echo|Flat media|Estelas que se desvanecen con zoom y rotación suaves|
+
+**Travel speed** admite valores positivos y negativos: los negativos invierten el movimiento. **Freeze scene** detiene el reloj de la escena y el movimiento y desvanecimiento del eco; el video y el audio siguen reproduciéndose. **Route position** añade un desplazamiento. **Reset scene / trails** devuelve el reloj y el desplazamiento de cámara al origen y borra las estelas. El avance recorre un mundo que se repite; Street weave se mueve dentro de la calle libre y Look around / orbit gira la vista en movimiento o rodea los objetos orbitales. **Camera tilt** orienta la cámara hacia arriba o abajo; Relief usa una cámara elevada sobre el terreno. Son recorridos de cámara restringidos, sin vuelo libre ni edición del mundo.
+
+**Media amount** mezcla la fuente seleccionada sobre las superficies. Las configuraciones opcionales de escena usan entre un 80 y un 95 % para que el material de entrada determine su apariencia. Cero usa materiales procedurales. Las imágenes de las paredes ocupan paneles de 8 × 4 unidades; las cubiertas y los techos también usan la fuente, y Orbital Chamber la muestra detrás de las formas del primer plano. **Surface framing** controla la repetición, el ajuste o el recorte dentro de cada superficie. El selector de fuente, la inversión de cámara y los controles de reproducción siguen gestionando el material. Los ajustes guardados o personalizados conservan sus valores; vuelva a seleccionar un preset relacionado y active su modo espacial para cargar la configuración de esa escena. Cambiar de preset visual no selecciona otra fuente ni reinicia la reproducción.
+
+**Fractal zoom**, **Fractal detail** y **Fractal shape** aparecen al activar uno de los cuatro modos fractales. Zoom cambia la escala; Detail ajusta el número acotado de iteraciones; Shape modifica los cortes, la potencia del Mandelbulb, los pliegues del Mandelbox o la distorsión de contornos a partir del material de entrada. La velocidad, la congelación, los controles de cámara y la mezcla del material siguen disponibles en vivo. Ashen Ruins, Fractal Dive y Mandelbox Passage usan celdas sólidas; active Glyph mode y desactive Solid mode para obtener textura ASCII. Brightness Relief se retiró del catálogo de presets, pero su modo visual sigue disponible para los looks personalizados existentes.
+
+**Material glyphs** distingue superficies, agua, ventanas y cielo. Reserva ocho de los 96 espacios para glifos. Al aumentar Media amount, disminuye la sustitución por glifos de materiales para conservar el brillo y las formas de la fuente. Desactívelo y ponga Edge glyphs en cero para usar la rampa personalizada completa sin cambios. Edge glyphs funciona sobre Flat Media y elige trazos horizontales, verticales o diagonales, con histéresis cerca del umbral. Los ciclos de paleta siguen usando la luminancia base estable para los glifos habituales.
+
+**Phosphor / echo**, **Trail half-life**, **Echo zoom** y **Echo rotation** funcionan en modos planos y espaciales. Las estelas largas pueden ocultar detalles finos. El historial se borra al cambiar Bright output, la fuente, la cuadrícula, la escena, la semilla, el desplazamiento de ruta, la paleta o la disposición de glifos, y cuando el renderizado se interrumpe durante más de un segundo. Las transiciones estructurales nativas también borran el historial. El historial en coma flotante evita que las estelas tenues queden fijas; los dispositivos WebGL2 antiguos sin destinos de renderizado en coma flotante usan una alternativa de bytes con desvanecimiento más rápido.
+
+Los ajustes de audio existentes añaden un movimiento moderado de graves al campo de visión y a la altura de cámara, presencia a la luz, acentos de ritmo al resplandor y agudos a los reflejos del agua. Usan la sensibilidad, las intensidades por característica y la atenuación por densidad existentes. MIDI Learn incluye los controles espaciales, Freeze Scene y Reset Scene and Trails; no añade acciones de fuente ni de cámara.
+
+Los controles espaciales se aplican a imágenes, videos y cámaras locales, incluidas composiciones de cámaras. El renderizador heredado de flujos del servidor conserva su comportamiento. WebGPU, WebGL2 y wgpu nativo renderizan localmente. Los presets asignados explícitamente a Canvas mantienen el límite de densidad por software y usan la duplicación de salida para Pop Out espacial. Si la presentación GPU nativa no está disponible, elija Canvas para usar esa alternativa. Los límites de densidad normal y avanzada no han cambiado. Relief, Orbitals, los reflejos y las escenas densas pueden requerir más tiempo de GPU; reduzca Columns antes de elevar otros límites. La aceptación física en M1/16 GB y Windows/Linux sigue pendiente para esta versión.
 
 
 

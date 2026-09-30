@@ -139,6 +139,17 @@ base params
 Effective params must not persist back into user presets unless the user
 explicitly saves the current state as a preset.
 
+Audio feature polling and reactive output synchronization target 120 Hz, with
+at most one native feature read in flight. Duplicate capture frames and replies
+from stopped sessions are ignored. Browser FFT analyzers do not add smoothing;
+both capture paths use the shared immediate-attack, elapsed-time release
+envelope. Smoothing zero bypasses the envelope. Native input requests 128-frame
+buffers within the device's supported range and retains the default-buffer
+fallback. Beat history and decay follow time rather than callback count.
+Steady Pop Out updates consume these effective parameters without applying audio
+a second time. Armed native transitions receive unmodulated endpoints and keep
+their direct native audio response while parameter synchronization is suspended.
+
 ## Repository Ownership Map
 
 Use this map to find the likely owner of a change:
@@ -192,7 +203,7 @@ Use the [User Guide](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/U
 - Preserve the clean-profile Demo Image / Classic Camera ASCII state and keep
   backend preference on Auto. Existing profiles retain their settings.
 - Keep preset backend ownership in
-  `renderers/shared/preset-backend-contract.js` (79 total, 51 accelerated,
+  `renderers/shared/preset-backend-contract.js` (90 total, 62 accelerated,
   28 explicit Canvas). Intentional changes must update the contract and visible
   preset-matrix evidence together. Platform identity must not preemptively
   reassign ownership.

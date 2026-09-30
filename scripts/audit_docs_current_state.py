@@ -24,6 +24,8 @@ SPANISH_CURRENT_STATE_EXCLUSIONS = {
 
 FORBIDDEN_CURRENT_STATE = {
     "stale release-candidate baseline": re.compile(r"The current source/package release candidate is", re.I),
+    "stale 1.1.0 publication status": re.compile(r"Spatial stage \(1\.1\.0, unpublished\)|The release is currently a local development build|public installers have not been replaced", re.I),
+    "stale spatial preset count": re.compile(r"\b87/59/28\b|all 87 built-ins", re.I),
     "legacy point-and-click reference": re.compile(r"ascii[- ]point[- ]and[- ]click|point[- ](?:and[- ])?click", re.I),
     "stale 0.9.3 release posture": re.compile(r"public 0\.9\.3 release CI|Windows 0\.9\.3 artifacts", re.I),
     "stale 0.9.5 current posture": re.compile(r"Windows 0\.9\.5 artifacts|current development docs describe 0\.9\.6 on top of the released 0\.9\.5", re.I),
@@ -79,6 +81,11 @@ SPANISH_RELEASE_CLAIMS = {
 }
 
 REQUIRED_FEATURE_MARKERS = [
+    "Spatial visuals and trails (1.1.0)",
+    "All built-in presets start with **Space / Motion → Visual mode → Flat media**",
+    "**Color → Bright output** is off by default",
+    "Mandelbox Passage",
+    "Phosphor Echo",
     "Twenty-one project-native palettes",
     "Tidal Glass",
     "Ember Grotto",
@@ -99,18 +106,22 @@ REQUIRED_FEATURE_MARKERS = [
 
 HOMEPAGE_MARKERS = {
     "index.md": [
-        "79 built-in presets, 21 palettes",
+        "90 built-in presets, 21 palettes",
         "Preset playlists",
         "Save a frame",
-        "ASCII World Mint",
-        "ASCII City Nightshift",
+        "Spatial ASCII",
+        "Flat Media",
+        "Bright Output",
+        "Mandelbox Passage",
     ],
     "es/index.md": [
-        "79 presets integrados, 21 paletas",
+        "90 presets integrados, 21 paletas",
         "Listas de presets",
         "Guarda un fotograma",
-        "ASCII World Mint",
-        "ASCII City Nightshift",
+        "Spatial ASCII",
+        "Flat Media",
+        "Bright Output",
+        "Mandelbox Passage",
     ],
 }
 
@@ -266,7 +277,8 @@ def main() -> int:
         spanish_features = SPANISH_DOCS / "overview" / "features.md"
         spanish_feature_body = spanish_features.read_text(errors="replace")
         for marker in ["ASCII World Mint", "ASCII City Nightshift", "Media Foundation", "V4L2",
-                       "Tidal Glass", "Ember Grotto", "Fern After Rain", "Violet Dusk"]:
+                       "Tidal Glass", "Ember Grotto", "Fern After Rain", "Violet Dusk",
+                       "Flat Media", "Bright output", "Mandelbox Passage", "Phosphor Echo"]:
             if marker not in spanish_feature_body:
                 errors.append(f"{relative(spanish_features)}: missing current feature marker: {marker}")
 
@@ -287,8 +299,8 @@ def main() -> int:
             errors.append(f"{relative(quickstart)}: missing canonical contributor setup")
         for filename, markers in {
             "development/shared-desktop-services.md": ["docs/SHARED_DESKTOP_MIGRATION.md", "## Shared-Service Maintenance", "platform-desktop.json"],
-            "operations/testing.md": ["## Jev Development Testing", "npm test -- --offline", "platform-desktop.json"],
-            "development/rendering-engine.md": ["## Indexed Palette Cycling", "79 total, 51 accelerated, 28 explicit Canvas"],
+            "operations/testing.md": ["## Jev Development Testing", "npm test -- --offline", "platform-desktop.json", "## Spatial renderer changes", "### Audio response", "90 total / 62 accelerated / 28 explicit"],
+            "development/rendering-engine.md": ["## Indexed Palette Cycling", "## Spatial stage (1.1.0)", "90 total, 62 accelerated, 28 explicit Canvas"],
         }.items():
             path = DOCS / filename
             body = path.read_text() if path.exists() else ""

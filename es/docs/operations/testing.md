@@ -136,7 +136,7 @@ Para revertir únicamente Jev, elimina conjuntamente sus cuatro scripts de prueb
 |Módulos Rust/Tauri|`npm run test:rust`|
 |Rendimiento de salida nativa|`npm run smoke:native-output`, `npm run test:native-output-log`|
 |Rendimiento de la interfaz de usuario|`npm run smoke:ui-perf`, `npm run bench:density` con transiciones/valores predeterminados fijos, configuración de funciones, percentiles de fase, reemplazos de renderizador y restablecimientos de fotogramas|
-|Ajustes preestablecidos primarios instalados|`npm run smoke:primary-presets`, los 79 presets integrados sobre Demo Image, comprobando visibilidad de la vista principal, familia de backend, estado de ejecución, errores de GPU y proporciones en cada preset|
+|Ajustes preestablecidos primarios instalados|`npm run smoke:primary-presets`: los 90 presets integrados sobre Demo Image, comprobando para cada uno visibilidad en el preview principal, familia de backend, estado de ejecución, errores GPU y proporción de imagen|
 |Lanzamiento de instalación/actualización|`npm run smoke:release-install`|
 
 <a id="recommended-check-sets"></a>
@@ -166,7 +166,26 @@ Agregue comprobaciones manuales para cambio de fuente, transiciones preestableci
 
 La prueba de humo estática muestra la versión del navegador y el nombre de su ejecutable. Si falla, conserva el error original, la fase actual, un conjunto acotado de errores de consola y de página, solicitudes fallidas y errores HTTP, y el estado de arranque de cada página de prueba. Las URL omiten credenciales, parámetros de consulta y fragmentos. La captura de estado y de pantalla tiene tiempos máximos de espera para que una página bloqueada no impida registrar el fallo. El navegador se cierra tanto al terminar correctamente como al fallar.
 
-Cada ejecución fallida guarda `failure.json` y, si es posible, capturas de las páginas en una carpeta con fecha y hora dentro de `tmp-smoke-static/`. Usa `SMOKE_DIAGNOSTICS_DIR` para elegir otro directorio padre. Estos contextos nuevos del navegador contienen casos sintéticos; el diagnóstico no vuelca el almacenamiento, las variables de entorno ni el DOM completo. El job de Windows Desktop sube los diagnósticos como un artefacto separado que se conserva siete días. Esto no relaja los tiempos máximos de arranque, las comprobaciones de renderizado visible ni el contrato 79/51/28 de asignación de presets.
+Cada ejecución fallida guarda `failure.json` y, cuando es posible, capturas de pantalla en una carpeta con marca de tiempo dentro de `tmp-smoke-static/`. Use `SMOKE_DIAGNOSTICS_DIR` para elegir otro directorio. Estos contextos nuevos del navegador contienen datos sintéticos de prueba; los diagnósticos no vuelcan el almacenamiento, las variables de entorno ni el DOM completo. El trabajo Windows Desktop sube los diagnósticos como artefacto independiente durante siete días. Esto no reduce los límites de tiempo de inicio, las comprobaciones del renderizador visible ni el contrato de presets 90/62/28.
+
+<a id="audio-response"></a>
+
+### Respuesta al audio
+
+Ejecute `npm run test:audio-reactive` para comprobar modulación acotada, ataques inmediatos, caída independiente de la tasa de fotogramas, suavizado cero, una sola lectura nativa en curso, lecturas duplicadas y carreras entre parada y reinicio. `npm run test:rust` también comprueba la selección del búfer nativo, la detección de ataques y la caída de pulsos con distintos tamaños de búfer. Las pruebas de inicio retrasan los permisos del navegador, la reanudación de AudioContext, la reproducción de archivos y los comandos nativos para verificar cancelación, liberación de pistas y Stop/Start rápidos. Cubren la restauración de ajustes de presets y las ediciones de audio durante la preparación de transiciones nativas. La prueba estática cubre cambios de fuente y dispositivo de captura, ajustes en vivo y responsabilidad sobre los parámetros efectivos de Pop Out en estado estable y durante transiciones, además de la etiqueta Custom y la reselección mediante los controles reales de audio. `npm run test:renderer-resources` comprueba que el fotograma decodificado siga vivo hasta el envío a GPU, la liberación de recursos tras fallos y la recuperación del bucle de animación.
+
+Tras compilar la aplicación Dev optimizada, puede ejecutar una prueba local de tiempos de entrada nativa junto con las comprobaciones existentes de rendimiento de video, Pop Out y transiciones:
+
+```bash
+ASCILINE_UI_PERF_SMOKE_NATIVE_AUDIO=1 \
+ASCILINE_UI_PERF_SMOKE_FOREGROUND=1 \
+ASCILINE_UI_PERF_SMOKE_COLUMNS=640 \
+ASCILINE_UI_PERF_SMOKE_DURATION_MS=15000 \
+ASCILINE_UI_PERF_REPORT_PATH=/tmp/ascii-native-audio.json \
+npm run smoke:ui-perf
+```
+
+Mantenga visibles la aplicación y Pop Out durante la prueba. Se usa el micrófono o entrada nativa seleccionado con el permiso habitual del sistema. Los errores nuevos del frontend hacen fallar la prueba; los informes guardados existentes se conservan. Se registra la duración de la ventana de análisis, el tiempo de ida y vuelta por IPC y un límite de antigüedad de las características al recibirlas: su edad en la instantánea nativa más el viaje completo. No se graba audio sin procesar ni se mide la latencia física del sonido a la pantalla. Compare el renderizado con los umbrales existentes sin rebajarlos para obtener un resultado. La escucha física, los tiempos de la interfaz de audio o loopback, la captura del sistema y el hardware Windows/Linux requieren comprobaciones manuales independientes.
 
 <a id="renderer-backend-changes"></a>
 
@@ -270,7 +289,7 @@ La aceptación manual del informe debe comenzar con una cola vacía: ingrese una
 
 La prueba 2026-08-29 Windows 11 estableció que Signal Court y Midnight Scan CJK podían inicializarse en blanco tanto en WebGPU como en WebGL2, mientras que la ruta sólida/píxel de Neon Sledgehammer permanecía visible y la cámara se abría sin un informe de diagnóstico de medios falso. La regla general de glifo a lienzo Windows ahora se eliminó después de la reparación de la textura de glifo compacto. Vuelva a verificar los ajustes preestablecidos representativos de ASCII, Braille, CJK, Hangul, sólidos y de píxeles en el instalador de reemplazo antes de fusionarlos.
 
-La matriz estática de presets también verifica la asignación de backends: los perfiles limpios y los presets sin backend de compatibilidad explícito conservan Auto y usan WebGPU/WebGL2 en el entorno Chromium compatible de las pruebas. El barrido de presets de la app empaquetada exige por separado el contrato de 79 presets: 51 acelerados y 28 con Canvas explícito. CI de Windows ejecuta la matriz visible completa; las pruebas en hardware Windows deben confirmar además que los 51 presets acelerados usan WebGPU y siguen visibles en la máquina RTX de referencia.
+La matriz estática de presets también comprueba la asignación de backends: un estado limpio y los presets sin un backend de compatibilidad explícito conservan Auto y usan WebGPU/WebGL2 en el Chromium compatible de la prueba. La prueba de presets de la aplicación empaquetada exige por separado el contrato centralizado de 90 presets: 62 acelerados y 28 asignados explícitamente a Canvas. CI de Windows ejecuta toda la matriz visible; la aceptación física debe confirmar además que los 62 acelerados usen WebGPU y permanezcan visibles en el equipo RTX de destino.
 
 La misma prueba renderiza muestras de color conocidas mediante WebGL2 real y las compara con el mapeo compartido de las 21 paletas en los modos de color más cercano y luminancia, tanto al arrancar como al cambiar de paleta. También verifica que cargar una paleta conserve la orientación de la imagen de origen.
 
@@ -413,6 +432,18 @@ Mantenga separados los resultados locales, de CI, de artefactos publicados, de a
 - La cobertura de audio/cámara/medios nativos de Linux está limitada fuera de CI.
 
 El seguimiento del lanzamiento potencial, la plataforma, la accesibilidad, la localización y la cobertura de rendimiento se realiza en [Roadmap](/es/docs/reference/roadmap/).
+
+<a id="spatial-renderer-changes"></a>
+
+## Cambios en el renderizador espacial
+
+- `npm run test:spatial`: comprueba oclusión con alturas variables, intersecciones de cubiertas, rayos sin impacto y sobre ejes o esquinas, proyección rectilínea, repetición del mundo, movimiento con signo, controles finitos y acotados, límites de audio, desvanecimiento largo, respuesta a formas distintas de la fuente y diferencias entre pares de escenas activadas manualmente sobre una entrada oscura. También verifica los valores iniciales Flat Media y los límites exactos de probabilidad de WTF para cada modo. Los vectores de uniformes compartidos se ejecutan en JS y Rust; `npm run test:rust` también valida todo el WGSL nativo.
+- `npm run smoke:spatial`: compara lecturas reales de celdas WebGPU/WebGL2 con la referencia Canvas; comprueba Bright output desactivado inicialmente y sus cambios en vivo, tanto en RGB como en luminancia de glifos; persistencia entre presets, WTF y mensajes nativos; Flat Media tras cada selección de preset integrado; 24 controles en las nueve escenas activadas manualmente; ediciones manuales y MIDI durante interpolaciones y transiciones de presets espaciales guardados; persistencia de cambios y limpieza de capas; elección independiente de escena en WTF durante la generación de referencias, reintentos y alternativa final; igualdad de fotogramas congelados; desvanecimiento en coma flotante; límites Canvas; y reproducción continua de un video de 30 segundos entre los nuevos presets y Classic Camera ASCII. Las nueve configuraciones de escena y el modo Relief heredado deben responder a dos fotogramas en movimiento con histogramas de color y brillo idénticos, pero formas distintas, tanto en RGB como en glifos. WebGPU requiere Chromium instalado con soporte GPU; `CHROMIUM_EXECUTABLE` permite seleccionarlo. Por defecto se abre un navegador visible y aislado. `SPATIAL_SMOKE_HEADLESS=1` es opcional en controladores con una cadena de presentación WebGPU fiable sin ventana. La prueba numérica usa un destino GPU fuera de pantalla e inicia la aplicación de prueba en WebGL2 porque Chromium informa de forma intermitente de una cadena de presentación inválida al iniciar tanto el renderizador WebGPU de referencia como el candidato. Los diagnósticos GPU siguen haciendo fallar la prueba; la presentación se comprueba por separado en las pruebas nativas y visibles.
+- `npm run smoke:static`: comprueba todos los presets integrados, paletas, glifos, rutas de medios y redimensionado y errores JavaScript/GPU, incluidos los valores iniciales Flat Media del catálogo completo. La prueba nativa verifica esos mismos valores en la aplicación, el renderizador y los parámetros de salida nativa (`flatMediaPassed`).
+- `node scripts/capture_spatial_review.mjs /tmp/spatial-review.png` captura una fuente oscura con el brillo desactivado y activado, y las nueve escenas espaciales habilitadas manualmente, mediante presentación real en WebGL2. Añada `--fractals` para los cuatro looks fractales sobre la fuente de demostración sin modificar y con Bright Output desactivado; añada `--flat-presets` para capturar sus valores iniciales en Flat Media. El atlas de glifos debe terminar de cargarse antes de la captura.
+- Para medir el rendimiento de escenas nativas, use el entorno de pruebas de interfaz mantenido, por ejemplo `ASCILINE_UI_PERF_SMOKE_SPATIAL='{"visualMode":"city","sceneWet":0.55,"sceneRain":0.2,"sceneMedia":0.85}' ASCILINE_UI_PERF_SMOKE_COLUMNS=640 ASCILINE_UI_PERF_SMOKE_SYNTHETIC_AUDIO=1 npm run smoke:ui-perf`. Es una prueba exclusivamente local y debe usar la identidad de desarrollo. Conserve los umbrales habituales de tiempo por fotograma y actualización reactiva; una captura de pantalla no mide el rendimiento.
+
+Aceptación manual: confirme que Bright Output empieza desactivado en un perfil limpio y conserva una elección guardada. Compare Bright output activado y desactivado con cámaras, imágenes y videos oscuros; vuelva a seleccionar cada preset integrado para comprobar Flat Media y active manualmente su modo espacial. Compare el preview y la salida nativa al cambiar modo, fuente, densidad, paleta y rampa. Ajuste el zoom, detalle y forma fractal tras seleccionar un preset y durante su transición; pruebe congelación, inversión y reinicio, estelas largas, continuidad del video, orientación de cámara, inicio y parada de audio, captura del valor MIDI y cierre y reapertura de la salida. Verifique por separado una segunda pantalla física y el hardware mínimo de referencia. Consulte el [registro de 1.1.0](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/releases/RELEASE_1.1.0.md).
 
 
 <a id="source-material"></a>

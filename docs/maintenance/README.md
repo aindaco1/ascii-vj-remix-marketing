@@ -37,7 +37,7 @@ artifact. Correct stale upstream facts at their source before importing them.
 The [public Source Map](../reference/source-map.md) documents the imported files:
 
 - Root upstream `README.md` supplies product identity and lineage.
-- `docs/USER_GUIDE.md` supplies detailed capabilities, system requirements,
+- `docs/USER_GUIDE.md` supplies detailed capabilities, spatial controls and trails, system requirements,
   hardware, and thermal guidance. Full usage, permissions, privacy, and
   troubleshooting remain linked upstream, along with the README's install steps.
 - `docs/CONTRIBUTORS.md` supplies Quickstart and local development procedures.

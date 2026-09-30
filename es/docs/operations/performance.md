@@ -77,6 +77,14 @@ Normas:
 - Conserve el tiempo de reproducción de medios activos cuando cambien los ajustes preestablecidos visuales.
 - Mantenga los cambios discretos controlados y predecibles durante las transiciones.
 
+<a id="110-local-spatial-baseline"></a>
+
+## Mediciones espaciales locales de 1.1.0
+
+La etapa espacial conserva los límites de densidad existentes. La geometría se calcula una vez por celda, con hasta 64 pasos de cuadrícula (48 de trazado de esferas para Orbitals); los reflejos añaden un rayo acotado. La realimentación reutiliza dos texturas de historial en coma flotante y la salida nativa conserva la caché de cargas por versión de la fuente. La caché compartida de visibilidad por columna sigue siendo una optimización futura.
+
+La carga optimizada de ciudad, video y audio sintético a 640 columnas midió 39,1 FPS y 33,15 ms P95 en el preview con Pop Out abierto, y 60,1 FPS en la presentación nativa, en un M1 Max/64 GB con un 85 % de material de entrada. La prueba por fases superó los umbrales existentes, aunque persisten picos ocasionales. El alcance exacto, los fotogramas más lentos y los límites de la validación manual y del hardware mínimo constan en el [registro de la versión 1.1.0](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/releases/RELEASE_1.1.0.md#earlier-local-validation-before-fractal-follow-up).
+
 <a id="096-measured-optimization-pass"></a>
 
 ## 0.9.6 Pase de optimización medido
@@ -138,7 +146,7 @@ El atlas fuente Unicode está dividido en dieciséis páginas en escala de grise
 
 Las mediciones de funciones locales originales seleccionaron WebGL2 y siguen siendo evidencia de regresión GPU del navegador, no evidencia de aceptación para la vista previa del glifo Apple WebKit instalada.
 
-Para la vista principal macOS Apple WebKit, los ajustes preestablecidos de glifos elegibles para aceleración utilizan la textura de rampa compacta WebGPU. Los ajustes preestablecidos que poseen explícitamente Canvas2D mantienen el límite de densidad de software normal. El barrido anterior instalado de 71 ajustes preestablecidos resolvió 43 elementos integrados en WebGPU y 28 en Canvas2D, mantuvo los 71 visibles y confirmó que todos los ajustes preestablecidos elegibles para GPU fueron acelerados. Estas son medidas históricas; el contrato actual 79/51/28 se define en [Testing](/es/docs/operations/testing/#renderer-backend-changes). El Pop Out nativo permanece renderizado de forma independiente en GPU. Una ejecución estructural anterior de 30 segundos mantuvo la vista principal en 30.0 FPS, la presentación nativa en 60.0 FPS, las cargas de origen en 23.5 FPS para el dispositivo 24 FPS y completó 16 fundidos cruzados sincronizados con cero GPU o fallas de transición. Estos son resultados de regresión del host de desarrollo de M1 Max, no la certificación mínima de M1/16 GB.
+En la vista principal de macOS con Apple WebKit, los presets de glifos aptos para aceleración usan la textura compacta de la rampa WebGPU. Los presets asignados explícitamente a Canvas2D conservan el límite de densidad por software. Una prueba histórica de 71 presets instalados asignó 43 a WebGPU y 28 a Canvas2D, mantuvo los 71 visibles y confirmó que todos los aptos para GPU estaban acelerados. Son mediciones históricas; el contrato actual 90/62/28 se define en [Pruebas](/es/docs/operations/testing/#renderer-backend-changes). Pop Out nativo sigue renderizándose de forma independiente en GPU. Una ejecución estructural anterior de 30 segundos mantuvo la vista principal a 30,0 FPS, la presentación nativa a 60,0 FPS y las cargas de la fuente a 23,5 FPS para el video de prueba de 24 FPS; completó 16 transiciones sincronizadas sin fallos de GPU ni de transición. Son resultados de regresión en un equipo de desarrollo M1 Max, no una certificación del mínimo M1/16 GB.
 
 <a id="backend-notes"></a>
 
@@ -248,6 +256,10 @@ Normas:
 ### Reactividad de audio
 
 El análisis de audio está optimizado para una respuesta en vivo estable.
+
+Las lecturas de características tienen una frecuencia objetivo de 120 Hz sin acumular solicitudes nativas simultáneas. La captura solicita búferes de 128 muestras por canal dentro de los límites del dispositivo (2,67 ms a 48 kHz) y recurre a su valor predeterminado si no los admite. Es una solicitud de tamaño de búfer, no una garantía de latencia del hardware. Los ataques son inmediatos al recibir los datos; Smoothing controla una caída basada en el tiempo y cero la omite. El valor predeterminado de 0,36 tiene una constante de caída de 25,92 ms. El historial y la caída de los pulsos también usan el tiempo transcurrido para que los búferes menores no acorten los pulsos.
+
+`npm run test:audio-reactive` incluye una comparación determinista de muestreo y envolvente ante un cambio brusco: alcanzar el 90 % de un ataque tarda 8,33 ms con el modelo de 120 Hz, frente a 33,33 ms antes; caer al 10 % tarda 66,67 ms frente a 150 ms con el suavizado predeterminado. Son resultados del modelo de software y excluyen dispositivo, controlador, IPC, planificación del renderizado y latencia de pantalla. Para medir la captura real bajo carga, use la prueba de entrada nativa de [Pruebas](/es/docs/operations/testing/#audio-response).
 
 Normas:
 

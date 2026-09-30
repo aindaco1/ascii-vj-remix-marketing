@@ -7,7 +7,7 @@ parent: "Overview"
 
 # ASCII VJ Remix
 
-These sections follow the mother repository's `main` branch. See the [Release Baseline](/docs/overview/changelog-baseline/) for **1.0.6** release notes. Product identity, requirements, and hardware guidance are selected directly from their canonical guides.
+These sections follow the mother repository's `main` branch. See the [Release Baseline](/docs/overview/changelog-baseline/) for **1.1.0** release notes. Product identity, requirements, and hardware guidance are selected directly from their canonical guides.
 
 ## What This Project Is
 

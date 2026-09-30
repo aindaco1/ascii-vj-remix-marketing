@@ -88,3 +88,35 @@ maintaining parallel technical descriptions.
   The website deployment is tracked by the Pages workflow for the publishing
   commit; this documentation refresh does not rebuild the desktop release or
   deploy the relay.
+
+## 2026-09-29 — 1.1.0 Spatial ASCII refresh
+
+- Read merged app source at `03b1b02f1643a67f657a3dcc6b2e4aa8585edf39`,
+  including the maintained guides, changelog, preset/palette contracts and
+  [1.1.0 release record](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/releases/RELEASE_1.1.0.md).
+- Verified the public [v1.1.0 release](https://github.com/aindaco1/ascii-vj-remix/releases/tag/v1.1.0),
+  published September 29 at 19:49 UTC, with fourteen assets. Its tag resolves to
+  `19f9350a505c379cfc2302f484373dbd9467e25a`. Matched both homepages' generated
+  macOS, Windows and Linux download targets against the published asset URLs.
+- Corrected stale unpublished/local-build wording and interim 87/59/28 counts
+  in the canonical app guides, repaired the local-validation anchor, and matched
+  Linux install examples to published filenames. These documentation corrections
+  are committed upstream at `14753ff`; source exports confirm 90 presets
+  (62 accelerated, 28 Canvas) and 21 palettes.
+- Refreshed both homepages for eleven new looks, optional spatial/fractal modes,
+  Bright Output and audio/live-control fixes. Kept the current design and media
+  at the owner's request. All built-ins start in Flat Media, spatial modes are
+  opt-in, and Bright Output starts off while preserving saved choices.
+- Extended the existing feature import to include Spatial visuals and trails;
+  refreshed renderer, testing, performance, contributor, architecture, roadmap,
+  changelog and command pages. Added reviewed translations for all 121 new
+  Spanish segments, retaining app labels, code and source links.
+- Validation: ten pipeline tests, production Jekyll build, current-state,
+  52-page internal-link, SEO, support and performance audits passed. Both
+  generators reproduced identical output. Changed upstream paths and release
+  anchors resolve; maintenance records remain absent from public routes, search
+  and sitemap. `git diff --check` passed in both repositories.
+- Visually checked both release sections, language switching, the Spanish
+  release notes and the spatial-control table locally. Published installers,
+  updater hops and physical hardware were not retested in this website refresh;
+  their evidence and remaining coverage belong to the upstream release record.
