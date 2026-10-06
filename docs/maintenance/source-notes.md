@@ -120,3 +120,45 @@ maintaining parallel technical descriptions.
   release notes and the spatial-control table locally. Published installers,
   updater hops and physical hardware were not retested in this website refresh;
   their evidence and remaining coverage belong to the upstream release record.
+
+
+## 2026-10-05 — 1.2.0 Fractal Accents refresh
+
+- Read the clean app checkout at merged `main`
+  `a524e80babfb410993faa9bdba350bd6709810de`, confirmed against fetched
+  `origin/main`. Reviewed the documentation map, current user/developer and
+  release guides, changes since the prior ingestion, Fractal Accents local
+  validation, and the published 1.2.0 acceptance record.
+- Verified GitHub's latest public release is
+  [v1.2.0 — Fractal Accents](https://github.com/aindaco1/ascii-vj-remix/releases/tag/v1.2.0),
+  published October 5 at 01:37 UTC (October 4 at 19:37 in America/Denver),
+  with fourteen uploaded assets. The tag resolves to
+  `323a62169eff9b2d639112d5dfe999a0e2b45fc4`. Product data retains the
+  changelog date, 2026-10-04. Matched all three generated platform download
+  targets on each homepage to the published asset URLs.
+- Checked source exports: 96 presets (68 eligible for acceleration, 28 explicit
+  Canvas) and 21 palettes. Read the six preset definitions and their retention
+  and independent WTF selection behavior alongside the canonical guides.
+- Updated both homepages for Threadlight, Silver Etching, Contour Silk, Julia
+  Glass, Chromatic Undertow and Phosphor Lace, persistent accents, global
+  Subtle Limit, and WTF's 95% Flat Media / 5% optional scene selection plus
+  visibility checks. Retained existing design, media and shared components.
+- Added the canonical Fractal Accents section to the feature importer and local
+  link aliases. Refreshed release notes, renderer architecture and uniform
+  layout, 96/68/28 backend ownership, performance and regression guidance, and
+  the command reference including `smoke:wtf`. Unchanged guides regenerate
+  without differences; historical release evidence retains its dated scope.
+- Added 61 reviewed Spanish translation segments and protected the new preset
+  and control names. Extended existing pipeline checks for accent links/names
+  and current-state auditing for the catalog, controls and WTF probabilities.
+- Validation: all ten pipeline tests, production Jekyll build, current-state
+  audit, 52-page internal-link audit, SEO, support and performance audits passed.
+  Both generators reproduced identical files. `git diff --check` passed.
+  Visually reviewed the English/Spanish release sections, Spanish release notes,
+  both feature tables and language switching with the section anchor preserved.
+- This website refresh does not rebuild or retest desktop installers, updater
+  transactions, native output or physical hardware. Their acceptance evidence
+  and remaining coverage are linked from the upstream
+  [1.2.0 release record](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/releases/RELEASE_1.2.0.md).
+  The app checkout remains unchanged. Website publication is verified separately
+  through the publishing commit's Pages workflow and live routes.

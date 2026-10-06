@@ -106,8 +106,9 @@ Las rutas de dispositivos de medios agrupados se generalizan en esta referencia 
 |`npm run tauri:build:dev`|`node scripts/tauri_env.mjs build --config src-tauri/tauri.dev.conf.json`|
 |`npm run test:palette-cycling`|`node scripts/test_palette_cycling.mjs`|
 |`npm run test:renderer-resources`|`node scripts/test_renderer_resources.mjs && node scripts/test_webgpu_video_lifecycle.mjs`|
-|`npm run test:spatial`|`node scripts/test_spatial.mjs`|
+|`npm run test:spatial`|`node scripts/test_spatial.mjs && node scripts/test_fractal_accents.mjs && node scripts/test_wtf_visibility.mjs`|
 |`npm run smoke:spatial`|`node scripts/smoke_spatial.mjs`|
+|`npm run smoke:wtf`|`node scripts/smoke_wtf_visibility.mjs`|
 
 <a id="command-guidance"></a>
 

@@ -23,6 +23,7 @@ SPANISH_CURRENT_STATE_EXCLUSIONS = {
 }
 
 FORBIDDEN_CURRENT_STATE = {
+    "stale WTF flat-scene probability": re.compile(r"selects Flat Media with 80% probability|Media with 80% probability", re.I),
     "stale release-candidate baseline": re.compile(r"The current source/package release candidate is", re.I),
     "stale 1.1.0 publication status": re.compile(r"Spatial stage \(1\.1\.0, unpublished\)|The release is currently a local development build|public installers have not been replaced", re.I),
     "stale spatial preset count": re.compile(r"\b87/59/28\b|all 87 built-ins", re.I),
@@ -42,6 +43,7 @@ FORBIDDEN_CURRENT_STATE = {
 }
 
 FORBIDDEN_SPANISH_CURRENT_STATE = {
+    "stale WTF flat-scene probability": re.compile(r"Flat Media[^.\n]*probabilidad del 80\s*%", re.I),
     "legacy point-and-click reference": re.compile(r"ascii[- ]point[- ]and[- ]click|point[- ](?:and[- ])?click|juego.*point", re.I),
     "stale 0.9.3 release posture": re.compile(r"versión pública 0\.9\.3 CI|artefactos.*Windows 0\.9\.3", re.I),
     "stale 0.9.5 current posture": re.compile(r"artefactos.*Windows 0\.9\.5|documentos de desarrollo actuales.*0\.9\.5", re.I),
@@ -81,6 +83,15 @@ SPANISH_RELEASE_CLAIMS = {
 }
 
 REQUIRED_FEATURE_MARKERS = [
+    "## Fractal Accents",
+    "**Subtle Limit** starts enabled globally",
+    "WTF independently adds an accent to 65% of its targets",
+    "Threadlight",
+    "Silver Etching",
+    "Contour Silk",
+    "Julia Glass",
+    "Chromatic Undertow",
+    "Phosphor Lace",
     "Spatial visuals and trails (1.1.0)",
     "All built-in presets start with **Space / Motion → Visual mode → Flat media**",
     "**Color → Bright output** is off by default",
@@ -106,22 +117,26 @@ REQUIRED_FEATURE_MARKERS = [
 
 HOMEPAGE_MARKERS = {
     "index.md": [
-        "90 built-in presets, 21 palettes",
+        "96 built-in presets, 21 palettes",
         "Preset playlists",
         "Save a frame",
-        "Spatial ASCII",
+        "Fractal Accents",
+        "Subtle Limit",
+        "Julia Glass",
+        "Phosphor Lace",
         "Flat Media",
-        "Bright Output",
-        "Mandelbox Passage",
+        "95%",
     ],
     "es/index.md": [
-        "90 presets integrados, 21 paletas",
+        "96 presets integrados, 21 paletas",
         "Listas de presets",
         "Guarda un fotograma",
-        "Spatial ASCII",
+        "Fractal Accents",
+        "Subtle Limit",
+        "Julia Glass",
+        "Phosphor Lace",
         "Flat Media",
-        "Bright Output",
-        "Mandelbox Passage",
+        "95%",
     ],
 }
 
@@ -278,7 +293,9 @@ def main() -> int:
         spanish_feature_body = spanish_features.read_text(errors="replace")
         for marker in ["ASCII World Mint", "ASCII City Nightshift", "Media Foundation", "V4L2",
                        "Tidal Glass", "Ember Grotto", "Fern After Rain", "Violet Dusk",
-                       "Flat Media", "Bright output", "Mandelbox Passage", "Phosphor Echo"]:
+                       "Flat Media", "Bright output", "Mandelbox Passage", "Phosphor Echo",
+                       "Fractal Accents", "Subtle Limit", "Threadlight", "Silver Etching",
+                       "Contour Silk", "Julia Glass", "Chromatic Undertow", "Phosphor Lace"]:
             if marker not in spanish_feature_body:
                 errors.append(f"{relative(spanish_features)}: missing current feature marker: {marker}")
 
@@ -299,8 +316,8 @@ def main() -> int:
             errors.append(f"{relative(quickstart)}: missing canonical contributor setup")
         for filename, markers in {
             "development/shared-desktop-services.md": ["docs/SHARED_DESKTOP_MIGRATION.md", "## Shared-Service Maintenance", "platform-desktop.json"],
-            "operations/testing.md": ["## Jev Development Testing", "npm test -- --offline", "platform-desktop.json", "## Spatial renderer changes", "### Audio response", "90 total / 62 accelerated / 28 explicit"],
-            "development/rendering-engine.md": ["## Indexed Palette Cycling", "## Spatial stage (1.1.0)", "90 total, 62 accelerated, 28 explicit Canvas"],
+            "operations/testing.md": ["## Jev Development Testing", "npm test -- --offline", "platform-desktop.json", "## Spatial renderer changes", "### Audio response", "96 total / 68 accelerated / 28 explicit", "### Fractal accent regression checks", "npm run smoke:wtf"],
+            "development/rendering-engine.md": ["## Indexed Palette Cycling", "## Spatial stage (1.1.0)", "96 total, 68 accelerated, 28 explicit Canvas", "## Fractal accents", "thirteen vec4s (208 bytes)"],
         }.items():
             path = DOCS / filename
             body = path.read_text() if path.exists() else ""

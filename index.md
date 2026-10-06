@@ -67,18 +67,18 @@ nav_exclude: true
 
 <section class="section-band" aria-labelledby="release-heading">
   <p class="kicker">Latest release</p>
-  <h2 id="release-heading">v{{ site.data.product.latest_release.version }}: Spatial ASCII.</h2>
+  <h2 id="release-heading">v{{ site.data.product.latest_release.version }}: Fractal Accents.</h2>
   <div class="release-summary">
     <img class="release-app-icon" src="{{ site.data.product.app_icon.path | relative_url }}?v={{ site.data.product.app_icon.path | asset_fingerprint }}" width="512" height="512" alt="ASCII VJ Remix neon play-and-pixel app icon" loading="lazy" decoding="async">
     <div>
-      <p class="section-intro">Eleven new looks, optional spatial and fractal scenes, and faster audio response. Turn your images, video, and camera feeds into city streets, vaulted halls, or recursive worlds, with fog, reflections, and trails.</p>
-      <p class="section-intro"><strong>90 built-in presets, 21 palettes.</strong> Find a look by name, tune the glyphs and color, or save a playlist that moves through your favorites.</p>
+      <p class="section-intro">Six new looks add fine threads, etched contours, gentle distortions, color currents and fading trails to your footage. Explore Threadlight, Silver Etching, Contour Silk, Julia Glass, Chromatic Undertow and Phosphor Lace.</p>
+      <p class="section-intro"><strong>96 built-in presets, 21 palettes.</strong> Find a look by name, tune the glyphs and color, or save a playlist that moves through your favorites.</p>
     </div>
   </div>
   <div class="card-grid">
-    <article class="card pink"><h3>Choose when to go spatial</h3><p>Every built-in preset starts in Flat Media. Choose a Visual mode in Space / Motion to explore scenes from Neon Night Drive to Mandelbox Passage, then save your own look.</p></article>
-    <article class="card"><h3>Lift dark footage</h3><p>Enable Bright Output to bring out dark colors and glyphs. It starts off, and your choice stays set across presets and launches. Add Edge Etching or Phosphor Echo for line detail or fading trails.</p></article>
-    <article class="card pink"><h3>Keep live controls responsive</h3><p>Audio attacks respond faster, Stop cancels audio startup, and manual or MIDI edits survive preset transitions. Your video keeps playing as you change the look.</p></article>
+    <article class="card pink"><h3>Keep your accents as you mix</h3><p>Tune amount, coverage, placement, drift and audio response. Your accents stay set as you switch ordinary presets and work over every optional scene. Choose Off to remove them.</p></article>
+    <article class="card"><h3>Start with a subtle touch</h3><p>Subtle Limit starts enabled, keeping accent brightness, color, glyph changes and distortion bounded. Turn it off for a stronger treatment, or try one of six curated variations.</p></article>
+    <article class="card pink"><h3>Let WTF keep the set moving</h3><p>WTF now chooses Flat Media 95% of the time and optional scenes 5%. Stronger visibility checks account for dim footage, glyphs and audio changes while preserving naturally black source frames.</p></article>
   </div>
   <p class="release-link"><a href="{{ '/docs/overview/changelog-baseline/' | relative_url }}">See what’s new in v{{ site.data.product.latest_release.version }}</a></p>
 </section>

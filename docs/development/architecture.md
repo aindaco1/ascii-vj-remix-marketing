@@ -203,7 +203,7 @@ Use the [User Guide](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/U
 - Preserve the clean-profile Demo Image / Classic Camera ASCII state and keep
   backend preference on Auto. Existing profiles retain their settings.
 - Keep preset backend ownership in
-  `renderers/shared/preset-backend-contract.js` (90 total, 62 accelerated,
+  `renderers/shared/preset-backend-contract.js` (96 total, 68 accelerated,
   28 explicit Canvas). Intentional changes must update the contract and visible
   preset-matrix evidence together. Platform identity must not preemptively
   reassign ownership.

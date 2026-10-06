@@ -8,7 +8,7 @@ lang: es
 
 # ASCII VJ Remix
 
-Estas secciones siguen `main` del repositorio principal. Consulte la [Base de la versión](/es/docs/overview/changelog-baseline/) para las notas de **1.1.0**. La identidad del producto, los requisitos y las recomendaciones de hardware se extraen directamente de sus guías canónicas.
+Estas secciones siguen `main` del repositorio principal. Consulte la [Base de la versión](/es/docs/overview/changelog-baseline/) para las notas de **1.2.0**. La identidad del producto, los requisitos y las recomendaciones de hardware se extraen directamente de sus guías canónicas.
 
 <a id="what-this-project-is"></a>
 

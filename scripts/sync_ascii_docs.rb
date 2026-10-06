@@ -82,6 +82,7 @@ SECTION_ALIASES = {
   "README.md#current-capabilities" => "/docs/overview/features/#current-capabilities",
   "docs/USER_GUIDE.md#current-capabilities" => "/docs/overview/features/#current-capabilities",
   "docs/USER_GUIDE.md#spatial-visuals-and-trails-110" => "/docs/overview/features/#spatial-visuals-and-trails-110",
+  "docs/USER_GUIDE.md#fractal-accents" => "/docs/overview/features/#fractal-accents",
   "docs/USER_GUIDE.md#system-requirements" => "/docs/overview/ascii-vj-remix/#system-requirements",
   "docs/USER_GUIDE.md#hardware-guidance" => "/docs/overview/ascii-vj-remix/#hardware-guidance",
   "docs/USER_GUIDE.md#battery-and-heat-warning" => "/docs/overview/ascii-vj-remix/#battery-and-heat-warning"
@@ -237,7 +238,7 @@ module SyncAsciiDocs
 
         This page describes the current ASCII VJ Remix feature baseline for developers planning forks, ports, integrations, or feature work. The capability map is generated from the mother repository's User Guide.
 
-        #{source_sections("docs/USER_GUIDE.md", ["Current Capabilities", "Spatial visuals and trails (1.1.0)"])}
+        #{source_sections("docs/USER_GUIDE.md", ["Current Capabilities", "Spatial visuals and trails (1.1.0)", "Fractal Accents"])}
 
         #{source_note(["docs/USER_GUIDE.md"])}
       MD

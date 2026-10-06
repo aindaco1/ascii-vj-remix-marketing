@@ -7,29 +7,22 @@ parent: "Overview"
 
 # Release Baseline
 
-The latest dated changelog entry is **1.1.0**. This page excludes Unreleased entries; the [Changelog](/docs/reference/changelog/) retains them when present. Other developer guides follow merged `main`, which can include changes after the published desktop tag.
+The latest dated changelog entry is **1.2.0**. This page excludes Unreleased entries; the [Changelog](/docs/reference/changelog/) retains them when present. Other developer guides follow merged `main`, which can include changes after the published desktop tag.
 
-[Download v1.1.0 and read its publication and platform-validation notes](https://github.com/aindaco1/ascii-vj-remix/releases/tag/v1.1.0). The changelog date records the source release entry; GitHub Releases records when the downloads were published.
+[Download v1.2.0 and read its publication and platform-validation notes](https://github.com/aindaco1/ascii-vj-remix/releases/tag/v1.2.0). The changelog date records the source release entry; GitHub Releases records when the downloads were published.
 
 See the [Feature Set](/docs/overview/features/) for current controls and the upstream [release records](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/releases/README.md) for version-specific validation and platform coverage.
 
-## 1.1.0 Release Notes
+## 1.2.0 Release Notes
 
-- Accept Windows and Unix line endings when loading shared native shaders, preventing a Windows Pop Out shader initialization panic.
-- Hold decoded video frames through WebGPU submission to avoid transient external-texture bind failures. Keep the render loop recoverable after errors and count only submitted frames.
-- Make Audio Reactivity Stop cancel unfinished capture requests and serialize native Stop/Start. Restore audio slider tuning when selecting a preset, show custom tuning explicitly, and apply audio changes during Pop Out transitions.
-- Add eleven original presets: Neon Night Drive, Media Corridor, Wet Coast, Neon Cathedral, Orbital Chamber, Ashen Ruins, Fractal Dive, Mandelbulb Bloom, Mandelbox Passage, Edge Etching and Phosphor Echo. Brightness Relief is removed from the built-in catalog; its visual mode remains compatible with saved looks. Orbital Chamber no longer has an Experimental label.
-- Start all built-in presets, including Ashen Ruins, in Flat Media. Keep scene recipes available for manual Space / Motion selection and saved custom looks. WTF independently chooses Flat Media 80% of the time and shares the other 20% equally among all ten spatial modes; preset anchors, safety retries and fallback retain that choice.
-- Reduce audio response delay with 120 Hz feature polling, smaller supported native input buffers, immediate attacks and a shared time-based release envelope. Smoothing zero now fully disables smoothing. Ignore stale capture replies and avoid applying audio modulation twice in Pop Out.
-- Add a shared GPU scene shader for WebGPU, WebGL2 and native Pop Out: variable-height grid geometry, roof visibility, floors/ceilings, stable facade textures, fog, directional/contact shading, window emission, wet reflections and depth-tested rain. Canvas has a bounded software reference.
-- Map the selected image, playing video or camera onto larger scene surfaces with aspect-aware repeat/fit/crop controls. Optional scene recipes use 80–95% media, and material glyphs fade to preserve source shapes. Presets retain source identity and playback.
-- Add signed travel speed, freeze/reset, route selection, material glyphs, edge-directed ASCII with hysteresis, and reusable floating-point feedback history with elapsed-time decay, zoom and rotation.
-- Reuse the shared transport and bounded audio features for scene modulation; expose visual controls and transport actions to MIDI without adding source/capture/output actions.
-- Add a global Bright output toggle, off by default, that strongly lifts dark media before color/glyph selection and stays set across presets and launches. Turning it off retains the previous color response.
-- Give optional scene recipes distinct camera heights/tilts, speeds and framing, plus a narrow corridor, pitched cathedral roof, low shoreline and rotating orbital view. Add shared bounded recursive-ruin, Mandelbrot, Mandelbulb and Mandelbox scenes with zoom, detail and shape controls.
-- Keep manual visual and MIDI edits made during a preset transition instead of letting the transition overwrite them; retain the current Custom look and playing media.
-- Preserve the default Classic Camera ASCII selection, Auto backend preference and density limits. The preset ownership contract is now 90 total / 62 accelerated / 28 explicit Canvas.
-- Add geometric, transport, CPU/GPU pixel-parity, trail-decay and video-continuity checks. See [release scope and acceptance](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/releases/RELEASE_1.1.0.md).
+- WTF now selects Flat Media 95% of the time (5% total for optional scenes).
+- WTF validates glyph visibility, dim footage and audio response, checks its fallback, and shares shadow-preserving limits with native Pop Out.
+- Add six subtle Flat Media presets: Threadlight, Silver Etching, Contour Silk, Julia Glass, Chromatic Undertow and Phosphor Lace.
+- Add Fractal Accents with independent Amount/Coverage, edge/midtone/quiet-area/trail placement, scale, slow drift, restrained audio response, six curated variations and a MIDI-learnable Another variation action.
+- Make accents visible in glyph and monochrome looks, retain them across ordinary built-in preset changes, and apply them to all optional scene modes. Add an explicit Off choice and automatic short trails when echo is zero.
+- Integrate all six accent recipes into WTF, with an independent 65% accent / 35% Off choice retained across safety retries. Increase preset strength while keeping bounded source visibility.
+- Default the persistent global Subtle Limit on; preserve it across presets, saves, imports and WTF. Bound accent brightness, color, glyph changes and displacement without changing the clean-profile Classic Camera ASCII look.
+- Share bounded accent math across WebGPU, WebGL2, native wgpu and Canvas. Extend parity, source-continuity, freeze, bypass, audio, trail-decay and preset-matrix checks; the catalog is now 96 total / 68 accelerated / 28 explicit Canvas.
 
 
 

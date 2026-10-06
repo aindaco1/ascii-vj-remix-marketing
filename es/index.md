@@ -68,18 +68,18 @@ nav_exclude: true
 
 <section class="section-band" aria-labelledby="release-heading">
   <p class="kicker">Última versión</p>
-  <h2 id="release-heading">v{{ site.data.product.latest_release.version }}: Spatial ASCII.</h2>
+  <h2 id="release-heading">v{{ site.data.product.latest_release.version }}: Fractal Accents.</h2>
   <div class="release-summary">
     <img class="release-app-icon" src="{{ site.data.product.app_icon.path | relative_url }}?v={{ site.data.product.app_icon.path | asset_fingerprint }}" width="512" height="512" alt="Icono de la app ASCII VJ Remix con símbolo de reproducción y píxeles de neón" loading="lazy" decoding="async">
     <div>
-      <p class="section-intro">Once looks nuevos, escenas espaciales y fractales opcionales, y una respuesta al audio más rápida. Convierte tus imágenes, videos y cámaras en calles, salas abovedadas o mundos recursivos, con niebla, reflejos y estelas.</p>
-      <p class="section-intro"><strong>90 presets integrados, 21 paletas.</strong> Busca un look por nombre, ajusta los glifos y el color o guarda una lista que recorra tus favoritos.</p>
+      <p class="section-intro">Seis looks nuevos añaden hilos finos, contornos grabados, distorsiones suaves, corrientes de color y estelas a tus imágenes. Explora Threadlight, Silver Etching, Contour Silk, Julia Glass, Chromatic Undertow y Phosphor Lace.</p>
+      <p class="section-intro"><strong>96 presets integrados, 21 paletas.</strong> Busca un look por nombre, ajusta los glifos y el color o guarda una lista que recorra tus favoritos.</p>
     </div>
   </div>
   <div class="card-grid">
-    <article class="card pink"><h3>Elige cuándo entrar en una escena</h3><p>Todos los presets integrados empiezan en Flat Media. Elige un modo visual en Space / Motion para explorar escenas como Neon Night Drive o Mandelbox Passage y guarda tu propio look.</p></article>
-    <article class="card"><h3>Ilumina las tomas oscuras</h3><p>Activa Bright Output para resaltar los colores y glifos oscuros. Empieza desactivado y conserva tu elección entre presets y sesiones. Añade Edge Etching o Phosphor Echo para marcar contornos o crear estelas que se desvanecen.</p></article>
-    <article class="card pink"><h3>Controles que responden en vivo</h3><p>Los ataques de audio responden más rápido, Stop cancela el inicio de la captura y los ajustes manuales o MIDI se conservan durante las transiciones. El video sigue reproduciéndose mientras cambias el look.</p></article>
+    <article class="card pink"><h3>Conserva los acentos al mezclar</h3><p>Ajusta la intensidad, cobertura, ubicación, movimiento y respuesta al audio. Los acentos se conservan al cambiar entre presets normales y funcionan sobre cualquier escena opcional. Elige Off para quitarlos.</p></article>
+    <article class="card"><h3>Empieza con un toque sutil</h3><p>Subtle Limit empieza activado y limita los cambios de brillo, color, glifos y distorsión del acento. Desactívalo para un efecto más intenso o prueba una de las seis variaciones seleccionadas.</p></article>
+    <article class="card pink"><h3>Deja que WTF anime el set</h3><p>WTF ahora elige Flat Media el 95% de las veces y escenas opcionales el 5%. Sus controles de visibilidad consideran las tomas oscuras, los glifos y los cambios de audio, sin alterar los fotogramas negros de la fuente.</p></article>
   </div>
   <p class="release-link"><a href="{{ '/es/docs/overview/changelog-baseline/' | relative_url }}">Ver las novedades de v{{ site.data.product.latest_release.version }}</a></p>
 </section>

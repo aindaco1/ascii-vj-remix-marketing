@@ -72,7 +72,7 @@ Esta página describe la línea base de funciones ASCII VJ Remix actual para des
 - El tiempo de transición es configurable.
 - Editar un control visual durante una transición la detiene en el aspecto actual y conserva el cambio. El look interrumpido pasa a ser Custom y el material seleccionado sigue reproduciéndose. Los controles visuales MIDI siguen la misma regla.
 - Los ajustes preestablecidos conservan la fuente de medios activa a menos que el usuario la cambie explícitamente.
-- WTF pasa continuamente entre ajustes aleatorios seguros para uso en vivo, combinando familias de presets ASCII extremos y tradicionales y evitando una salida completamente blanca o negra. Cada transición elige Flat Media con una probabilidad del 80 %; el 20 % restante se reparte entre los diez modos espaciales, con un 2 % para cada uno. Son probabilidades por transición, por lo que pueden aparecer varios looks planos o espaciales seguidos.
+- WTF mode cambia continuamente entre ajustes aleatorios aptos para directo y combina familias de presets ASCII extremos y tradicionales, evitando una salida completamente blanca o negra. Cada transición elige Flat Media de forma independiente con una probabilidad del 95%; el otro 5% se reparte por igual entre los diez modos espaciales (0.5% cada uno). Es una probabilidad por transición, así que pueden aparecer varios looks planos o espaciales consecutivos. WTF comprueba las tomas oscuras, la cobertura de los glifos, sus colores fijos y la respuesta activa al audio antes de aceptar un destino. Si ningún candidato ni alternativa es seguro, conserva el look actual y vuelve a intentarlo. Los fotogramas naturalmente negros de la fuente siguen siendo válidos. Bright Output permanece bajo tu control.
 
 <a id="pixel-art-and-color-cycling"></a>
 
@@ -186,6 +186,31 @@ Todos los presets integrados empiezan en **Space / Motion → Visual mode → Fl
 Los ajustes de audio existentes añaden un movimiento moderado de graves al campo de visión y a la altura de cámara, presencia a la luz, acentos de ritmo al resplandor y agudos a los reflejos del agua. Usan la sensibilidad, las intensidades por característica y la atenuación por densidad existentes. MIDI Learn incluye los controles espaciales, Freeze Scene y Reset Scene and Trails; no añade acciones de fuente ni de cámara.
 
 Los controles espaciales se aplican a imágenes, videos y cámaras locales, incluidas composiciones de cámaras. El renderizador heredado de flujos del servidor conserva su comportamiento. WebGPU, WebGL2 y wgpu nativo renderizan localmente. Los presets asignados explícitamente a Canvas mantienen el límite de densidad por software y usan la duplicación de salida para Pop Out espacial. Si la presentación GPU nativa no está disponible, elija Canvas para usar esa alternativa. Los límites de densidad normal y avanzada no han cambiado. Relief, Orbitals, los reflejos y las escenas densas pueden requerir más tiempo de GPU; reduzca Columns antes de elevar otros límites. La aceptación física en M1/16 GB y Windows/Linux sigue pendiente para esta versión.
+
+## Fractal Accents
+
+Los seis looks nuevos mantienen el material seleccionado en Flat Media y añaden pequeñas texturas fractales. Al seleccionarlos se conservan la reproducción de la fuente y tu ajuste global de Subtle Limit.
+
+|Preset|Acento|
+| --- | --- |
+|Threadlight|Hilos finos de trampas orbitales a lo largo de los bordes, con textura Braille|
+|Silver Etching|Grabado sutil de contornos monocromáticos en los tonos medios|
+|Contour Silk|Bandas angulares suaves en las zonas más tranquilas de celdas sólidas|
+|Julia Glass|Pequeñas distorsiones en celdas sólidas que protegen los bordes|
+|Chromatic Undertow|Corrientes de color con respuesta tonal en looks monocromáticos y de glifos|
+|Phosphor Lace|Atenuación fractal de estelas cortas de una fuente en movimiento|
+
+Abre **Fractal Accents** para ajustar **Fractal amount**, **Coverage**, **Placement**, **Texture scale**, **Drift** y **Audio accent**. Amount controla la intensidad; Coverage cambia qué proporción de la imagen recibe el efecto. Placement selecciona Edges, Midtones, Quiet areas o Trails. Trails usa tus ajustes de Phosphor / echo o aporta un eco corto cuando ese control está en cero; se aprecia mejor con una fuente en movimiento. Selecciona **Off**, o pon Amount o Coverage en cero, para omitir el acento. Los acentos funcionan sobre todos los presets y modos visuales espaciales o fractales opcionales. Sus cambios de color y densidad de glifos también se ven en looks monocromáticos y de color fijo.
+
+Al cambiar entre presets integrados normales se conservan los ajustes actuales del acento, incluido Off. Al seleccionar uno de los seis presets de acentos se carga su receta. Los presets personalizados guardados restauran sus propios ajustes de acento.
+
+WTF añade un acento de forma independiente al 65% de sus destinos, eligiendo entre las seis recetas y variando intensidad, cobertura, escala, movimiento, respuesta al audio y variación. El 35% restante desactiva los acentos. Esto funciona tanto con destinos planos como con escenas; WTF conserva tu ajuste global de Subtle Limit.
+
+**Subtle Limit** empieza activado globalmente. Limita los cambios de brillo, color y desplazamiento del acento incluso cuando un deslizador, el audio o MIDI pide más. Al desactivarlo puedes aplicar efectos más intensos. Tu elección se conserva entre presets y sesiones; los presets guardados no la cambian. Los demás controles de color y audio conservan su rango normal.
+
+**Variation** selecciona uno de seis campos de Julia elegidos. **Another variation** los recorre sin cambiar el resto del look. Drift usa el reloj de escena existente; **Freeze scene**, **Travel speed** y **Reset scene / trails** siguen disponibles en Space / Motion. Audio accent añade una modulación moderada del acento basada en la presencia cuando Audio Reactivity está activo. Los controles y Another variation están disponibles mediante MIDI Learn.
+
+Los acentos comparten WebGPU, WebGL2, Pop Out nativo y la alternativa acotada de Canvas existente. No necesitan archivos adicionales, descargas ni servicios en línea.
 
 
 
