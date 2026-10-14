@@ -12,6 +12,7 @@ Use the source repository as the working tree:
 ```bash
 git clone https://github.com/aindaco1/ascii-vj-remix.git
 cd ascii-vj-remix
+git checkout 512974b25a9a768c8d4cd253e3988f33578fdf86
 ```
 
 ## Prerequisites
@@ -26,11 +27,12 @@ Minimum development tools:
 
 Platform-specific desktop prerequisites:
 
-- macOS: Xcode command line tools.
+- macOS: full Xcode and its Metal toolchain for Syphon.
 - Windows: Visual Studio Build Tools with the C++ workload and WebView2
   runtime.
 - Linux: WebKitGTK 4.1 development packages, appindicator, ALSA development
-  headers, librsvg, OpenSSL, patchelf, and build tools.
+  headers, librsvg, OpenSSL, patchelf, and build tools. Native NDI discovery also
+  requires the Avahi client/common libraries and a running `avahi-daemon` service.
 
 Optional but useful:
 
@@ -46,7 +48,13 @@ Install JavaScript dependencies:
 ```bash
 git submodule update --init shared/dust-wave-platform
 npm ci
+npm run video-io:stage
 ```
+
+SDK staging downloads pinned build inputs from official sources. It supports
+macOS arm64 and Windows/Linux x64, and must run before desktop builds/checks.
+The browser-only development path does not use native transports. See
+[native runtime packaging](/docs/operations/release/#native-video-runtime-packaging).
 
 Run the browser dev server:
 
@@ -96,13 +104,13 @@ For packaging, signing, publication, or updater work, follow [Release and Update
 
 ## Development Boundary
 
-Do not add hosted fonts, CDNs, online decoders, telemetry, or hosted runtime dependencies. Keep runtime assets bundled locally and selected user media local.
+Do not add hosted fonts, CDNs, online decoders, telemetry, or hosted runtime dependencies. Keep runtime assets bundled locally. Media stays local unless the user enables video sharing: NDI uses the LAN; Syphon shares with apps on the same Mac. Transport audio is not supported.
 
 
 
 ## Source Material
 
 This page is generated from ASCII VJ Remix source material. Primary sources:
-- [docs/CONTRIBUTORS.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/CONTRIBUTORS.md)
-- [docs/TESTING.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/TESTING.md)
-- [docs/RELEASING.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/RELEASING.md)
+- [docs/CONTRIBUTORS.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/CONTRIBUTORS.md)
+- [docs/TESTING.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/TESTING.md)
+- [docs/RELEASING.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/RELEASING.md)

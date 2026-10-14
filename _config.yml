@@ -1,5 +1,5 @@
 title: ASCII VJ Remix
-description: ASCII VJ Remix is a desktop visualizer for DJs and VJs who want live ASCII video, camera, and audio-reactive visuals.
+description: "ASCII VJ Remix turns video, cameras and sound into live ASCII visuals. In 1.3.0: native NDI and macOS Syphon video sharing."
 url: "https://asciivj.com"
 baseurl: ""
 repository: aindaco1/ascii-vj-remix-marketing

@@ -104,9 +104,9 @@ Cada ejecución crea un directorio nuevo, excluido de Git, en `jev-results/<time
 
 Los resultados casi empatados, con margen inferior a 0,10, las respuestas inciertas, las versiones no reconocidas del evaluador o los controles con respuestas conocidas incorrectas requieren revisión y producen un código de salida distinto de cero. Inicialmente solo se reconoce `jev-1.13.0`. El margen es provisional para estos casos etiquetados por ingeniería; no hereda la calibración de CutNotes ni demuestra fiabilidad general. No cambies los prompts ni los umbrales solo para obtener un resultado positivo. Usa los controles observados como pruebas de regresión y reserva ejemplos nuevos antes de afirmar que hay calibración tras modificar los prompts.
 
-La primera ejecución local detectó un falso positivo en un control negativo de captura de diagnósticos y solicitó revisión correctamente. La pregunta general sobre distinguir fallos se sustituyó por el requisito explícito de conservar el arranque del renderizador como fallido; se fijaron dos formulaciones nuevas antes de repetir la evaluación. Sin cambiar el umbral, la nueva ejecución superó los 14 controles y los seis casos de comportamiento en Jev 1.13.0. Se conservan ambas ejecuciones como evidencia local. Esta verificación es limitada y no demuestra calibración independiente ni aceptación en hardware físico. El [registro de verificación de la integración](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/testing/JEV_EVALUATION.md) conserva los resultados exactos, los hashes y los límites de limpieza.
+La primera ejecución local detectó un falso positivo en un control negativo de captura de diagnósticos y solicitó revisión correctamente. La pregunta general sobre distinguir fallos se sustituyó por el requisito explícito de conservar el arranque del renderizador como fallido; se fijaron dos formulaciones nuevas antes de repetir la evaluación. Sin cambiar el umbral, la nueva ejecución superó los 14 controles y los seis casos de comportamiento en Jev 1.13.0. Se conservan ambas ejecuciones como evidencia local. Esta verificación es limitada y no demuestra calibración independiente ni aceptación en hardware físico. El [registro de verificación de la integración](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/testing/JEV_EVALUATION.md) conserva los resultados exactos, los hashes y los límites de limpieza.
 
-La construcción de solicitudes, el transporte de Cloudflare, la validación de respuestas y la decisión de solicitar revisión reutilizan Platform Test Core mediante la entrada pública `test-core/jev`. [platform-desktop.json](https://github.com/aindaco1/ascii-vj-remix/blob/main/platform-desktop.json) define el commit inmutable actual y las versiones exactas de los paquetes. La integración original usaba Test Core 0.3.0 de [Platform PR 46](https://github.com/aindaco1/dust-wave-platform/pull/46); sus resultados fechados permanecen en el registro de verificación. El adaptador rechaza una copia de Platform con otra revisión o cambios locales. ASCII VJ mantiene su corpus, autenticación, límites, informes y ejecución de comandos. No importa otro proyecto vecino, copia un cliente del modelo, añade una dependencia npm, llama al modelo desde la app ni cambia la versión de la app. No se copia el repositorio compartido en `dist`. El evaluador verifica Test Core 0.3.1, pero todavía escribe `0.3.0` en el campo `testCoreVersion` del informe. Hasta que se corrija ese metadato, usa `platformCommit`, los hashes del código y el manifiesto para verificar la procedencia de las dependencias.
+La construcción de solicitudes, el transporte de Cloudflare, la validación de respuestas y la decisión de solicitar revisión reutilizan Platform Test Core mediante la entrada pública `test-core/jev`. [platform-desktop.json](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/platform-desktop.json) define el commit inmutable actual y las versiones exactas de los paquetes. La integración original usaba Test Core 0.3.0 de [Platform PR 46](https://github.com/aindaco1/dust-wave-platform/pull/46); sus resultados fechados permanecen en el registro de verificación. El adaptador rechaza una copia de Platform con otra revisión o cambios locales. ASCII VJ mantiene su corpus, autenticación, límites, informes y ejecución de comandos. No importa otro proyecto vecino, copia un cliente del modelo, añade una dependencia npm, llama al modelo desde la app ni cambia la versión de la app. No se copia el repositorio compartido en `dist`. El evaluador verifica Test Core 0.3.1, pero todavía escribe `0.3.0` en el campo `testCoreVersion` del informe. Hasta que se corrija ese metadato, usa `platformCommit`, los hashes del código y el manifiesto para verificar la procedencia de las dependencias.
 
 Para revertir únicamente Jev, elimina conjuntamente sus cuatro scripts de prueba, comandos, paso de pruebas de CI y documentación. Conserva el submódulo de Platform y el manifiesto: el actualizador y el relay también los usan. Consulta la [migración de servicios de escritorio compartidos](/es/docs/development/shared-desktop-services/#independent-rollback) para revertir esa integración por separado. No se requiere migración de la aplicación ni de datos.
 
@@ -151,7 +151,7 @@ Para revertir únicamente Jev, elimina conjuntamente sus cuatro scripts de prueb
 git diff --check
 ```
 
-Para guías movidas o divididas, verifique también los enlaces de archivos relativos, los anclajes de encabezado y las referencias de flujo de trabajo/script a las rutas anteriores. Incluya los nuevos archivos en la validación del enlace; `git diff --check` solo detecta errores de espacios en blanco. El [índice de documentación](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/README.md#maintaining-documentation) define la propiedad.
+Para guías movidas o divididas, verifique también los enlaces de archivos relativos, los anclajes de encabezado y las referencias de flujo de trabajo/script a las rutas anteriores. Incluya los nuevos archivos en la validación del enlace; `git diff --check` solo detecta errores de espacios en blanco. El [índice de documentación](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/README.md#maintaining-documentation) define la propiedad.
 
 <a id="frontend-ui-css-presets-sources-audio-ui"></a>
 
@@ -266,7 +266,7 @@ npm run midi:probe -- --connect
 npm run smoke:static
 ```
 
-La sonda física verifica que CoreMIDI pueda enumerar y abrir simultáneamente ambas direcciones del mioXC. No reemplaza el barrido de control y la lista de verificación de captura/restauración de banco completo en [MIDI_UC33E](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MIDI_UC33E.md).
+La sonda física verifica que CoreMIDI pueda enumerar y abrir simultáneamente ambas direcciones del mioXC. No reemplaza el barrido de control y la lista de verificación de captura/restauración de banco completo en [MIDI_UC33E](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/MIDI_UC33E.md).
 
 <a id="tauri-commands-permissions-or-capabilities"></a>
 
@@ -330,13 +330,13 @@ npm run smoke:release-install
 npm run test:macos-dmg-layout
 ```
 
-Ejecute `npm run ffmpeg:build-sidecar` antes que `npm run check:release` en un clon limpio. `npm run bundle:release` ejecuta el paso de compilación del sidecar automáticamente.
+Ejecuta `npm run video-io:stage` y `npm run ffmpeg:build-sidecar` antes de `npm run check:release` en un clon limpio. `npm run bundle:release` ejecuta automáticamente ambos pasos de preparación y compilación.
 
 El humo de lanzamiento descarga artefactos de los lanzamientos GitHub y verifica el diseño del instalador, los activos incluidos, los paquetes de actualización firmados, el comportamiento de `latest.json`, los controles empaquetados visibles Update y Reports y la ausencia de una lectura de backend duplicada en la barra superior. En macOS, verifica el DMG descargado, lo monta como de solo lectura en una raíz temporal privada, valida el diseño exacto de la aplicación a las aplicaciones e inspecciona la aplicación montada antes del salto del actualizador.
 
 La prueba del controlador verifica que la disponibilidad de producción permita exactamente una verificación silenciosa por lanzamiento, que los resultados actuales/fuera de línea no anuncien el estado, que una actualización disponible no se instale automáticamente y que la ruta manual existente aún realice nuevas verificaciones e instalaciones activadas por el usuario.
 
-Para una verificación manual del actualizador, inicie la versión compatible anterior instalada, confirme que la verificación de antecedentes muestre la versión de destino sin descargarla automáticamente y luego realice la acción de instalación explícita. Verifique la versión de destino y el ícono de la aplicación después del reinicio, la visibilidad de Reports con una cola vacía/pendiente y la ausencia de la lectura duplicada del backend en la barra superior. Registre las versiones de origen y de destino y las identidades de los artefactos. La recuperación del control heredado faltante-Update se documenta en la [Guía del usuario](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/USER_GUIDE.md#upgrading-from-096-or-097).
+Para una verificación manual del actualizador, inicie la versión compatible anterior instalada, confirme que la verificación de antecedentes muestre la versión de destino sin descargarla automáticamente y luego realice la acción de instalación explícita. Verifique la versión de destino y el ícono de la aplicación después del reinicio, la visibilidad de Reports con una cola vacía/pendiente y la ausencia de la lectura duplicada del backend en la barra superior. Registre las versiones de origen y de destino y las identidades de los artefactos. La recuperación del control heredado faltante-Update se documenta en la [Guía del usuario](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/USER_GUIDE.md#upgrading-from-096-or-097).
 
 En macOS, Release Smoke extrae las cargas útiles actuales y anteriores de `.app.tar.gz`, requiere `com.asciline.remix`, ID de equipo `PWT3Q52LZ2`, tiempo de ejecución reforzado, aceptación de Gatekeeper y exactamente el mismo requisito designado, luego ejecuta la aplicación anterior a través del actualizador y revalida el paquete reemplazado. La aprobación interactiva del TCC en sí sigue siendo una verificación manual.
 
@@ -373,7 +373,7 @@ En macOS, Release Smoke extrae las cargas útiles actuales y anteriores de `.app
 
 La aplicación depende del hardware real y de las pilas de medios del sistema operativo. Las pruebas automatizadas no cubren todas las combinaciones de hardware y plataforma.
 
-La decisión de lanzamiento [1.0.3](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/releases/RELEASE_1.0.3.md#release-decision--2026-09-04) registra la aceptación del propietario de Windows y el aplazamiento explícito de las pruebas de la cámara física de Ubuntu/Fedora. Que la brecha de cobertura Linux permanece abierta en el expediente documentado; ejecute las comprobaciones de una sola cámara en la [lista de verificación manual de humo](#manual-smoke-checklist) en los artefactos instalados exactos antes de registrar la aceptación. Las comprobaciones de paquetes de CI y Hyper-V no cierran la cobertura de la cámara física.
+La decisión de lanzamiento [1.0.3](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/releases/RELEASE_1.0.3.md#release-decision--2026-09-04) registra la aceptación del propietario de Windows y el aplazamiento explícito de las pruebas de la cámara física de Ubuntu/Fedora. Que la brecha de cobertura Linux permanece abierta en el expediente documentado; ejecute las comprobaciones de una sola cámara en la [lista de verificación manual de humo](#manual-smoke-checklist) en los artefactos instalados exactos antes de registrar la aceptación. Las comprobaciones de paquetes de CI y Hyper-V no cierran la cobertura de la cámara física.
 
 Matrices manuales importantes:
 
@@ -381,7 +381,7 @@ Matrices manuales importantes:
 - macOS con cámara USB externa.
 - macOS con sistema de captura de audio.
 - Windows con WebView2, D3D12/WebGL2, cámara, micrófono y ruta de instalación.
-- Linux con aceleración WebKitGTK, GPU, cámara, micrófono y rutas AppImage/deb/rpm. La matriz de VM mantenida y la lista de verificación de paquetes se encuentran en [Linux VM QA](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/LINUX_VM_QA.md).
+- Linux con aceleración WebKitGTK, GPU, cámara, micrófono y rutas AppImage/deb/rpm. La matriz de VM mantenida y la lista de verificación de paquetes se encuentran en [Linux VM QA](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/LINUX_VM_QA.md).
 - Equipo experimental macOS Apple Silicon MIDI: Evolution/M-Audio UC-33e a través de ambas direcciones DIN de un iConnectivity mioXC, alimentado por separado.
 
 Al informar los resultados del hardware, incluya:
@@ -418,7 +418,7 @@ La imagen de Podman tiene como valor predeterminado el Nodo 24. Utilice `NODE_MA
 
 La [Guía de lanzamiento y actualización](/es/docs/operations/release/#build-and-package) documenta el requisito previo de confirmación exacta del escritorio, las compilaciones paralelas de la aplicación/FFmpeg, la transferencia de entrada inmutable, la firma de la plataforma, la publicación y la aceptación posterior a la publicación. [Security](/es/docs/operations/security/#release-security-posture) posee las restricciones de seguridad.
 
-Mantenga separados los resultados locales, de CI, de artefactos publicados, de aplicaciones instaladas y de plataforma física al informar la validación. La evidencia histórica por versión se encuentra en [registros de publicación](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/releases/README.md).
+Mantenga separados los resultados locales, de CI, de artefactos publicados, de aplicaciones instaladas y de plataforma física al informar la validación. La evidencia histórica por versión se encuentra en [registros de publicación](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/releases/README.md).
 
 <a id="known-gaps"></a>
 
@@ -444,7 +444,7 @@ El seguimiento del lanzamiento potencial, la plataforma, la accesibilidad, la lo
 - `node scripts/capture_spatial_review.mjs /tmp/spatial-review.png` captura una fuente oscura con el brillo desactivado y activado, y las nueve escenas espaciales habilitadas manualmente, mediante presentación real en WebGL2. Añada `--fractals` para los cuatro looks fractales sobre la fuente de demostración sin modificar y con Bright Output desactivado; añada `--flat-presets` para capturar sus valores iniciales en Flat Media. El atlas de glifos debe terminar de cargarse antes de la captura.
 - Para medir el rendimiento de escenas nativas, use el entorno de pruebas de interfaz mantenido, por ejemplo `ASCILINE_UI_PERF_SMOKE_SPATIAL='{"visualMode":"city","sceneWet":0.55,"sceneRain":0.2,"sceneMedia":0.85}' ASCILINE_UI_PERF_SMOKE_COLUMNS=640 ASCILINE_UI_PERF_SMOKE_SYNTHETIC_AUDIO=1 npm run smoke:ui-perf`. Es una prueba exclusivamente local y debe usar la identidad de desarrollo. Conserve los umbrales habituales de tiempo por fotograma y actualización reactiva; una captura de pantalla no mide el rendimiento.
 
-Aceptación manual: confirme que Bright Output empieza desactivado en un perfil limpio y conserva una elección guardada. Compare Bright output activado y desactivado con cámaras, imágenes y videos oscuros; vuelva a seleccionar cada preset integrado para comprobar Flat Media y active manualmente su modo espacial. Compare el preview y la salida nativa al cambiar modo, fuente, densidad, paleta y rampa. Ajuste el zoom, detalle y forma fractal tras seleccionar un preset y durante su transición; pruebe congelación, inversión y reinicio, estelas largas, continuidad del video, orientación de cámara, inicio y parada de audio, captura del valor MIDI y cierre y reapertura de la salida. Verifique por separado una segunda pantalla física y el hardware mínimo de referencia. Consulte el [registro de 1.1.0](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/releases/RELEASE_1.1.0.md).
+Aceptación manual: confirme que Bright Output empieza desactivado en un perfil limpio y conserva una elección guardada. Compare Bright output activado y desactivado con cámaras, imágenes y videos oscuros; vuelva a seleccionar cada preset integrado para comprobar Flat Media y active manualmente su modo espacial. Compare el preview y la salida nativa al cambiar modo, fuente, densidad, paleta y rampa. Ajuste el zoom, detalle y forma fractal tras seleccionar un preset y durante su transición; pruebe congelación, inversión y reinicio, estelas largas, continuidad del video, orientación de cámara, inicio y parada de audio, captura del valor MIDI y cierre y reapertura de la salida. Verifique por separado una segunda pantalla física y el hardware mínimo de referencia. Consulte el [registro de 1.1.0](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/releases/RELEASE_1.1.0.md).
 
 
 <a id="fractal-accent-regression-checks"></a>
@@ -455,10 +455,26 @@ Aceptación manual: confirme que Bright Output empieza desactivado en un perfil 
 
 `node scripts/capture_spatial_review.mjs /tmp/fractal-accents.png --accents` captura pares de vistas con el acento desactivado y activado usando la salida real de WebGL2; el último par usa el historial de una fuente en movimiento. Añade `--accent-combinations` para revisar combinaciones de glifos con color fijo, monocromo y escenas opcionales. Para estos cambios, usa la matriz estática habitual, el barrido de presets de la vista principal instalada y las pruebas de rendimiento optimizadas de interfaz y salida nativa. La aceptación en hardware físico Windows/Linux y en el equipo mínimo de referencia sigue siendo independiente.
 
+<a id="native-video-io"></a>
+
+## Entrada y salida de video nativo
+
+Prepara los SDK con `npm run video-io:stage`. Las pruebas deterministas de fotogramas, ABI y configuración de Rust se ejecutan con `npm run test:rust`; usa `npm run test:video-io-alpha` para las pruebas reales de píxeles transparentes, semitransparentes y opacos en WebGPU/WebGL2/Canvas. `npm run test:video-io-runtime` usa el SDK preparado para enviar y recibir 60 fotogramas sintéticos a 1080p, con comprobaciones de alfa transparente, parcial y opaco, además de negro. Esta prueba comprimida de ida y vuelta admite un margen de redondeo de dos valores de código de 8 bits; las pruebas unitarias del renderizador y los búferes de transporte conservan sus límites más estrictos. El plazo de 30 segundos permite iniciar la conexión y copiar datos en compilaciones de depuración en máquinas virtuales alojadas; no mide el objetivo de 1080p60. Desktop CI la ejecuta en cada plataforma después de compilar; no demuestra la aceptación con LAN, dispositivos ni la app instalada. En una GPU nativa, ejecuta:
+
+```bash
+node scripts/cargo_env.mjs test --release --manifest-path src-tauri/Cargo.toml native_gpu_coverage_and_bounded_readback -- --ignored --nocapture
+```
+
+`src-tauri/examples/video_io_probe.rs` es una aplicación independiente basada en el SDK NDI. Su primer argumento es la ruta de la biblioteca de ejecución preparada; sin indicar un modo, realiza una prueba de bucle local y alfa; `send` publica la fuente sintética y `receive NAME` verifica 120 fotogramas entrantes. El quinto argumento opcional define la duración del envío en segundos. `src-tauri/examples/syphon_probe.m` es una aplicación Metal independiente basada en el SDK público para Mac; la cabecera del archivo contiene el comando de compilación. Usa `send 'ASCII VJ Remix SDK proof' SECONDS` o `receive NAME SECONDS`. Estas pruebas solo contienen material sintético.
+
+Para la aceptación de la app instalada, inicia un emisor llamado `ASCII VJ Remix SDK proof` y abre el ejecutable Dev firmado con `ASCILINE_VIDEO_IO_SMOKE=ndi` o `syphon`, `ASCILINE_VIDEO_IO_SMOKE_BACKEND=webgl2` o `canvas2d` y `ASCILINE_SMOKE_REPORT` apuntando a un archivo local de resultados. La prueba usa el controlador WebView real, comprueba el alfa y las dimensiones de entrada, inicia ambas salidas compatibles junto con Pop Out y verifica que cerrar Pop Out no detenga las salidas compartidas. `ASCILINE_VIDEO_IO_SMOKE_DURATION_MS` amplía la medición predeterminada de 8 segundos. Otra aplicación recibe de forma independiente la salida `ASCII VJ Remix Video Smoke`. Este modo cierra la app y modifica su perfil Dev; usa la identidad Dev aislada y no lo ejecutes sobre producción.
+
+La compilación y la CI, las aplicaciones locales instaladas, la compatibilidad con LAN y dispositivos físicos, la prueba sostenida a 1080p60, las instalaciones limpias y las actualizaciones entre versiones son etapas de aceptación separadas. Consulta la [matriz de lanzamiento y los requisitos pendientes](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/releases/RELEASE_1.3.0.md) vigentes.
+
 
 <a id="source-material"></a>
 
 ## Material de origen
 
 Esta página se genera a partir del material fuente de ASCII VJ Remix. Fuentes primarias:
-- [docs/TESTING.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/TESTING.md)
+- [docs/TESTING.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/TESTING.md)

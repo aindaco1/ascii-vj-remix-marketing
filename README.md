@@ -37,6 +37,11 @@ generated English or Spanish pages.
 
 The default source is the sibling `../ascii-vj-remix` checkout. Override it with
 `ASCII_VJ_SOURCE=/absolute/path/to/ascii-vj-remix` when needed.
+Source links use that checkout's commit; set `ASCII_VJ_SOURCE_REF` to the matching
+commit when importing an exported snapshot. `_data/release_target.yml` currently
+sets 1.3.0 launch copy and expected download URLs, as requested. Remove that
+override once the upstream changelog dates 1.3.0; otherwise the importer uses
+the latest dated source release.
 
 ```bash
 ruby scripts/sync_ascii_docs.rb

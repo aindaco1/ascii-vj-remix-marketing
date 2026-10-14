@@ -188,6 +188,9 @@ a {
   text-shadow: var(--home-text-shadow);
 }
 
+.release-status a,
+.section-intro a { color: #00e5ff; }
+
 .hero-action-band {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;

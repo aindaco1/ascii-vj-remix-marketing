@@ -26,7 +26,7 @@ El repositorio combina renderizado WebGPU/WebGL de alta calidad, rutas de compat
 
 - La salida WebGPU/WebGL es el objetivo de calidad visual.
 - Las rutas de flujo adaptable y Canvas derivadas de ASCILINE permanecen disponibles como infraestructura de compatibilidad y desarrollo.
-- El uso normal de la aplicación es local primero y sin conexión.
+- El uso normal de la app prioriza el procesamiento local y funciona sin internet; NDI usa la LAN cuando se activa expresamente.
 - Todos los controles en vivo se dirigen a través de un modelo de parámetro canónico.
 - Los ajustes preestablecidos, WTF mode, la reactividad de audio y el control MIDI componen sin bifurcar el estado del renderizador.
 - Pop Out utiliza rutas nativas de cuadros más recientes cuando están disponibles para minimizar la latencia de la cámara en vivo.
@@ -44,7 +44,7 @@ Source selection
   -> effective params
   -> renderer runtime
   -> main preview
-  -> optional native/browser Pop Out
+  -> optional shared native output (Pop Out / NDI / Syphon)
 ```
 
 La selección de fuente puede provenir de medios integrados, archivos seleccionados por el usuario, transmisiones de cámara, cámaras mixtas o sesiones de transmisión de desarrollo. El tiempo de ejecución del renderizador elige el mejor backend para la fuente y el entorno activos.
@@ -133,19 +133,20 @@ Utilice este mapa para encontrar al probable propietario de un cambio:
 
 |Área|Archivos primarios|
 | --- | --- |
-|UI principal, parámetros, ajustes preestablecidos, controles de fuente, WTF, UI de audio|[app.js](https://github.com/aindaco1/ascii-vj-remix/blob/main/app.js), [index.html](https://github.com/aindaco1/ascii-vj-remix/blob/main/index.html), [style.css](https://github.com/aindaco1/ascii-vj-remix/blob/main/style.css)|
-|Abstracción de fuente de medios y renderizador GPU|[renderizadores/gpu/](https://github.com/aindaco1/ascii-vj-remix/tree/main/renderers/gpu)|
-|Mapeo MIDI, soft takeover, perfil UC-33e|[midi-mapping.js](https://github.com/aindaco1/ascii-vj-remix/blob/main/renderers/shared/midi-mapping.js), [MIDI_UC33E](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MIDI_UC33E.md)|
-|Adaptador Tauri y ayudantes de visualización de salida|[renderizadores/escritorio/](https://github.com/aindaco1/ascii-vj-remix/tree/main/renderers/desktop)|
-|Shell Tauri, comandos, permisos, actualizador, audio nativo, salida nativa|[src-tauri/](https://github.com/aindaco1/ascii-vj-remix/tree/main/src-tauri)|
-|Entrada/salida nativa MIDI y SysEx|[midi.rs](https://github.com/aindaco1/ascii-vj-remix/blob/main/src-tauri/src/midi.rs)|
-|Renderizador nativo Pop Out|[native_output.rs](https://github.com/aindaco1/ascii-vj-remix/blob/main/src-tauri/src/native_output.rs), [gpu.rs](https://github.com/aindaco1/ascii-vj-remix/blob/main/src-tauri/src/native_output/gpu.rs)|
-|Rutas de cámara nativas de la plataforma|[native_camera.rs](https://github.com/aindaco1/ascii-vj-remix/blob/main/src-tauri/src/native_output/native_camera.rs), [ffmpeg.rs](https://github.com/aindaco1/ascii-vj-remix/blob/main/src-tauri/src/media_engine/ffmpeg.rs)|
-|Motor multimedia Rust, códec, sesiones FFmpeg|[src-tauri/src/media_engine/](https://github.com/aindaco1/ascii-vj-remix/tree/main/src-tauri/src/media_engine)|
-|Medios de demostración integrados y accesorios ocultos|[medios/](https://github.com/aindaco1/ascii-vj-remix/tree/main/media)|
-|Experimentos de códec/vector|[experimentos/](https://github.com/aindaco1/ascii-vj-remix/tree/main/experiments)|
-|Scripts de compilación, pruebas de humo, publicación, Podman y FFmpeg|[guiones/](https://github.com/aindaco1/ascii-vj-remix/tree/main/scripts)|
-|Documentos de usuario/desarrollador|[docs/](https://github.com/aindaco1/ascii-vj-remix/tree/main/docs) y [README](/es/docs/overview/ascii-vj-remix/)|
+|UI principal, parámetros, ajustes preestablecidos, controles de fuente, WTF, UI de audio|[app.js](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/app.js), [index.html](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/index.html), [style.css](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/style.css)|
+|Abstracción de fuente de medios y renderizador GPU|[renderizadores/gpu/](https://github.com/aindaco1/ascii-vj-remix/tree/512974b25a9a768c8d4cd253e3988f33578fdf86/renderers/gpu)|
+|Mapeo MIDI, soft takeover, perfil UC-33e|[midi-mapping.js](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/renderers/shared/midi-mapping.js), [MIDI_UC33E](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/MIDI_UC33E.md)|
+|Adaptador Tauri y ayudantes de visualización de salida|[renderizadores/escritorio/](https://github.com/aindaco1/ascii-vj-remix/tree/512974b25a9a768c8d4cd253e3988f33578fdf86/renderers/desktop)|
+|Shell Tauri, comandos, permisos, actualizador, audio nativo, salida nativa|[src-tauri/](https://github.com/aindaco1/ascii-vj-remix/tree/512974b25a9a768c8d4cd253e3988f33578fdf86/src-tauri)|
+|Entrada/salida nativa MIDI y SysEx|[midi.rs](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/src-tauri/src/midi.rs)|
+|Entrada y salida de video nativo|[video-io.js](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/renderers/desktop/video-io.js), [video_io](https://github.com/aindaco1/ascii-vj-remix/tree/512974b25a9a768c8d4cd253e3988f33578fdf86/src-tauri/src/video_io), [procedencia del entorno de ejecución](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/src-tauri/resources/video-io/provenance.json)|
+|Renderizador nativo Pop Out|[native_output.rs](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/src-tauri/src/native_output.rs), [gpu.rs](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/src-tauri/src/native_output/gpu.rs)|
+|Rutas de cámara nativas de la plataforma|[native_camera.rs](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/src-tauri/src/native_output/native_camera.rs), [ffmpeg.rs](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/src-tauri/src/media_engine/ffmpeg.rs)|
+|Motor multimedia Rust, códec, sesiones FFmpeg|[src-tauri/src/media_engine/](https://github.com/aindaco1/ascii-vj-remix/tree/512974b25a9a768c8d4cd253e3988f33578fdf86/src-tauri/src/media_engine)|
+|Medios de demostración integrados y accesorios ocultos|[medios/](https://github.com/aindaco1/ascii-vj-remix/tree/512974b25a9a768c8d4cd253e3988f33578fdf86/media)|
+|Experimentos de códec/vector|[experimentos/](https://github.com/aindaco1/ascii-vj-remix/tree/512974b25a9a768c8d4cd253e3988f33578fdf86/experiments)|
+|Scripts de compilación, pruebas de humo, publicación, Podman y FFmpeg|[guiones/](https://github.com/aindaco1/ascii-vj-remix/tree/512974b25a9a768c8d4cd253e3988f33578fdf86/scripts)|
+|Documentos de usuario/desarrollador|[docs/](https://github.com/aindaco1/ascii-vj-remix/tree/512974b25a9a768c8d4cd253e3988f33578fdf86/docs) y [README](/es/docs/overview/ascii-vj-remix/)|
 
 <a id="non-negotiable-constraints"></a>
 
@@ -153,14 +154,14 @@ Utilice este mapa para encontrar al probable propietario de un cambio:
 
 - El tiempo de ejecución debe ser local primero y sin conexión de forma predeterminada.
 - No agregue CDN, fuentes alojadas, descodificadores alojados, telemetría ni dependencias de tiempo de ejecución en línea.
-- Las rutas intencionales de tiempo de ejecución en línea se limitan a la verificación de metadatos de lanzamiento limitados de la aplicación de producción para detectar artefactos de actualización firmados en el momento del lanzamiento, acciones explícitas de descarga/instalación del actualizador y envío de informes de fallas revisados/desinfectados solo en producción.
+- Las conexiones de red intencionales durante la ejecución se limitan a la consulta acotada de metadatos de versiones al iniciar la app de producción, las acciones explícitas de descarga e instalación de actualizaciones firmadas y el envío de informes de fallos revisados y depurados, exclusivo de producción. El descubrimiento, la entrada y la salida NDI® que activa el usuario permiten compartir video por la LAN; Syphon funciona dentro de la misma Mac. Consulta la [seguridad del transporte nativo](/es/docs/operations/security/#native-video-transport-boundary).
 - Conserve el nombre de la aplicación: ASCII VJ Remix.
 - Conserve la dirección de la aplicación nativa para macOS, Windows y Linux.
 - No replantee el modo de navegador como el producto. Las rutas del navegador/Vite son útiles para el desarrollo, las pruebas de humo y la portabilidad del renderizador.
 - Mantenga alta la calidad del renderizado. La salida WebGPU/WebGL es el objetivo de calidad visual.
 - Conserve las rutas alternativas a menos que se implemente y pruebe un reemplazo.
 - Trate el rendimiento y la latencia de Pop Out como un comportamiento crítico de cara al usuario.
-- Mantenga locales los medios locales seleccionados por el usuario. No cargue archivos ni datos de cámara/audio.
+- Mantén locales los archivos multimedia elegidos por el usuario, salvo cuando active expresamente una salida de video compartida. Las salidas compartidas y las entradas en vivo empiezan desactivadas al iniciar la app; no transportan audio. Nunca adjuntes archivos multimedia, nombres descubiertos, direcciones de red ni fotogramas sin procesar a los informes.
 - Mantenga la superposición de estadísticas como propiedad del usuario. Los ajustes preestablecidos aleatorios, WTF mode y los ajustes preestablecidos de audio no lo desactivan a menos que el usuario lo haga explícitamente.
 - La infraestructura de transmisión existe pero no es un modo de fuente visible normal. Mantenga oculta su interfaz de usuario; La productización prospectiva pertenece a la hoja de ruta.
 - La seguridad, el rendimiento, la accesibilidad y la orientación de i18n se encuentran en documentos de práctica dedicados en `docs/`; actualizarlos cuando cambien los supuestos arquitectónicos.
@@ -169,7 +170,7 @@ Utilice este mapa para encontrar al probable propietario de un cambio:
 
 ## Restricciones de comportamiento y propiedad
 
-Utilice la [Guía del usuario](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/USER_GUIDE.md) para conocer el comportamiento actual y el [Motor de renderizado](/es/docs/development/rendering-engine/) para conocer los contratos detallados. Al editar:
+Utilice la [Guía del usuario](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/USER_GUIDE.md) para conocer el comportamiento actual y el [Motor de renderizado](/es/docs/development/rendering-engine/) para conocer los contratos detallados. Al editar:
 
 - Conserve el estado de perfil limpio Demo Image / Classic Camera ASCII y mantenga la preferencia de backend en Auto. Los perfiles existentes conservan su configuración.
 - Mantenga la asignación de backends de presets en `renderers/shared/preset-backend-contract.js` (96 en total, 68 acelerados y 28 asignados explícitamente a Canvas). Los cambios intencionales deben actualizar tanto el contrato como la evidencia de la matriz visual de presets. La plataforma no debe cambiar esa asignación de forma preventiva.
@@ -177,7 +178,7 @@ Utilice la [Guía del usuario](https://github.com/aindaco1/ascii-vj-remix/blob/m
 - Amplíe las políticas de paleta compartida, conjunto de caracteres, atlas de glifos y cuadrícula. Mantenga Advanced Density global y fuera de los ajustes preestablecidos; no agregue límites por renderizador ni búsqueda de fuentes del sistema en tiempo de ejecución. Lea la guía del renderizador antes de cambiar los límites.
 - Reutilizar recursos GPU y versiones del marco fuente; no reduzca la calidad visual ni la resolución para obtener una mejora del rendimiento.
 - Mantenga acotados los datos de análisis de audio y excluya el audio sin procesar de IPC y de los diagnósticos. Conserve los límites de seguridad y evite reescribir los presets guardados durante la modulación.
-- Mantenga el control del UC-33e en la ruta DIN mioXC documentada. MIDI apunta al comportamiento visual, de audio, preestablecido y WTF; no debe apuntar a la fuente, la cámara, Pop Out, la visualización de salida, el archivo, el actualizador ni las acciones de informe. Lea [MIDI_UC33E](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MIDI_UC33E.md) antes de cambiar la política de mapeo o hardware.
+- Mantenga el control del UC-33e en la ruta DIN mioXC documentada. MIDI apunta al comportamiento visual, de audio, preestablecido y WTF; no debe apuntar a la fuente, la cámara, Pop Out, la visualización de salida, el archivo, el actualizador ni las acciones de informe. Lea [MIDI_UC33E](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/MIDI_UC33E.md) antes de cambiar la política de mapeo o hardware.
 - Conserve la interfaz de usuario densa en negro, blanco y gris con acentos de estado en rosa y azul. No reduzca la densidad de control ni agregue texto de marketing explicativo dentro de la aplicación.
 - Mantenga Reports accesible con una cola vacía. Los diagnósticos del renderizador siguen el [contrato de seguridad](/es/docs/operations/security/#crash-reporting); no adjunte diagnósticos de medios locales ni registros arbitrarios.
 - Mantenga la selección de backend en el control central y los diagnósticos de backend resueltos en el Stats Overlay propiedad del usuario, sin una lectura duplicada en la barra superior.
@@ -189,5 +190,5 @@ Utilice la [Guía del usuario](https://github.com/aindaco1/ascii-vj-remix/blob/m
 ## Material de origen
 
 Esta página se genera a partir del material fuente de ASCII VJ Remix. Fuentes primarias:
-- [docs/AGENTS.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/AGENTS.md)
-- [docs/RENDERING_ENGINE.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/RENDERING_ENGINE.md)
+- [docs/AGENTS.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/AGENTS.md)
+- [docs/RENDERING_ENGINE.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/RENDERING_ENGINE.md)

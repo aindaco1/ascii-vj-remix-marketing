@@ -15,6 +15,7 @@ Utilice el repositorio de origen como árbol de trabajo:
 ```bash
 git clone https://github.com/aindaco1/ascii-vj-remix.git
 cd ascii-vj-remix
+git checkout 512974b25a9a768c8d4cd253e3988f33578fdf86
 ```
 
 <a id="prerequisites"></a>
@@ -31,9 +32,9 @@ Herramientas mínimas de desarrollo:
 
 Requisitos previos de escritorio específicos de la plataforma:
 
-- macOS: herramientas de línea de comandos de Xcode.
+- macOS: Xcode completo y sus herramientas Metal para Syphon.
 - Windows: Herramientas de compilación de Visual Studio con la carga de trabajo C++ y el tiempo de ejecución WebView2.
-- Linux: paquetes de desarrollo WebKitGTK 4.1, appindicator, encabezados de desarrollo ALSA, librsvg, OpenSSL, patchelf y herramientas de compilación.
+- Linux: paquetes de desarrollo de WebKitGTK 4.1, appindicator, cabeceras de desarrollo de ALSA, librsvg, OpenSSL, patchelf y herramientas de compilación. El descubrimiento NDI nativo también requiere las bibliotecas client/common de Avahi y el servicio `avahi-daemon` en ejecución.
 
 Opcional pero útil:
 
@@ -51,7 +52,10 @@ Instale las dependencias JavaScript:
 ```bash
 git submodule update --init shared/dust-wave-platform
 npm ci
+npm run video-io:stage
 ```
+
+La preparación de los SDK descarga dependencias de compilación con versiones fijadas desde fuentes oficiales. Es compatible con macOS arm64 y Windows/Linux x64, y debe ejecutarse antes de compilar o verificar la app de escritorio. El desarrollo solo para navegador no utiliza transportes nativos. Consulta el [empaquetado de bibliotecas de video nativo](/es/docs/operations/release/#native-video-runtime-packaging).
 
 Ejecute el servidor de desarrollo del navegador:
 
@@ -99,7 +103,7 @@ Para tareas de empaquetado, firma, publicación o actualización, siga [Lanzamie
 
 ## Límite de desarrollo
 
-No agregue fuentes alojadas, CDN, descodificadores en línea, telemetría ni dependencias de tiempo de ejecución alojadas. Mantenga los activos de tiempo de ejecución agrupados localmente y los medios de usuario seleccionados localmente.
+No añadas fuentes alojadas en línea, CDN, decodificadores en línea, telemetría ni dependencias de ejecución alojadas. Incluye los recursos de ejecución localmente. Los archivos multimedia permanecen locales salvo que el usuario active una salida de video compartida: NDI usa la LAN; Syphon comparte con apps en la misma Mac. No se admite audio en los transportes.
 
 
 
@@ -108,6 +112,6 @@ No agregue fuentes alojadas, CDN, descodificadores en línea, telemetría ni dep
 ## Material de origen
 
 Esta página se genera a partir del material fuente de ASCII VJ Remix. Fuentes primarias:
-- [docs/CONTRIBUTORS.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/CONTRIBUTORS.md)
-- [docs/TESTING.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/TESTING.md)
-- [docs/RELEASING.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/RELEASING.md)
+- [docs/CONTRIBUTORS.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/CONTRIBUTORS.md)
+- [docs/TESTING.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/TESTING.md)
+- [docs/RELEASING.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/RELEASING.md)

@@ -9,13 +9,13 @@ parent: "Reference"
 
 This document contains prospective work only. It is not a description of the
 current product and it does not promise a release date or version. Current
-behavior belongs in the [User Guide](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/USER_GUIDE.md) and practice guides; completed
+behavior belongs in the [User Guide](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/USER_GUIDE.md) and practice guides; completed
 work and release history belong in the [Changelog](/docs/reference/changelog/).
 
 ## Distribution and Platform Validation
 
 - Complete the remaining physical checks for the owner-approved
-  [1.1.0 Spatial ASCII release](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/releases/RELEASE_1.1.0.md#release-decision--2026-09-29):
+  [1.1.0 Spatial ASCII release](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/releases/RELEASE_1.1.0.md#release-decision--2026-09-29):
   reference-floor performance, camera/audio/GPU behavior on Windows/Linux,
   external-display alignment, physical MIDI and sound-to-display latency.
 
@@ -23,7 +23,7 @@ work and release history belong in the [Changelog](/docs/reference/changelog/).
   including macOS 13 runtime regression, physical capture/MIDI/permission and
   external-display checks, and signed Xcode 27 artifact/toolchain promotion.
   Current published evidence and remaining boundaries are in the
-  [1.0.4 record](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/releases/RELEASE_1.0.4.md#issue-review--2026-09-16).
+  [1.0.4 record](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/releases/RELEASE_1.0.4.md#issue-review--2026-09-16).
 
 - Add Authenticode signing and timestamping for Windows installers when a
   sustainable signing provider and release policy are in place.
@@ -33,12 +33,20 @@ work and release history belong in the [Changelog](/docs/reference/changelog/).
   virtual Windows and Linux machines.
 - Validate Linux AppImage, deb, and rpm packages across a maintained distro
   matrix. Complete the Ubuntu/Fedora physical camera testing deferred in the
-  [1.0.3 release decision](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/releases/RELEASE_1.0.3.md#release-decision--2026-09-04),
+  [1.0.3 release decision](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/releases/RELEASE_1.0.3.md#release-decision--2026-09-04),
   using the maintained [hardware checks](/docs/operations/testing/#hardware-and-platform-checks).
 - Confirm macOS privacy grants survive an identity-stable public updater hop on
   a clean machine.
 - Decide whether Windows releases need a fixed WebView2 runtime for offline
   installation.
+
+## Native Video Release Acceptance
+
+The implemented Dev candidate and accepted scope are recorded in
+[1.3.0 release record](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/releases/RELEASE_1.3.0.md).
+Before public release, complete the Windows/Linux installed matrix, physical
+LAN and HX2/HX3/device interoperability, sustained performance, network-permission
+recovery, sleep/wake, clean installation and updater-hop gates in that record.
 
 ## MIDI Controllers and Profiles
 
@@ -156,7 +164,7 @@ work and release history belong in the [Changelog](/docs/reference/changelog/).
   UC-33e/mioXC rig.
 - Maintain a troubleshooting matrix for permissions, GPU fallback, codecs, and
   output-window issues.
-- Keep the [documentation index](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/README.md), user/developer guides, and practice
+- Keep the [documentation index](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/README.md), user/developer guides, and practice
   guides aligned with verified behavior.
 
 ## Planning Constraints
@@ -178,4 +186,4 @@ work and release history belong in the [Changelog](/docs/reference/changelog/).
 ## Source Material
 
 This page is generated from ASCII VJ Remix source material. Primary sources:
-- [docs/ROADMAP.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/ROADMAP.md)
+- [docs/ROADMAP.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/ROADMAP.md)

@@ -8,7 +8,7 @@ lang: es
 
 # ASCII VJ Remix
 
-Estas secciones siguen `main` del repositorio principal. Consulte la [Base de la versión](/es/docs/overview/changelog-baseline/) para las notas de **1.2.0**. La identidad del producto, los requisitos y las recomendaciones de hardware se extraen directamente de sus guías canónicas.
+Estas secciones siguen la revisión importada del código fuente. Consulta la [Base de la versión](/es/docs/overview/changelog-baseline/) para ver las notas de **1.3.0**. La identidad del producto, los requisitos y las recomendaciones de hardware proceden directamente de sus guías canónicas.
 
 <a id="what-this-project-is"></a>
 
@@ -96,7 +96,7 @@ En portátiles:
 - Cierre Pop Out cuando no necesite una segunda superficie de salida.
 - Prefiera la imagen de demostración incorporada o un solo video cuando realice pruebas con batería.
 
-Para instalación, permisos, privacidad y solución de problemas, utilice la [Guía del usuario](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/USER_GUIDE.md).
+Para instalación, permisos, privacidad y solución de problemas, utilice la [Guía del usuario](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/USER_GUIDE.md).
 
 
 
@@ -105,6 +105,6 @@ Para instalación, permisos, privacidad y solución de problemas, utilice la [Gu
 ## Material de origen
 
 Esta página se genera a partir del material fuente de ASCII VJ Remix. Fuentes primarias:
-- [README.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/README.md)
-- [docs/USER_GUIDE.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/USER_GUIDE.md)
-- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/CHANGELOG.md)
+- [README.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/README.md)
+- [docs/USER_GUIDE.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/USER_GUIDE.md)
+- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/CHANGELOG.md)

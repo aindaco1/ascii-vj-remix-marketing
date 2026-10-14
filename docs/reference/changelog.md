@@ -7,7 +7,22 @@ parent: "Reference"
 
 # Changelog
 
-## Unreleased
+## [1.3.0]
+
+Release scope and platform validation are tracked in the
+[1.3.0 release record](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/releases/RELEASE_1.3.0.md).
+
+- Add native [NDI®](https://ndi.video/) video input/output on the desktop platform paths and native
+  Syphon Metal input/output on macOS, with one selected live input and concurrent
+  NDI, Syphon and Pop Out destinations. No transport audio.
+- Add compact Video I/O controls, explicit source discovery, reconnect handling,
+  720p/1080p output formats, and sharing disabled on fresh launch.
+- Preserve source transparency independently of glyph selection through GPU,
+  Canvas, native output and crossfades; procedural scenes can add visible content.
+- Bundle pinned native runtimes and notices, validate staging and sign nested Mac
+  libraries. See [Dev evidence and remaining release gates](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/releases/NATIVE_VIDEO_IO_DEV.md).
+
+NDI® is a registered trademark of Vizrt NDI AB.
 
 ## [1.2.0] - 2026-10-04
 
@@ -36,7 +51,7 @@ parent: "Reference"
 - Give optional scene recipes distinct camera heights/tilts, speeds and framing, plus a narrow corridor, pitched cathedral roof, low shoreline and rotating orbital view. Add shared bounded recursive-ruin, Mandelbrot, Mandelbulb and Mandelbox scenes with zoom, detail and shape controls.
 - Keep manual visual and MIDI edits made during a preset transition instead of letting the transition overwrite them; retain the current Custom look and playing media.
 - Preserve the default Classic Camera ASCII selection, Auto backend preference and density limits. The preset ownership contract is now 90 total / 62 accelerated / 28 explicit Canvas.
-- Add geometric, transport, CPU/GPU pixel-parity, trail-decay and video-continuity checks. See [release scope and acceptance](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/releases/RELEASE_1.1.0.md).
+- Add geometric, transport, CPU/GPU pixel-parity, trail-decay and video-continuity checks. See [release scope and acceptance](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/releases/RELEASE_1.1.0.md).
 
 ## [1.0.6] - 2026-09-25
 
@@ -1071,4 +1086,4 @@ baseline for the current ASCII VJ Remix feature set.
 ## Source Material
 
 This page is generated from ASCII VJ Remix source material. Primary sources:
-- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/CHANGELOG.md)
+- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/CHANGELOG.md)

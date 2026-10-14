@@ -12,7 +12,7 @@ lang: es
 
 Esta guía define el procedimiento mantenido de empaquetado, firma, publicación y actualización. Ejecute los comandos desde la raíz del repositorio. Consulte [Pruebas](/es/docs/operations/testing/#release-and-updater) para seleccionar las comprobaciones y [Seguridad](/es/docs/operations/security/#release-security-posture) para el modelo de seguridad de las publicaciones.
 
-Las decisiones y pruebas específicas de la versión se guardan en [registros de publicación](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/releases/README.md). Son instantáneas históricas, no el procedimiento de publicación actual.
+Las decisiones y pruebas específicas de la versión se guardan en [registros de publicación](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/releases/README.md). Son instantáneas históricas, no el procedimiento de publicación actual.
 
 <a id="evidence-and-release-records"></a>
 
@@ -28,7 +28,7 @@ Al recopilar evidencia de una versión, registre la versión exacta, el commit o
 
 Una compilación o publicación correcta no demuestra aceptación en hardware físico. Registre el alcance de cualquier aplazamiento aprobado por el responsable y enlace la comprobación pendiente desde [Pruebas](/es/docs/operations/testing/#hardware-and-platform-checks) y la [Hoja de ruta](/es/docs/reference/roadmap/#distribution-and-platform-validation).
 
-Cree los registros de cada versión en `docs/releases/`, indique la fecha y la etapa de evidencia y añádalos al [índice de versiones](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/releases/README.md). Conserve las filas pendientes como evidencia histórica; no las marque como aprobadas solo porque después se publicó una versión. Las guías de usuario y arquitectura describen el comportamiento mantenido, y el [Registro de cambios](/es/docs/reference/changelog/) conserva el historial de versiones.
+Cree los registros de cada versión en `docs/releases/`, indique la fecha y la etapa de evidencia y añádalos al [índice de versiones](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/releases/README.md). Conserve las filas pendientes como evidencia histórica; no las marque como aprobadas solo porque después se publicó una versión. Las guías de usuario y arquitectura describen el comportamiento mantenido, y el [Registro de cambios](/es/docs/reference/changelog/) conserva el historial de versiones.
 
 <a id="release-workflow"></a>
 
@@ -39,6 +39,14 @@ Las compilaciones de escritorio ASCII VJ Remix deben permanecer independientes e
 Las publicaciones se realizan mediante `.github/workflows/release-desktop.yml`. La matriz compila y verifica los artefactos de macOS, Windows y Linux, genera fragmentos del manifiesto del actualizador, los combina en `latest.json` y sube los instaladores, paquetes de actualización, firmas y `latest.json` a GitHub Releases. La compilación usa la etiqueta `v*` solicitada, de modo que los artefactos corresponden al código etiquetado y no a cambios posteriores de `main`.
 
 `.github/workflows/auto-version-release.yml` automatiza la ruta de lanzamiento común. Cuando `package.json`, `package-lock.json`, `src-tauri/Cargo.toml`, `src-tauri/tauri.conf.json` o `CHANGELOG.md` cambian en `main`, valida que las versiones de la aplicación coincidan con `npm run release:version:check`, crea `vX.Y.Z` cuando esa etiqueta aún no existe y envía el flujo de trabajo de la versión de escritorio con esa etiqueta. Si la etiqueta ya existe, omite el envío de la versión para que las inserciones repetidas no sobrescriban accidentalmente una versión publicada.
+
+<a id="preparing-a-candidate-without-publishing"></a>
+
+## Preparar una versión candidata sin publicarla
+
+Sincroniza la versión en `package.json`, ambas entradas raíz de `package-lock.json`, `src-tauri/Cargo.toml`, la entrada de la app en `Cargo.lock` y `src-tauri/tauri.conf.json`. Añade una sección de versión sin publicar al registro de cambios y un registro de lanzamiento con la matriz probada y los requisitos pendientes. Ejecuta `npm run release:version:check` y `npm run release:secrets:check:public`, prepara las bibliotecas nativas y después ejecuta `npm run check:release` y las pruebas específicas del cambio.
+
+Sube una rama de función o lanzamiento y abre una solicitud de cambios en borrador para ejecutar Desktop CI y generar los instaladores de desarrollo de Windows/Linux. Mantén el borrador hasta que pasen las pruebas que bloquean la publicación o el responsable registre un aplazamiento concreto. Integrar un cambio de versión en `main` activa la publicación: cuando Desktop CI pasa en ese commit exacto, la automatización crea la etiqueta y publica la versión. Una solicitud de preparación por sí sola no autoriza integrar, etiquetar ni activar el flujo de publicación. Registra la evidencia de firma pública, instaladores y actualizador solo después de ejecutar esas etapas.
 
 <a id="updater-signing"></a>
 
@@ -137,6 +145,14 @@ node scripts/check_github_release_secrets.mjs --require-windows-signing
 
 El asistente almacena `AZURE_CLIENT_SECRET` como un secreto de acciones GitHub y los demás ID de Azure como variables del repositorio GitHub. El secreto del cliente de Azure es el único secreto de firma Windows requerido; manténgalo fuera del historial de shell y de los registros de chat. La selección de proveedores y la implementación de la firma Windows siguen siendo decisiones de la hoja de ruta; las herramientas inactivas no describen la postura de distribución actual.
 
+<a id="native-video-runtime-packaging"></a>
+
+## Empaquetado de bibliotecas de video nativo
+
+Ejecuta `npm run video-io:stage` antes de verificar o compilar la app de escritorio; la CI lo hace en cada tarea de compilación y empaquetado. `check:video-io-resources` verifica la versión, el hash y los avisos de NDI preparados, incluido el archivo completo de licencias de terceros del SDK. macOS incluye NDI y Syphon en Contents/Frameworks para que Tauri firme el código anidado antes de firmar la app. Windows/Linux empaquetan NDI en resources/video-io para la arquitectura actual. Los metadatos deb/rpm de Linux requieren las bibliotecas y el servicio Avahi; quienes usen AppImage deben seguir la [configuración del sistema](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/USER_GUIDE.md#linux-ndi-sources-do-not-appear). Incluye los avisos y la procedencia fijada en los instaladores y archivos de actualización. No distribuyas cabeceras del SDK, NDI Tools ni programas de ejemplo del SDK como dependencias de la aplicación.
+
+El acuerdo de NDI 6.3.2 fijado y los avisos necesarios para el usuario final se revisaron durante la implementación; conserva los términos propios del componente, la atribución NDI y su enlace. Los metadatos de copyright del paquete Tauri proporcionan la declaración de marca requerida al diálogo nativo About predeterminado; el enlace de Video I/O incluye la misma atribución. La [página de licencias del proveedor](https://docs.ndi.video/all/developing-with-ndi/sdk/licensing) seguía indicando SDK 6.3.2 el 2026-10-13. Vuelve a revisar el acuerdo completo y los hashes antes de redistribuir públicamente; detente si cambia una suma de verificación del proveedor. Conserva la licencia BSD de Syphon. Verifica la carga de bibliotecas dinámicas firmadas, el contenido del instalador, los permisos de red y el firewall en una instalación limpia, y la entrada y salida reales después de actualizar. La evidencia de la candidata y las afirmaciones de compatibilidad aún no verificadas se registran en el [registro de la versión 1.3.0](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/releases/RELEASE_1.3.0.md).
+
 <a id="build-and-package"></a>
 
 ## Construir y empaquetar
@@ -176,4 +192,4 @@ El verdadero salto de actualización basado en aplicaciones necesita una versió
 ## Material de origen
 
 Esta página se genera a partir del material fuente de ASCII VJ Remix. Fuentes primarias:
-- [docs/RELEASING.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/RELEASING.md)
+- [docs/RELEASING.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/RELEASING.md)

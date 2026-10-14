@@ -31,7 +31,7 @@ El proyecto es un laboratorio de renderizado Tauri nativo local. Trate esto como
 |`media/`|Imagen/vídeo de demostración integrados y accesorios de desarrollo ocultos.|
 |`experiments/`|Experimentos de secuencias y vectores de códecs heredados/adaptativos.|
 |`scripts/`|Comprobaciones de compilación, configuración de Podman, asistentes de lanzamiento, asistentes de actualización, scripts de preparación/compilación FFmpeg y pruebas de humo.|
-|`docs/`|[Índice de documentación](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/README.md), guías de usuario/desarrollador, guías prácticas, registros de lanzamiento y evidencia de desempeño.|
+|`docs/`|[Índice de documentación](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/README.md), guías de usuario/desarrollador, guías prácticas, registros de lanzamiento y evidencia de desempeño.|
 
 <a id="prerequisites"></a>
 
@@ -47,9 +47,9 @@ Herramientas mínimas de desarrollo:
 
 Requisitos previos de escritorio específicos de la plataforma:
 
-- macOS: herramientas de línea de comandos de Xcode.
+- macOS: Xcode completo y sus herramientas Metal para Syphon.
 - Windows: Herramientas de compilación de Visual Studio con la carga de trabajo C++ y el tiempo de ejecución WebView2.
-- Linux: paquetes de desarrollo WebKitGTK 4.1, appindicator, encabezados de desarrollo ALSA, librsvg, OpenSSL, patchelf y herramientas de compilación.
+- Linux: paquetes de desarrollo de WebKitGTK 4.1, appindicator, cabeceras de desarrollo de ALSA, librsvg, OpenSSL, patchelf y herramientas de compilación. El descubrimiento NDI nativo también requiere las bibliotecas client/common de Avahi y el servicio `avahi-daemon` en ejecución.
 
 Opcional pero útil:
 
@@ -67,7 +67,10 @@ Instale las dependencias JavaScript:
 ```bash
 git submodule update --init shared/dust-wave-platform
 npm ci
+npm run video-io:stage
 ```
+
+La preparación de los SDK descarga dependencias de compilación con versiones fijadas desde fuentes oficiales. Es compatible con macOS arm64 y Windows/Linux x64, y debe ejecutarse antes de compilar o verificar la app de escritorio. El desarrollo solo para navegador no utiliza transportes nativos. Consulta el [empaquetado de bibliotecas de video nativo](/es/docs/operations/release/#native-video-runtime-packaging).
 
 Ejecute el servidor de desarrollo del navegador:
 
@@ -120,6 +123,7 @@ Cuando una versión publicada supere la aceptación de instaladores y actualizac
 |`npm run dev`|Servidor de desarrollo del navegador en `127.0.0.1:8010`.|
 |`npm run build`|Compilación de producción Vite más copia de activos en tiempo de ejecución.|
 |`npm run preview`|Obtenga una vista previa de la compilación de producción.|
+|`npm run video-io:stage`|Preparar las bibliotecas de ejecución y los avisos de NDI/Syphon con versiones fijadas.|
 |`npm run tauri:dev`|Modo de desarrollo de escritorio Tauri.|
 |`npm run tauri:build:dev -- --bundles app`|Aplicación de desarrollo macOS optimizada.|
 |`npm run bundle:debug`|Cree y valide un paquete de escritorio de depuración local.|
@@ -130,7 +134,7 @@ Cuando una versión publicada supere la aceptación de instaladores y actualizac
 
 La [Referencia rápida de pruebas](/es/docs/operations/testing/#quick-reference) posee comandos de validación; sus [conjuntos de verificación recomendados](/es/docs/operations/testing/#recommended-check-sets) explican cuál ejecutar para variar.
 
-Las solicitudes de extracción del mismo repositorio también empaquetan artefactos de desarrollo deshabilitados por el actualizador después de que pasa la puerta de escritorio de la plataforma. El instalador sin firmar `ASCII VJ Remix Dev` Windows se construye en modo de lanzamiento, verifica el subsistema gráfico PE y se instala junto con la identidad de producción. Linux produce paquetes AppImage, deb y rpm a partir de la misma identidad de desarrollo. CI crea y verifica los recursos FFmpeg/ffprobe anclados para cada conjunto de paquetes antes de agruparlos. Los artefactos `ascii-vj-remix-windows-test-<commit>` y `ascii-vj-remix-linux-test-<commit>` se conservan durante 14 días. Consulte [Linux VM QA](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/LINUX_VM_QA.md) para conocer la matriz de VM mantenida.
+Las solicitudes de extracción del mismo repositorio también empaquetan artefactos de desarrollo deshabilitados por el actualizador después de que pasa la puerta de escritorio de la plataforma. El instalador sin firmar `ASCII VJ Remix Dev` Windows se construye en modo de lanzamiento, verifica el subsistema gráfico PE y se instala junto con la identidad de producción. Linux produce paquetes AppImage, deb y rpm a partir de la misma identidad de desarrollo. CI crea y verifica los recursos FFmpeg/ffprobe anclados para cada conjunto de paquetes antes de agruparlos. Los artefactos `ascii-vj-remix-windows-test-<commit>` y `ascii-vj-remix-linux-test-<commit>` se conservan durante 14 días. Consulte [Linux VM QA](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/LINUX_VM_QA.md) para conocer la matriz de VM mantenida.
 
 <a id="podman-development-shell"></a>
 
@@ -225,7 +229,7 @@ Mantenga las capacidades limitadas:
 - Ventana principal: selección de medios, gestión de salida, proveedores de audio, actualizador.
 - Ventana de salida: permisos mínimos de escucha/cierre/pantalla completa únicamente.
 
-La superficie de comando MIDI es únicamente la ventana principal. El código nativo MIDI se encuentra en `src-tauri/src/midi.rs`; El primer puerto admitido es el mioXC con conexión DIN. No otorgue comandos MIDI o SysEx a la ventana de salida. Consulte [MIDI_UC33E](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MIDI_UC33E.md) antes de cambiar el perfil de hardware.
+La superficie de comando MIDI es únicamente la ventana principal. El código nativo MIDI se encuentra en `src-tauri/src/midi.rs`; El primer puerto admitido es el mioXC con conexión DIN. No otorgue comandos MIDI o SysEx a la ventana de salida. Consulte [MIDI_UC33E](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/MIDI_UC33E.md) antes de cambiar el perfil de hardware.
 
 Seleccione [MIDI comprueba](/es/docs/operations/testing/#midi-uc-33e-or-sysex-changes) para cambios de mapeo, transporte o SysEx.
 
@@ -255,13 +259,9 @@ ASCII VJ Remix Dev  com.asciline.remix.dev
 
 `npm run tauri:dev`, `npm run bundle:debug` y `npm run tauri:build:dev` aplican automáticamente `src-tauri/tauri.dev.conf.json`. No utilice un paquete con nombre de producción para pruebas locales de cámara, micrófono o audio del sistema.
 
-Cree la identidad de firma de código local estable una vez:
+Instala una identidad de firma Apple Development desde Xcode o selecciona otra identidad de equipo Apple con `ASCILINE_CODESIGN_IDENTITY`. Las bibliotecas de video incluidas requieren un Team ID para la validación de bibliotecas del entorno de ejecución reforzado; la antigua identidad autofirmada de `desktop:codesign:local` no puede cargarlas.
 
-```bash
-npm run desktop:codesign:local
-```
-
-Luego cree, instale e inicie la aplicación de desarrollo:
+Compila, instala e inicia la app de desarrollo:
 
 ```bash
 npm run desktop:run-local -- --build
@@ -318,7 +318,7 @@ El flujo de trabajo de lanzamiento crea FFmpeg a partir del tarball fuente ofici
 
 ## Trabajo de lanzamiento y actualización
 
-Siga la [Guía de lanzamiento y actualización](/es/docs/operations/release/) para empaquetar, firmar, publicar, artefactos inmutables y aceptación posterior a la publicación. Utilice [Prueba: Lanzamiento y Actualizador](/es/docs/operations/testing/#release-and-updater) para seleccionar la verificación. La evidencia específica de la versión se encuentra en [registros de publicación](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/releases/README.md).
+Siga la [Guía de lanzamiento y actualización](/es/docs/operations/release/) para empaquetar, firmar, publicar, artefactos inmutables y aceptación posterior a la publicación. Utilice [Prueba: Lanzamiento y Actualizador](/es/docs/operations/testing/#release-and-updater) para seleccionar la verificación. La evidencia específica de la versión se encuentra en [registros de publicación](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/releases/README.md).
 
 <a id="pull-request-checklist"></a>
 
@@ -345,13 +345,23 @@ Elija el [conjunto de comprobaciones recomendado](/es/docs/operations/testing/#r
 
 ## Licencia
 
-Esta bifurcación conserva la licencia MIT con una restricción antipublicidad en [LICENSE](https://github.com/aindaco1/ascii-vj-remix/blob/main/LICENSE). No es la licencia estándar del MIT. Su texto no ha cambiado desde la confirmación ascendente [`95a3029679b0761663171f5b9afcf28a086a8b3c`](https://github.com/YusufB5/ASCILINE/blob/95a3029679b0761663171f5b9afcf28a086a8b3c/LICENSE) (3 de mayo de 2026), que está presente en el historial de esta bifurcación. El SHA-256 de ambos archivos es `7fb645f1d4eafa849eaf8332b0e32ab0c9d4f6b4c42a648c45e5edaf783e159b`.
+Esta bifurcación conserva la licencia MIT con una restricción antipublicidad en [LICENSE](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/LICENSE). No es la licencia estándar del MIT. Su texto no ha cambiado desde la confirmación ascendente [`95a3029679b0761663171f5b9afcf28a086a8b3c`](https://github.com/YusufB5/ASCILINE/blob/95a3029679b0761663171f5b9afcf28a086a8b3c/LICENSE) (3 de mayo de 2026), que está presente en el historial de esta bifurcación. El SHA-256 de ambos archivos es `7fb645f1d4eafa849eaf8332b0e32ab0c9d4f6b4c42a648c45e5edaf783e159b`.
 
 Upstream adoptó un aviso de licencia diferente el 3 de septiembre de 2026 en [`9921b0dfddfebdcaa7081cfca918fc668a330e06`](https://github.com/YusufB5/ASCILINE/blob/9921b0dfddfebdcaa7081cfca918fc668a330e06/LICENSE): AGPL-3.0-o posterior para su motor/servidor Python y MIT estándar para su SDK/decodificadores de cliente JavaScript. Yusuf informó ese cambio en [#38](https://github.com/aindaco1/ascii-vj-remix/issues/38). El 16 de septiembre de 2026, el mantenedor de la bifurcación decidió conservar la licencia existente y documentar esta procedencia; En esa revisión no se importó ningún código ascendente ni ningún texto de licencia nuevo.
 
-Antes de importar código ascendente posterior, registre la revisión exacta, los archivos afectados y sus avisos aplicables y revise la compatibilidad con esta bifurcación. No asuma que el aviso actual describe esta bifurcación ni asigne su nueva licencia de SDK al código copiado anterior sin verificar su procedencia. Los activos y sidecars de terceros incluidos conservan sus propios avisos (incluidos [Unifont](https://github.com/aindaco1/ascii-vj-remix/blob/main/third_party/unifont/README.md) y [FFmpeg](https://github.com/aindaco1/ascii-vj-remix/blob/main/src-tauri/resources/ffmpeg/README.md)).
+Antes de importar código ascendente posterior, registre la revisión exacta, los archivos afectados y sus avisos aplicables y revise la compatibilidad con esta bifurcación. No asuma que el aviso actual describe esta bifurcación ni asigne su nueva licencia de SDK al código copiado anterior sin verificar su procedencia. Los activos y sidecars de terceros incluidos conservan sus propios avisos (incluidos [Unifont](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/third_party/unifont/README.md) y [FFmpeg](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/src-tauri/resources/ffmpeg/README.md)).
 
 Las contribuciones deben ser compatibles con esa licencia y con la política de tiempo de ejecución local primero del proyecto.
+
+<a id="native-video-runtime-setup"></a>
+
+## Configuración de las bibliotecas de video nativo
+
+Después de `npm ci`, ejecuta `npm run video-io:stage` y luego `npm run check:video-io-resources`. El script descarga los archivos oficiales de los SDK, verifica sus hashes fijados y copia las bibliotecas de ejecución y los avisos necesarios. En macOS también compila la revisión fijada del framework Syphon. Usa `ASCII_VIDEO_SDK_CACHE` o una caché temporal del sistema. Lee los avisos incluidos de NDI y Syphon antes de compilar o redistribuir estos componentes con licencias independientes. Las máquinas de compilación compatibles coinciden con las arquitecturas de distribución actuales: Mac arm64 y Windows/Linux x64.
+
+En Mac, compila con `npm run tauri:build:dev -- --bundles app` y luego ejecuta `npm run desktop:run-local`. Para las bibliotecas incluidas, el instalador local prefiere una identidad Apple Development instalada; usa `ASCILINE_CODESIGN_IDENTITY` para elegir otra identidad de equipo Apple. Un certificado autofirmado no tiene Team ID y no puede cargar estas bibliotecas con el entorno de ejecución reforzado. El script se detiene con una indicación clara si no encuentra una identidad predeterminada adecuada. La firma de producción y la identidad `com.asciline.remix.dev` siguen separadas.
+
+Los flujos de escritorio y publicación preparan las mismas dependencias fijadas en cada plataforma. El desarrollo solo para navegador sigue funcionando sin SDK nativos; los controles de transporte aparecen únicamente en Tauri.
 
 
 <a id="source-material"></a>
@@ -359,4 +369,4 @@ Las contribuciones deben ser compatibles con esa licencia y con la política de 
 ## Material de origen
 
 Esta página se genera a partir del material fuente de ASCII VJ Remix. Fuentes primarias:
-- [docs/CONTRIBUTORS.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/CONTRIBUTORS.md)
+- [docs/CONTRIBUTORS.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/CONTRIBUTORS.md)

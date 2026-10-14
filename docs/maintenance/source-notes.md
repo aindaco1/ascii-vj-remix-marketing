@@ -162,3 +162,82 @@ maintaining parallel technical descriptions.
   [1.2.0 release record](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/releases/RELEASE_1.2.0.md).
   The app checkout remains unchanged. Website publication is verified separately
   through the publishing commit's Pages workflow and live routes.
+
+## 2026-10-13 — Upcoming 1.3.0 Native Video I/O
+
+- Read the app's documentation map, agent guidance, README, candidate changelog,
+  release record, and changes to the user, contributor, renderer, security,
+  performance, testing, release and roadmap guides since the 1.2.0 ingestion.
+  Reviewed package scripts and native component notices alongside those guides.
+- The candidate remains on `feat/native-video-io`, ahead of `main`. Imported a
+  fixed export of commit `512974b25a9a768c8d4cd253e3988f33578fdf86` while app
+  preparation continued independently. Verified that commit on GitHub and
+  confirmed no later documentation changes before completing this refresh.
+  This task did not edit the app checkout.
+- Queried GitHub's latest public release: **v1.2.0**, published
+  `2026-10-05T01:37:21Z`, with fourteen assets. Verified the three platform
+  download targets against that asset list. Product data retains its
+  `2026-10-04` changelog date. No 1.3.0 release, installer or updater is claimed.
+- Extended the existing importer to pin source links, retain the dated download
+  baseline, and expose versioned Unreleased entries as a separate upcoming
+  release. All 23 English and 23 Spanish developer pages identify the candidate
+  and point to its exact source and acceptance record. Quickstart checks out
+  that revision before setup. Native sharing anchors resolve locally; Linux
+  troubleshooting and detailed acceptance records remain linked upstream.
+- Refreshed native NDI/Syphon controls, shared output architecture, alpha,
+  explicit LAN sharing, runtime staging and notices, Apple team signing,
+  Linux Avahi requirements and source/CI/installed/hardware acceptance limits.
+  Presets remain 96 total / 68 accelerated / 28 Canvas, with 21 palettes.
+- Added upcoming-release sections, release-status links, search/social
+  descriptions and support priorities in both languages. Preserved the
+  Fractal Accents published-release summary, artwork and download components.
+  NDI links and attribution accompany the new copy; video-only transport,
+  macOS-only Syphon, opt-in sharing and the 1080p60 target are explicit.
+- Added 77 reviewed Spanish segments, including technical headings, prose and
+  unchanged command cells. Translation lookup reuses reviewed text when only
+  a source commit URL changes, restores the exact pinned links, and prioritizes
+  reviewed wording over cached service results. App control names stay intact.
+- Validation: all 14 pipeline tests, production Jekyll build, current-state,
+  52-page internal-link, SEO, support and performance audits passed. Both
+  generators reproduced identical output. `git diff --check` passed.
+- Visually reviewed the English and Spanish upcoming sections and the Spanish
+  native-sharing guide, checked desktop and 390px mobile layouts, and verified
+  language switching retains `#native-video-sharing`. Corrected the new prose
+  and status links to use the existing cyan color after the visual check.
+- This is a local website/documentation refresh. Desktop acceptance remains in
+  the pinned candidate record; no desktop build, release publication or website
+  deployment was performed. The maintenance guide records the copy changes
+  needed when 1.3.0 is actually published.
+
+### 1.3.0 launch-copy assumption
+
+The owner subsequently requested treating 1.3.0 as imminently released and
+presuming its download links. This supersedes the earlier candidate presentation:
+
+- `_data/release_target.yml` selects 1.3.0 without changing the app repository's
+  Unreleased entry or inventing a publication date. Regeneration retains the
+  approved launch presentation until the upstream release is dated.
+- Both homepages, metadata, support copy, release baseline and generated English
+  and Spanish docs now present 1.3.0 as the current release. Candidate banners
+  are removed; Fractal Accents remains a feature section.
+- Downloads target the expected v1.3.0 macOS DMG, Windows EXE and Linux AppImage.
+  Generic download actions and mobile/unknown-platform fallbacks point to the
+  v1.3.0 release page. These URLs are presumed by request, not newly verified
+  published assets. Technical performance and compatibility limits remain intact.
+- Added nine reviewed Spanish segments and a launch-target pipeline regression.
+  The previous source pin and desktop-validation evidence remain unchanged.
+- Launch-copy validation: all 15 pipeline tests, the production build and all
+  site audits passed. Refreshed browser checks
+  confirmed v1.3.0 asset URLs, removed candidate banners and no horizontal
+  overflow on both 390px homepages. `git diff --check` passed.
+
+### Homepage editorial pass
+
+At the owner's request, removed the homepage's repeated performance/setup
+caveat and shortened the native-sharing cards in English and Spanish. Built-in
+Looks now covers the breadth of the 96 presets, 21 palettes, customization,
+playlists and WTF transitions instead of Fractal Accents recipes and 95/5
+probabilities. Detailed limits remain in the developer guides. Updated the
+homepage audit markers to match the broader copy. The production build,
+current-state, 52-page link, SEO and performance audits passed; rendered
+English desktop and Spanish mobile checks found no horizontal overflow.

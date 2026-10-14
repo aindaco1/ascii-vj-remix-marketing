@@ -10,9 +10,16 @@ lang: es
 
 # Registro de cambios
 
-<a id="unreleased"></a>
+## [1.3.0]
 
-## Sin publicar
+El alcance del lanzamiento y la validación de plataformas se documentan en el [registro de la versión 1.3.0](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/releases/RELEASE_1.3.0.md).
+
+- Añade entrada y salida nativas de video [NDI®](https://ndi.video/) en las plataformas de escritorio y entrada y salida Syphon Metal en macOS, con una entrada en vivo seleccionada y destinos NDI, Syphon y Pop Out simultáneos. Los transportes no incluyen audio.
+- Añade controles compactos de Video I/O, descubrimiento explícito de fuentes, reconexión, formatos de salida 720p/1080p y salidas compartidas desactivadas al iniciar la app.
+- Conserva la transparencia de la fuente independientemente de la selección de glifos en GPU, Canvas, salida nativa y transiciones; las escenas procedurales pueden añadir contenido visible.
+- Incluye bibliotecas nativas con versiones fijadas y sus avisos, valida su preparación y firma las bibliotecas anidadas en Mac. Consulta la [evidencia Dev y los requisitos de lanzamiento pendientes](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/releases/NATIVE_VIDEO_IO_DEV.md).
+
+NDI® es una marca registrada de Vizrt NDI AB.
 
 ## [1.2.0] - 2026-10-04
 
@@ -41,7 +48,7 @@ lang: es
 - Las configuraciones opcionales de escena tienen alturas e inclinaciones de cámara, velocidades y encuadres distintos, además de un corredor estrecho, un techo inclinado de catedral, una costa baja y una vista orbital giratoria. Se añaden escenas compartidas y acotadas de ruinas recursivas, Mandelbrot, Mandelbulb y Mandelbox, con controles de zoom, detalle y forma.
 - Se conservan las ediciones visuales manuales y MIDI realizadas durante una transición de preset, evitando que la transición las sobrescriba. Se mantiene el look Custom actual y la reproducción del material.
 - Se conservan Classic Camera ASCII como selección predeterminada, Auto como preferencia de backend y los límites de densidad. El contrato de asignación de presets pasa a ser de 90 en total: 62 acelerados y 28 asignados explícitamente a Canvas.
-- Se añaden comprobaciones de geometría, movimiento, paridad de píxeles entre CPU y GPU, desvanecimiento de estelas y continuidad del video. Consulte el [alcance y la aceptación de la versión](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/releases/RELEASE_1.1.0.md).
+- Se añaden comprobaciones de geometría, movimiento, paridad de píxeles entre CPU y GPU, desvanecimiento de estelas y continuidad del video. Consulte el [alcance y la aceptación de la versión](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/releases/RELEASE_1.1.0.md).
 
 ## [1.0.6] - 2026-09-25
 
@@ -717,4 +724,4 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 ## Material de origen
 
 Esta página se genera a partir del material fuente de ASCII VJ Remix. Fuentes primarias:
-- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/CHANGELOG.md)
+- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/CHANGELOG.md)

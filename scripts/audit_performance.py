@@ -128,7 +128,7 @@ def main() -> int:
             download = parser.downloads[0]
             release_base = f"https://github.com/aindaco1/ascii-vj-remix/releases/download/v{release}/"
             expected = {
-                "href": "https://github.com/aindaco1/ascii-vj-remix/releases/latest",
+                "href": f"https://github.com/aindaco1/ascii-vj-remix/releases/tag/v{release}",
                 "data-download-macos": f"{release_base}ASCII.VJ.Remix_{release}_aarch64.dmg",
                 "data-download-windows": f"{release_base}ASCII.VJ.Remix_{release}_x64-setup.exe",
                 "data-download-linux": f"{release_base}ASCII.VJ.Remix_{release}_amd64.AppImage",

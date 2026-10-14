@@ -25,7 +25,40 @@ This page describes the current ASCII VJ Remix feature baseline for developers p
   allow it.
 - Camera mixer layouts: grid, split row, stack, and picture-in-picture.
 - Camera controls appear directly under the Source panel while Camera is active.
-- Static media and camera frames stay local. They are not uploaded to a server.
+- Static media and camera frames stay local unless you explicitly enable a video sharing output.
+
+### Native Video Sharing
+
+Added in 1.3.0; see [release record](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/releases/RELEASE_1.3.0.md).
+
+Select **NDI® Input** or **Syphon Input** in Source, then choose a discovered
+sender under **Video I/O**. Refresh repeats discovery. Only one transport source
+is selected at a time; presets and WTF keep that source. Syphon is available
+only on macOS. NDI finds senders on the local network; source visibility depends
+on sender settings and network/firewall permissions. On Linux, install the
+Avahi libraries and keep its service running; see
+[Linux NDI discovery](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/USER_GUIDE.md#linux-ndi-sources-do-not-appear).
+
+Enable **NDI Out** and/or **Syphon Out** to share the finished visuals. Set the
+output name and 720p/1080p at 30/60 fps. Pop Out can run at the same time; closing
+its window does not stop either sharing switch. Output switches and live input
+connections reset on launch; the name and format are remembered. Turning all
+sharing off and selecting ordinary media releases the transport sessions.
+
+Source alpha is retained where the receiving application supports it. Opaque
+black stays opaque. Flat glyph backgrounds follow source coverage; spatial
+scenes can generate their own visible backdrop, and displacement/feedback can
+move or extend coverage. A disconnected input holds its last frame briefly,
+then sends a transparent blank while attempting reconnection. A uniquely named
+sender can reconnect after restarting; ambiguous renamed senders need reselection.
+
+These transports carry video only. Use the independent Audio Reactivity controls
+for microphone, system or file audio. NDI High Bandwidth output is implemented;
+HX2/HX3/device compatibility awaits the published interoperability matrix.
+The 1080p60 setting is a target, not a guarantee for every preset and machine.
+See the [tested matrix and remaining acceptance](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/releases/RELEASE_1.3.0.md).
+
+NDI® is a registered trademark of Vizrt NDI AB. [About NDI](https://ndi.video/).
 
 ### Rendering
 
@@ -91,7 +124,7 @@ This page describes the current ASCII VJ Remix feature baseline for developers p
 - Twenty-three read-only character presets adapted from
   [ascii.today](https://ascii.today/), including Broadway KB, Computer, Doom,
   Ghost, Modular, Standard, Univers, and Doh. The complete credited pack is in
-  [ascii.today Character Presets](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/ASCII_TODAY_PRESETS.md).
+  [ascii.today Character Presets](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/ASCII_TODAY_PRESETS.md).
 - Built-in and My Presets are shown as separate, independently alphabetized
   sections with a live name search. The prior Point & Click Default display
   name is now the more descriptive Dense Color ASCII; its stable preset id is
@@ -223,7 +256,7 @@ and requires a manually captured and verified hardware profile.
   in the background whenever the production app opens. A current or offline
   check is silent; when a newer release exists, the top-bar Update control shows
   it. If upgrading from 0.9.6 or 0.9.7, see the
-  [legacy updater recovery notes](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/USER_GUIDE.md#upgrading-from-096-or-097).
+  [legacy updater recovery notes](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/USER_GUIDE.md#upgrading-from-096-or-097).
 - The same Update control remains available for a manual recheck. Downloading,
   installation, and relaunch remain explicitly user initiated.
 - The Reports control remains visible when no crash reports are pending so the
@@ -241,8 +274,9 @@ and requires a manually captured and verified hardware profile.
 - Normal development commands use the visibly separate `ASCII VJ Remix Dev`
   app and `com.asciline.remix.dev` bundle identifier. Development builds cannot
   replace or inherit privacy grants from the production app.
-- Intentional online paths are limited to the updater check/download flow and
-  production-only reviewed/sanitized crash report submission.
+- Intentional internet paths are limited to the updater check/download flow and
+  production-only reviewed/sanitized crash report submission. User-enabled NDI
+  discovery and video sharing use the LAN.
 - Crash report submission goes through the Rust desktop layer to the
   `https://crash.dustwave.xyz` Cloudflare Worker relay. The webview does not get
   arbitrary HTTP capability and selected media is never uploaded. Renderer
@@ -257,7 +291,7 @@ connection label, and the buffer counter are not exposed in the normal Source
 UI.
 
 The initial hardware setup and complete controller map live in
-[UC-33e and mioXC guide](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MIDI_UC33E.md).
+[UC-33e and mioXC guide](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/MIDI_UC33E.md).
 
 ## Spatial visuals and trails (1.1.0)
 
@@ -270,7 +304,7 @@ Reselecting a built-in preset restores Flat Media. Saved custom presets retain
 their chosen mode, and existing saved settings are not migrated.
 Version 1.1.0 is available in [GitHub Releases](https://github.com/aindaco1/ascii-vj-remix/releases/tag/v1.1.0)
 and through the production in-app updater. See the
-[release record](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/releases/RELEASE_1.1.0.md#published-artifacts-and-acceptance)
+[release record](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/releases/RELEASE_1.1.0.md#published-artifacts-and-acceptance)
 for installer/updater validation and remaining physical-platform checks.
 
 | Preset | Optional Visual mode | Scene after opting in |
@@ -391,4 +425,4 @@ Canvas fallback. No additional files, downloads or online service are needed.
 ## Source Material
 
 This page is generated from ASCII VJ Remix source material. Primary sources:
-- [docs/USER_GUIDE.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/USER_GUIDE.md)
+- [docs/USER_GUIDE.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/USER_GUIDE.md)

@@ -1,6 +1,6 @@
 ---
 title: ASCII VJ Remix
-description: "ASCII VJ Remix es un visualizador de escritorio para DJs y VJs que quieren video ASCII, cámara y visuales reactivos al sonido."
+description: "ASCII VJ Remix convierte video, cámaras y sonido en visuales ASCII en vivo. Video compartido con NDI y Syphon en macOS en 1.3.0."
 layout: homepage
 lang: es
 nav_enabled: false
@@ -9,7 +9,7 @@ nav_exclude: true
 <section class="hero" aria-labelledby="home-title">
   <div class="hero-title-block">
     <h1 id="home-title">Visuales simples para DJs. Control ASCII profundo para VJs.</h1>
-    <p class="release-status">Última versión: <strong>v{{ site.data.product.latest_release.version }}</strong></p>
+    <p class="release-status">Última versión: <a href="#release-heading"><strong>v{{ site.data.product.latest_release.version }}</strong> · Entrada y salida de video nativo</a></p>
   </div>
   <aside class="demo-frame demo-frame--video" aria-label="Preview de ASCII VJ Remix">
     {% assign hero_webm = '/assets/videos/ascii-hero.webm' %}
@@ -38,7 +38,7 @@ nav_exclude: true
     <article class="card pink">
       <h3>Para DJs</h3>
       <p>Corre una capa visual simple sin armar un rig completo de VJ. Carga un clip, usa una cámara o deja que el audio mueva la imagen para que la pantalla se sienta viva.</p>
-      <a href="https://github.com/aindaco1/ascii-vj-remix/releases/latest">Descargar la app</a>
+      <a href="https://github.com/aindaco1/ascii-vj-remix/releases/tag/v{{ site.data.product.latest_release.version }}">Descargar la app</a>
     </article>
     <article class="card">
       <h3>Para VJs</h3>
@@ -60,7 +60,7 @@ nav_exclude: true
     <article class="card"><h3>Video y cámara</h3><p>Usa clips o cámaras en vivo como material base y conviértelos en visuales ASCII, de celda, pixel y glyph.</p></article>
     <article class="card"><h3>Movimiento reactivo al sonido</h3><p>Deja que ritmo, brillo, densidad y bandas de frecuencia muevan la imagen para que los visuales respondan al set.</p></article>
     <article class="card"><h3>Control de paleta, dithering y glifos</h3><p>Combina 21 paletas integradas con dithering Bayer, controles de profundidad y color de glifos, conjuntos multilingües y rampas Unicode personalizadas.</p></article>
-    <article class="card"><h3>Densidad consciente del rendimiento</h3><p>Mantente dentro de los límites compartidos del renderizador o activa Densidad avanzada para usar hasta 900 columnas sin garantía de 30 FPS.</p></article>
+    <article class="card"><h3>De bloques grandes a detalles finos</h3><p>Ajusta el tamaño y la separación de las celdas o activa Advanced Density para usar hasta 900 columnas.</p></article>
     <article class="card"><h3>Listas de presets</h3><p>Guarda una secuencia de looks, cambia su orden y repítela en orden o al azar. Define cuánto dura cada preset y deja que las transiciones avancen mientras tu fuente sigue reproduciéndose.</p></article>
     <article class="card"><h3>Guarda un fotograma</h3><p>Captura el visual actual como PNG directamente en tu Escritorio, sin incluir la superposición de estadísticas.</p></article>
   </div>
@@ -68,20 +68,33 @@ nav_exclude: true
 
 <section class="section-band" aria-labelledby="release-heading">
   <p class="kicker">Última versión</p>
-  <h2 id="release-heading">v{{ site.data.product.latest_release.version }}: Fractal Accents.</h2>
+  <h2 id="release-heading">v{{ site.data.product.latest_release.version }}: entrada y salida de video nativo.</h2>
+  <p class="section-intro">Incorpora una señal en vivo a tu set ASCII y comparte los visuales con otras apps o receptores. La versión 1.3.0 añade entrada y salida <a href="https://ndi.video/">NDI®</a> en macOS Apple Silicon, Windows x64 y Linux x86_64, además de Syphon en macOS.</p>
+  <div class="card-grid">
+    <article class="card pink"><h3>Mezcla una señal en vivo</h3><p>Elige un emisor NDI o Syphon en Video I/O y conserva la señal al cambiar de preset, usar WTF o ajustar los controles visuales. NDI usa tu red local; Syphon conecta apps en la misma Mac.</p></article>
+    <article class="card"><h3>Comparte mientras proyectas</h3><p>Envía el video terminado por NDI o Syphon mientras Pop Out llena otra pantalla. Elige 720p o 1080p a 30 o 60 fps.</p></article>
+    <article class="card pink"><h3>Conserva la transparencia al mezclar</h3><p>Conserva la transparencia de la fuente al pasar a otra app para superponer y combinar visuales. El negro opaco sigue siendo opaco.</p></article>
+  </div>
+  <p class="release-link"><a href="{{ '/es/docs/overview/changelog-baseline/#130-release-notes' | relative_url }}">Ver las novedades de v{{ site.data.product.latest_release.version }}</a> · <a href="{{ '/es/docs/overview/features/#native-video-sharing' | relative_url }}">Guía para compartir video nativo</a></p>
+  <p class="section-intro">NDI® es una marca registrada de Vizrt NDI AB.</p>
+</section>
+
+<section class="section-band" aria-labelledby="looks-heading">
+  <p class="kicker">Looks integrados</p>
+  <h2 id="looks-heading">Encuentra tu look.</h2>
   <div class="release-summary">
     <img class="release-app-icon" src="{{ site.data.product.app_icon.path | relative_url }}?v={{ site.data.product.app_icon.path | asset_fingerprint }}" width="512" height="512" alt="Icono de la app ASCII VJ Remix con símbolo de reproducción y píxeles de neón" loading="lazy" decoding="async">
     <div>
-      <p class="section-intro">Seis looks nuevos añaden hilos finos, contornos grabados, distorsiones suaves, corrientes de color y estelas a tus imágenes. Explora Threadlight, Silver Etching, Contour Silk, Julia Glass, Chromatic Undertow y Phosphor Lace.</p>
-      <p class="section-intro"><strong>96 presets integrados, 21 paletas.</strong> Busca un look por nombre, ajusta los glifos y el color o guarda una lista que recorra tus favoritos.</p>
+      <p class="section-intro">Explora ASCII clásico de terminal, estilos de píxeles, ciclos de color y texturas de glifos, y lleva tus visuales a escenas espaciales.</p>
+      <p class="section-intro"><strong>96 presets integrados, 21 paletas.</strong> Cada look es un punto de partida para tu propia mezcla de color, textura y movimiento.</p>
     </div>
   </div>
   <div class="card-grid">
-    <article class="card pink"><h3>Conserva los acentos al mezclar</h3><p>Ajusta la intensidad, cobertura, ubicación, movimiento y respuesta al audio. Los acentos se conservan al cambiar entre presets normales y funcionan sobre cualquier escena opcional. Elige Off para quitarlos.</p></article>
-    <article class="card"><h3>Empieza con un toque sutil</h3><p>Subtle Limit empieza activado y limita los cambios de brillo, color, glifos y distorsión del acento. Desactívalo para un efecto más intenso o prueba una de las seis variaciones seleccionadas.</p></article>
-    <article class="card pink"><h3>Deja que WTF anime el set</h3><p>WTF ahora elige Flat Media el 95% de las veces y escenas opcionales el 5%. Sus controles de visibilidad consideran las tomas oscuras, los glifos y los cambios de audio, sin alterar los fotogramas negros de la fuente.</p></article>
+    <article class="card pink"><h3>Elige un punto de partida</h3><p>Busca presets por nombre y cambia de look mientras tu video o cámara sigue funcionando.</p></article>
+    <article class="card"><h3>Ajusta cada detalle</h3><p>Combina paletas, conjuntos de caracteres, dithering, formas de celda y movimiento. Guarda tus propios presets y llévalos al siguiente set.</p></article>
+    <article class="card pink"><h3>Mantén el set en movimiento</h3><p>Arma una lista de favoritos o deja que WTF genere una secuencia de looks con transiciones suaves.</p></article>
   </div>
-  <p class="release-link"><a href="{{ '/es/docs/overview/changelog-baseline/' | relative_url }}">Ver las novedades de v{{ site.data.product.latest_release.version }}</a></p>
+  <p class="release-link"><a href="{{ '/es/docs/overview/features/' | relative_url }}">Explora los controles visuales</a></p>
 </section>
 
 <section class="section-band" aria-labelledby="workflow-heading">

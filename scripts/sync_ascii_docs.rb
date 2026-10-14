@@ -5,14 +5,22 @@ require "fileutils"
 require "digest"
 require "pathname"
 require "json"
+require "open3"
+require "yaml"
 
 ROOT = Pathname(__dir__).join("..").expand_path
 SOURCE_ROOT = Pathname(ENV.fetch("ASCII_VJ_SOURCE", ROOT.join("../ascii-vj-remix").to_s)).expand_path
 SOURCE_REPO = ENV.fetch("ASCII_VJ_REPO", "aindaco1/ascii-vj-remix")
-BLOB_BASE = "https://github.com/#{SOURCE_REPO}/blob/main/"
-TREE_BASE = "https://github.com/#{SOURCE_REPO}/tree/main/"
+SOURCE_REF = ENV.fetch("ASCII_VJ_SOURCE_REF") do
+  revision, status = Open3.capture2("git", "-C", SOURCE_ROOT.to_s, "rev-parse", "HEAD", err: File::NULL)
+  status.success? ? revision.strip : "main"
+end
+BLOB_BASE = "https://github.com/#{SOURCE_REPO}/blob/#{SOURCE_REF}/"
+TREE_BASE = "https://github.com/#{SOURCE_REPO}/tree/#{SOURCE_REF}/"
 ICON_SOURCE = "src-tauri/icons/icon.png"
 ICON_DESTINATION = "assets/images/ascii-vj-remix-app-icon.png"
+RELEASE_TARGET_FILE = ROOT.join("_data/release_target.yml")
+RELEASE_TARGET = RELEASE_TARGET_FILE.file? ? YAML.safe_load(RELEASE_TARGET_FILE.read).fetch("version") : nil
 
 SOURCE_FILES = {
   readme: "README.md",
@@ -81,6 +89,7 @@ SECTION_ALIASES = {
   "README.md#what-this-project-is" => "/docs/overview/ascii-vj-remix/#what-this-project-is",
   "README.md#current-capabilities" => "/docs/overview/features/#current-capabilities",
   "docs/USER_GUIDE.md#current-capabilities" => "/docs/overview/features/#current-capabilities",
+  "docs/USER_GUIDE.md#native-video-sharing" => "/docs/overview/features/#native-video-sharing",
   "docs/USER_GUIDE.md#spatial-visuals-and-trails-110" => "/docs/overview/features/#spatial-visuals-and-trails-110",
   "docs/USER_GUIDE.md#fractal-accents" => "/docs/overview/features/#fractal-accents",
   "docs/USER_GUIDE.md#system-requirements" => "/docs/overview/ascii-vj-remix/#system-requirements",
@@ -121,12 +130,45 @@ module SyncAsciiDocs
     markdown[/^##\s+\[#{Regexp.escape(version)}\]\s+-\s+(\d{4}-\d{2}-\d{2})\s*$/, 1] || ""
   end
 
+  def site_release_version(markdown, target: RELEASE_TARGET)
+    target || released_version(markdown)
+  end
+
   def released_body(markdown, version)
     escaped = Regexp.escape(version)
-    match = markdown.match(/^##\s+\[#{escaped}\]\s+-\s+\d{4}-\d{2}-\d{2}\s*\n(?<body>[\s\S]*?)(?=^##\s+|\z)/)
+    match = markdown.match(/^##\s+\[#{escaped}\]\s+-\s+(?:\d{4}-\d{2}-\d{2}|Unreleased)\s*\n(?<body>[\s\S]*?)(?=^##\s+|\z)/)
     raise "Missing release notes for #{version}" unless match
 
     match[:body].strip
+  end
+
+  def upcoming_version(markdown)
+    markdown[/^##\s+\[([0-9]+\.[0-9]+\.[0-9]+)\]\s+-\s+Unreleased\s*$/, 1]
+  end
+
+  def candidate_notice
+    changelog = read_source("CHANGELOG.md")
+    upcoming = upcoming_version(changelog)
+    return "" unless upcoming && upcoming != site_release_version(changelog)
+
+    "**Upcoming #{upcoming} — unpublished candidate.** These guides describe the [pinned source snapshot](#{TREE_BASE.chomp('/')}). Downloads remain on **#{released_version(changelog)}**. See the [candidate release record](#{source_link("docs/releases/RELEASE_#{upcoming}.md")}) for completed checks and open acceptance gates."
+  end
+
+  def upcoming_notes(changelog)
+    upcoming = upcoming_version(changelog)
+    return "" unless upcoming
+
+    body = section(changelog, "[#{upcoming}] - Unreleased")
+    "## Upcoming #{upcoming} Release Notes\n\n#{rewrite_links(body, 'CHANGELOG.md')}"
+  end
+
+  def release_copy(content, target: RELEASE_TARGET)
+    return content unless target
+
+    content
+      .gsub("[#{target}] - Unreleased", "[#{target}]")
+      .gsub("Release candidate; publication and acceptance status are tracked in the", "Release scope and platform validation are tracked in the")
+      .gsub("Available in the #{target} candidate; see [release status]", "Added in #{target}; see [release record]")
   end
 
   def source_sections(source, headings)
@@ -174,6 +216,9 @@ module SyncAsciiDocs
     front = ["---", "title: #{title.inspect}", "description: #{page_description(title).inspect}", "nav_order: #{nav_order}"]
     front << "parent: #{parent.inspect}" if parent
     front << "---"
+    notice = candidate_notice
+    body = body.sub(/^(# [^\n]+)\n/, "\\1\n\n#{notice}\n") unless notice.empty?
+    body = release_copy(body)
     target.write((front + ["", body.strip, ""]).join("\n"))
   end
 
@@ -184,7 +229,7 @@ module SyncAsciiDocs
 
   def pages
     changelog = read_source("CHANGELOG.md")
-    version = released_version(changelog)
+    version = site_release_version(changelog)
     pkg = package_json
     commands = command_rows(pkg)
 
@@ -196,7 +241,7 @@ module SyncAsciiDocs
 
         ASCII VJ Remix is a local-first desktop visualizer and renderer workbench. For users, it exists to give DJs a manageable visualizer and VJs fine-grained ASCII/video filter control. For developers, it is a Tauri desktop application with a dense renderer/control surface, native output path, local media adapters, audio-reactive modulation, and release/update infrastructure.
 
-        These guides follow merged changes on the mother repository's `main` branch. The [Release Baseline](/docs/overview/changelog-baseline/) identifies the latest dated release, **#{version}**. Changes after that release are labeled separately; source, CI, desktop publication, relay deployment, and hardware acceptance are distinct.
+        These guides describe **#{version}**, using the imported source snapshot from the mother repository. See the [Release Baseline](/docs/overview/changelog-baseline/) for release notes and the source-linked guides for architecture, setup, and validation.
 
         ## Start Here
 
@@ -223,7 +268,7 @@ module SyncAsciiDocs
       product_overview: <<~MD,
         # ASCII VJ Remix
 
-        These sections follow the mother repository's `main` branch. See the [Release Baseline](/docs/overview/changelog-baseline/) for **#{version}** release notes. Product identity, requirements, and hardware guidance are selected directly from their canonical guides.
+        These sections follow the imported source snapshot. See the [Release Baseline](/docs/overview/changelog-baseline/) for **#{version}** release notes. Product identity, requirements, and hardware guidance are selected directly from their canonical guides.
 
         #{source_sections("README.md", ["What This Project Is"])}
 
@@ -245,11 +290,13 @@ module SyncAsciiDocs
       release_baseline: <<~MD,
         # Release Baseline
 
-        The latest dated changelog entry is **#{version}**. This page excludes Unreleased entries; the [Changelog](/docs/reference/changelog/) retains them when present. Other developer guides follow merged `main`, which can include changes after the published desktop tag.
+        The current release is **#{version}**. The [Changelog](/docs/reference/changelog/) contains the full version history.
 
-        [Download v#{version} and read its publication and platform-validation notes](https://github.com/#{SOURCE_REPO}/releases/tag/v#{version}). The changelog date records the source release entry; GitHub Releases records when the downloads were published.
+        [Download v#{version}](https://github.com/#{SOURCE_REPO}/releases/tag/v#{version}).
 
         See the [Feature Set](/docs/overview/features/) for current controls and the upstream [release records](#{source_link("docs/releases/README.md")}) for version-specific validation and platform coverage.
+
+        #{upcoming_version(changelog) == version ? "" : upcoming_notes(changelog)}
 
         ## #{version} Release Notes
 
@@ -280,6 +327,7 @@ module SyncAsciiDocs
         ```bash
         git clone https://github.com/aindaco1/ascii-vj-remix.git
         cd ascii-vj-remix
+        git checkout #{SOURCE_REF}
         ```
 
         #{source_sections("docs/CONTRIBUTORS.md", ["Prerequisites", "First-Time Setup"])}
@@ -292,7 +340,7 @@ module SyncAsciiDocs
 
         ## Development Boundary
 
-        Do not add hosted fonts, CDNs, online decoders, telemetry, or hosted runtime dependencies. Keep runtime assets bundled locally and selected user media local.
+        Do not add hosted fonts, CDNs, online decoders, telemetry, or hosted runtime dependencies. Keep runtime assets bundled locally. Media stays local unless the user enables video sharing: NDI uses the LAN; Syphon shares with apps on the same Mac. Transport audio is not supported.
 
         #{source_note(["docs/CONTRIBUTORS.md", "docs/TESTING.md", "docs/RELEASING.md"])}
       MD
@@ -373,7 +421,7 @@ module SyncAsciiDocs
         | `README.md` | Product scope and lineage; upstream installation and first-run entry point. |
         | `docs/README.md` | Upstream documentation ownership and navigation. |
         | `docs/USER_GUIDE.md` | Detailed feature set, system requirements, hardware, and thermal guidance. Full usage, permissions, and troubleshooting remain linked upstream. |
-        | `CHANGELOG.md` | Current release baseline, recent behavior changes, security notes, and validation expectations. |
+        | `CHANGELOG.md` | Dated release baseline and separately labeled upcoming changes, security notes, and validation expectations. |
         | `docs/RENDERING_ENGINE.md` | Source flow, parameter model, renderer backends, effective params, Pop Out, audio, and stream paths. |
         | `docs/CONTRIBUTORS.md` | Quickstart, local app identity, contribution workflow, FFmpeg, and Podman. |
         | `docs/SHARED_DESKTOP_MIGRATION.md` | Shared Desktop Services: package ownership, validation, rollback, and post-release source changes. Exact pins remain in the linked `platform-desktop.json`. |
@@ -396,6 +444,8 @@ module SyncAsciiDocs
         [Release records](#{source_link("docs/releases/README.md")}) preserve dated decisions and evidence. Use [Release and Updates](/docs/operations/release/) for the current procedure, [Testing](/docs/operations/testing/) for verification, and [Roadmap](/docs/reference/roadmap/) for prospective work.
 
         ## Regenerate Docs
+
+        Source links are pinned to the imported revision. The sync reads a local checkout; set `ASCII_VJ_SOURCE` for another checkout and `ASCII_VJ_SOURCE_REF` for an exported snapshot's commit. Inspect its branch, commit and working tree before importing. Website launch metadata is maintained separately from source validation records.
 
         ```bash
         ruby scripts/sync_ascii_docs.rb
@@ -447,7 +497,9 @@ module SyncAsciiDocs
     raise "Source repo not found: #{SOURCE_ROOT}" unless SOURCE_ROOT.directory?
     SOURCE_FILES.each_value { |file| read_source(file) }
     changelog = read_source("CHANGELOG.md")
-    version = released_version(changelog)
+    version = site_release_version(changelog)
+    upcoming = upcoming_version(changelog)
+    upcoming = nil if upcoming == version
     # Resolve every source section/link before mutating generated pages or data.
     generated_pages = pages
     icon_sha256 = sync_app_icon
@@ -457,6 +509,9 @@ module SyncAsciiDocs
       latest_release:
         version: #{version.inspect}
         date: #{released_date(changelog, version).inspect}
+      #{upcoming ? "upcoming_release:\n  version: #{upcoming.inspect}" : ""}
+      docs_source:
+        ref: #{SOURCE_REF.inspect}
       app_icon:
         path: #{("/" + ICON_DESTINATION).inspect}
         sha256: #{icon_sha256.inspect}

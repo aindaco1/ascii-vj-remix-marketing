@@ -23,7 +23,7 @@ Bundled media fixture paths are generalized in this public reference. Use `packa
 | `npm run preview` | `vite preview --host 127.0.0.1 --port 8010` |
 | `npm run check` | `npm run check:offline` |
 | `npm run check:offline` | `npm run build && node scripts/check_offline_bundle.mjs` |
-| `npm run check:desktop` | `npm run check:offline && npm run test:smoke-diagnostics && npm run check:tauri-policy && npm run check:icons && npm run check:glyph-atlas && npm run test:release-build-reuse && npm run test:spatial && npm run test:render-math && npm run test:palette-cycling && npm run test:preset-backend-contract && npm run test:preset-playlists && npm run test:canvas-readback && npm run test:renderer-fallback && npm run test:renderer-resources && npm run test:media-source-policy && npm run test:audio-reactive && npm run test:midi && npm run test:crash-report-ui && npm run test:crash-relay && npm run test:output-display && npm run test:desktop-updater && npm run test:updater-manifest && npm run test:macos-artifacts && npm run test:macos-secret-args && npm run test:windows-secret-args && npm run test:ffmpeg-policy && npm run check:ffmpeg-resources && npm run test:rust && npm run tauri:build:dev -- --debug --no-bundle` |
+| `npm run check:desktop` | `npm run check:offline && npm run test:smoke-diagnostics && npm run check:tauri-policy && npm run check:icons && npm run check:glyph-atlas && npm run test:release-build-reuse && npm run test:spatial && npm run test:render-math && npm run test:palette-cycling && npm run test:preset-backend-contract && npm run test:preset-playlists && npm run test:canvas-readback && npm run test:renderer-fallback && npm run test:renderer-resources && npm run test:media-source-policy && npm run test:audio-reactive && npm run test:midi && npm run test:crash-report-ui && npm run test:crash-relay && npm run test:output-display && npm run test:desktop-updater && npm run test:updater-manifest && npm run test:macos-artifacts && npm run test:macos-secret-args && npm run test:windows-secret-args && npm run test:ffmpeg-policy && npm run check:ffmpeg-resources && npm run check:video-io-resources && npm run test:rust && npm run tauri:build:dev -- --debug --no-bundle` |
 | `npm run check:release` | `npm run check:offline && npm run check:tauri-policy && npm run check:icons && npm run check:glyph-atlas && npm run test:release-build-reuse && npm run test:spatial && npm run test:render-math && npm run test:palette-cycling && npm run test:preset-backend-contract && npm run test:preset-playlists && npm run test:canvas-readback && npm run test:renderer-fallback && npm run test:renderer-resources && npm run test:media-source-policy && npm run test:audio-reactive && npm run test:midi && npm run test:crash-report-ui && npm run test:crash-relay && npm run test:output-display && npm run test:desktop-updater && npm run test:updater-manifest && npm run test:macos-artifacts && npm run test:macos-secret-args && npm run test:windows-secret-args && npm run test:ffmpeg-policy && npm run check:release-runtime && npm run test:rust` |
 | `npm run check:bundle` | `node scripts/check_tauri_bundle.mjs` |
 | `npm run check:bundle:debug` | `node scripts/check_tauri_bundle.mjs --profile debug --expected-bundle-id com.asciline.remix.dev` |
@@ -32,7 +32,7 @@ Bundled media fixture paths are generalized in this public reference. Use `packa
 | `npm run check:icons` | `node scripts/check_app_icons.mjs` |
 | `npm run check:glyph-atlas` | `node scripts/check_glyph_atlas.mjs` |
 | `npm run check:ffmpeg-release` | `node scripts/check_ffmpeg_resources.mjs --require-current-platform` |
-| `npm run check:release-runtime` | `npm run test:ffmpeg-source-build && npm run check:ffmpeg-release` |
+| `npm run check:release-runtime` | `npm run test:ffmpeg-source-build && npm run check:ffmpeg-release && npm run check:video-io-resources` |
 | `npm run check:macos-notarization` | `node scripts/check_macos_notarization.mjs --profile release` |
 | `npm run check:windows-authenticode` | `node scripts/check_windows_authenticode.mjs --profile release` |
 | `npm run check:windows-gui` | `node scripts/check_windows_gui_subsystem.mjs --profile release` |
@@ -41,7 +41,7 @@ Bundled media fixture paths are generalized in this public reference. Use `packa
 | `npm run bundle:debug` | `npm run tauri:build:dev -- --debug && npm run check:bundle:debug` |
 | `npm run bundle:test` | `npm run check:ffmpeg-release && npm run tauri:build:dev -- --bundles nsis,msi && node scripts/check_tauri_bundle.mjs --profile release --expected-bundle-id com.asciline.remix.dev && npm run check:windows-gui` |
 | `npm run bundle:test:linux` | `npm run check:ffmpeg-release && npm run tauri:build:dev -- --bundles appimage,deb,rpm && node scripts/check_tauri_bundle.mjs --profile release --expected-bundle-id com.asciline.remix.dev` |
-| `npm run bundle:release` | `npm run ffmpeg:build-sidecar && npm run check:release && npm run tauri:build && npm run check:bundle:release` |
+| `npm run bundle:release` | `npm run video-io:stage && npm run ffmpeg:build-sidecar && npm run check:release && npm run tauri:build && npm run check:bundle:release` |
 | `npm run desktop:run-local` | `bash scripts/run_local_desktop_app.sh` |
 | `npm run desktop:run-local:foreground` | `ASCILINE_FOREGROUND=1 bash scripts/run_local_desktop_app.sh` |
 | `npm run desktop:run-local:reset` | `ASCILINE_RESET_TCC=1 bash scripts/run_local_desktop_app.sh` |
@@ -106,6 +106,10 @@ Bundled media fixture paths are generalized in this public reference. Use `packa
 | `npm run test:spatial` | `node scripts/test_spatial.mjs && node scripts/test_fractal_accents.mjs && node scripts/test_wtf_visibility.mjs` |
 | `npm run smoke:spatial` | `node scripts/smoke_spatial.mjs` |
 | `npm run smoke:wtf` | `node scripts/smoke_wtf_visibility.mjs` |
+| `npm run video-io:stage` | `node scripts/stage_video_io.mjs` |
+| `npm run test:video-io-alpha` | `node scripts/test_video_io_alpha.mjs` |
+| `npm run check:video-io-resources` | `node scripts/check_video_io_resources.mjs` |
+| `npm run test:video-io-runtime` | `node scripts/test_video_io_runtime.mjs` |
 
 ## Command Guidance
 
@@ -119,7 +123,7 @@ Bundled media fixture paths are generalized in this public reference. Use `packa
 ## Source Material
 
 This page is generated from ASCII VJ Remix source material. Primary sources:
-- [package.json](https://github.com/aindaco1/ascii-vj-remix/blob/main/package.json)
-- [docs/CONTRIBUTORS.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/CONTRIBUTORS.md)
-- [docs/TESTING.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/TESTING.md)
-- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/CHANGELOG.md)
+- [package.json](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/package.json)
+- [docs/CONTRIBUTORS.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/CONTRIBUTORS.md)
+- [docs/TESTING.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/TESTING.md)
+- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/CHANGELOG.md)

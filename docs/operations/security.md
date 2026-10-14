@@ -20,8 +20,8 @@ FFmpeg sidecars, signed update artifacts, and reviewed/sanitized crash reports.
 - Do not add CDNs, hosted fonts, hosted codecs, telemetry, hosted renderers, or
   runtime dependency downloads.
 - Treat the GitHub Releases updater and production-only crash reporter as the
-  only intentional online runtime paths.
-- Keep user-selected media, camera frames, and audio analysis local.
+  intentional internet runtime paths; explicitly enabled NDI uses the LAN.
+- Keep media and audio analysis local unless the user enables video sharing.
 - Require explicit user selection before reading a local file.
 - Keep Tauri capabilities narrow and window-specific.
 - Keep the output window as a presentation surface, not a second privileged app
@@ -141,7 +141,7 @@ The shared relay also has separately gated adapters for Podcast Visualizer,
 MKV Magic, Auto Subtitle, CutNotes, Road Notice, Paper, and Record. Each owns a
 bounded allowlisted schema and fixed repository routing while reusing serialized
 issue aggregation. These adapters do not broaden the ASCII desktop report
-contract. The [relay guide](https://github.com/aindaco1/ascii-vj-remix/blob/main/crash-relay/README.md) owns route-specific schemas,
+contract. The [relay guide](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/crash-relay/README.md) owns route-specific schemas,
 deployment evidence, and deduplication limits; the
 [migration guide](/docs/development/shared-desktop-services/) records shared package ownership
 and changes after the latest desktop release.
@@ -462,8 +462,28 @@ Report security issues privately to:
 Include the operating system, app version, source type, whether Pop Out was
 active, and any relevant permission or updater state.
 
+## Native Video Transport Boundary
+
+NDI discovery/input/output is an explicit user-directed LAN media feature.
+Transport switches are off on launch. No SDK is downloaded at runtime, the
+WebView CSP is unchanged, and FFmpeg remains limited to local media protocols.
+The NDI attribution anchor is the only allowed external documentation link in
+the offline asset check; scripts, images, styles and modules remain local.
+
+Only the main window can configure/discover/read/write native video. Rust
+validates selected sources, output sizes/rates/names, frame dimensions/strides,
+packet sizes and generations before allocating or accepting pixels. Frame
+storage and GPU work are bounded. Source names, network addresses, identifiers
+and raw frames stay out of uploaded diagnostic reports. Syphon is local Metal
+texture sharing. Both transports omit audio.
+
+Runtime provenance and bundled notices are in `src-tauri/resources/video-io/`.
+Mac nested code is signed with the application's team; library validation is
+not disabled. Release acceptance includes the actual NDI 6.3.2 agreement,
+network permissions/firewall behavior and installed runtime loading.
+
 
 ## Source Material
 
 This page is generated from ASCII VJ Remix source material. Primary sources:
-- [docs/SECURITY.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/SECURITY.md)
+- [docs/SECURITY.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/SECURITY.md)

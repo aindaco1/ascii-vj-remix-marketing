@@ -32,7 +32,7 @@ desktop-only feature is added.
 | `media/` | Built-in demo image/video and hidden development fixtures. |
 | `experiments/` | Legacy/adaptive codec vector and stream experiments. |
 | `scripts/` | Build checks, Podman setup, release helpers, updater helpers, FFmpeg staging/build scripts, and smoke tests. |
-| `docs/` | [Documentation index](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/README.md), user/developer guides, practice guides, release records, and performance evidence. |
+| `docs/` | [Documentation index](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/README.md), user/developer guides, practice guides, release records, and performance evidence. |
 
 ## Prerequisites
 
@@ -46,11 +46,12 @@ Minimum development tools:
 
 Platform-specific desktop prerequisites:
 
-- macOS: Xcode command line tools.
+- macOS: full Xcode and its Metal toolchain for Syphon.
 - Windows: Visual Studio Build Tools with the C++ workload and WebView2
   runtime.
 - Linux: WebKitGTK 4.1 development packages, appindicator, ALSA development
-  headers, librsvg, OpenSSL, patchelf, and build tools.
+  headers, librsvg, OpenSSL, patchelf, and build tools. Native NDI discovery also
+  requires the Avahi client/common libraries and a running `avahi-daemon` service.
 
 Optional but useful:
 
@@ -66,7 +67,13 @@ Install JavaScript dependencies:
 ```bash
 git submodule update --init shared/dust-wave-platform
 npm ci
+npm run video-io:stage
 ```
+
+SDK staging downloads pinned build inputs from official sources. It supports
+macOS arm64 and Windows/Linux x64, and must run before desktop builds/checks.
+The browser-only development path does not use native transports. See
+[native runtime packaging](/docs/operations/release/#native-video-runtime-packaging).
 
 Run the browser dev server:
 
@@ -131,6 +138,7 @@ archiving.
 | `npm run dev` | Browser dev server on `127.0.0.1:8010`. |
 | `npm run build` | Vite production build plus runtime asset copy. |
 | `npm run preview` | Preview the production build. |
+| `npm run video-io:stage` | Stage pinned NDI/Syphon runtime libraries and notices. |
 | `npm run tauri:dev` | Tauri desktop dev mode. |
 | `npm run tauri:build:dev -- --bundles app` | Optimized macOS development app. |
 | `npm run bundle:debug` | Build and validate a local debug desktop bundle. |
@@ -152,7 +160,7 @@ and verifies the pinned FFmpeg/ffprobe resources for each package set before
 bundling. The
 `ascii-vj-remix-windows-test-<commit>` and
 `ascii-vj-remix-linux-test-<commit>` artifacts are retained for 14 days. See
-[Linux VM QA](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/LINUX_VM_QA.md) for the maintained VM matrix.
+[Linux VM QA](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/LINUX_VM_QA.md) for the maintained VM matrix.
 
 ## Podman Development Shell
 
@@ -260,7 +268,7 @@ Keep capabilities narrow:
 The MIDI command surface is main-window only. Native MIDI code lives
 in `src-tauri/src/midi.rs`; the first supported port is the DIN-connected
 mioXC. Do not grant MIDI or SysEx commands to the output window. See
-[MIDI_UC33E](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MIDI_UC33E.md) before changing the hardware profile.
+[MIDI_UC33E](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/MIDI_UC33E.md) before changing the hardware profile.
 
 Select the [MIDI checks](/docs/operations/testing/#midi-uc-33e-or-sysex-changes) for mapping,
 transport, or SysEx changes.
@@ -296,13 +304,12 @@ ASCII VJ Remix Dev  com.asciline.remix.dev
 Do not use a production-named bundle for local Camera, Microphone, or System
 Audio testing.
 
-Create the stable local code-signing identity once:
+Install an Apple Development signing identity through Xcode, or select another
+Apple team identity with `ASCILINE_CODESIGN_IDENTITY`. Bundled video libraries
+require a Team ID for hardened-runtime library validation; the older self-signed
+`desktop:codesign:local` identity cannot load them.
 
-```bash
-npm run desktop:codesign:local
-```
-
-Then build, install, and launch the development app:
+Build, install, and launch the development app:
 
 ```bash
 npm run desktop:run-local -- --build
@@ -376,7 +383,7 @@ Do not commit generated sidecar binaries or private release keys.
 Follow the [Release and Updater Guide](/docs/operations/release/) for packaging, signing,
 publication, immutable artifacts, and post-publication acceptance. Use
 [Testing: Release and Updater](/docs/operations/testing/#release-and-updater) for check selection.
-Version-specific evidence lives in [release records](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/releases/README.md).
+Version-specific evidence lives in [release records](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/releases/README.md).
 
 ## Pull Request Checklist
 
@@ -402,7 +409,7 @@ references; `git diff --check` alone does not check links.
 ## License
 
 This fork retains the MIT License with an Anti-Advertisement Restriction in
-[LICENSE](https://github.com/aindaco1/ascii-vj-remix/blob/main/LICENSE). It is not the standard MIT license. Its text is unchanged
+[LICENSE](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/LICENSE). It is not the standard MIT license. Its text is unchanged
 from upstream commit
 [`95a3029679b0761663171f5b9afcf28a086a8b3c`](https://github.com/YusufB5/ASCILINE/blob/95a3029679b0761663171f5b9afcf28a086a8b3c/LICENSE)
 (May 3, 2026), which is present in this fork's history. The SHA-256 of both files
@@ -421,14 +428,36 @@ and their applicable notices and review compatibility with this fork. Do not
 assume the current upstream notice describes this fork, or assign its new SDK
 license to the older copied code without checking provenance. Bundled third-party
 assets and sidecars retain their own notices (including
-[Unifont](https://github.com/aindaco1/ascii-vj-remix/blob/main/third_party/unifont/README.md) and
-[FFmpeg](https://github.com/aindaco1/ascii-vj-remix/blob/main/src-tauri/resources/ffmpeg/README.md)).
+[Unifont](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/third_party/unifont/README.md) and
+[FFmpeg](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/src-tauri/resources/ffmpeg/README.md)).
 
 Contributions must be compatible with that license and with the project's
 local-first runtime policy.
+
+## Native Video Runtime Setup
+
+After `npm ci`, run `npm run video-io:stage`, then
+`npm run check:video-io-resources`. The staging script downloads official SDK
+archives, checks pinned hashes and copies runtime libraries and required notices. macOS
+also builds the pinned Syphon framework. It uses `ASCII_VIDEO_SDK_CACHE` or a
+system temporary cache. Read the bundled NDI and Syphon notices before building
+or redistributing these separately licensed components. Supported build hosts
+match current release architectures: Mac arm64 and Windows/Linux x64.
+
+Build with `npm run tauri:build:dev -- --bundles app` on Mac, then
+`npm run desktop:run-local`. With bundled libraries, the local installer prefers
+an installed Apple Development signing identity; set `ASCILINE_CODESIGN_IDENTITY`
+for another Apple team identity. A self-signed certificate has no Team ID and
+cannot load these libraries under hardened runtime. The script fails with a
+clear instruction if no suitable default identity is available. Production
+signing and the `com.asciline.remix.dev` identity remain separate.
+
+The desktop and release workflows stage the same pinned inputs on each platform.
+Browser-only development still works without native SDKs; transport controls
+appear only in Tauri.
 
 
 ## Source Material
 
 This page is generated from ASCII VJ Remix source material. Primary sources:
-- [docs/CONTRIBUTORS.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/CONTRIBUTORS.md)
+- [docs/CONTRIBUTORS.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/CONTRIBUTORS.md)

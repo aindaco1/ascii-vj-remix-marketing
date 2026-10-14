@@ -14,7 +14,7 @@ The sync script uses the following source files from the ASCII VJ Remix reposito
 | `README.md` | Product scope and lineage; upstream installation and first-run entry point. |
 | `docs/README.md` | Upstream documentation ownership and navigation. |
 | `docs/USER_GUIDE.md` | Detailed feature set, system requirements, hardware, and thermal guidance. Full usage, permissions, and troubleshooting remain linked upstream. |
-| `CHANGELOG.md` | Current release baseline, recent behavior changes, security notes, and validation expectations. |
+| `CHANGELOG.md` | Dated release baseline and separately labeled upcoming changes, security notes, and validation expectations. |
 | `docs/RENDERING_ENGINE.md` | Source flow, parameter model, renderer backends, effective params, Pop Out, audio, and stream paths. |
 | `docs/CONTRIBUTORS.md` | Quickstart, local app identity, contribution workflow, FFmpeg, and Podman. |
 | `docs/SHARED_DESKTOP_MIGRATION.md` | Shared Desktop Services: package ownership, validation, rollback, and post-release source changes. Exact pins remain in the linked `platform-desktop.json`. |
@@ -32,11 +32,13 @@ The sync script uses the following source files from the ASCII VJ Remix reposito
 
 ## Guide Ownership
 
-The [upstream documentation index](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/README.md) owns the full guide map, including MIDI, character-preset credits, Linux VM QA, component docs, and benchmark evidence. These specialized guides remain linked to their canonical source files.
+The [upstream documentation index](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/README.md) owns the full guide map, including MIDI, character-preset credits, Linux VM QA, component docs, and benchmark evidence. These specialized guides remain linked to their canonical source files.
 
-[Release records](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/releases/README.md) preserve dated decisions and evidence. Use [Release and Updates](/docs/operations/release/) for the current procedure, [Testing](/docs/operations/testing/) for verification, and [Roadmap](/docs/reference/roadmap/) for prospective work.
+[Release records](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/releases/README.md) preserve dated decisions and evidence. Use [Release and Updates](/docs/operations/release/) for the current procedure, [Testing](/docs/operations/testing/) for verification, and [Roadmap](/docs/reference/roadmap/) for prospective work.
 
 ## Regenerate Docs
+
+Source links are pinned to the imported revision. The sync reads a local checkout; set `ASCII_VJ_SOURCE` for another checkout and `ASCII_VJ_SOURCE_REF` for an exported snapshot's commit. Inspect its branch, commit and working tree before importing. Website launch metadata is maintained separately from source validation records.
 
 ```bash
 ruby scripts/sync_ascii_docs.rb

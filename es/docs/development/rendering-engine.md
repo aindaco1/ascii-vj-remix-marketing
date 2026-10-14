@@ -25,7 +25,7 @@ Documentos de práctica relacionados:
 
 - La salida WebGPU/WebGL es el objetivo de calidad visual.
 - Las rutas de flujo adaptable y Canvas derivadas de ASCILINE permanecen disponibles como infraestructura de compatibilidad y desarrollo.
-- El uso normal de la aplicación es local primero y sin conexión.
+- El uso normal de la app prioriza el procesamiento local y funciona sin internet; NDI usa la LAN cuando se activa expresamente.
 - Todos los controles en vivo se dirigen a través de un modelo de parámetro canónico.
 - Los ajustes preestablecidos, WTF mode, la reactividad de audio y el control MIDI componen sin bifurcar el estado del renderizador.
 - Pop Out utiliza rutas nativas de cuadros más recientes cuando están disponibles para minimizar la latencia de la cámara en vivo.
@@ -43,7 +43,7 @@ Source selection
   -> effective params
   -> renderer runtime
   -> main preview
-  -> optional native/browser Pop Out
+  -> optional shared native output (Pop Out / NDI / Syphon)
 ```
 
 La selección de fuente puede provenir de medios integrados, archivos seleccionados por el usuario, transmisiones de cámara, cámaras mixtas o sesiones de transmisión de desarrollo. El tiempo de ejecución del renderizador elige el mejor backend para la fuente y el entorno activos.
@@ -156,6 +156,18 @@ registered media id
 ```
 
 La interfaz de usuario de origen normal oculta el modo de transmisión. El trabajo de productización potencial se rastrea en [Roadmap](/es/docs/reference/roadmap/).
+
+<a id="native-video-io"></a>
+
+## Entrada y salida de video nativo
+
+`renderers/desktop/video-io.js` gestiona los controles de fuente y salida y la IPC binaria acotada. `src-tauri/src/video_io/` gestiona una sesión de entrada, un espacio para el fotograma más reciente, el renderizador nativo compartido fuera de pantalla y los destinos que se activan de forma independiente. El descubrimiento, la captura y el envío NDI utilizan el SDK estándar mediante una ABI de C limitada; Syphon usa la API pública Metal incluida a través de `native/video_syphon.m`.
+
+Los fotogramas NDI normalizan el paso de fila y el orden de canales a RGBA8 con alfa sin premultiplicar. Las texturas Syphon se retienen y se importan al dispositivo Metal de wgpu existente. La vista previa de la entrada en vivo usa el fotograma binario más reciente; no gestiona el receptor. La salida acelerada reutiliza las canalizaciones nativas de celdas y glifos y los parámetros efectivos canónicos. Los presets de Canvas envían sus píxeles terminados, incluida la capa saliente de la transición. Las fuentes locales de imagen, video y cámara usan el mismo adaptador; no se crea otro decodificador por cada transporte.
+
+La textura RGBA terminada alimenta la lectura de NDI, los espacios de exportación GPU retenidos de Syphon y Pop Out. El máximo de trabajo simultáneo de renderizado, lectura y exportación es de tres fotogramas; los más recientes sustituyen a los anteriores sin alargar una cola. El formato de salida es independiente del tamaño de la ventana. Pop Out compone la cobertura sobre su fondo de pantalla; las salidas de transporte la conservan. El puente de transporte no recibe audio.
+
+La cobertura viaja por separado de `cell.a` (dirección del glifo), con un historial de cobertura para la retroalimentación. La composición de glifos y fondo recibe la cobertura una sola vez; las transiciones interpolan RGBA premultiplicado antes de volver a RGBA sin premultiplicar para el transporte. Los cambios de generación de la fuente limpian el historial, la vista previa y la lectura, y rechazan la IPC obsoleta. La red del SDK se activa expresamente; las listas de fuentes, los identificadores y los píxeles no forman parte de los informes.
 
 <a id="parameter-model"></a>
 
@@ -562,7 +574,7 @@ UC-33e DIN output
 - Captura/restaura paquetes SysEx opacos delimitados a través de la salida mioXC seleccionada sin exponer los permisos MIDI a la ventana de salida.
 - Las capas de mapeo y transporte están cubiertas por pruebas automatizadas, pero la restauración/verificación física del banco completo sigue siendo una brecha de aceptación experimental.
 
-Consulte [UC-33e y mioXC MIDI Control](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MIDI_UC33E.md) para ver el mapa físico.
+Consulte [UC-33e y mioXC MIDI Control](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/MIDI_UC33E.md) para ver el mapa físico.
 
 <a id="packaging-and-offline-runtime"></a>
 
@@ -641,4 +653,4 @@ Al cargar presets integrados normales se conservan los campos canónicos del ace
 ## Material de origen
 
 Esta página se genera a partir del material fuente de ASCII VJ Remix. Fuentes primarias:
-- [docs/RENDERING_ENGINE.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/RENDERING_ENGINE.md)
+- [docs/RENDERING_ENGINE.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/RENDERING_ENGINE.md)

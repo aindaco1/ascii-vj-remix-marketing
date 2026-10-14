@@ -132,4 +132,4 @@ decisions rather than undocumented current capabilities.
 ## Source Material
 
 This page is generated from ASCII VJ Remix source material. Primary sources:
-- [docs/I18N.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/I18N.md)
+- [docs/I18N.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/I18N.md)

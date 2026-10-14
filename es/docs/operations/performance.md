@@ -14,6 +14,14 @@ Esta guía documenta el modelo de rendimiento actual, el comportamiento de acept
 
 El trabajo de rendimiento consiste en el ritmo de fotogramas, la salida GPU, la decodificación de medios, la latencia de la cámara, la respuesta reactiva al audio, el Pop Out nativo y el mantenimiento de la capacidad de respuesta de la interfaz de usuario de control denso mientras el renderizador está bajo carga.
 
+<a id="native-video-io-target"></a>
+
+## Objetivo de rendimiento del video nativo
+
+1080p60 es el objetivo para compartir video nativo. No es una garantía medida para todos los looks y equipos. La versión candidata Dev conserva los fotogramas más recientes y limita el trabajo GPU, la lectura y la exportación a tres fotogramas simultáneos. La captura y el envío NDI se ejecutan en trabajadores separados; la entrada y salida Syphon permanecen en Metal, salvo la lectura de la vista previa. Los presets de Canvas requieren transferir por CPU los fotogramas terminados y pueden tener un límite menor.
+
+Las pruebas breves en Mac con la app instalada, una entrada, ambos transportes y Pop Out midieron aproximadamente 52–54 fotogramas renderizados por segundo a 1080p, sin descartes en la preparación de fotogramas. Esto no mide la antigüedad de los fotogramas recibidos ni constituye una prueba continua de 30 minutos. Publica límites de rendimiento sostenido solo después de las pruebas con hardware y aplicaciones identificados en la [evidencia de la versión candidata](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/releases/NATIVE_VIDEO_IO_DEV.md).
+
 <a id="performance-principles"></a>
 
 ## Principios de desempeño
@@ -83,7 +91,7 @@ Normas:
 
 La etapa espacial conserva los límites de densidad existentes. La geometría se calcula una vez por celda, con hasta 64 pasos de cuadrícula (48 de trazado de esferas para Orbitals); los reflejos añaden un rayo acotado. La realimentación reutiliza dos texturas de historial en coma flotante y la salida nativa conserva la caché de cargas por versión de la fuente. La caché compartida de visibilidad por columna sigue siendo una optimización futura.
 
-La carga optimizada de ciudad, video y audio sintético a 640 columnas midió 39,1 FPS y 33,15 ms P95 en el preview con Pop Out abierto, y 60,1 FPS en la presentación nativa, en un M1 Max/64 GB con un 85 % de material de entrada. La prueba por fases superó los umbrales existentes, aunque persisten picos ocasionales. El alcance exacto, los fotogramas más lentos y los límites de la validación manual y del hardware mínimo constan en el [registro de la versión 1.1.0](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/releases/RELEASE_1.1.0.md#earlier-local-validation-before-fractal-follow-up).
+La carga optimizada de ciudad, video y audio sintético a 640 columnas midió 39,1 FPS y 33,15 ms P95 en el preview con Pop Out abierto, y 60,1 FPS en la presentación nativa, en un M1 Max/64 GB con un 85 % de material de entrada. La prueba por fases superó los umbrales existentes, aunque persisten picos ocasionales. El alcance exacto, los fotogramas más lentos y los límites de la validación manual y del hardware mínimo constan en el [registro de la versión 1.1.0](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/releases/RELEASE_1.1.0.md#earlier-local-validation-before-fractal-follow-up).
 
 <a id="096-measured-optimization-pass"></a>
 
@@ -433,7 +441,7 @@ Las canalizaciones WebGPU se compilan de forma asincrónica y se comparten por d
 
 La reutilización de la búsqueda de la paleta del navegador tiene un límite de 16 tablas (512 KiB); La reutilización nativa tiene un límite de 16 tablas (2 MiB más claves pequeñas). El orden de luminancia nativo se calcula una vez por instantánea de parámetro y el inicio del vídeo utiliza una sonda para geometría/FPS. Las actualizaciones en vivo de la tabla de visualización reutilizan los buffers y nunca reconstruyen estos recursos. La inicialización fallida del renderizador ahora destruye recursos parciales y WebGL2 también libera su búfer cuádruple/VAO.
 
-La prueba de humo de rendimiento de la interfaz de usuario ahora informa la finalización/fallo real de la interfaz de usuario con un tiempo de espera limitado. La expiración del temporizador por sí sola nunca es una medida pasajera. Los resultados locales exactos y las limitaciones de la plataforma pertenecen al registro de versión [1.0.4](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/releases/RELEASE_1.0.4.md).
+La prueba de humo de rendimiento de la interfaz de usuario ahora informa la finalización/fallo real de la interfaz de usuario con un tiempo de espera limitado. La expiración del temporizador por sí sola nunca es una medida pasajera. Los resultados locales exactos y las limitaciones de la plataforma pertenecen al registro de versión [1.0.4](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/releases/RELEASE_1.0.4.md).
 
 
 Los acentos fractales añaden un bucle de Julia acotado con salida anticipada (máximo de 24 iteraciones) a la pasada de celdas existente cuando están activados en cualquier modo visual. Off, Amount en cero o Coverage en cero omiten el bucle. El vidrio espacial deforma el rayo principal de la escena sin trazados adicionales. Canvas reutiliza la memoria del campo y lo mantiene en caché cuando el reloj no cambia. Los límites de cuadrícula y la resolución existentes se conservan. Usa el barrido de presets de la vista principal instalada y una prueba de humo optimizada de interfaz y salida nativa con `ASCILINE_UI_PERF_SMOKE_SPATIAL='{"accentAmount":0.5,"accentCoverage":1}'` para medir la función en el dispositivo objetivo; el hardware de gama baja necesita su propia ejecución.
@@ -444,4 +452,4 @@ Los acentos fractales añaden un bucle de Julia acotado con salida anticipada (m
 ## Material de origen
 
 Esta página se genera a partir del material fuente de ASCII VJ Remix. Fuentes primarias:
-- [docs/PERFORMANCE.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/PERFORMANCE.md)
+- [docs/PERFORMANCE.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/PERFORMANCE.md)

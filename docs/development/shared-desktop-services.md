@@ -14,7 +14,7 @@ and installed-app acceptance remain separate.
 
 - Consumer baseline: `a11e7f0c90f22d9ab1ebbaa4a502c0fc3771e534`.
 - Previous Platform pin: `60d439b887f1244f82ff232c849d74152b28c776`.
-- New immutable commit and exact versions: [platform-desktop.json](https://github.com/aindaco1/ascii-vj-remix/blob/main/platform-desktop.json).
+- New immutable commit and exact versions: [platform-desktop.json](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/platform-desktop.json).
 - Shared surface: Tauri progress/manifest helpers, reviewed-report sender, serialized aggregation and GitHub issue reconciliation.
 
 Keep relay routes, product schemas, fingerprints, authentication, issue text, bindings, storage keys, migration classes, rate limits and operator controls local. Existing Road Notice routing is preserved. App startup and install/restart UI stay local.
@@ -24,16 +24,16 @@ Keep relay routes, product schemas, fingerprints, authentication, issue text, bi
 The 1.0.6 maintenance context also includes these changes merged on September 25,
 2026 after the desktop tag. They do not add ASCII VJ app features:
 
-- The [Record adapter](https://github.com/aindaco1/ascii-vj-remix/blob/main/crash-relay/README.md#record-adapter) adds reviewed,
+- The [Record adapter](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/crash-relay/README.md#record-adapter) adds reviewed,
   bounded diagnostics through the existing relay aggregation path.
 - The Platform pin advances Desktop Core from 0.1.0 to 0.2.0 for compatible
-  legacy adapters. The [consumer manifest](https://github.com/aindaco1/ascii-vj-remix/blob/main/platform-desktop.json) remains
+  legacy adapters. The [consumer manifest](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/platform-desktop.json) remains
   the authority for the exact current revision and package versions.
 
 The published 1.0.6 desktop artifacts retain their tagged dependency revision;
 these later commits do not change those installers. Relay deployment and
 synthetic GitHub delivery have their own acceptance steps in the
-[relay guide](https://github.com/aindaco1/ascii-vj-remix/blob/main/crash-relay/README.md). A merged commit or desktop release does
+[relay guide](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/crash-relay/README.md). A merged commit or desktop release does
 not establish either result.
 
 ## Validation
@@ -80,4 +80,4 @@ ASCILINE code is excluded; this repository's retained license is unchanged.
 ## Source Material
 
 This page is generated from ASCII VJ Remix source material. Primary sources:
-- [docs/SHARED_DESKTOP_MIGRATION.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/SHARED_DESKTOP_MIGRATION.md)
+- [docs/SHARED_DESKTOP_MIGRATION.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/SHARED_DESKTOP_MIGRATION.md)

@@ -20,8 +20,8 @@ El perfil de riesgo de ASCII VJ Remix es una aplicación de escritorio Tauri loc
 
 - Mantenga la aplicación empaquetada localmente primero y fuera de línea de forma predeterminada.
 - No agregue CDN, fuentes alojadas, códecs alojados, telemetría, renderizadores alojados ni descargas de dependencias de tiempo de ejecución.
-- Trate el actualizador de versiones GitHub y el informe de fallas solo de producción como las únicas rutas de ejecución en línea intencionales.
-- Mantenga local los medios seleccionados por el usuario, los fotogramas de la cámara y el análisis de audio.
+- Considera el actualizador de GitHub Releases y el sistema de informes de fallos exclusivo de producción como las conexiones intencionales a internet durante la ejecución; NDI usa la LAN cuando se activa expresamente.
+- Mantén locales los archivos multimedia y el análisis de audio, salvo que el usuario active una salida de video compartida.
 - Requerir una selección explícita del usuario antes de leer un archivo local.
 - Mantenga las capacidades de Tauri limitadas y específicas de ventana.
 - Mantenga la ventana de salida como una superficie de presentación, no como un segundo controlador de aplicación privilegiado.
@@ -99,7 +99,7 @@ Al agregar un comando Tauri:
 
 Los informes de fallas se aceptan por preferencia y son solo de producción para el envío de la red. Las compilaciones de depuración/desarrollo pueden capturar informes locales para realizar pruebas, pero Rust se niega a enviarlos.
 
-El relay compartido también tiene adaptadores con activación independiente para Podcast Visualizer, MKV Magic, Auto Subtitle, CutNotes, Road Notice, Paper y Record. Cada uno mantiene un esquema acotado de campos permitidos y un repositorio de destino fijo, y reutiliza la agregación serializada de incidencias. No amplían los datos admitidos por los informes de ASCII VJ. La [guía del relay](https://github.com/aindaco1/ascii-vj-remix/blob/main/crash-relay/README.md) define los esquemas de cada ruta, la evidencia de despliegue y los límites de deduplicación; la [guía de migración](/es/docs/development/shared-desktop-services/) documenta los paquetes compartidos y los cambios posteriores a la última versión de escritorio.
+El relay compartido también tiene adaptadores con activación independiente para Podcast Visualizer, MKV Magic, Auto Subtitle, CutNotes, Road Notice, Paper y Record. Cada uno mantiene un esquema acotado de campos permitidos y un repositorio de destino fijo, y reutiliza la agregación serializada de incidencias. No amplían los datos admitidos por los informes de ASCII VJ. La [guía del relay](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/crash-relay/README.md) define los esquemas de cada ruta, la evidencia de despliegue y los límites de deduplicación; la [guía de migración](/es/docs/development/shared-desktop-services/) documenta los paquetes compartidos y los cambios posteriores a la última versión de escritorio.
 
 El adaptador de MKV Magic usa una entrada con activación independiente y una página de revisión del mismo origen en el navegador. Solo una acción explícita de Send envía la proyección de campos permitidos, limitada a 4 KiB; no se aceptan registros sin filtrar, medios, mensajes arbitrarios, credenciales ni incidentes completos de fallo. La página elimina los datos del fragmento antes de renderizar y usa CSP con nonce, no-referrer y no-store. Comparte la agregación serializada y el escritor de GitHub, pero no el código de la aplicación ni los permisos de escritorio. La app principal de MKV sigue sin permisos de red. El acceso al repositorio y las pruebas sintéticas sobre el despliegue se validan por separado; consulta la guía del relay para la retención y reversión.
 
@@ -330,10 +330,20 @@ Informar problemas de seguridad de forma privada a:
 
 Incluya el sistema operativo, la versión de la aplicación, el tipo de fuente, si Pop Out estaba activo y cualquier permiso relevante o estado del actualizador.
 
+<a id="native-video-transport-boundary"></a>
+
+## Límites de seguridad del transporte de video nativo
+
+El descubrimiento, la entrada y la salida NDI son funciones de video por LAN que activa expresamente el usuario. Los interruptores de transporte empiezan desactivados al iniciar la app. No se descarga ningún SDK durante la ejecución, la CSP de WebView no cambia y FFmpeg sigue limitado a protocolos multimedia locales. El enlace de atribución NDI es el único enlace externo de documentación permitido por la verificación de recursos sin conexión; scripts, imágenes, estilos y módulos siguen siendo locales.
+
+Solo la ventana principal puede configurar, descubrir, leer o escribir video nativo. Rust valida las fuentes seleccionadas, los tamaños, frecuencias y nombres de salida, las dimensiones y pasos de fila, los tamaños de paquete y las generaciones antes de asignar memoria o aceptar píxeles. El almacenamiento de fotogramas y el trabajo GPU tienen límites. Los nombres de fuentes, direcciones de red, identificadores y fotogramas sin procesar quedan fuera de los informes de diagnóstico enviados. Syphon comparte texturas Metal localmente. Ambos transportes excluyen el audio.
+
+La procedencia de las bibliotecas de ejecución y los avisos incluidos están en `src-tauri/resources/video-io/`. El código anidado de Mac se firma con el equipo de la aplicación; la validación de bibliotecas permanece activada. La aceptación del lanzamiento incluye el acuerdo real de NDI 6.3.2, el comportamiento de permisos de red y firewall y la carga de las bibliotecas instaladas.
+
 
 <a id="source-material"></a>
 
 ## Material de origen
 
 Esta página se genera a partir del material fuente de ASCII VJ Remix. Fuentes primarias:
-- [docs/SECURITY.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/SECURITY.md)
+- [docs/SECURITY.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/SECURITY.md)

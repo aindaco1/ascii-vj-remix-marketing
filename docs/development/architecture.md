@@ -25,7 +25,7 @@ ASCII/cell visuals.
 - WebGPU/WebGL output is the visual-quality target.
 - ASCILINE-derived Canvas and adaptive-stream paths remain available as
   compatibility and development infrastructure.
-- Normal app use is local-first and offline.
+- Normal app use is local-first and offline; explicitly enabled NDI uses the LAN.
 - All live controls route through one canonical parameter model.
 - Presets, WTF mode, audio reactivity, and MIDI control compose without forking
   renderer state.
@@ -44,7 +44,7 @@ Source selection
   -> effective params
   -> renderer runtime
   -> main preview
-  -> optional native/browser Pop Out
+  -> optional shared native output (Pop Out / NDI / Syphon)
 ```
 
 Source selection can come from built-in media, user-selected files, camera
@@ -156,19 +156,20 @@ Use this map to find the likely owner of a change:
 
 | Area | Primary Files |
 | --- | --- |
-| Main UI, params, presets, source controls, WTF, audio UI | [app.js](https://github.com/aindaco1/ascii-vj-remix/blob/main/app.js), [index.html](https://github.com/aindaco1/ascii-vj-remix/blob/main/index.html), [style.css](https://github.com/aindaco1/ascii-vj-remix/blob/main/style.css) |
-| GPU renderer and media source abstraction | [renderers/gpu/](https://github.com/aindaco1/ascii-vj-remix/tree/main/renderers/gpu) |
-| MIDI mapping, soft takeover, UC-33e profile | [midi-mapping.js](https://github.com/aindaco1/ascii-vj-remix/blob/main/renderers/shared/midi-mapping.js), [MIDI_UC33E](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MIDI_UC33E.md) |
-| Tauri adapter and output-display helpers | [renderers/desktop/](https://github.com/aindaco1/ascii-vj-remix/tree/main/renderers/desktop) |
-| Tauri shell, commands, permissions, updater, native audio, native output | [src-tauri/](https://github.com/aindaco1/ascii-vj-remix/tree/main/src-tauri) |
-| Native MIDI input/output and SysEx | [midi.rs](https://github.com/aindaco1/ascii-vj-remix/blob/main/src-tauri/src/midi.rs) |
-| Native Pop Out renderer | [native_output.rs](https://github.com/aindaco1/ascii-vj-remix/blob/main/src-tauri/src/native_output.rs), [gpu.rs](https://github.com/aindaco1/ascii-vj-remix/blob/main/src-tauri/src/native_output/gpu.rs) |
-| Platform-native camera paths | [native_camera.rs](https://github.com/aindaco1/ascii-vj-remix/blob/main/src-tauri/src/native_output/native_camera.rs), [ffmpeg.rs](https://github.com/aindaco1/ascii-vj-remix/blob/main/src-tauri/src/media_engine/ffmpeg.rs) |
-| Rust media engine, codec, FFmpeg sessions | [src-tauri/src/media_engine/](https://github.com/aindaco1/ascii-vj-remix/tree/main/src-tauri/src/media_engine) |
-| Built-in demo media and hidden fixtures | [media/](https://github.com/aindaco1/ascii-vj-remix/tree/main/media) |
-| Codec/vector experiments | [experiments/](https://github.com/aindaco1/ascii-vj-remix/tree/main/experiments) |
-| Build, smoke, release, Podman, FFmpeg scripts | [scripts/](https://github.com/aindaco1/ascii-vj-remix/tree/main/scripts) |
-| User/developer docs | [docs/](https://github.com/aindaco1/ascii-vj-remix/tree/main/docs) and [README](/docs/overview/ascii-vj-remix/) |
+| Main UI, params, presets, source controls, WTF, audio UI | [app.js](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/app.js), [index.html](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/index.html), [style.css](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/style.css) |
+| GPU renderer and media source abstraction | [renderers/gpu/](https://github.com/aindaco1/ascii-vj-remix/tree/512974b25a9a768c8d4cd253e3988f33578fdf86/renderers/gpu) |
+| MIDI mapping, soft takeover, UC-33e profile | [midi-mapping.js](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/renderers/shared/midi-mapping.js), [MIDI_UC33E](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/MIDI_UC33E.md) |
+| Tauri adapter and output-display helpers | [renderers/desktop/](https://github.com/aindaco1/ascii-vj-remix/tree/512974b25a9a768c8d4cd253e3988f33578fdf86/renderers/desktop) |
+| Tauri shell, commands, permissions, updater, native audio, native output | [src-tauri/](https://github.com/aindaco1/ascii-vj-remix/tree/512974b25a9a768c8d4cd253e3988f33578fdf86/src-tauri) |
+| Native MIDI input/output and SysEx | [midi.rs](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/src-tauri/src/midi.rs) |
+| Native video I/O | [video-io.js](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/renderers/desktop/video-io.js), [video_io](https://github.com/aindaco1/ascii-vj-remix/tree/512974b25a9a768c8d4cd253e3988f33578fdf86/src-tauri/src/video_io), [runtime provenance](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/src-tauri/resources/video-io/provenance.json) |
+| Native Pop Out renderer | [native_output.rs](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/src-tauri/src/native_output.rs), [gpu.rs](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/src-tauri/src/native_output/gpu.rs) |
+| Platform-native camera paths | [native_camera.rs](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/src-tauri/src/native_output/native_camera.rs), [ffmpeg.rs](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/src-tauri/src/media_engine/ffmpeg.rs) |
+| Rust media engine, codec, FFmpeg sessions | [src-tauri/src/media_engine/](https://github.com/aindaco1/ascii-vj-remix/tree/512974b25a9a768c8d4cd253e3988f33578fdf86/src-tauri/src/media_engine) |
+| Built-in demo media and hidden fixtures | [media/](https://github.com/aindaco1/ascii-vj-remix/tree/512974b25a9a768c8d4cd253e3988f33578fdf86/media) |
+| Codec/vector experiments | [experiments/](https://github.com/aindaco1/ascii-vj-remix/tree/512974b25a9a768c8d4cd253e3988f33578fdf86/experiments) |
+| Build, smoke, release, Podman, FFmpeg scripts | [scripts/](https://github.com/aindaco1/ascii-vj-remix/tree/512974b25a9a768c8d4cd253e3988f33578fdf86/scripts) |
+| User/developer docs | [docs/](https://github.com/aindaco1/ascii-vj-remix/tree/512974b25a9a768c8d4cd253e3988f33578fdf86/docs) and [README](/docs/overview/ascii-vj-remix/) |
 
 ## Non-Negotiable Constraints
 
@@ -178,7 +179,9 @@ Use this map to find the likely owner of a change:
 - Intentional online runtime paths are limited to the production app's bounded
   release-metadata check for signed updater artifacts at launch, explicit
   updater download/install actions, and production-only reviewed/sanitized
-  crash report submission.
+  crash report submission. User-enabled NDI® discovery/input/output is an
+  explicit LAN video-sharing path; Syphon is local to the Mac. See
+  [native transport security](/docs/operations/security/#native-video-transport-boundary).
 - Preserve the app name: ASCII VJ Remix.
 - Preserve the native app direction for macOS, Windows, and Linux.
 - Do not reframe browser mode as the product. Browser/Vite paths are useful for
@@ -186,7 +189,9 @@ Use this map to find the likely owner of a change:
 - Keep renderer quality high. WebGPU/WebGL output is the visual quality target.
 - Preserve fallback paths unless a replacement is implemented and tested.
 - Treat Pop Out performance and latency as critical user-facing behavior.
-- Keep user-selected local media local. Do not upload files or camera/audio data.
+- Keep user-selected local media local except for explicitly enabled video
+  sharing. Sharing and live inputs reset off on launch; no transport audio.
+  Never attach media, discovered names, network addresses or raw frames to reports.
 - Keep stats overlay user-owned. Random presets, WTF mode, and audio presets do
   not turn it off unless the user explicitly does.
 - Stream infrastructure exists but is not a normal visible source mode. Keep
@@ -197,7 +202,7 @@ Use this map to find the likely owner of a change:
 
 ## Behavior and Ownership Constraints
 
-Use the [User Guide](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/USER_GUIDE.md) for current behavior and
+Use the [User Guide](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/USER_GUIDE.md) for current behavior and
 [Rendering Engine](/docs/development/rendering-engine/) for the detailed contracts. When editing:
 
 - Preserve the clean-profile Demo Image / Classic Camera ASCII state and keep
@@ -219,7 +224,7 @@ Use the [User Guide](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/U
   Preserve safe clamps and avoid rewriting saved presets during modulation.
 - Keep UC-33e control on the documented mioXC DIN path. MIDI targets visual,
   audio, preset, and WTF behavior; it must not target source, Camera, Pop Out,
-  output-display, file, updater, or report actions. Read [MIDI_UC33E](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/MIDI_UC33E.md)
+  output-display, file, updater, or report actions. Read [MIDI_UC33E](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/MIDI_UC33E.md)
   before changing mapping or hardware policy.
 - Preserve the dense black/white/grey UI with pink/blue state accents. Do not
   reduce control density or add explanatory marketing text inside the app.
@@ -234,5 +239,5 @@ Use the [User Guide](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/U
 ## Source Material
 
 This page is generated from ASCII VJ Remix source material. Primary sources:
-- [docs/AGENTS.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/AGENTS.md)
-- [docs/RENDERING_ENGINE.md](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/RENDERING_ENGINE.md)
+- [docs/AGENTS.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/AGENTS.md)
+- [docs/RENDERING_ENGINE.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/RENDERING_ENGINE.md)

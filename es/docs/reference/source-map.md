@@ -17,7 +17,7 @@ El script de sincronización utiliza los siguientes archivos fuente del reposito
 |`README.md`|Alcance y linaje del producto; instalación aguas arriba y punto de entrada de primera ejecución.|
 |`docs/README.md`|Propiedad y navegación de la documentación ascendente.|
 |`docs/USER_GUIDE.md`|Conjunto detallado de funciones, requisitos del sistema, hardware y guía térmica. El uso completo, los permisos y la solución de problemas permanecen vinculados en sentido ascendente.|
-|`CHANGELOG.md`|Línea de base de la versión actual, cambios de comportamiento recientes, notas de seguridad y expectativas de validación.|
+|`CHANGELOG.md`|Base de la versión fechada y próximos cambios identificados por separado, notas de seguridad y expectativas de validación.|
 |`docs/RENDERING_ENGINE.md`|Flujo de origen, modelo de parámetros, backends de renderizado, parámetros efectivos, Pop Out, audio y rutas de transmisión.|
 |`docs/CONTRIBUTORS.md`|Inicio rápido, identidad de la aplicación local, flujo de trabajo de contribución, FFmpeg y Podman.|
 |`docs/SHARED_DESKTOP_MIGRATION.md`|Servicios de escritorio compartido: propiedad del paquete, validación, reversión y cambios de fuente posteriores al lanzamiento. Los pines exactos permanecen en el `platform-desktop.json` vinculado.|
@@ -37,13 +37,15 @@ El script de sincronización utiliza los siguientes archivos fuente del reposito
 
 ## Propiedad de la guía
 
-El [índice de documentación ascendente](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/README.md) posee el mapa de guía completo, incluido MIDI, créditos de caracteres preestablecidos, control de calidad de VM Linux, documentos de componentes y evidencia de referencia. Estas guías especializadas permanecen vinculadas a sus archivos fuente canónicos.
+El [índice de documentación ascendente](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/README.md) posee el mapa de guía completo, incluido MIDI, créditos de caracteres preestablecidos, control de calidad de VM Linux, documentos de componentes y evidencia de referencia. Estas guías especializadas permanecen vinculadas a sus archivos fuente canónicos.
 
-Los [registros de versiones](https://github.com/aindaco1/ascii-vj-remix/blob/main/docs/releases/README.md) conservan decisiones y evidencia fechadas. Consulte [Lanzamiento y actualizaciones](/es/docs/operations/release/) para el procedimiento actual, [Pruebas](/es/docs/operations/testing/) para la verificación y la [Hoja de ruta](/es/docs/reference/roadmap/) para el trabajo futuro.
+Los [registros de versiones](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/releases/README.md) conservan decisiones y evidencia fechadas. Consulte [Lanzamiento y actualizaciones](/es/docs/operations/release/) para el procedimiento actual, [Pruebas](/es/docs/operations/testing/) para la verificación y la [Hoja de ruta](/es/docs/reference/roadmap/) para el trabajo futuro.
 
 <a id="regenerate-docs"></a>
 
 ## Regenerar documentos
+
+Los enlaces al código fuente apuntan a la revisión importada. La sincronización lee una copia local; define `ASCII_VJ_SOURCE` para usar otra copia y `ASCII_VJ_SOURCE_REF` para indicar el commit de una exportación. Revisa la rama, el commit y el estado del árbol de trabajo antes de importar. Los metadatos de lanzamiento del sitio se mantienen por separado de los registros de validación del código fuente.
 
 ```bash
 ruby scripts/sync_ascii_docs.rb

@@ -56,7 +56,7 @@ FORBIDDEN_SPANISH_CURRENT_STATE = {
 
 ENGLISH_RELEASE_CLAIMS = {
     "dated release baseline": re.compile(
-        r"The latest dated changelog entry is \*\*([0-9]+\.[0-9]+\.[0-9]+)\*\*"
+        r"The (?:latest dated changelog entry|current release) is \*\*([0-9]+\.[0-9]+\.[0-9]+)\*\*"
     ),
     "current docs feature set": re.compile(
         r"Current (?:source )?docs describe the \*\*([0-9]+\.[0-9]+\.[0-9]+)\*\*"
@@ -83,6 +83,10 @@ SPANISH_RELEASE_CLAIMS = {
 }
 
 REQUIRED_FEATURE_MARKERS = [
+    "### Native Video Sharing",
+    "NDI High Bandwidth output is implemented",
+    "These transports carry video only",
+    "Output switches and live input connections reset on launch",
     "## Fractal Accents",
     "**Subtle Limit** starts enabled globally",
     "WTF independently adds an accent to 65% of its targets",
@@ -120,23 +124,25 @@ HOMEPAGE_MARKERS = {
         "96 built-in presets, 21 palettes",
         "Preset playlists",
         "Save a frame",
-        "Fractal Accents",
-        "Subtle Limit",
-        "Julia Glass",
-        "Phosphor Lace",
-        "Flat Media",
-        "95%",
+        "Built-in looks",
+        "Find your look",
+        "Save your own presets",
+        "WTF",
+        "Latest release",
+        "NDI®",
+        "Syphon",
     ],
     "es/index.md": [
         "96 presets integrados, 21 paletas",
         "Listas de presets",
         "Guarda un fotograma",
-        "Fractal Accents",
-        "Subtle Limit",
-        "Julia Glass",
-        "Phosphor Lace",
-        "Flat Media",
-        "95%",
+        "Looks integrados",
+        "Encuentra tu look",
+        "Guarda tus propios presets",
+        "WTF",
+        "Última versión",
+        "NDI®",
+        "Syphon",
     ],
 }
 
@@ -259,6 +265,39 @@ def main() -> int:
     )
     audit_translated_source_links(errors)
 
+    # A candidate must not silently become a published download or merged-main claim.
+    product_body = PRODUCT.read_text()
+    launch_target = ROOT / "_data/release_target.yml"
+    if launch_target.exists():
+        target = re.search(r'^version: "([0-9.]+)"', launch_target.read_text(), re.M)
+        if not target or target.group(1) != release:
+            errors.append("generated release does not match the configured launch target")
+        for name in HOMEPAGE_MARKERS:
+            body = (ROOT / name).read_text()
+            if re.search(r"Coming next|Unpublished candidate|Versión candidata sin publicar|upcoming_release", body):
+                errors.append(f"{name}: stale candidate marketing for the launch target")
+        for docs_root in (DOCS, SPANISH_DOCS):
+            for path in public_docs(docs_root):
+                if re.search(r"\*\*(?:Upcoming .*unpublished candidate|Próxima versión .*candidata sin publicar)", path.read_text()):
+                    errors.append(f"{relative(path)}: stale candidate banner for the launch target")
+    upcoming = re.search(r'^upcoming_release:\n\s+version: "([0-9.]+)"', product_body, re.M)
+    if upcoming:
+        candidate = upcoming.group(1)
+        revision = product_value("ref")
+        if candidate == release or not re.fullmatch(r"[a-f0-9]{40}", revision):
+            errors.append("candidate metadata must separate published and upcoming versions and pin a commit")
+        for docs_root, notice in [(DOCS, f"Upcoming {candidate} — unpublished candidate"),
+                                  (SPANISH_DOCS, f"Próxima versión {candidate} — candidata sin publicar")]:
+            for path in public_docs(docs_root):
+                body = path.read_text()
+                if notice not in body or f"/tree/{revision}" not in body:
+                    errors.append(f"{relative(path)}: missing pinned candidate scope")
+                if f"/releases/download/v{candidate}/" in body or f"/releases/tag/v{candidate}" in body:
+                    errors.append(f"{relative(path)}: unpublished candidate linked as a public release")
+        baseline = (DOCS / "overview/changelog-baseline.md").read_text()
+        if f"## Upcoming {candidate} Release Notes" not in baseline:
+            errors.append("release baseline is missing separately labeled candidate notes")
+
     if release:
         audit_release_claims(
             DOCS,
@@ -295,7 +334,8 @@ def main() -> int:
                        "Tidal Glass", "Ember Grotto", "Fern After Rain", "Violet Dusk",
                        "Flat Media", "Bright output", "Mandelbox Passage", "Phosphor Echo",
                        "Fractal Accents", "Subtle Limit", "Threadlight", "Silver Etching",
-                       "Contour Silk", "Julia Glass", "Chromatic Undertow", "Phosphor Lace"]:
+                       "Contour Silk", "Julia Glass", "Chromatic Undertow", "Phosphor Lace",
+                       "NDI® Input", "Syphon Input", "Video I/O", "NDI High Bandwidth"]:
             if marker not in spanish_feature_body:
                 errors.append(f"{relative(spanish_features)}: missing current feature marker: {marker}")
 
@@ -311,13 +351,16 @@ def main() -> int:
         quickstart = DOCS / "development" / "quickstart.md"
         quickstart_body = quickstart.read_text() if quickstart.exists() else ""
         if any(marker not in quickstart_body for marker in [
-            "npm ci", "## First-Time Setup", "git submodule update --init shared/dust-wave-platform"
+            "npm ci", "## First-Time Setup", "git submodule update --init shared/dust-wave-platform",
+            "npm run video-io:stage"
         ]):
             errors.append(f"{relative(quickstart)}: missing canonical contributor setup")
         for filename, markers in {
             "development/shared-desktop-services.md": ["docs/SHARED_DESKTOP_MIGRATION.md", "## Shared-Service Maintenance", "platform-desktop.json"],
-            "operations/testing.md": ["## Jev Development Testing", "npm test -- --offline", "platform-desktop.json", "## Spatial renderer changes", "### Audio response", "96 total / 68 accelerated / 28 explicit", "### Fractal accent regression checks", "npm run smoke:wtf"],
-            "development/rendering-engine.md": ["## Indexed Palette Cycling", "## Spatial stage (1.1.0)", "96 total, 68 accelerated, 28 explicit Canvas", "## Fractal accents", "thirteen vec4s (208 bytes)"],
+            "operations/testing.md": ["## Jev Development Testing", "npm test -- --offline", "platform-desktop.json", "## Spatial renderer changes", "### Audio response", "96 total / 68 accelerated / 28 explicit", "### Fractal accent regression checks", "npm run smoke:wtf", "## Native Video I/O", "npm run test:video-io-alpha", "npm run test:video-io-runtime"],
+            "development/rendering-engine.md": ["## Indexed Palette Cycling", "## Spatial stage (1.1.0)", "96 total, 68 accelerated, 28 explicit Canvas", "## Fractal accents", "thirteen vec4s (208 bytes)", "## Native Video I/O"],
+            "operations/security.md": ["## Native Video Transport Boundary", "Both transports omit audio"],
+            "operations/release.md": ["## Native Video Runtime Packaging", "## Preparing a Candidate Without Publishing"],
         }.items():
             path = DOCS / filename
             body = path.read_text() if path.exists() else ""

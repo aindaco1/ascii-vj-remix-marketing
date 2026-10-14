@@ -150,6 +150,10 @@ def protect_text(text: str) -> tuple[str, list[str]]:
         "Canvas2D",
         "Pixel Canvas",
         "Pop Out",
+        "NDI High Bandwidth",
+        "NDI",
+        "Syphon",
+        "Video I/O",
         "WTF mode",
         "MIDI",
         "FFmpeg",
@@ -341,6 +345,33 @@ def translate_date_line(text: str) -> str | None:
     return f"{int(day)} de {translated_month} de {year}"
 
 
+def known_translation(text: str) -> str | None:
+    """Reuse reviewed prose when only the source commit in a link changed."""
+    links: dict[str, str] = {}
+
+    def canonical_link(match: re.Match[str]) -> str:
+        canonical = match.group(1) + "main" + match.group(2)
+        links[canonical] = match.group(0)
+        return canonical
+
+    canonical = re.sub(
+        r"(https://github\.com/aindaco1/ascii-vj-remix/(?:blob|tree)/)[a-f0-9]{40}(/[^\s)]+|(?=[)\s]|$))",
+        canonical_link, text,
+    )
+    with cache_lock:
+        # Reviewed wording wins over cached service results, including when
+        # the reviewed paragraph still uses the original main-branch link.
+        for translations in (REVIEWED_TRANSLATIONS, cache):
+            if text in translations:
+                return polish_translation(translations[text])
+            if canonical in translations:
+                result = translations[canonical]
+                for original, pinned in links.items():
+                    result = result.replace(original, pinned)
+                return polish_translation(result)
+    return None
+
+
 def translate_texts(texts: list[str]) -> list[str]:
     translated = ["" for _ in texts]
     pending_values = []
@@ -365,14 +396,9 @@ def translate_texts(texts: list[str]) -> list[str]:
             translated[index] = SECTION_TITLES[stripped]
             continue
 
-        if stripped in REVIEWED_TRANSLATIONS:
-            translated[index] = REVIEWED_TRANSLATIONS[stripped]
-            continue
-
-        with cache_lock:
-            cached = cache.get(stripped)
-        if cached is not None:
-            translated[index] = polish_translation(cached)
+        known = known_translation(stripped)
+        if known is not None:
+            translated[index] = known
             continue
 
         protected, placeholders = protect_text(stripped)

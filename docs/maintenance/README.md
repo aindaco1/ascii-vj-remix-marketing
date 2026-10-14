@@ -28,11 +28,22 @@ sibling `../ascii-vj-remix`; set `ASCII_VJ_SOURCE` to use another checkout and
 fetch or update the source checkout. Inspect its branch, commit, and working
 tree before refreshing.
 
-Public developer guides follow merged `main`, while the release badge and
-download links use the newest dated changelog entry. Clearly label post-release
-source changes in their canonical upstream guide. Verify the published tag
-separately; a newer source pin or relay adapter is not part of an older desktop
-artifact. Correct stale upstream facts at their source before importing them.
+Public developer guides follow the imported source revision. The importer pins
+source links to the checkout's commit; set `ASCII_VJ_SOURCE_REF` to the matching
+commit when importing an exported snapshot. Inspect uncommitted changes first:
+a commit link describes committed source, not local edits. Use a fixed snapshot
+when another chat is actively changing the app checkout.
+
+A versioned `Unreleased` changelog entry adds `upcoming_release` metadata, a
+candidate notice on every developer page, and a separate upcoming section in
+Release Baseline. This supports a candidate branch before it merges to `main`.
+By default, the release badge and download links use the newest dated changelog
+entry. `_data/release_target.yml` can select a version for owner-requested launch
+copy before that entry is dated. The current approved target is 1.3.0: use its
+release notes, current-release wording and expected versioned installer URLs,
+and suppress its candidate banner. Leave the publication date empty until the
+source provides it. This presentation setting does not alter upstream evidence
+or mark desktop validation complete. Remove it when the source dates the release.
 
 The [public Source Map](../reference/source-map.md) documents the imported files:
 
@@ -57,8 +68,9 @@ writing pages or product data. When upstream splits or moves a guide, update
 sections get local fragment links; other sections link to the full upstream guide.
 Keep existing public page URLs stable when changing their source ownership.
 
-The newest **dated** changelog entry supplies the release badge; Unreleased is
-excluded. `_data/product.yml` also records the copied canonical icon SHA-256.
+The configured launch target, or otherwise the newest **dated** changelog entry,
+supplies the release badge. `_data/product.yml` also records the source revision
+and copied canonical icon SHA-256.
 The date is the changelog date and may differ from publication time. Verify the
 release and platform assets on GitHub Releases before publishing updated claims.
 
@@ -73,6 +85,10 @@ translations live in the ignored `.translation-cache/` directory.
 Reviewed passages live in `scripts/spanish-docs-overrides.json`, keyed by the full
 English paragraph or table cell. Add an entry when wording changes or a technical
 translation needs correction; generated Spanish pages are overwritten on rerun.
+For source links, reviewed keys may use `/blob/main/` or `/tree/main/`. The
+translator reuses that prose for pinned commit URLs while restoring the exact
+English source links; reviewed translations take precedence over cached service
+results. Retain app labels such as Video I/O, NDI Out and Syphon Out.
 
 The translation step uses the site's bundled Kramdown engine through
 `scripts/docs_heading_ids.rb`. It retains Spanish heading IDs and adds English
@@ -130,5 +146,12 @@ not archive a recurring Price or Product while subscriptions still depend on it.
 The homepage download action uses `_includes/download-latest-button.html`.
 It derives macOS DMG, Windows installer, and Linux AppImage URLs from
 `_data/product.yml`; `assets/js/site.js` selects the visitor's desktop platform.
-Mobile and unknown platforms use GitHub's latest-release page. The performance
+Mobile and unknown platforms use that version's GitHub release page. The performance
 audit checks both homepages and the generated artifact URLs.
+
+Both homepages now present Native Video I/O as the 1.3.0 release. Built-in Looks
+highlights the range of presets and visual options, without release-specific
+accent recipes or WTF probabilities. Keep both languages, metadata, support priorities and
+release audits aligned when advancing the version. The expected macOS DMG,
+Windows EXE, Linux AppImage and release-page URLs use the selected version.
+Publication verification remains a separate step from preparing this launch copy.
