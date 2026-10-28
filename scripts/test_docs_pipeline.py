@@ -119,6 +119,15 @@ class SourceSyncTests(unittest.TestCase):
             for filename in sentinels:
                 self.assertEqual((project / filename).read_text(), "original")
 
+    def test_dated_release_normalizes_old_candidate_copy_only(self):
+        value = {
+            "changelog": "## [1.4.0] - Unreleased\n\n## [1.3.1] - 2026-10-21\n\n## [1.3.0] - 2026-10-13\n",
+            "copy": "Available in the 1.3.0 candidate; see [release status](old).\nAvailable in the 1.4.0 candidate; see [release status](next).",
+        }
+        self.assertEqual(ruby('SyncAsciiDocs.site_release_version(input["changelog"], target: nil)', value), "1.3.1")
+        self.assertEqual(ruby('SyncAsciiDocs.release_copy(input["copy"], target: nil, changelog: input["changelog"])', value),
+                         "Added in 1.3.0; see [release record](old).\nAvailable in the 1.4.0 candidate; see [release status](next).")
+
 
 class TranslationTests(unittest.TestCase):
     def test_pinned_links_reuse_reviewed_prose_before_cached_translation(self):

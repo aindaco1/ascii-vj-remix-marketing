@@ -97,6 +97,7 @@ Bundled media fixture paths are generalized in this public reference. Use `packa
 | `npm run test:crash-relay` | `npm --prefix crash-relay test` |
 | `npm run test:vectors` | `node scripts/test_vectors.mjs` |
 | `npm run test:rust` | `node scripts/cargo_env.mjs test --manifest-path src-tauri/Cargo.toml` |
+| `npm run test:tls` | `node scripts/cargo_env.mjs test --locked --manifest-path src-tauri/Cargo.toml --test tls_trust -- --ignored --nocapture` |
 | `npm run tauri` | `node scripts/tauri_env.mjs` |
 | `npm run tauri:dev` | `node scripts/tauri_env.mjs dev --config src-tauri/tauri.dev.conf.json` |
 | `npm run tauri:build` | `node scripts/tauri_env.mjs build` |
@@ -118,12 +119,25 @@ Bundled media fixture paths are generalized in this public reference. Use `packa
 - Run desktop/release checks after changing Tauri capabilities, updater config, signing, crash reporting, native output, or platform packaging.
 - Keep secrets and signing material out of committed source.
 
+## TLS Trust Acceptance
+
+Version 1.3.1 updates TLS certificate trust to reject compromised eMudhra chains. Run the opt-in live check from the app repository after completing [Quickstart](/docs/development/quickstart/):
+
+```bash
+npm run test:tls
+```
+
+The [TLS acceptance test](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/src-tauri/tests/tls_trust.rs) uses the application's locked reqwest/rustls dependencies. It first requires a successful HTTPS response from `https://example.com/`, then requires certificate rejection (`CertDistrusted`) for all 12 disclosed eMudhra test chains. A timeout, DNS error or other connection failure does not count as certificate rejection.
+
+This test contacts public endpoints and is ignored by the ordinary Rust test run; invoke it explicitly when validating TLS dependency changes. It does not establish installed-app, updater or physical-platform acceptance.
+
 
 
 ## Source Material
 
 This page is generated from ASCII VJ Remix source material. Primary sources:
-- [package.json](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/package.json)
-- [docs/CONTRIBUTORS.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/CONTRIBUTORS.md)
-- [docs/TESTING.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/TESTING.md)
-- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/CHANGELOG.md)
+- [package.json](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/package.json)
+- [docs/CONTRIBUTORS.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/CONTRIBUTORS.md)
+- [docs/TESTING.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/TESTING.md)
+- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/CHANGELOG.md)
+- [src-tauri/tests/tls_trust.rs](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/src-tauri/tests/tls_trust.rs)

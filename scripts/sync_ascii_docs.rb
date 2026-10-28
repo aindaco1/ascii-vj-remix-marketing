@@ -38,7 +38,8 @@ SOURCE_FILES = {
   testing: "docs/TESTING.md",
   accessibility: "docs/ACCESSIBILITY.md",
   i18n: "docs/I18N.md",
-  roadmap: "docs/ROADMAP.md"
+  roadmap: "docs/ROADMAP.md",
+  tls_test: "src-tauri/tests/tls_trust.rs"
 }.freeze
 
 DOCS = [
@@ -162,13 +163,20 @@ module SyncAsciiDocs
     "## Upcoming #{upcoming} Release Notes\n\n#{rewrite_links(body, 'CHANGELOG.md')}"
   end
 
-  def release_copy(content, target: RELEASE_TARGET)
-    return content unless target
+  def release_copy(content, target: RELEASE_TARGET, changelog: "")
+    if target
+      content = content
+        .gsub("[#{target}] - Unreleased", "[#{target}]")
+        .gsub("Release candidate; publication and acceptance status are tracked in the", "Release scope and platform validation are tracked in the")
+    end
 
+    # Some durable guides retain candidate wording after the changelog is dated.
+    # Normalize only versions with a dated entry or an explicit launch override.
+    released = changelog.scan(/^##\s+\[([^\]]+)\]\s+-\s+\d{4}-\d{2}-\d{2}\s*$/).flatten
+    (released + [target]).compact.uniq.each do |version|
+      content = content.gsub("Available in the #{version} candidate; see [release status]", "Added in #{version}; see [release record]")
+    end
     content
-      .gsub("[#{target}] - Unreleased", "[#{target}]")
-      .gsub("Release candidate; publication and acceptance status are tracked in the", "Release scope and platform validation are tracked in the")
-      .gsub("Available in the #{target} candidate; see [release status]", "Added in #{target}; see [release record]")
   end
 
   def source_sections(source, headings)
@@ -218,7 +226,7 @@ module SyncAsciiDocs
     front << "---"
     notice = candidate_notice
     body = body.sub(/^(# [^\n]+)\n/, "\\1\n\n#{notice}\n") unless notice.empty?
-    body = release_copy(body)
+    body = release_copy(body, changelog: read_source("CHANGELOG.md"))
     target.write((front + ["", body.strip, ""]).join("\n"))
   end
 
@@ -407,7 +415,19 @@ module SyncAsciiDocs
         - Run desktop/release checks after changing Tauri capabilities, updater config, signing, crash reporting, native output, or platform packaging.
         - Keep secrets and signing material out of committed source.
 
-        #{source_note(["package.json", "docs/CONTRIBUTORS.md", "docs/TESTING.md", "CHANGELOG.md"])}
+        ## TLS Trust Acceptance
+
+        Version 1.3.1 updates TLS certificate trust to reject compromised eMudhra chains. Run the opt-in live check from the app repository after completing [Quickstart](/docs/development/quickstart/):
+
+        ```bash
+        npm run test:tls
+        ```
+
+        The [TLS acceptance test](#{source_link("src-tauri/tests/tls_trust.rs")}) uses the application's locked reqwest/rustls dependencies. It first requires a successful HTTPS response from `https://example.com/`, then requires certificate rejection (`CertDistrusted`) for all 12 disclosed eMudhra test chains. A timeout, DNS error or other connection failure does not count as certificate rejection.
+
+        This test contacts public endpoints and is ignored by the ordinary Rust test run; invoke it explicitly when validating TLS dependency changes. It does not establish installed-app, updater or physical-platform acceptance.
+
+        #{source_note(["package.json", "docs/CONTRIBUTORS.md", "docs/TESTING.md", "CHANGELOG.md", "src-tauri/tests/tls_trust.rs"])}
       MD
       roadmap: copied_page("Roadmap", "docs/ROADMAP.md", "Reference", 2),
       changelog: copied_page("Changelog", "CHANGELOG.md", "Reference", 3),
@@ -435,6 +455,7 @@ module SyncAsciiDocs
         | `docs/I18N.md` | Internationalization and localization expectations. |
         | `docs/ROADMAP.md` | Prospective direction only. |
         | `package.json` | NPM command reference. |
+        | `src-tauri/tests/tls_trust.rs` | Opt-in live TLS acceptance scope and certificate-rejection assertions. |
         | `src-tauri/icons/icon.png` | Approved canonical app icon copied into the marketing site. |
 
         ## Guide Ownership

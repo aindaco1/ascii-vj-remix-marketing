@@ -30,7 +30,7 @@ hide_search: true
       <li>camera and local media workflow polish</li>
       <li>macOS signing and release maintenance</li>
       <li>Windows/Linux packaging verification</li>
-      <li>native video sharing, transparency, and interoperability testing for 1.3.0 and beyond</li>
+      <li>native video sharing, transparency, and interoperability testing</li>
       <li>accessibility, performance, and localization improvements</li>
     </ul>
   </article>

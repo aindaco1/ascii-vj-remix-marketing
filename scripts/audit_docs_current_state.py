@@ -129,6 +129,9 @@ HOMEPAGE_MARKERS = {
         "Save your own presets",
         "WTF",
         "Latest release",
+        "Security update",
+        "Version 1.3.1",
+        "eMudhra",
         "NDI®",
         "Syphon",
     ],
@@ -141,6 +144,9 @@ HOMEPAGE_MARKERS = {
         "Guarda tus propios presets",
         "WTF",
         "Última versión",
+        "actualización de seguridad",
+        "versión 1.3.1",
+        "eMudhra",
         "NDI®",
         "Syphon",
     ],
@@ -361,6 +367,7 @@ def main() -> int:
             "development/rendering-engine.md": ["## Indexed Palette Cycling", "## Spatial stage (1.1.0)", "96 total, 68 accelerated, 28 explicit Canvas", "## Fractal accents", "thirteen vec4s (208 bytes)", "## Native Video I/O"],
             "operations/security.md": ["## Native Video Transport Boundary", "Both transports omit audio"],
             "operations/release.md": ["## Native Video Runtime Packaging", "## Preparing a Candidate Without Publishing"],
+            "reference/commands.md": ["## TLS Trust Acceptance", "npm run test:tls", "CertDistrusted", "src-tauri/tests/tls_trust.rs"],
         }.items():
             path = DOCS / filename
             body = path.read_text() if path.exists() else ""

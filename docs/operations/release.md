@@ -13,7 +13,7 @@ procedure for maintainers. Run commands from the repository root. Use
 [Security](/docs/operations/security/#release-security-posture) for the release security model.
 
 Version-specific decisions and evidence are kept in
-[release records](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/releases/README.md). They are historical snapshots, not the
+[release records](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/releases/README.md). They are historical snapshots, not the
 current release procedure.
 
 ## Evidence and Release Records
@@ -33,7 +33,7 @@ check from [Testing](/docs/operations/testing/#hardware-and-platform-checks) and
 [Roadmap](/docs/reference/roadmap/#distribution-and-platform-validation).
 
 Create version-specific records under `docs/releases/`, identify the evidence
-stage and date, and add them to the [release index](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/releases/README.md). Preserve
+stage and date, and add them to the [release index](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/releases/README.md). Preserve
 recorded pending rows as historical evidence; do not silently mark them passed
 because a later release shipped. Durable product behavior belongs in the user
 and architecture guides, and release history belongs in the
@@ -222,7 +222,7 @@ version/hash and notices, including the complete SDK third-party license file. m
 so Tauri signs nested code before signing the app. Windows/Linux package NDI
 under resources/video-io for the current architecture. Linux deb/rpm metadata
 requires Avahi libraries/service; AppImage users follow the
-[host setup](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/USER_GUIDE.md#linux-ndi-sources-do-not-appear). Bundle notices and pinned
+[host setup](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/USER_GUIDE.md#linux-ndi-sources-do-not-appear). Bundle notices and pinned
 provenance with installers and updater archives. Do not distribute SDK headers,
 NDI Tools or SDK example programs as application dependencies.
 
@@ -235,8 +235,8 @@ still identifies SDK 6.3.2 on 2026-10-13. Recheck the full agreement and archive
 hashes before public redistribution; stop on an upstream checksum change. Preserve
 Syphon's BSD license. Verify signed dynamic library loading, installer contents,
 clean network-permission/firewall behavior and real input/output after updates.
-Current candidate evidence and unverified platform/device claims are recorded
-in the [1.3.0 release record](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/releases/RELEASE_1.3.0.md).
+Published acceptance evidence and unverified platform/device claims are recorded
+in the [1.3.0 release record](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/releases/RELEASE_1.3.0.md).
 
 ## Build and Package
 
@@ -253,6 +253,8 @@ successful main-push `Desktop` workflow, then hands both outputs to the bundle
 jobs as immutable one-day workflow artifacts. The restored app binary is
 verified against its commit, platform, version, byte size, and SHA-256 before
 `tauri bundle` packages it without recompiling. Runtime builds remain offline;
+the isolated FFmpeg job runs only FFmpeg checks, and the package job stages and
+validates the complete FFmpeg/NDI/Syphon runtime set before bundling.
 Unix artifact downloads restore executable mode on `ffmpeg` and `ffprobe`
 before the release-input checks, because zipped artifact transfers reset file
 permissions. Runtime hashes and camera-input availability are still verified.
@@ -309,4 +311,4 @@ direct install and updater download smoke.
 ## Source Material
 
 This page is generated from ASCII VJ Remix source material. Primary sources:
-- [docs/RELEASING.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/RELEASING.md)
+- [docs/RELEASING.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/RELEASING.md)

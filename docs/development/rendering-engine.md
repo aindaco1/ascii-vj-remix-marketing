@@ -757,7 +757,7 @@ UC-33e DIN output
 - The mapping and transport layers are automated-test covered, but physical
   full-bank restore/verification remains an experimental acceptance gap.
 
-See [UC-33e and mioXC MIDI Control](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/MIDI_UC33E.md) for the physical map.
+See [UC-33e and mioXC MIDI Control](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/MIDI_UC33E.md) for the physical map.
 
 ## Packaging and Offline Runtime
 
@@ -934,4 +934,4 @@ WTF anchors. Both paths exclude the global limit from preset-owned parameters.
 ## Source Material
 
 This page is generated from ASCII VJ Remix source material. Primary sources:
-- [docs/RENDERING_ENGINE.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/RENDERING_ENGINE.md)
+- [docs/RENDERING_ENGINE.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/RENDERING_ENGINE.md)

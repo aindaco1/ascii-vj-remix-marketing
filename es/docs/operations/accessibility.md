@@ -197,4 +197,4 @@ Estos límites no eximen a los controles de la aplicación de los requisitos de 
 ## Material de origen
 
 Esta página se genera a partir del material fuente de ASCII VJ Remix. Fuentes primarias:
-- [docs/ACCESSIBILITY.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/ACCESSIBILITY.md)
+- [docs/ACCESSIBILITY.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/ACCESSIBILITY.md)

@@ -39,11 +39,13 @@ candidate notice on every developer page, and a separate upcoming section in
 Release Baseline. This supports a candidate branch before it merges to `main`.
 By default, the release badge and download links use the newest dated changelog
 entry. `_data/release_target.yml` can select a version for owner-requested launch
-copy before that entry is dated. The current approved target is 1.3.0: use its
-release notes, current-release wording and expected versioned installer URLs,
-and suppress its candidate banner. Leave the publication date empty until the
-source provides it. This presentation setting does not alter upstream evidence
-or mark desktop validation complete. Remove it when the source dates the release.
+copy before that entry is dated. No override is active: the current baseline is
+the dated 1.3.1 release. For an explicitly requested future launch override,
+leave the publication date empty until the source provides it. This presentation
+setting does not alter upstream evidence or mark desktop validation complete.
+Remove it when the source dates the release. The importer also normalizes the
+specific “Available in the VERSION candidate” feature wording for dated releases
+and approved launch targets; other candidate versions retain their status.
 
 The [public Source Map](../reference/source-map.md) documents the imported files:
 
@@ -53,6 +55,8 @@ The [public Source Map](../reference/source-map.md) documents the imported files
   troubleshooting remain linked upstream, along with the README's install steps.
 - `docs/CONTRIBUTORS.md` supplies Quickstart and local development procedures.
   The complete npm script catalog is generated from `package.json` in Commands.
+- `src-tauri/tests/tls_trust.rs` supplies the opt-in TLS acceptance guidance in
+  Commands, including its public network requests and strict rejection assertion.
 - `docs/SHARED_DESKTOP_MIGRATION.md` supplies Shared Desktop Services. Exact
   dependency versions remain owned by its linked `platform-desktop.json`;
   component-specific relay contracts remain in the upstream relay README.
@@ -149,9 +153,10 @@ It derives macOS DMG, Windows installer, and Linux AppImage URLs from
 Mobile and unknown platforms use that version's GitHub release page. The performance
 audit checks both homepages and the generated artifact URLs.
 
-Both homepages now present Native Video I/O as the 1.3.0 release. Built-in Looks
-highlights the range of presets and visual options, without release-specific
-accent recipes or WTF probabilities. Keep both languages, metadata, support priorities and
-release audits aligned when advancing the version. The expected macOS DMG,
-Windows EXE, Linux AppImage and release-page URLs use the selected version.
-Publication verification remains a separate step from preparing this launch copy.
+Both homepages present 1.3.1 as a TLS security update and retain native video
+sharing as a feature introduced in 1.3.0. Built-in Looks highlights the range of
+presets and visual options, without release-specific accent recipes or WTF
+probabilities. Keep both languages, metadata, support priorities and release
+audits aligned when advancing the version. The macOS DMG, Windows EXE, Linux
+AppImage and release-page URLs use the selected version. Verify those targets
+against published assets and check the deployed website after each release.

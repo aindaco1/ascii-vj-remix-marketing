@@ -241,3 +241,45 @@ probabilities. Detailed limits remain in the developer guides. Updated the
 homepage audit markers to match the broader copy. The production build,
 current-state, 52-page link, SEO and performance audits passed; rendered
 English desktop and Spanish mobile checks found no horizontal overflow.
+
+## 2026-10-28 — 1.3.1 TLS security refresh
+
+- Read the website maintenance/import/localization contracts and the app's
+  documentation map, agent guide, README, changelog, user and security guides,
+  contributor/release changes, shared-service guide, and published 1.3.0
+  acceptance record. Reviewed the 1.3.1 Cargo dependency changes, package
+  commands and `src-tauri/tests/tls_trust.rs` for the patch's scope.
+- Imported the clean app checkout at
+  `ab93bbd6b4d1634d3ee90e05dea743686b83d366`, verified against remote `main`
+  and the peeled `v1.3.1` tag. The app checkout remains unchanged.
+- Verified that GitHub's latest public release is
+  [v1.3.1](https://github.com/aindaco1/ascii-vj-remix/releases/tag/v1.3.1),
+  published October 21 at 23:31:43 UTC (17:31:43 America/Denver), with fourteen
+  uploaded assets. Both homepages' generated macOS DMG, Windows EXE and Linux
+  AppImage URLs match the published assets. Product data uses the changelog
+  date, `2026-10-21`.
+- Removed the 1.3.0 launch override. Both homepages and their metadata now
+  describe 1.3.1 as a certificate-trust security update; native NDI/Syphon
+  sharing remains a separate feature section identified as introduced in 1.3.0.
+  Existing media, styling, support and platform download components are retained.
+- Refreshed all 23 English and 23 Spanish developer pages through the existing
+  generators, with source links pinned to the release commit. Added the TLS
+  command and source-linked guidance: it is opt-in, contacts public endpoints,
+  requires a valid HTTPS control and `CertDistrusted` on twelve test chains,
+  and does not accept generic network failure as proof of certificate rejection.
+- The source README still names 1.3.0 as current, and its User Guide retains
+  candidate wording for native sharing. Site release identity comes from the
+  dated changelog; the importer normalizes that specific candidate sentence
+  only for dated releases or explicit launch targets. A regression covers an
+  older dated release alongside a genuinely unreleased future version.
+- Added 23 reviewed Spanish translation segments. Updated maintenance guidance,
+  source attribution and current-state checks for the release and TLS command.
+- Validation: all 16 pipeline tests passed, including with the sibling app
+  checkout unavailable as in CI. The production Jekyll build, current-state,
+  52-page internal-link, SEO, support and performance audits passed. Both
+  generators reproduced identical output, and `git diff --check` passed.
+- Visually reviewed the new English/Spanish release sections and release notes,
+  verified language switching and checked both homepages at 390px with no
+  horizontal overflow. Desktop installers, live TLS acceptance and updater
+  transactions were not rerun in this website task. These are local website
+  changes; publication is a separate step.

@@ -31,7 +31,7 @@ hide_search: true
       <li>pulido del flujo de cámara y medios locales</li>
       <li>firma de macOS y mantenimiento de lanzamientos</li>
       <li>verificación de empaquetado para Windows/Linux</li>
-      <li>pruebas de video nativo compartido, transparencia e interoperabilidad para 1.3.0 y las siguientes versiones</li>
+      <li>pruebas de video nativo compartido, transparencia e interoperabilidad</li>
       <li>mejoras de accesibilidad, rendimiento y localización</li>
     </ul>
   </article>

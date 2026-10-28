@@ -574,7 +574,7 @@ UC-33e DIN output
 - Captura/restaura paquetes SysEx opacos delimitados a través de la salida mioXC seleccionada sin exponer los permisos MIDI a la ventana de salida.
 - Las capas de mapeo y transporte están cubiertas por pruebas automatizadas, pero la restauración/verificación física del banco completo sigue siendo una brecha de aceptación experimental.
 
-Consulte [UC-33e y mioXC MIDI Control](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/MIDI_UC33E.md) para ver el mapa físico.
+Consulte [UC-33e y mioXC MIDI Control](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/MIDI_UC33E.md) para ver el mapa físico.
 
 <a id="packaging-and-offline-runtime"></a>
 
@@ -653,4 +653,4 @@ Al cargar presets integrados normales se conservan los campos canónicos del ace
 ## Material de origen
 
 Esta página se genera a partir del material fuente de ASCII VJ Remix. Fuentes primarias:
-- [docs/RENDERING_ENGINE.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/RENDERING_ENGINE.md)
+- [docs/RENDERING_ENGINE.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/RENDERING_ENGINE.md)

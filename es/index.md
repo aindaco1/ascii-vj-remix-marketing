@@ -1,6 +1,6 @@
 ---
 title: ASCII VJ Remix
-description: "ASCII VJ Remix convierte video, cámaras y sonido en visuales ASCII en vivo. Video compartido con NDI y Syphon en macOS en 1.3.0."
+description: "ASCII VJ Remix convierte video, cámaras y sonido en visuales ASCII en vivo, con NDI y Syphon en macOS. La versión 1.3.1 corrige la seguridad TLS."
 layout: homepage
 lang: es
 nav_enabled: false
@@ -9,7 +9,7 @@ nav_exclude: true
 <section class="hero" aria-labelledby="home-title">
   <div class="hero-title-block">
     <h1 id="home-title">Visuales simples para DJs. Control ASCII profundo para VJs.</h1>
-    <p class="release-status">Última versión: <a href="#release-heading"><strong>v{{ site.data.product.latest_release.version }}</strong> · Entrada y salida de video nativo</a></p>
+    <p class="release-status">Última versión: <a href="#release-heading"><strong>v{{ site.data.product.latest_release.version }}</strong> · Actualización de seguridad</a></p>
   </div>
   <aside class="demo-frame demo-frame--video" aria-label="Preview de ASCII VJ Remix">
     {% assign hero_webm = '/assets/videos/ascii-hero.webm' %}
@@ -68,14 +68,21 @@ nav_exclude: true
 
 <section class="section-band" aria-labelledby="release-heading">
   <p class="kicker">Última versión</p>
-  <h2 id="release-heading">v{{ site.data.product.latest_release.version }}: entrada y salida de video nativo.</h2>
-  <p class="section-intro">Incorpora una señal en vivo a tu set ASCII y comparte los visuales con otras apps o receptores. La versión 1.3.0 añade entrada y salida <a href="https://ndi.video/">NDI®</a> en macOS Apple Silicon, Windows x64 y Linux x86_64, además de Syphon en macOS.</p>
+  <h2 id="release-heading">v{{ site.data.product.latest_release.version }}: actualización de seguridad.</h2>
+  <p class="section-intro">La versión 1.3.1 refuerza la verificación de certificados en las conexiones HTTPS al rechazar cadenas de certificados eMudhra comprometidas. Incluye las funciones de video compartido y los controles visuales de versiones anteriores.</p>
+  <p class="release-link"><a href="{{ '/es/docs/overview/changelog-baseline/' | relative_url }}">Ver las novedades de v{{ site.data.product.latest_release.version }}</a></p>
+</section>
+
+<section class="section-band" aria-labelledby="native-video-heading">
+  <p class="kicker">Video nativo compartido</p>
+  <h2 id="native-video-heading">Incorpora una señal en vivo a tu set ASCII.</h2>
+  <p class="section-intro">Comparte los visuales con otras apps o receptores. Desde la versión 1.3.0, la entrada y salida <a href="https://ndi.video/">NDI®</a> funcionan en macOS Apple Silicon, Windows x64 y Linux x86_64, además de Syphon en macOS.</p>
   <div class="card-grid">
     <article class="card pink"><h3>Mezcla una señal en vivo</h3><p>Elige un emisor NDI o Syphon en Video I/O y conserva la señal al cambiar de preset, usar WTF o ajustar los controles visuales. NDI usa tu red local; Syphon conecta apps en la misma Mac.</p></article>
     <article class="card"><h3>Comparte mientras proyectas</h3><p>Envía el video terminado por NDI o Syphon mientras Pop Out llena otra pantalla. Elige 720p o 1080p a 30 o 60 fps.</p></article>
     <article class="card pink"><h3>Conserva la transparencia al mezclar</h3><p>Conserva la transparencia de la fuente al pasar a otra app para superponer y combinar visuales. El negro opaco sigue siendo opaco.</p></article>
   </div>
-  <p class="release-link"><a href="{{ '/es/docs/overview/changelog-baseline/#130-release-notes' | relative_url }}">Ver las novedades de v{{ site.data.product.latest_release.version }}</a> · <a href="{{ '/es/docs/overview/features/#native-video-sharing' | relative_url }}">Guía para compartir video nativo</a></p>
+  <p class="release-link"><a href="{{ '/es/docs/overview/features/#native-video-sharing' | relative_url }}">Guía para compartir video nativo</a></p>
   <p class="section-intro">NDI® es una marca registrada de Vizrt NDI AB.</p>
 </section>
 

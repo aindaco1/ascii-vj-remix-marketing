@@ -10,26 +10,20 @@ lang: es
 
 # Base de la versión
 
-La versión actual es **1.3.0**. El [Registro de cambios](/es/docs/reference/changelog/) contiene el historial completo de versiones.
+La versión actual es **1.3.1**. El [Registro de cambios](/es/docs/reference/changelog/) contiene el historial completo de versiones.
 
-[Descarga v1.3.0](https://github.com/aindaco1/ascii-vj-remix/releases/tag/v1.3.0).
+[Descargar v1.3.1](https://github.com/aindaco1/ascii-vj-remix/releases/tag/v1.3.1).
 
-Consulte las [Funciones](/es/docs/overview/features/) para conocer los controles actuales y los [registros de publicación del repositorio principal](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/releases/README.md) para la validación y cobertura de plataformas de cada versión.
+Consulte las [Funciones](/es/docs/overview/features/) para conocer los controles actuales y los [registros de publicación del repositorio principal](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/releases/README.md) para la validación y cobertura de plataformas de cada versión.
 
 
 
-<a id="130-release-notes"></a>
+<a id="131-release-notes"></a>
 
-## Notas de la versión 1.3.0
+## Notas de la versión 1.3.1
 
-El alcance del lanzamiento y la validación de plataformas se documentan en el [registro de la versión 1.3.0](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/releases/RELEASE_1.3.0.md).
-
-- Añade entrada y salida nativas de video [NDI®](https://ndi.video/) en las plataformas de escritorio y entrada y salida Syphon Metal en macOS, con una entrada en vivo seleccionada y destinos NDI, Syphon y Pop Out simultáneos. Los transportes no incluyen audio.
-- Añade controles compactos de Video I/O, descubrimiento explícito de fuentes, reconexión, formatos de salida 720p/1080p y salidas compartidas desactivadas al iniciar la app.
-- Conserva la transparencia de la fuente independientemente de la selección de glifos en GPU, Canvas, salida nativa y transiciones; las escenas procedurales pueden añadir contenido visible.
-- Incluye bibliotecas nativas con versiones fijadas y sus avisos, valida su preparación y firma las bibliotecas anidadas en Mac. Consulta la [evidencia Dev y los requisitos de lanzamiento pendientes](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/releases/NATIVE_VIDEO_IO_DEV.md).
-
-NDI® es una marca registrada de Vizrt NDI AB.
+- Se rechazan las cadenas TLS eMudhra comprometidas con rustls-webpki 0.103.16 y los paquetes de certificados raíz webpki 1.0.10.
+- Se añadió una prueba TLS en vivo opcional que comprueba las 12 cadenas de certificados divulgadas y una conexión HTTPS válida como control (`npm run test:tls`).
 
 
 
@@ -38,4 +32,4 @@ NDI® es una marca registrada de Vizrt NDI AB.
 ## Material de origen
 
 Esta página se genera a partir del material fuente de ASCII VJ Remix. Fuentes primarias:
-- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/CHANGELOG.md)
+- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/CHANGELOG.md)

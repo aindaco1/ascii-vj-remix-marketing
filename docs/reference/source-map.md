@@ -28,13 +28,14 @@ The sync script uses the following source files from the ASCII VJ Remix reposito
 | `docs/I18N.md` | Internationalization and localization expectations. |
 | `docs/ROADMAP.md` | Prospective direction only. |
 | `package.json` | NPM command reference. |
+| `src-tauri/tests/tls_trust.rs` | Opt-in live TLS acceptance scope and certificate-rejection assertions. |
 | `src-tauri/icons/icon.png` | Approved canonical app icon copied into the marketing site. |
 
 ## Guide Ownership
 
-The [upstream documentation index](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/README.md) owns the full guide map, including MIDI, character-preset credits, Linux VM QA, component docs, and benchmark evidence. These specialized guides remain linked to their canonical source files.
+The [upstream documentation index](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/README.md) owns the full guide map, including MIDI, character-preset credits, Linux VM QA, component docs, and benchmark evidence. These specialized guides remain linked to their canonical source files.
 
-[Release records](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/releases/README.md) preserve dated decisions and evidence. Use [Release and Updates](/docs/operations/release/) for the current procedure, [Testing](/docs/operations/testing/) for verification, and [Roadmap](/docs/reference/roadmap/) for prospective work.
+[Release records](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/releases/README.md) preserve dated decisions and evidence. Use [Release and Updates](/docs/operations/release/) for the current procedure, [Testing](/docs/operations/testing/) for verification, and [Roadmap](/docs/reference/roadmap/) for prospective work.
 
 ## Regenerate Docs
 

@@ -31,15 +31,16 @@ El script de sincronización utiliza los siguientes archivos fuente del reposito
 |`docs/I18N.md`|Expectativas de internacionalización y localización.|
 |`docs/ROADMAP.md`|Sólo dirección prospectiva.|
 |`package.json`|Referencia del comando NPM.|
+|`src-tauri/tests/tls_trust.rs`|Alcance de la prueba TLS en vivo opcional y comprobaciones de rechazo de certificados.|
 |`src-tauri/icons/icon.png`|Icono de aplicación canónica aprobada copiado en el sitio de marketing.|
 
 <a id="guide-ownership"></a>
 
 ## Propiedad de la guía
 
-El [índice de documentación ascendente](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/README.md) posee el mapa de guía completo, incluido MIDI, créditos de caracteres preestablecidos, control de calidad de VM Linux, documentos de componentes y evidencia de referencia. Estas guías especializadas permanecen vinculadas a sus archivos fuente canónicos.
+El [índice de documentación ascendente](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/README.md) posee el mapa de guía completo, incluido MIDI, créditos de caracteres preestablecidos, control de calidad de VM Linux, documentos de componentes y evidencia de referencia. Estas guías especializadas permanecen vinculadas a sus archivos fuente canónicos.
 
-Los [registros de versiones](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/releases/README.md) conservan decisiones y evidencia fechadas. Consulte [Lanzamiento y actualizaciones](/es/docs/operations/release/) para el procedimiento actual, [Pruebas](/es/docs/operations/testing/) para la verificación y la [Hoja de ruta](/es/docs/reference/roadmap/) para el trabajo futuro.
+Los [registros de versiones](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/releases/README.md) conservan decisiones y evidencia fechadas. Consulte [Lanzamiento y actualizaciones](/es/docs/operations/release/) para el procedimiento actual, [Pruebas](/es/docs/operations/testing/) para la verificación y la [Hoja de ruta](/es/docs/reference/roadmap/) para el trabajo futuro.
 
 <a id="regenerate-docs"></a>
 

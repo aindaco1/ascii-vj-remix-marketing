@@ -32,7 +32,7 @@ desktop-only feature is added.
 | `media/` | Built-in demo image/video and hidden development fixtures. |
 | `experiments/` | Legacy/adaptive codec vector and stream experiments. |
 | `scripts/` | Build checks, Podman setup, release helpers, updater helpers, FFmpeg staging/build scripts, and smoke tests. |
-| `docs/` | [Documentation index](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/README.md), user/developer guides, practice guides, release records, and performance evidence. |
+| `docs/` | [Documentation index](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/README.md), user/developer guides, practice guides, release records, and performance evidence. |
 
 ## Prerequisites
 
@@ -118,9 +118,10 @@ attributes do not break app signing. You can override the build directory with
 ## Build cleanup
 
 Keep the current installed Dev app, its optimized `release` build cache,
-`node_modules`, the current `dist` bundle, and staged FFmpeg resources for local
-development and testing. Once build/test processes have stopped, the generated
-`debug` tree and obsolete smoke outputs can be removed. The next debug build
+`node_modules`, the current `dist` bundle, staged FFmpeg/NDI/Syphon resources and
+the pinned SDK staging cache for local development and testing. Once build/test
+processes have stopped, the generated `debug` tree and obsolete smoke outputs
+can be removed. The next debug build
 recreates its cache; `npm run tauri:dev` and `npm run check:desktop` remain the
 normal development commands.
 
@@ -160,7 +161,7 @@ and verifies the pinned FFmpeg/ffprobe resources for each package set before
 bundling. The
 `ascii-vj-remix-windows-test-<commit>` and
 `ascii-vj-remix-linux-test-<commit>` artifacts are retained for 14 days. See
-[Linux VM QA](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/LINUX_VM_QA.md) for the maintained VM matrix.
+[Linux VM QA](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/LINUX_VM_QA.md) for the maintained VM matrix.
 
 ## Podman Development Shell
 
@@ -268,7 +269,7 @@ Keep capabilities narrow:
 The MIDI command surface is main-window only. Native MIDI code lives
 in `src-tauri/src/midi.rs`; the first supported port is the DIN-connected
 mioXC. Do not grant MIDI or SysEx commands to the output window. See
-[MIDI_UC33E](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/MIDI_UC33E.md) before changing the hardware profile.
+[MIDI_UC33E](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/MIDI_UC33E.md) before changing the hardware profile.
 
 Select the [MIDI checks](/docs/operations/testing/#midi-uc-33e-or-sysex-changes) for mapping,
 transport, or SysEx changes.
@@ -383,7 +384,7 @@ Do not commit generated sidecar binaries or private release keys.
 Follow the [Release and Updater Guide](/docs/operations/release/) for packaging, signing,
 publication, immutable artifacts, and post-publication acceptance. Use
 [Testing: Release and Updater](/docs/operations/testing/#release-and-updater) for check selection.
-Version-specific evidence lives in [release records](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/releases/README.md).
+Version-specific evidence lives in [release records](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/releases/README.md).
 
 ## Pull Request Checklist
 
@@ -409,7 +410,7 @@ references; `git diff --check` alone does not check links.
 ## License
 
 This fork retains the MIT License with an Anti-Advertisement Restriction in
-[LICENSE](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/LICENSE). It is not the standard MIT license. Its text is unchanged
+[LICENSE](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/LICENSE). It is not the standard MIT license. Its text is unchanged
 from upstream commit
 [`95a3029679b0761663171f5b9afcf28a086a8b3c`](https://github.com/YusufB5/ASCILINE/blob/95a3029679b0761663171f5b9afcf28a086a8b3c/LICENSE)
 (May 3, 2026), which is present in this fork's history. The SHA-256 of both files
@@ -428,8 +429,8 @@ and their applicable notices and review compatibility with this fork. Do not
 assume the current upstream notice describes this fork, or assign its new SDK
 license to the older copied code without checking provenance. Bundled third-party
 assets and sidecars retain their own notices (including
-[Unifont](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/third_party/unifont/README.md) and
-[FFmpeg](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/src-tauri/resources/ffmpeg/README.md)).
+[Unifont](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/third_party/unifont/README.md) and
+[FFmpeg](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/src-tauri/resources/ffmpeg/README.md)).
 
 Contributions must be compatible with that license and with the project's
 local-first runtime policy.
@@ -460,4 +461,4 @@ appear only in Tauri.
 ## Source Material
 
 This page is generated from ASCII VJ Remix source material. Primary sources:
-- [docs/CONTRIBUTORS.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/CONTRIBUTORS.md)
+- [docs/CONTRIBUTORS.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/CONTRIBUTORS.md)

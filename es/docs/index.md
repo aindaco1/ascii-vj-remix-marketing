@@ -13,7 +13,7 @@ Estos documentos son para desarrolladores de software que desean bifurcar, inspe
 
 ASCII VJ Remix es un visualizador de escritorio local y un banco de trabajo de renderizado. Para los usuarios, existe para brindar a los DJ un visualizador manejable y a los VJ un control detallado de filtro de video/ASCII. Para los desarrolladores, es una aplicación de escritorio Tauri con una densa superficie de control/representación, ruta de salida nativa, adaptadores de medios locales, modulación reactiva de audio e infraestructura de lanzamiento/actualización.
 
-Estas guías describen **1.3.0** a partir de la revisión importada del repositorio principal. Consulta la [Base de la versión](/es/docs/overview/changelog-baseline/) para ver las notas de lanzamiento y las guías vinculadas al código fuente para conocer la arquitectura, la configuración y la validación.
+Estas guías describen **1.3.1** a partir de la revisión importada del repositorio principal. Consulta la [Base de la versión](/es/docs/overview/changelog-baseline/) para ver las notas de la versión y las guías enlazadas al código fuente para arquitectura, configuración y validación.
 
 <a id="start-here"></a>
 
@@ -48,19 +48,20 @@ Estas guías describen **1.3.0** a partir de la revisión importada del reposito
 ## Material de origen
 
 Esta página se genera a partir del material fuente de ASCII VJ Remix. Fuentes primarias:
-- [README.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/README.md)
-- [docs/README.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/README.md)
-- [docs/USER_GUIDE.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/USER_GUIDE.md)
-- [docs/RELEASING.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/RELEASING.md)
-- [docs/releases/README.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/releases/README.md)
-- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/CHANGELOG.md)
-- [docs/RENDERING_ENGINE.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/RENDERING_ENGINE.md)
-- [docs/CONTRIBUTORS.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/CONTRIBUTORS.md)
-- [docs/SHARED_DESKTOP_MIGRATION.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/SHARED_DESKTOP_MIGRATION.md)
-- [docs/AGENTS.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/AGENTS.md)
-- [docs/SECURITY.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/SECURITY.md)
-- [docs/PERFORMANCE.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/PERFORMANCE.md)
-- [docs/TESTING.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/TESTING.md)
-- [docs/ACCESSIBILITY.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/ACCESSIBILITY.md)
-- [docs/I18N.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/I18N.md)
-- [docs/ROADMAP.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/ROADMAP.md)
+- [README.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/README.md)
+- [docs/README.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/README.md)
+- [docs/USER_GUIDE.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/USER_GUIDE.md)
+- [docs/RELEASING.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/RELEASING.md)
+- [docs/releases/README.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/releases/README.md)
+- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/CHANGELOG.md)
+- [docs/RENDERING_ENGINE.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/RENDERING_ENGINE.md)
+- [docs/CONTRIBUTORS.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/CONTRIBUTORS.md)
+- [docs/SHARED_DESKTOP_MIGRATION.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/SHARED_DESKTOP_MIGRATION.md)
+- [docs/AGENTS.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/AGENTS.md)
+- [docs/SECURITY.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/SECURITY.md)
+- [docs/PERFORMANCE.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/PERFORMANCE.md)
+- [docs/TESTING.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/TESTING.md)
+- [docs/ACCESSIBILITY.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/ACCESSIBILITY.md)
+- [docs/I18N.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/I18N.md)
+- [docs/ROADMAP.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/ROADMAP.md)
+- [src-tauri/tests/tls_trust.rs](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/src-tauri/tests/tls_trust.rs)

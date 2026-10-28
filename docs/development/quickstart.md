@@ -12,7 +12,7 @@ Use the source repository as the working tree:
 ```bash
 git clone https://github.com/aindaco1/ascii-vj-remix.git
 cd ascii-vj-remix
-git checkout 512974b25a9a768c8d4cd253e3988f33578fdf86
+git checkout ab93bbd6b4d1634d3ee90e05dea743686b83d366
 ```
 
 ## Prerequisites
@@ -111,6 +111,6 @@ Do not add hosted fonts, CDNs, online decoders, telemetry, or hosted runtime dep
 ## Source Material
 
 This page is generated from ASCII VJ Remix source material. Primary sources:
-- [docs/CONTRIBUTORS.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/CONTRIBUTORS.md)
-- [docs/TESTING.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/TESTING.md)
-- [docs/RELEASING.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/RELEASING.md)
+- [docs/CONTRIBUTORS.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/CONTRIBUTORS.md)
+- [docs/TESTING.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/TESTING.md)
+- [docs/RELEASING.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/RELEASING.md)

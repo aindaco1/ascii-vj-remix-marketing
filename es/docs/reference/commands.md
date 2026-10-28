@@ -100,6 +100,7 @@ Las rutas de dispositivos de medios agrupados se generalizan en esta referencia 
 |`npm run test:crash-relay`|`npm --prefix crash-relay test`|
 |`npm run test:vectors`|`node scripts/test_vectors.mjs`|
 |`npm run test:rust`|`node scripts/cargo_env.mjs test --manifest-path src-tauri/Cargo.toml`|
+|`npm run test:tls`|`node scripts/cargo_env.mjs test --locked --manifest-path src-tauri/Cargo.toml --test tls_trust -- --ignored --nocapture`|
 |`npm run tauri`|`node scripts/tauri_env.mjs`|
 |`npm run tauri:dev`|`node scripts/tauri_env.mjs dev --config src-tauri/tauri.dev.conf.json`|
 |`npm run tauri:build`|`node scripts/tauri_env.mjs build`|
@@ -123,6 +124,20 @@ Las rutas de dispositivos de medios agrupados se generalizan en esta referencia 
 - Ejecute comprobaciones de escritorio/versión después de cambiar las capacidades de Tauri, la configuración del actualizador, la firma, los informes de fallos, la salida nativa o el empaquetado de la plataforma.
 - Mantenga los secretos y el material de firma fuera de fuentes comprometidas.
 
+<a id="tls-trust-acceptance"></a>
+
+## Aceptación de la confianza TLS
+
+La versión 1.3.1 actualiza la confianza en certificados TLS para rechazar cadenas eMudhra comprometidas. Ejecuta la prueba en vivo opcional desde el repositorio de la app después de completar el [Inicio rápido](/es/docs/development/quickstart/):
+
+```bash
+npm run test:tls
+```
+
+La [prueba de aceptación TLS](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/src-tauri/tests/tls_trust.rs) usa las dependencias reqwest/rustls fijadas en el archivo de bloqueo de la app. Primero exige una respuesta HTTPS correcta de `https://example.com/` y luego el rechazo del certificado (`CertDistrusted`) para las 12 cadenas de prueba eMudhra divulgadas. Un tiempo de espera agotado, un error DNS u otro fallo de conexión no cuenta como rechazo del certificado.
+
+Esta prueba contacta con servidores públicos y se omite en la ejecución habitual de pruebas de Rust; invócala explícitamente al validar cambios en las dependencias TLS. No demuestra aceptación de la app instalada, del actualizador ni de plataformas físicas.
+
 
 
 <a id="source-material"></a>
@@ -130,7 +145,8 @@ Las rutas de dispositivos de medios agrupados se generalizan en esta referencia 
 ## Material de origen
 
 Esta página se genera a partir del material fuente de ASCII VJ Remix. Fuentes primarias:
-- [package.json](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/package.json)
-- [docs/CONTRIBUTORS.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/CONTRIBUTORS.md)
-- [docs/TESTING.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/docs/TESTING.md)
-- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/512974b25a9a768c8d4cd253e3988f33578fdf86/CHANGELOG.md)
+- [package.json](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/package.json)
+- [docs/CONTRIBUTORS.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/CONTRIBUTORS.md)
+- [docs/TESTING.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/TESTING.md)
+- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/CHANGELOG.md)
+- [src-tauri/tests/tls_trust.rs](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/src-tauri/tests/tls_trust.rs)
