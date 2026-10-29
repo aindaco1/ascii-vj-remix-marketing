@@ -12,7 +12,7 @@ lang: es
 
 Esta guía define el procedimiento mantenido de empaquetado, firma, publicación y actualización. Ejecute los comandos desde la raíz del repositorio. Consulte [Pruebas](/es/docs/operations/testing/#release-and-updater) para seleccionar las comprobaciones y [Seguridad](/es/docs/operations/security/#release-security-posture) para el modelo de seguridad de las publicaciones.
 
-Las decisiones y pruebas específicas de la versión se guardan en [registros de publicación](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/releases/README.md). Son instantáneas históricas, no el procedimiento de publicación actual.
+Las decisiones y pruebas específicas de la versión se guardan en [registros de publicación](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/releases/README.md). Son instantáneas históricas, no el procedimiento de publicación actual.
 
 <a id="evidence-and-release-records"></a>
 
@@ -28,7 +28,7 @@ Al recopilar evidencia de una versión, registre la versión exacta, el commit o
 
 Una compilación o publicación correcta no demuestra aceptación en hardware físico. Registre el alcance de cualquier aplazamiento aprobado por el responsable y enlace la comprobación pendiente desde [Pruebas](/es/docs/operations/testing/#hardware-and-platform-checks) y la [Hoja de ruta](/es/docs/reference/roadmap/#distribution-and-platform-validation).
 
-Cree los registros de cada versión en `docs/releases/`, indique la fecha y la etapa de evidencia y añádalos al [índice de versiones](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/releases/README.md). Conserve las filas pendientes como evidencia histórica; no las marque como aprobadas solo porque después se publicó una versión. Las guías de usuario y arquitectura describen el comportamiento mantenido, y el [Registro de cambios](/es/docs/reference/changelog/) conserva el historial de versiones.
+Cree los registros de cada versión en `docs/releases/`, indique la fecha y la etapa de evidencia y añádalos al [índice de versiones](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/releases/README.md). Conserve las filas pendientes como evidencia histórica; no las marque como aprobadas solo porque después se publicó una versión. Las guías de usuario y arquitectura describen el comportamiento mantenido, y el [Registro de cambios](/es/docs/reference/changelog/) conserva el historial de versiones.
 
 <a id="release-workflow"></a>
 
@@ -84,6 +84,8 @@ El script secreto del actualizador pasa valores a `gh secret set` a través de l
 <a id="local-packaging-and-app-identity"></a>
 
 ## Empaquetado local e identidad de la aplicación
+
+El script de compilación de FFmpeg reintenta la descarga desde la URL oficial y, si la transferencia falla, recurre al servidor espejo de archivos de MacPorts. Ambas rutas exigen el mismo SHA-256 fijado antes de extraer el archivo. Al establecer `ASCILINE_FFMPEG_URL`, se usa exclusivamente esa fuente y se desactiva el recurso al servidor espejo.
 
 Para paquetes locales con actualizador deshabilitado, use los [comandos del colaborador](/es/docs/development/contributing/#common-commands). En macOS, siga [Permisos durante el desarrollo](/es/docs/development/contributing/#macos-permissions-during-development) para una firma de desarrollo estable.
 
@@ -149,9 +151,9 @@ El asistente almacena `AZURE_CLIENT_SECRET` como un secreto de acciones GitHub y
 
 ## Empaquetado de bibliotecas de video nativo
 
-Ejecuta `npm run video-io:stage` antes de verificar o compilar la app de escritorio; la CI lo hace en cada tarea de compilación y empaquetado. `check:video-io-resources` verifica la versión, el hash y los avisos de NDI preparados, incluido el archivo completo de licencias de terceros del SDK. macOS incluye NDI y Syphon en Contents/Frameworks para que Tauri firme el código anidado antes de firmar la app. Windows/Linux empaquetan NDI en resources/video-io para la arquitectura actual. Los metadatos deb/rpm de Linux requieren las bibliotecas y el servicio Avahi; quienes usen AppImage deben seguir la [configuración del sistema](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/USER_GUIDE.md#linux-ndi-sources-do-not-appear). Incluye los avisos y la procedencia fijada en los instaladores y archivos de actualización. No distribuyas cabeceras del SDK, NDI Tools ni programas de ejemplo del SDK como dependencias de la aplicación.
+Ejecuta `npm run video-io:stage` antes de verificar o compilar la app de escritorio; la CI lo hace en cada tarea de compilación y empaquetado. `check:video-io-resources` verifica la versión, el hash y los avisos de NDI preparados, incluido el archivo completo de licencias de terceros del SDK. macOS incluye NDI y Syphon en Contents/Frameworks para que Tauri firme el código anidado antes de firmar la app. Windows/Linux empaquetan NDI en resources/video-io para la arquitectura actual. Los metadatos deb/rpm de Linux requieren las bibliotecas y el servicio Avahi; quienes usen AppImage deben seguir la [configuración del sistema](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/USER_GUIDE.md#linux-ndi-sources-do-not-appear). Incluye los avisos y la procedencia fijada en los instaladores y archivos de actualización. No distribuyas cabeceras del SDK, NDI Tools ni programas de ejemplo del SDK como dependencias de la aplicación.
 
-El acuerdo fijado de NDI 6.3.2 y los avisos obligatorios para el usuario final se revisaron durante la implementación; conserva sus términos de componente y la atribución y el enlace de NDI. Los metadatos de copyright del paquete Tauri proporcionan la declaración de marca obligatoria al diálogo nativo Acerca de; el enlace de Video I/O incluye la misma atribución. La [página de licencias del proveedor](https://docs.ndi.video/all/developing-with-ndi/sdk/licensing) todavía identifica el SDK 6.3.2 a fecha de 2026-10-13. Vuelve a comprobar el acuerdo completo y los hashes de los archivos antes de redistribuir; detente si cambia una suma de verificación de origen. Conserva la licencia BSD de Syphon. Verifica la carga de bibliotecas dinámicas firmadas, el contenido del instalador, el comportamiento de los permisos de red y del cortafuegos desde una instalación limpia, y la entrada y salida reales después de actualizar. La evidencia de aceptación publicada y las afirmaciones de plataforma y dispositivos aún sin verificar se documentan en el [registro de la versión 1.3.0](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/releases/RELEASE_1.3.0.md).
+El acuerdo fijado de NDI 6.3.2 y los avisos obligatorios para el usuario final se revisaron durante la implementación; conserva sus términos de componente y la atribución y el enlace de NDI. Los metadatos de copyright del paquete Tauri proporcionan la declaración de marca obligatoria al diálogo nativo Acerca de; el enlace de Video I/O incluye la misma atribución. La [página de licencias del proveedor](https://docs.ndi.video/all/developing-with-ndi/sdk/licensing) todavía identifica el SDK 6.3.2 a fecha de 2026-10-13. Vuelve a comprobar el acuerdo completo y los hashes de los archivos antes de redistribuir; detente si cambia una suma de verificación de origen. Conserva la licencia BSD de Syphon. Verifica la carga de bibliotecas dinámicas firmadas, el contenido del instalador, el comportamiento de los permisos de red y del cortafuegos desde una instalación limpia, y la entrada y salida reales después de actualizar. La evidencia de aceptación publicada y las afirmaciones de plataforma y dispositivos aún sin verificar se documentan en el [registro de la versión 1.3.0](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/releases/RELEASE_1.3.0.md).
 
 <a id="build-and-package"></a>
 
@@ -192,4 +194,4 @@ El verdadero salto de actualización basado en aplicaciones necesita una versió
 ## Material de origen
 
 Esta página se genera a partir del material fuente de ASCII VJ Remix. Fuentes primarias:
-- [docs/RELEASING.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/RELEASING.md)
+- [docs/RELEASING.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/RELEASING.md)

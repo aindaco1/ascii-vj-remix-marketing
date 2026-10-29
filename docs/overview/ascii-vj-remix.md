@@ -7,7 +7,7 @@ parent: "Overview"
 
 # ASCII VJ Remix
 
-These sections follow the imported source snapshot. See the [Release Baseline](/docs/overview/changelog-baseline/) for **1.3.1** release notes. Product identity, requirements, and hardware guidance are selected directly from their canonical guides.
+These sections follow the imported source snapshot. See the [Release Baseline](/docs/overview/changelog-baseline/) for **1.3.2** release notes. Product identity, requirements, and hardware guidance are selected directly from their canonical guides.
 
 ## What This Project Is
 
@@ -122,13 +122,13 @@ On laptops:
 - Close Pop Out when you do not need a second output surface.
 - Prefer the built-in Demo Image or a single video when testing on battery.
 
-For installation, permissions, privacy, and troubleshooting, use the complete [User Guide](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/USER_GUIDE.md).
+For installation, permissions, privacy, and troubleshooting, use the complete [User Guide](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/USER_GUIDE.md).
 
 
 
 ## Source Material
 
 This page is generated from ASCII VJ Remix source material. Primary sources:
-- [README.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/README.md)
-- [docs/USER_GUIDE.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/USER_GUIDE.md)
-- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/CHANGELOG.md)
+- [README.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/README.md)
+- [docs/USER_GUIDE.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/USER_GUIDE.md)
+- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/CHANGELOG.md)

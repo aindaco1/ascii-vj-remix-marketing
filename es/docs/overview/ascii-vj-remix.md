@@ -8,7 +8,7 @@ lang: es
 
 # ASCII VJ Remix
 
-Estas secciones siguen la revisión importada del código fuente. Consulta la [Base de la versión](/es/docs/overview/changelog-baseline/) para ver las notas de **1.3.1**. La identidad del producto, los requisitos y la orientación sobre hardware se seleccionan directamente de sus guías canónicas.
+Estas secciones siguen la revisión importada del código fuente. Consulta la [Base de la versión](/es/docs/overview/changelog-baseline/) para ver las notas de **1.3.2**. La identidad del producto, los requisitos y la orientación sobre hardware se seleccionan directamente de sus guías canónicas.
 
 <a id="what-this-project-is"></a>
 
@@ -96,7 +96,7 @@ En portátiles:
 - Cierre Pop Out cuando no necesite una segunda superficie de salida.
 - Prefiera la imagen de demostración incorporada o un solo video cuando realice pruebas con batería.
 
-Para instalación, permisos, privacidad y solución de problemas, utilice la [Guía del usuario](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/USER_GUIDE.md).
+Para instalación, permisos, privacidad y solución de problemas, utilice la [Guía del usuario](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/USER_GUIDE.md).
 
 
 
@@ -105,6 +105,6 @@ Para instalación, permisos, privacidad y solución de problemas, utilice la [Gu
 ## Material de origen
 
 Esta página se genera a partir del material fuente de ASCII VJ Remix. Fuentes primarias:
-- [README.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/README.md)
-- [docs/USER_GUIDE.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/USER_GUIDE.md)
-- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/CHANGELOG.md)
+- [README.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/README.md)
+- [docs/USER_GUIDE.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/USER_GUIDE.md)
+- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/CHANGELOG.md)

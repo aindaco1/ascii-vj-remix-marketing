@@ -25,7 +25,7 @@ Canvas presets require finished-frame CPU transfer and can have a lower limit.
 Short installed Mac tests with input + both transports + Pop Out measured roughly
 52–54 rendered frames/second at 1080p with no staging drops. This does not measure
 receiver frame age or establish a 30-minute soak. Publish sustained limits only
-after the named-hardware/peer checks in [candidate evidence](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/releases/NATIVE_VIDEO_IO_DEV.md).
+after the named-hardware/peer checks in [candidate evidence](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/releases/NATIVE_VIDEO_IO_DEV.md).
 
 ## Performance Principles
 
@@ -109,7 +109,7 @@ The optimized city/video/synthetic-audio workload at 640 columns measured
 presentation on M1 Max/64 GB, with 85% source media. The maintained phased
 smoke passed its existing gates; occasional spikes remain. Exact scope, the frame-time
 tails and manual/reference-floor limitations are recorded in the
-[1.1.0 release record](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/releases/RELEASE_1.1.0.md#earlier-local-validation-before-fractal-follow-up).
+[1.1.0 release record](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/releases/RELEASE_1.1.0.md#earlier-local-validation-before-fractal-follow-up).
 
 ## 0.9.6 Measured Optimization Pass
 
@@ -582,7 +582,7 @@ releases its quad buffer/VAO.
 
 The UI performance smoke now reports actual UI completion/failure with a bounded
 timeout. Timer expiry alone is never a passing measurement. Exact local results
-and platform limitations belong in the [1.0.4 release record](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/releases/RELEASE_1.0.4.md).
+and platform limitations belong in the [1.0.4 release record](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/releases/RELEASE_1.0.4.md).
 
 
 Fractal accents add one bounded, early-exiting Julia loop (at most 24 iterations)
@@ -597,4 +597,4 @@ to measure the feature on the target device; low-end hardware needs its own run.
 ## Source Material
 
 This page is generated from ASCII VJ Remix source material. Primary sources:
-- [docs/PERFORMANCE.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/PERFORMANCE.md)
+- [docs/PERFORMANCE.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/PERFORMANCE.md)

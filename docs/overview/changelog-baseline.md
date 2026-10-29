@@ -7,22 +7,22 @@ parent: "Overview"
 
 # Release Baseline
 
-The current release is **1.3.1**. The [Changelog](/docs/reference/changelog/) contains the full version history.
+The current release is **1.3.2**. The [Changelog](/docs/reference/changelog/) contains the full version history.
 
-[Download v1.3.1](https://github.com/aindaco1/ascii-vj-remix/releases/tag/v1.3.1).
+[Download v1.3.2](https://github.com/aindaco1/ascii-vj-remix/releases/tag/v1.3.2).
 
-See the [Feature Set](/docs/overview/features/) for current controls and the upstream [release records](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/releases/README.md) for version-specific validation and platform coverage.
+See the [Feature Set](/docs/overview/features/) for current controls and the upstream [release records](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/releases/README.md) for version-specific validation and platform coverage.
 
 
 
-## 1.3.1 Release Notes
+## 1.3.2 Release Notes
 
-- Reject compromised eMudhra TLS chains with rustls-webpki 0.103.16 and webpki root bundles 1.0.10.
-- Add opt-in live TLS acceptance against all 12 disclosed test chains and a valid HTTPS control (`npm run test:tls`).
+- Preserve media volume, mute, and looping across visual presets, playlists, and WTF. Older saved presets no longer override these playback settings.
+- Keep release builds working through FFmpeg source-host outages with a checksum-pinned mirror fallback.
 
 
 
 ## Source Material
 
 This page is generated from ASCII VJ Remix source material. Primary sources:
-- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/CHANGELOG.md)
+- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/CHANGELOG.md)

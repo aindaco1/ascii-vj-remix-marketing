@@ -64,7 +64,8 @@ Bundled media fixture paths are generalized in this public reference. Use `packa
 | `npm run media:native-session-preview` | `node scripts/cargo_env.mjs run --manifest-path src-tauri/Cargo.toml --example native_session_preview --` |
 | `npm run media:pipeline-preview` | `node scripts/cargo_env.mjs run --manifest-path src-tauri/Cargo.toml --example pipeline_preview --` |
 | `npm run midi:probe` | `node scripts/cargo_env.mjs run --manifest-path src-tauri/Cargo.toml --example midi_probe --` |
-| `npm run smoke:static` | `npm run build && node scripts/smoke_static_pages.mjs` |
+| `npm run smoke:static` | `npm run build && node scripts/smoke_static_pages.mjs && node scripts/smoke_video_playback.mjs` |
+| `npm run smoke:video-playback` | `node scripts/smoke_video_playback.mjs` |
 | `npm run smoke:native-output` | `node scripts/smoke_native_output_perf.mjs` |
 | `npm run smoke:ui-perf` | `node scripts/smoke_ui_perf.mjs` |
 | `npm run smoke:primary-presets` | `node scripts/smoke_primary_presets.mjs` |
@@ -116,6 +117,7 @@ Bundled media fixture paths are generalized in this public reference. Use `packa
 
 - Use focused checks before broad release gates while developing.
 - Run renderer checks after changing shared math, presets, backend behavior, source adapters, transitions, audio modulation, or Pop Out behavior.
+- Run `npm run smoke:video-playback` after changing playback settings or preset ownership. See [Testing: Audio response](/docs/operations/testing/#audio-response) for coverage, local-file soak options, and native audio-device limits.
 - Run desktop/release checks after changing Tauri capabilities, updater config, signing, crash reporting, native output, or platform packaging.
 - Keep secrets and signing material out of committed source.
 
@@ -127,7 +129,7 @@ Version 1.3.1 updates TLS certificate trust to reject compromised eMudhra chains
 npm run test:tls
 ```
 
-The [TLS acceptance test](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/src-tauri/tests/tls_trust.rs) uses the application's locked reqwest/rustls dependencies. It first requires a successful HTTPS response from `https://example.com/`, then requires certificate rejection (`CertDistrusted`) for all 12 disclosed eMudhra test chains. A timeout, DNS error or other connection failure does not count as certificate rejection.
+The [TLS acceptance test](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/src-tauri/tests/tls_trust.rs) uses the application's locked reqwest/rustls dependencies. It first requires a successful HTTPS response from `https://example.com/`, then requires certificate rejection (`CertDistrusted`) for all 12 disclosed eMudhra test chains. A timeout, DNS error or other connection failure does not count as certificate rejection.
 
 This test contacts public endpoints and is ignored by the ordinary Rust test run; invoke it explicitly when validating TLS dependency changes. It does not establish installed-app, updater or physical-platform acceptance.
 
@@ -136,8 +138,8 @@ This test contacts public endpoints and is ignored by the ordinary Rust test run
 ## Source Material
 
 This page is generated from ASCII VJ Remix source material. Primary sources:
-- [package.json](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/package.json)
-- [docs/CONTRIBUTORS.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/CONTRIBUTORS.md)
-- [docs/TESTING.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/TESTING.md)
-- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/CHANGELOG.md)
-- [src-tauri/tests/tls_trust.rs](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/src-tauri/tests/tls_trust.rs)
+- [package.json](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/package.json)
+- [docs/CONTRIBUTORS.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/CONTRIBUTORS.md)
+- [docs/TESTING.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/TESTING.md)
+- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/CHANGELOG.md)
+- [src-tauri/tests/tls_trust.rs](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/src-tauri/tests/tls_trust.rs)

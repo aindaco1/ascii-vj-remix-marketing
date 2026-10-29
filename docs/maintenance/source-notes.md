@@ -283,3 +283,45 @@ English desktop and Spanish mobile checks found no horizontal overflow.
   horizontal overflow. Desktop installers, live TLS acceptance and updater
   transactions were not rerun in this website task. These are local website
   changes; publication is a separate step.
+
+## 2026-10-29 — 1.3.2 video soundtrack playback refresh
+
+- Read the current app documentation map, agent guide, README, changelog,
+  User Guide, rendering, testing and release-guide changes, and the published
+  1.3.2 acceptance record. Checked the playback parameter exclusions, WTF
+  changes, new smoke command and FFmpeg fallback against their implementations.
+- Imported the clean app checkout at
+  `eebf5bdca6c88c66a04cacd9a2a8256112880fdb`, matching remote `main`.
+  This revision includes the publication evidence added after the released
+  source commit `63d8a7421b220cb94261aa62559e3a8db6debe5c`, which the peeled
+  `v1.3.2` tag still identifies. Generated source links pin the imported revision.
+- Verified GitHub's latest public release as
+  [v1.3.2](https://github.com/aindaco1/ascii-vj-remix/releases/tag/v1.3.2),
+  published October 29 at 08:11:31 UTC (02:11:31 America/Denver), with fourteen
+  uploaded assets. The generated macOS DMG, Windows EXE and Linux AppImage
+  targets match those assets and returned HTTP 200. The public updater manifest
+  reports 1.3.2 with nine platform entries. Product data uses the dated changelog
+  entry, `2026-10-29`.
+- Updated both homepages, release labels and metadata for playback volume,
+  mute and looping remaining user-controlled across presets, playlists, WTF
+  and older saved presets. The shared download component now selects 1.3.2.
+- Regenerated all 23 English and 23 Spanish developer pages. The source refresh
+  adds playback ownership, the `smoke:video-playback` command and its inclusion
+  in `smoke:static`, local-file soak options, and the checksum-pinned MacPorts
+  fallback for FFmpeg source downloads. Explicit custom source URLs remain
+  exclusive. Added a Commands cross-reference to the canonical testing guidance
+  and 17 reviewed Spanish translation segments.
+- Preserved the test coverage boundary: Chromium platform identities do not
+  certify Windows/Linux native decoders or audio devices, and local-file signal
+  summaries do not measure physical speakers. Desktop installation, updater
+  and listening acceptance remain in the upstream release record; this website
+  task did not rerun those checks.
+- Validation: all 16 pipeline tests passed with the sibling app checkout
+  unavailable as in CI. The production Jekyll build, current-state audit,
+  52-page internal-link audit, SEO, support and performance audits passed.
+- Both generators reproduced identical output. Reviewed both homepages and
+  release-note pages in the browser, verified language switching, and checked
+  the new release headings at a narrow 325-CSS-pixel viewport with no horizontal
+  overflow. Restored the normal viewport and retained a local preview screenshot.
+  `git diff --check` passed. This validation preceded website publication;
+  deployment verification and cleanup receipts are recorded separately.

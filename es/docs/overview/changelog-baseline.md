@@ -10,20 +10,20 @@ lang: es
 
 # Base de la versión
 
-La versión actual es **1.3.1**. El [Registro de cambios](/es/docs/reference/changelog/) contiene el historial completo de versiones.
+La versión actual es **1.3.2**. El [Registro de cambios](/es/docs/reference/changelog/) contiene el historial completo de versiones.
 
-[Descargar v1.3.1](https://github.com/aindaco1/ascii-vj-remix/releases/tag/v1.3.1).
+[Descargar v1.3.2](https://github.com/aindaco1/ascii-vj-remix/releases/tag/v1.3.2).
 
-Consulte las [Funciones](/es/docs/overview/features/) para conocer los controles actuales y los [registros de publicación del repositorio principal](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/releases/README.md) para la validación y cobertura de plataformas de cada versión.
+Consulte las [Funciones](/es/docs/overview/features/) para conocer los controles actuales y los [registros de publicación del repositorio principal](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/releases/README.md) para la validación y cobertura de plataformas de cada versión.
 
 
 
-<a id="131-release-notes"></a>
+<a id="132-release-notes"></a>
 
-## Notas de la versión 1.3.1
+## Notas de la versión 1.3.2
 
-- Se rechazan las cadenas TLS eMudhra comprometidas con rustls-webpki 0.103.16 y los paquetes de certificados raíz webpki 1.0.10.
-- Se añadió una prueba TLS en vivo opcional que comprueba las 12 cadenas de certificados divulgadas y una conexión HTTPS válida como control (`npm run test:tls`).
+- Conserva el volumen, el silencio y la reproducción en bucle del contenido multimedia al cambiar presets visuales, reproducir listas o usar WTF. Los presets guardados en versiones anteriores ya no sobrescriben estos ajustes de reproducción.
+- Mantiene la compilación de versiones durante caídas del servidor de fuentes de FFmpeg mediante un servidor espejo que verifica la suma de comprobación fijada.
 
 
 
@@ -32,4 +32,4 @@ Consulte las [Funciones](/es/docs/overview/features/) para conocer los controles
 ## Material de origen
 
 Esta página se genera a partir del material fuente de ASCII VJ Remix. Fuentes primarias:
-- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/CHANGELOG.md)
+- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/CHANGELOG.md)

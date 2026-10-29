@@ -412,6 +412,7 @@ module SyncAsciiDocs
 
         - Use focused checks before broad release gates while developing.
         - Run renderer checks after changing shared math, presets, backend behavior, source adapters, transitions, audio modulation, or Pop Out behavior.
+        - Run `npm run smoke:video-playback` after changing playback settings or preset ownership. See [Testing: Audio response](/docs/operations/testing/#audio-response) for coverage, local-file soak options, and native audio-device limits.
         - Run desktop/release checks after changing Tauri capabilities, updater config, signing, crash reporting, native output, or platform packaging.
         - Keep secrets and signing material out of committed source.
 

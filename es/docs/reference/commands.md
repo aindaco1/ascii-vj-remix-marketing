@@ -67,7 +67,8 @@ Las rutas de dispositivos de medios agrupados se generalizan en esta referencia 
 |`npm run media:native-session-preview`|`node scripts/cargo_env.mjs run --manifest-path src-tauri/Cargo.toml --example native_session_preview --`|
 |`npm run media:pipeline-preview`|`node scripts/cargo_env.mjs run --manifest-path src-tauri/Cargo.toml --example pipeline_preview --`|
 |`npm run midi:probe`|`node scripts/cargo_env.mjs run --manifest-path src-tauri/Cargo.toml --example midi_probe --`|
-|`npm run smoke:static`|`npm run build && node scripts/smoke_static_pages.mjs`|
+|`npm run smoke:static`|`npm run build && node scripts/smoke_static_pages.mjs && node scripts/smoke_video_playback.mjs`|
+|`npm run smoke:video-playback`|`node scripts/smoke_video_playback.mjs`|
 |`npm run smoke:native-output`|`node scripts/smoke_native_output_perf.mjs`|
 |`npm run smoke:ui-perf`|`node scripts/smoke_ui_perf.mjs`|
 |`npm run smoke:primary-presets`|`node scripts/smoke_primary_presets.mjs`|
@@ -121,6 +122,7 @@ Las rutas de dispositivos de medios agrupados se generalizan en esta referencia 
 
 - Utilice controles específicos antes de las puertas de lanzamiento amplias durante el desarrollo.
 - Ejecute comprobaciones del renderizador después de cambiar las matemáticas compartidas, los ajustes preestablecidos, el comportamiento del backend, los adaptadores de origen, las transiciones, la modulación de audio o el comportamiento de Pop Out.
+- Ejecuta `npm run smoke:video-playback` después de cambiar los ajustes de reproducción o los parámetros que controlan los presets. Consulta [Pruebas: Respuesta al audio](/es/docs/operations/testing/#audio-response) para conocer la cobertura, las opciones de pruebas prolongadas con archivos locales y los límites de las pruebas con dispositivos de audio nativos.
 - Ejecute comprobaciones de escritorio/versión después de cambiar las capacidades de Tauri, la configuración del actualizador, la firma, los informes de fallos, la salida nativa o el empaquetado de la plataforma.
 - Mantenga los secretos y el material de firma fuera de fuentes comprometidas.
 
@@ -134,7 +136,7 @@ La versión 1.3.1 actualiza la confianza en certificados TLS para rechazar caden
 npm run test:tls
 ```
 
-La [prueba de aceptación TLS](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/src-tauri/tests/tls_trust.rs) usa las dependencias reqwest/rustls fijadas en el archivo de bloqueo de la app. Primero exige una respuesta HTTPS correcta de `https://example.com/` y luego el rechazo del certificado (`CertDistrusted`) para las 12 cadenas de prueba eMudhra divulgadas. Un tiempo de espera agotado, un error DNS u otro fallo de conexión no cuenta como rechazo del certificado.
+La [prueba de aceptación TLS](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/src-tauri/tests/tls_trust.rs) usa las dependencias reqwest/rustls fijadas en el archivo de bloqueo de la app. Primero exige una respuesta HTTPS correcta de `https://example.com/` y luego el rechazo del certificado (`CertDistrusted`) para las 12 cadenas de prueba eMudhra divulgadas. Un tiempo de espera agotado, un error DNS u otro fallo de conexión no cuenta como rechazo del certificado.
 
 Esta prueba contacta con servidores públicos y se omite en la ejecución habitual de pruebas de Rust; invócala explícitamente al validar cambios en las dependencias TLS. No demuestra aceptación de la app instalada, del actualizador ni de plataformas físicas.
 
@@ -145,8 +147,8 @@ Esta prueba contacta con servidores públicos y se omite en la ejecución habitu
 ## Material de origen
 
 Esta página se genera a partir del material fuente de ASCII VJ Remix. Fuentes primarias:
-- [package.json](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/package.json)
-- [docs/CONTRIBUTORS.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/CONTRIBUTORS.md)
-- [docs/TESTING.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/TESTING.md)
-- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/CHANGELOG.md)
-- [src-tauri/tests/tls_trust.rs](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/src-tauri/tests/tls_trust.rs)
+- [package.json](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/package.json)
+- [docs/CONTRIBUTORS.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/CONTRIBUTORS.md)
+- [docs/TESTING.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/TESTING.md)
+- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/CHANGELOG.md)
+- [src-tauri/tests/tls_trust.rs](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/src-tauri/tests/tls_trust.rs)

@@ -10,20 +10,20 @@ lang: es
 
 # Hoja de ruta
 
-Este documento contiene únicamente trabajos prospectivos. No es una descripción del producto actual y no promete una fecha o versión de lanzamiento. El comportamiento actual pertenece a la [Guía del usuario](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/USER_GUIDE.md) y guías de práctica; El trabajo completado y el historial de lanzamientos pertenecen al [Changelog](/es/docs/reference/changelog/).
+Este documento contiene únicamente trabajos prospectivos. No es una descripción del producto actual y no promete una fecha o versión de lanzamiento. El comportamiento actual pertenece a la [Guía del usuario](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/USER_GUIDE.md) y guías de práctica; El trabajo completado y el historial de lanzamientos pertenecen al [Changelog](/es/docs/reference/changelog/).
 
 <a id="distribution-and-platform-validation"></a>
 
 ## Distribución y Validación de Plataforma
 
-- Complete las comprobaciones físicas pendientes de la [versión 1.1.0 Spatial ASCII aprobada por el responsable](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/releases/RELEASE_1.1.0.md#release-decision--2026-09-29): rendimiento en el hardware mínimo de referencia, cámaras, audio y GPU en Windows/Linux, alineación de pantallas externas, MIDI físico y latencia del sonido a la pantalla.
+- Complete las comprobaciones físicas pendientes de la [versión 1.1.0 Spatial ASCII aprobada por el responsable](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/releases/RELEASE_1.1.0.md#release-decision--2026-09-29): rendimiento en el hardware mínimo de referencia, cámaras, audio y GPU en Windows/Linux, alineación de pantallas externas, MIDI físico y latencia del sonido a la pantalla.
 
-- Completar la aceptación de [macOS 27 (#30)](https://github.com/aindaco1/ascii-vj-remix/issues/30), incluida la regresión en tiempo de ejecución de macOS 13, captura física/MIDI/permisos y comprobaciones de visualización externa, y promoción de cadena de herramientas/artefactos Xcode 27 firmados. La evidencia publicada actual y los límites restantes se encuentran en el registro [1.0.4](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/releases/RELEASE_1.0.4.md#issue-review--2026-09-16).
+- Completar la aceptación de [macOS 27 (#30)](https://github.com/aindaco1/ascii-vj-remix/issues/30), incluida la regresión en tiempo de ejecución de macOS 13, captura física/MIDI/permisos y comprobaciones de visualización externa, y promoción de cadena de herramientas/artefactos Xcode 27 firmados. La evidencia publicada actual y los límites restantes se encuentran en el registro [1.0.4](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/releases/RELEASE_1.0.4.md#issue-review--2026-09-16).
 
 - Agregue firma Authenticode y marca de tiempo para los instaladores Windows cuando exista un proveedor de firma sostenible y una política de lanzamiento.
 - Valide el comportamiento de Windows SmartScreen en máquinas limpias después de que comience la distribución firmada.
 - Ejecute pruebas de humo de instalación, lanzamiento y actualización en máquinas Windows y Linux físicas o virtuales representativas.
-- Valide los paquetes Linux AppImage, deb y rpm en una matriz de distribución mantenida. Complete las pruebas de la cámara física de Ubuntu/Fedora aplazadas en la [decisión de lanzamiento 1.0.3](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/releases/RELEASE_1.0.3.md#release-decision--2026-09-04), utilizando las [verificaciones de hardware](/es/docs/operations/testing/#hardware-and-platform-checks).
+- Valide los paquetes Linux AppImage, deb y rpm en una matriz de distribución mantenida. Complete las pruebas de la cámara física de Ubuntu/Fedora aplazadas en la [decisión de lanzamiento 1.0.3](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/releases/RELEASE_1.0.3.md#release-decision--2026-09-04), utilizando las [verificaciones de hardware](/es/docs/operations/testing/#hardware-and-platform-checks).
 - Confirme que las concesiones de privacidad de macOS sobrevivan a un actualizador público de identidad estable en una máquina limpia.
 - Decida si las versiones de Windows necesitan un tiempo de ejecución fijo de WebView2 para la instalación sin conexión.
 
@@ -31,7 +31,7 @@ Este documento contiene únicamente trabajos prospectivos. No es una descripció
 
 ## Aceptación del lanzamiento de video nativo
 
-El alcance publicado y la aceptación automatizada se documentan en el [registro de la versión 1.3.0](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/releases/RELEASE_1.3.0.md). Completa las comprobaciones aplazadas de transporte en instalaciones Windows/Linux, interoperabilidad física de LAN y fuentes HX2/HX3/dispositivos, rendimiento sostenido, recuperación de permisos de red, suspensión y reactivación, ejecución en macOS 13 y medios transparentes de ese registro. Las comprobaciones automatizadas de instaladores públicos y actualizaciones de 1.2.0 → 1.3.0 han pasado; siguen pendientes los permisos de privacidad y el comportamiento de transporte en hardware físico después de actualizar.
+El alcance publicado y la aceptación automatizada se documentan en el [registro de la versión 1.3.0](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/releases/RELEASE_1.3.0.md). Completa las comprobaciones aplazadas de transporte en instalaciones Windows/Linux, interoperabilidad física de LAN y fuentes HX2/HX3/dispositivos, rendimiento sostenido, recuperación de permisos de red, suspensión y reactivación, ejecución en macOS 13 y medios transparentes de ese registro. Las comprobaciones automatizadas de instaladores públicos y actualizaciones de 1.2.0 → 1.3.0 han pasado; siguen pendientes los permisos de privacidad y el comportamiento de transporte en hardware físico después de actualizar.
 
 <a id="midi-controllers-and-profiles"></a>
 
@@ -126,7 +126,7 @@ El alcance publicado y la aceptación automatizada se documentan en el [registro
 - Agregue capturas de pantalla mantenidas para la configuración, los permisos, la superficie de control y Pop Out.
 - Agregue guías de configuración de hardware para cámaras, interfaces de audio, proyectores y el equipo UC-33e/mioXC.
 - Mantenga una matriz de solución de problemas para permisos, respaldo de GPU, códecs y problemas de ventanas de salida.
-- Mantenga el [índice de documentación](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/README.md), las guías de usuario/desarrollador y las guías de práctica alineados con el comportamiento verificado.
+- Mantenga el [índice de documentación](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/README.md), las guías de usuario/desarrollador y las guías de práctica alineados con el comportamiento verificado.
 
 <a id="planning-constraints"></a>
 
@@ -147,4 +147,4 @@ El alcance publicado y la aceptación automatizada se documentan en el [registro
 ## Material de origen
 
 Esta página se genera a partir del material fuente de ASCII VJ Remix. Fuentes primarias:
-- [docs/ROADMAP.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/ROADMAP.md)
+- [docs/ROADMAP.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/ROADMAP.md)

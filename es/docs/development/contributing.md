@@ -31,7 +31,7 @@ El proyecto es un laboratorio de renderizado Tauri nativo local. Trate esto como
 |`media/`|Imagen/vídeo de demostración integrados y accesorios de desarrollo ocultos.|
 |`experiments/`|Experimentos de secuencias y vectores de códecs heredados/adaptativos.|
 |`scripts/`|Comprobaciones de compilación, configuración de Podman, asistentes de lanzamiento, asistentes de actualización, scripts de preparación/compilación FFmpeg y pruebas de humo.|
-|`docs/`|[Índice de documentación](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/README.md), guías de usuario/desarrollador, guías prácticas, registros de lanzamiento y evidencia de desempeño.|
+|`docs/`|[Índice de documentación](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/README.md), guías de usuario/desarrollador, guías prácticas, registros de lanzamiento y evidencia de desempeño.|
 
 <a id="prerequisites"></a>
 
@@ -134,7 +134,7 @@ Cuando una versión publicada supere la aceptación de instaladores y actualizac
 
 La [Referencia rápida de pruebas](/es/docs/operations/testing/#quick-reference) posee comandos de validación; sus [conjuntos de verificación recomendados](/es/docs/operations/testing/#recommended-check-sets) explican cuál ejecutar para variar.
 
-Las solicitudes de extracción del mismo repositorio también empaquetan artefactos de desarrollo deshabilitados por el actualizador después de que pasa la puerta de escritorio de la plataforma. El instalador sin firmar `ASCII VJ Remix Dev` Windows se construye en modo de lanzamiento, verifica el subsistema gráfico PE y se instala junto con la identidad de producción. Linux produce paquetes AppImage, deb y rpm a partir de la misma identidad de desarrollo. CI crea y verifica los recursos FFmpeg/ffprobe anclados para cada conjunto de paquetes antes de agruparlos. Los artefactos `ascii-vj-remix-windows-test-<commit>` y `ascii-vj-remix-linux-test-<commit>` se conservan durante 14 días. Consulte [Linux VM QA](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/LINUX_VM_QA.md) para conocer la matriz de VM mantenida.
+Las solicitudes de extracción del mismo repositorio también empaquetan artefactos de desarrollo deshabilitados por el actualizador después de que pasa la puerta de escritorio de la plataforma. El instalador sin firmar `ASCII VJ Remix Dev` Windows se construye en modo de lanzamiento, verifica el subsistema gráfico PE y se instala junto con la identidad de producción. Linux produce paquetes AppImage, deb y rpm a partir de la misma identidad de desarrollo. CI crea y verifica los recursos FFmpeg/ffprobe anclados para cada conjunto de paquetes antes de agruparlos. Los artefactos `ascii-vj-remix-windows-test-<commit>` y `ascii-vj-remix-linux-test-<commit>` se conservan durante 14 días. Consulte [Linux VM QA](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/LINUX_VM_QA.md) para conocer la matriz de VM mantenida.
 
 <a id="podman-development-shell"></a>
 
@@ -229,7 +229,7 @@ Mantenga las capacidades limitadas:
 - Ventana principal: selección de medios, gestión de salida, proveedores de audio, actualizador.
 - Ventana de salida: permisos mínimos de escucha/cierre/pantalla completa únicamente.
 
-La superficie de comando MIDI es únicamente la ventana principal. El código nativo MIDI se encuentra en `src-tauri/src/midi.rs`; El primer puerto admitido es el mioXC con conexión DIN. No otorgue comandos MIDI o SysEx a la ventana de salida. Consulte [MIDI_UC33E](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/MIDI_UC33E.md) antes de cambiar el perfil de hardware.
+La superficie de comando MIDI es únicamente la ventana principal. El código nativo MIDI se encuentra en `src-tauri/src/midi.rs`; El primer puerto admitido es el mioXC con conexión DIN. No otorgue comandos MIDI o SysEx a la ventana de salida. Consulte [MIDI_UC33E](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/MIDI_UC33E.md) antes de cambiar el perfil de hardware.
 
 Seleccione [MIDI comprueba](/es/docs/operations/testing/#midi-uc-33e-or-sysex-changes) para cambios de mapeo, transporte o SysEx.
 
@@ -318,7 +318,7 @@ El flujo de trabajo de lanzamiento crea FFmpeg a partir del tarball fuente ofici
 
 ## Trabajo de lanzamiento y actualización
 
-Siga la [Guía de lanzamiento y actualización](/es/docs/operations/release/) para empaquetar, firmar, publicar, artefactos inmutables y aceptación posterior a la publicación. Utilice [Prueba: Lanzamiento y Actualizador](/es/docs/operations/testing/#release-and-updater) para seleccionar la verificación. La evidencia específica de la versión se encuentra en [registros de publicación](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/releases/README.md).
+Siga la [Guía de lanzamiento y actualización](/es/docs/operations/release/) para empaquetar, firmar, publicar, artefactos inmutables y aceptación posterior a la publicación. Utilice [Prueba: Lanzamiento y Actualizador](/es/docs/operations/testing/#release-and-updater) para seleccionar la verificación. La evidencia específica de la versión se encuentra en [registros de publicación](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/releases/README.md).
 
 <a id="pull-request-checklist"></a>
 
@@ -345,11 +345,11 @@ Elija el [conjunto de comprobaciones recomendado](/es/docs/operations/testing/#r
 
 ## Licencia
 
-Esta bifurcación conserva la licencia MIT con una restricción antipublicidad en [LICENSE](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/LICENSE). No es la licencia estándar del MIT. Su texto no ha cambiado desde la confirmación ascendente [`95a3029679b0761663171f5b9afcf28a086a8b3c`](https://github.com/YusufB5/ASCILINE/blob/95a3029679b0761663171f5b9afcf28a086a8b3c/LICENSE) (3 de mayo de 2026), que está presente en el historial de esta bifurcación. El SHA-256 de ambos archivos es `7fb645f1d4eafa849eaf8332b0e32ab0c9d4f6b4c42a648c45e5edaf783e159b`.
+Esta bifurcación conserva la licencia MIT con una restricción antipublicidad en [LICENSE](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/LICENSE). No es la licencia estándar del MIT. Su texto no ha cambiado desde la confirmación ascendente [`95a3029679b0761663171f5b9afcf28a086a8b3c`](https://github.com/YusufB5/ASCILINE/blob/95a3029679b0761663171f5b9afcf28a086a8b3c/LICENSE) (3 de mayo de 2026), que está presente en el historial de esta bifurcación. El SHA-256 de ambos archivos es `7fb645f1d4eafa849eaf8332b0e32ab0c9d4f6b4c42a648c45e5edaf783e159b`.
 
 Upstream adoptó un aviso de licencia diferente el 3 de septiembre de 2026 en [`9921b0dfddfebdcaa7081cfca918fc668a330e06`](https://github.com/YusufB5/ASCILINE/blob/9921b0dfddfebdcaa7081cfca918fc668a330e06/LICENSE): AGPL-3.0-o posterior para su motor/servidor Python y MIT estándar para su SDK/decodificadores de cliente JavaScript. Yusuf informó ese cambio en [#38](https://github.com/aindaco1/ascii-vj-remix/issues/38). El 16 de septiembre de 2026, el mantenedor de la bifurcación decidió conservar la licencia existente y documentar esta procedencia; En esa revisión no se importó ningún código ascendente ni ningún texto de licencia nuevo.
 
-Antes de importar código ascendente posterior, registre la revisión exacta, los archivos afectados y sus avisos aplicables y revise la compatibilidad con esta bifurcación. No asuma que el aviso actual describe esta bifurcación ni asigne su nueva licencia de SDK al código copiado anterior sin verificar su procedencia. Los activos y sidecars de terceros incluidos conservan sus propios avisos (incluidos [Unifont](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/third_party/unifont/README.md) y [FFmpeg](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/src-tauri/resources/ffmpeg/README.md)).
+Antes de importar código ascendente posterior, registre la revisión exacta, los archivos afectados y sus avisos aplicables y revise la compatibilidad con esta bifurcación. No asuma que el aviso actual describe esta bifurcación ni asigne su nueva licencia de SDK al código copiado anterior sin verificar su procedencia. Los activos y sidecars de terceros incluidos conservan sus propios avisos (incluidos [Unifont](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/third_party/unifont/README.md) y [FFmpeg](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/src-tauri/resources/ffmpeg/README.md)).
 
 Las contribuciones deben ser compatibles con esa licencia y con la política de tiempo de ejecución local primero del proyecto.
 
@@ -369,4 +369,4 @@ Los flujos de escritorio y publicación preparan las mismas dependencias fijadas
 ## Material de origen
 
 Esta página se genera a partir del material fuente de ASCII VJ Remix. Fuentes primarias:
-- [docs/CONTRIBUTORS.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/CONTRIBUTORS.md)
+- [docs/CONTRIBUTORS.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/CONTRIBUTORS.md)

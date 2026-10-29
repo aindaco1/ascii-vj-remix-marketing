@@ -143,12 +143,12 @@ two fresh phrasings were fixed before the revised run. With the threshold
 unchanged, that run passed all 14 controls and six behavior cases on Jev 1.13.0.
 Both runs remain in local evidence. This is a small local verification, not
 independent calibration or physical-platform acceptance.
-The [integration verification record](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/testing/JEV_EVALUATION.md) preserves the
+The [integration verification record](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/testing/JEV_EVALUATION.md) preserves the
 exact results, evidence hashes and cleanup boundaries.
 
 Request construction, Cloudflare transport, response validation, and review
 routing reuse Platform Test Core through the public `test-core/jev` entry.
-[platform-desktop.json](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/platform-desktop.json) owns the current immutable
+[platform-desktop.json](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/platform-desktop.json) owns the current immutable
 commit and exact package versions. The original integration used Test Core 0.3.0
 from [Platform PR 46](https://github.com/aindaco1/dust-wave-platform/pull/46);
 its dated results remain in the integration verification record.
@@ -204,7 +204,7 @@ git diff --check
 For moved or split guides, also check relative file links, heading anchors,
 and workflow/script references to the old paths. Include the new files in link
 validation; `git diff --check` only detects whitespace errors. The
-[documentation index](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/README.md#maintaining-documentation) defines ownership.
+[documentation index](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/README.md#maintaining-documentation) defines ownership.
 
 ### Frontend UI, CSS, Presets, Sources, Audio UI
 
@@ -245,6 +245,18 @@ effective-parameter ownership in steady versus transitioning Pop Out output,
 plus Custom labeling and reselection through the actual audio controls.
 `npm run test:renderer-resources` checks decoded-frame lifetime through GPU
 submission, failure cleanup and animation-loop recovery.
+
+`npm run smoke:video-playback` checks volume/mute/loop preservation across all
+built-in preset bases, both renderer families, older saved presets, WTF, and
+manual edits during transitions. It also runs within `smoke:static`. The three
+platform identities exercise shared source/preset behavior in Chromium; they do
+not certify Windows/Linux native decoders or audio devices.
+
+For a local file soak, set `ASCILINE_PLAYBACK_MEDIA` to its absolute path and
+`ASCILINE_PLAYBACK_SOAK_MS` to the desired duration in milliseconds. The Mac
+identity case reads that file locally and reports playback progress plus bounded
+Web Audio signal summaries. It does not capture raw audio, upload media, or
+measure physical speaker output. Other cases use the bundled fixtures.
 
 After building the optimized Dev app, a local native-input timing probe runs
 alongside the existing video, Pop Out and transition performance gates:
@@ -403,7 +415,7 @@ npm run smoke:static
 
 The physical probe verifies that CoreMIDI can enumerate and simultaneously open
 both directions of the mioXC. It does not replace the control sweep and
-full-bank capture/restore checklist in [MIDI_UC33E](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/MIDI_UC33E.md).
+full-bank capture/restore checklist in [MIDI_UC33E](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/MIDI_UC33E.md).
 
 ### Tauri Commands, Permissions, or Capabilities
 
@@ -519,7 +531,7 @@ it automatically, then exercise the explicit install action. Verify the target
 version and app icon after relaunch, Reports visibility with an empty/pending
 queue, and absence of the duplicate top-bar backend readout. Record the source
 and target versions and artifact identities. Legacy missing-Update-control
-recovery is documented in the [User Guide](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/USER_GUIDE.md#upgrading-from-096-or-097).
+recovery is documented in the [User Guide](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/USER_GUIDE.md#upgrading-from-096-or-097).
 
 On macOS, release smoke extracts the current and previous `.app.tar.gz`
 payloads, requires `com.asciline.remix`, Team ID `PWT3Q52LZ2`, hardened runtime,
@@ -580,7 +592,7 @@ Use this after user-facing renderer, source, audio, or output changes:
 The app depends on real hardware and OS media stacks. Automated tests do not
 cover every hardware and platform combination.
 
-The [1.0.3 release decision](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/releases/RELEASE_1.0.3.md#release-decision--2026-09-04)
+The [1.0.3 release decision](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/releases/RELEASE_1.0.3.md#release-decision--2026-09-04)
 records Windows owner acceptance and explicit deferral of Ubuntu/Fedora physical
 camera testing. That Linux coverage gap remains open in the documented record;
 run the single-camera checks in the [manual smoke checklist](#manual-smoke-checklist)
@@ -595,7 +607,7 @@ Important manual matrices:
 - Windows with WebView2, D3D12/WebGL2, camera, mic, and installer path.
 - Linux with WebKitGTK, GPU acceleration, camera, mic, and AppImage/deb/rpm
   paths. The maintained VM matrix and package checklist are in
-  [Linux VM QA](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/LINUX_VM_QA.md).
+  [Linux VM QA](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/LINUX_VM_QA.md).
 - Experimental macOS Apple Silicon MIDI rig: Evolution/M-Audio UC-33e through
   both DIN directions of an iConnectivity mioXC, powered separately.
 
@@ -636,7 +648,7 @@ handoff, platform signing, publication, and post-publication acceptance.
 
 Keep local, CI, published-artifact, installed-app, and physical-platform results
 separate when reporting validation. Historical per-version evidence lives in
-[release records](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/releases/README.md).
+[release records](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/releases/README.md).
 
 ## Known Gaps
 
@@ -713,7 +725,7 @@ source, density, palette and ramp; adjust fractal zoom/detail/shape after select
 a preset and during its transition; exercise freeze/reverse/reset, long feedback
 fades, source/video continuity, camera orientation, audio start/stop, MIDI
 pickup and output close/reopen. Verify a physical second display and the
-reference-floor hardware separately. See the [1.1.0 record](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/releases/RELEASE_1.1.0.md).
+reference-floor hardware separately. See the [1.1.0 record](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/releases/RELEASE_1.1.0.md).
 
 
 ### Fractal accent regression checks
@@ -781,10 +793,10 @@ Dev profile; use the isolated Dev identity and do not run it against production.
 
 Build/CI, installed local peers, physical LAN/device compatibility, 1080p60 soak,
 clean installs and updater hops are separate gates. See the exact current
-[release matrix and open gates](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/releases/RELEASE_1.3.0.md).
+[release matrix and open gates](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/releases/RELEASE_1.3.0.md).
 
 
 ## Source Material
 
 This page is generated from ASCII VJ Remix source material. Primary sources:
-- [docs/TESTING.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/TESTING.md)
+- [docs/TESTING.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/TESTING.md)

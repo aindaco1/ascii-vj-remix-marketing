@@ -7,6 +7,11 @@ parent: "Reference"
 
 # Changelog
 
+## [1.3.2] - 2026-10-29
+
+- Preserve media volume, mute, and looping across visual presets, playlists, and WTF. Older saved presets no longer override these playback settings.
+- Keep release builds working through FFmpeg source-host outages with a checksum-pinned mirror fallback.
+
 ## [1.3.1] - 2026-10-21
 
 - Reject compromised eMudhra TLS chains with rustls-webpki 0.103.16 and webpki root bundles 1.0.10.
@@ -15,7 +20,7 @@ parent: "Reference"
 ## [1.3.0] - 2026-10-13
 
 Publication and acceptance evidence are tracked in the
-[1.3.0 release record](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/releases/RELEASE_1.3.0.md).
+[1.3.0 release record](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/releases/RELEASE_1.3.0.md).
 
 - Add native [NDI®](https://ndi.video/) video input/output on the desktop platform paths and native
   Syphon Metal input/output on macOS, with one selected live input and concurrent
@@ -25,7 +30,7 @@ Publication and acceptance evidence are tracked in the
 - Preserve source transparency independently of glyph selection through GPU,
   Canvas, native output and crossfades; procedural scenes can add visible content.
 - Bundle pinned native runtimes and notices, validate staging and sign nested Mac
-  libraries. See [Dev evidence and remaining release gates](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/releases/NATIVE_VIDEO_IO_DEV.md).
+  libraries. See [Dev evidence and remaining release gates](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/releases/NATIVE_VIDEO_IO_DEV.md).
 
 NDI® is a registered trademark of Vizrt NDI AB.
 
@@ -56,7 +61,7 @@ NDI® is a registered trademark of Vizrt NDI AB.
 - Give optional scene recipes distinct camera heights/tilts, speeds and framing, plus a narrow corridor, pitched cathedral roof, low shoreline and rotating orbital view. Add shared bounded recursive-ruin, Mandelbrot, Mandelbulb and Mandelbox scenes with zoom, detail and shape controls.
 - Keep manual visual and MIDI edits made during a preset transition instead of letting the transition overwrite them; retain the current Custom look and playing media.
 - Preserve the default Classic Camera ASCII selection, Auto backend preference and density limits. The preset ownership contract is now 90 total / 62 accelerated / 28 explicit Canvas.
-- Add geometric, transport, CPU/GPU pixel-parity, trail-decay and video-continuity checks. See [release scope and acceptance](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/releases/RELEASE_1.1.0.md).
+- Add geometric, transport, CPU/GPU pixel-parity, trail-decay and video-continuity checks. See [release scope and acceptance](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/releases/RELEASE_1.1.0.md).
 
 ## [1.0.6] - 2026-09-25
 
@@ -1091,4 +1096,4 @@ baseline for the current ASCII VJ Remix feature set.
 ## Source Material
 
 This page is generated from ASCII VJ Remix source material. Primary sources:
-- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/CHANGELOG.md)
+- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/CHANGELOG.md)

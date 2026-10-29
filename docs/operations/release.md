@@ -13,7 +13,7 @@ procedure for maintainers. Run commands from the repository root. Use
 [Security](/docs/operations/security/#release-security-posture) for the release security model.
 
 Version-specific decisions and evidence are kept in
-[release records](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/releases/README.md). They are historical snapshots, not the
+[release records](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/releases/README.md). They are historical snapshots, not the
 current release procedure.
 
 ## Evidence and Release Records
@@ -33,7 +33,7 @@ check from [Testing](/docs/operations/testing/#hardware-and-platform-checks) and
 [Roadmap](/docs/reference/roadmap/#distribution-and-platform-validation).
 
 Create version-specific records under `docs/releases/`, identify the evidence
-stage and date, and add them to the [release index](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/releases/README.md). Preserve
+stage and date, and add them to the [release index](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/releases/README.md). Preserve
 recorded pending rows as historical evidence; do not silently mark them passed
 because a later release shipped. Durable product behavior belongs in the user
 and architecture guides, and release history belongs in the
@@ -122,6 +122,11 @@ notarization readiness. The current Windows release path publishes unsigned
 preview artifacts and does not require Windows signing secrets.
 
 ## Local Packaging and App Identity
+
+The FFmpeg source builder retries the official release URL, then falls back to
+the MacPorts distfile mirror if the transfer fails. Both paths require the same
+pinned SHA-256 before extraction. Setting `ASCILINE_FFMPEG_URL` uses only that
+explicit source and disables the fallback.
 
 For updater-disabled local bundles, use the
 [contributor commands](/docs/development/contributing/#common-commands). On macOS, follow
@@ -222,7 +227,7 @@ version/hash and notices, including the complete SDK third-party license file. m
 so Tauri signs nested code before signing the app. Windows/Linux package NDI
 under resources/video-io for the current architecture. Linux deb/rpm metadata
 requires Avahi libraries/service; AppImage users follow the
-[host setup](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/USER_GUIDE.md#linux-ndi-sources-do-not-appear). Bundle notices and pinned
+[host setup](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/USER_GUIDE.md#linux-ndi-sources-do-not-appear). Bundle notices and pinned
 provenance with installers and updater archives. Do not distribute SDK headers,
 NDI Tools or SDK example programs as application dependencies.
 
@@ -236,7 +241,7 @@ hashes before public redistribution; stop on an upstream checksum change. Preser
 Syphon's BSD license. Verify signed dynamic library loading, installer contents,
 clean network-permission/firewall behavior and real input/output after updates.
 Published acceptance evidence and unverified platform/device claims are recorded
-in the [1.3.0 release record](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/releases/RELEASE_1.3.0.md).
+in the [1.3.0 release record](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/releases/RELEASE_1.3.0.md).
 
 ## Build and Package
 
@@ -311,4 +316,4 @@ direct install and updater download smoke.
 ## Source Material
 
 This page is generated from ASCII VJ Remix source material. Primary sources:
-- [docs/RELEASING.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/RELEASING.md)
+- [docs/RELEASING.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/RELEASING.md)

@@ -40,7 +40,7 @@ Release Baseline. This supports a candidate branch before it merges to `main`.
 By default, the release badge and download links use the newest dated changelog
 entry. `_data/release_target.yml` can select a version for owner-requested launch
 copy before that entry is dated. No override is active: the current baseline is
-the dated 1.3.1 release. For an explicitly requested future launch override,
+the dated 1.3.2 release. For an explicitly requested future launch override,
 leave the publication date empty until the source provides it. This presentation
 setting does not alter upstream evidence or mark desktop validation complete.
 Remove it when the source dates the release. The importer also normalizes the
@@ -153,8 +153,10 @@ It derives macOS DMG, Windows installer, and Linux AppImage URLs from
 Mobile and unknown platforms use that version's GitHub release page. The performance
 audit checks both homepages and the generated artifact URLs.
 
-Both homepages present 1.3.1 as a TLS security update and retain native video
-sharing as a feature introduced in 1.3.0. Built-in Looks highlights the range of
+Both homepages present 1.3.2 as the video soundtrack playback fix: volume, mute,
+and looping stay user-controlled across presets, playlists and WTF. Native video
+sharing remains a feature introduced in 1.3.0, and the 1.3.1 TLS guidance remains
+in Commands and the changelog. Built-in Looks highlights the range of
 presets and visual options, without release-specific accent recipes or WTF
 probabilities. Keep both languages, metadata, support priorities and release
 audits aligned when advancing the version. The macOS DMG, Windows EXE, Linux

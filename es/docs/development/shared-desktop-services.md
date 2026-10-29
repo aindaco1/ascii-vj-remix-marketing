@@ -14,7 +14,7 @@ La migración a servicios de escritorio compartidos se publicó en [v1.0.6](http
 
 - Revisión inicial del repositorio consumidor: `a11e7f0c90f22d9ab1ebbaa4a502c0fc3771e534`.
 - Revisión anterior de Platform: `60d439b887f1244f82ff232c849d74152b28c776`.
-- Commit inmutable actual y versiones exactas: [platform-desktop.json](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/platform-desktop.json).
+- Commit inmutable actual y versiones exactas: [platform-desktop.json](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/platform-desktop.json).
 - Componentes compartidos: helpers de progreso y manifiestos de Tauri, envío de informes revisados, agregación serializada y conciliación de incidencias de GitHub.
 
 Las rutas del relay, los esquemas de cada producto, las huellas de diagnóstico, la autenticación, el texto de las incidencias, los bindings, las claves de almacenamiento, las clases de migración, los límites de solicitudes y los controles del operador siguen siendo responsabilidad de este repositorio. Se conserva el enrutamiento de Road Notice. El arranque de la app y la interfaz de instalación y reinicio también permanecen aquí.
@@ -25,10 +25,10 @@ Las rutas del relay, los esquemas de cada producto, las huellas de diagnóstico,
 
 La documentación de mantenimiento de 1.0.6 también incluye estos cambios integrados el 25 de septiembre de 2026, después de crear la etiqueta de la versión de escritorio. No añaden funciones a la app ASCII VJ:
 
-- El [adaptador de Record](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/crash-relay/README.md#record-adapter) añade diagnósticos revisados y acotados mediante la ruta de agregación existente del relay.
-- La dependencia de Platform pasa de Desktop Core 0.1.0 a 0.2.0 para mantener la compatibilidad con adaptadores anteriores. El [manifiesto del consumidor](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/platform-desktop.json) sigue siendo la fuente de la revisión actual y las versiones exactas de los paquetes.
+- El [adaptador de Record](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/crash-relay/README.md#record-adapter) añade diagnósticos revisados y acotados mediante la ruta de agregación existente del relay.
+- La dependencia de Platform pasa de Desktop Core 0.1.0 a 0.2.0 para mantener la compatibilidad con adaptadores anteriores. El [manifiesto del consumidor](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/platform-desktop.json) sigue siendo la fuente de la revisión actual y las versiones exactas de los paquetes.
 
-Los paquetes de escritorio publicados de 1.0.6 conservan la revisión de dependencias de su etiqueta; estos commits posteriores no modifican los instaladores. El despliegue del relay y la entrega a GitHub con datos sintéticos tienen sus propias comprobaciones en la [guía del relay](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/crash-relay/README.md). Un commit integrado o una versión de escritorio publicada no demuestra ninguno de esos resultados.
+Los paquetes de escritorio publicados de 1.0.6 conservan la revisión de dependencias de su etiqueta; estos commits posteriores no modifican los instaladores. El despliegue del relay y la entrega a GitHub con datos sintéticos tienen sus propias comprobaciones en la [guía del relay](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/crash-relay/README.md). Un commit integrado o una versión de escritorio publicada no demuestra ninguno de esos resultados.
 
 <a id="validation"></a>
 
@@ -66,4 +66,4 @@ Los mecanismos extraídos del relay son aportaciones originales de Alonso para D
 ## Material de origen
 
 Esta página se genera a partir del material fuente de ASCII VJ Remix. Fuentes primarias:
-- [docs/SHARED_DESKTOP_MIGRATION.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/SHARED_DESKTOP_MIGRATION.md)
+- [docs/SHARED_DESKTOP_MIGRATION.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/SHARED_DESKTOP_MIGRATION.md)

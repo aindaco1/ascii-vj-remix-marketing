@@ -1,5 +1,5 @@
 title: ASCII VJ Remix
-description: "ASCII VJ Remix turns video, cameras and sound into live ASCII visuals, with native NDI and macOS Syphon sharing. Version 1.3.1 adds a TLS security fix."
+description: "ASCII VJ Remix turns video, cameras and sound into live ASCII visuals. Version 1.3.2 preserves volume, mute and looping across presets, playlists and WTF."
 url: "https://asciivj.com"
 baseurl: ""
 repository: aindaco1/ascii-vj-remix-marketing

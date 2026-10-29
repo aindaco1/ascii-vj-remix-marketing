@@ -141,7 +141,7 @@ The shared relay also has separately gated adapters for Podcast Visualizer,
 MKV Magic, Auto Subtitle, CutNotes, Road Notice, Paper, and Record. Each owns a
 bounded allowlisted schema and fixed repository routing while reusing serialized
 issue aggregation. These adapters do not broaden the ASCII desktop report
-contract. The [relay guide](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/crash-relay/README.md) owns route-specific schemas,
+contract. The [relay guide](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/crash-relay/README.md) owns route-specific schemas,
 deployment evidence, and deduplication limits; the
 [migration guide](/docs/development/shared-desktop-services/) records shared package ownership
 and changes after the latest desktop release.
@@ -486,4 +486,4 @@ network permissions/firewall behavior and installed runtime loading.
 ## Source Material
 
 This page is generated from ASCII VJ Remix source material. Primary sources:
-- [docs/SECURITY.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/SECURITY.md)
+- [docs/SECURITY.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/SECURITY.md)

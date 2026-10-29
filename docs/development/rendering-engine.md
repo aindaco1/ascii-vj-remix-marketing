@@ -148,6 +148,11 @@ Tauri desktop audio sources:
 The audio layer outputs bounded feature vectors, not raw audio buffers or raw
 visual frames.
 
+Video soundtrack playback belongs to the selected media element. Volume, mute,
+and looping are global playback settings excluded from visual presets (including
+older imports) and WTF randomization. Renderer changes reuse the playing source;
+explicit playback edits during a transition still take effect immediately.
+
 ### Stream Sessions
 
 Stream sessions are development and advanced infrastructure. They are not a
@@ -757,7 +762,7 @@ UC-33e DIN output
 - The mapping and transport layers are automated-test covered, but physical
   full-bank restore/verification remains an experimental acceptance gap.
 
-See [UC-33e and mioXC MIDI Control](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/MIDI_UC33E.md) for the physical map.
+See [UC-33e and mioXC MIDI Control](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/MIDI_UC33E.md) for the physical map.
 
 ## Packaging and Offline Runtime
 
@@ -934,4 +939,4 @@ WTF anchors. Both paths exclude the global limit from preset-owned parameters.
 ## Source Material
 
 This page is generated from ASCII VJ Remix source material. Primary sources:
-- [docs/RENDERING_ENGINE.md](https://github.com/aindaco1/ascii-vj-remix/blob/ab93bbd6b4d1634d3ee90e05dea743686b83d366/docs/RENDERING_ENGINE.md)
+- [docs/RENDERING_ENGINE.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/RENDERING_ENGINE.md)
