@@ -1,6 +1,6 @@
 ---
 title: ASCII VJ Remix
-description: "ASCII VJ Remix convierte video, cámaras y sonido en visuales ASCII en vivo. La versión 1.3.2 conserva volumen, silencio y bucle al cambiar presets o usar WTF."
+description: "ASCII VJ Remix convierte video, cámaras y sonido en visuales ASCII en vivo. La versión 1.3.4 actualiza NDI a 6.4.0."
 layout: homepage
 lang: es
 nav_enabled: false
@@ -9,7 +9,7 @@ nav_exclude: true
 <section class="hero" aria-labelledby="home-title">
   <div class="hero-title-block">
     <h1 id="home-title">Visuales simples para DJs. Control ASCII profundo para VJs.</h1>
-    <p class="release-status">Última versión: <a href="#release-heading"><strong>v{{ site.data.product.latest_release.version }}</strong> · Audio del video</a></p>
+    <p class="release-status">Última versión: <a href="#release-heading"><strong>v{{ site.data.product.latest_release.version }}</strong> · Actualización del runtime NDI</a></p>
   </div>
   <aside class="demo-frame demo-frame--video" aria-label="Preview de ASCII VJ Remix">
     {% assign hero_webm = '/assets/videos/ascii-hero.webm' %}
@@ -68,8 +68,8 @@ nav_exclude: true
 
 <section class="section-band" aria-labelledby="release-heading">
   <p class="kicker">Última versión</p>
-  <h2 id="release-heading">v{{ site.data.product.latest_release.version }}: Conserva el audio de tu video.</h2>
-  <p class="section-intro">La versión 1.3.2 conserva tus ajustes de volumen, silencio y reproducción en bucle al cambiar de preset, reproducir listas o usar WTF. Los presets guardados en versiones anteriores también los respetan. Cámbialos cuando quieras desde Playback.</p>
+  <h2 id="release-heading">v{{ site.data.product.latest_release.version }}: Actualización del runtime NDI.</h2>
+  <p class="section-intro">El video nativo compartido ahora incluye el runtime NDI 6.4.0.</p>
   <p class="release-link"><a href="{{ '/es/docs/overview/changelog-baseline/' | relative_url }}">Ver las novedades de v{{ site.data.product.latest_release.version }}</a></p>
 </section>
 

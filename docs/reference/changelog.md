@@ -7,6 +7,24 @@ parent: "Reference"
 
 # Changelog
 
+## [1.3.4] - 2026-11-19
+
+- Recover a stalled WebGPU preview while preserving the current image or playing video, preset and backend preference. Repeated failures use an available fallback renderer.
+- Update the bundled NDI runtime to 6.4.0 and verify its third-party notices during staging.
+
+## [1.3.3] - 2026-11-09
+
+- Added an opt-in macOS complimentary-license pilot with Keychain-backed Rust activation and authenticated signed updates; default release feeds and installed offline use remain unchanged.
+
+- Bundle the original app and component notices in an offline Software licenses
+  panel, record public-domain demo-footage provenance, and retain the VCR font
+  pending explicit redistribution evidence.
+- Build the Linux AppImage launcher from pinned source and include the complete
+  static-runtime and bundled-library source records.
+- Generate locked dependency/FFmpeg source archives and verify legal resources,
+  source hashes and release identity before publication. Linux additionally
+  requires reviewed AppImage runtime and bundled distro-library sources.
+
 ## [1.3.2] - 2026-10-29
 
 - Preserve media volume, mute, and looping across visual presets, playlists, and WTF. Older saved presets no longer override these playback settings.
@@ -20,7 +38,7 @@ parent: "Reference"
 ## [1.3.0] - 2026-10-13
 
 Publication and acceptance evidence are tracked in the
-[1.3.0 release record](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/releases/RELEASE_1.3.0.md).
+[1.3.0 release record](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/docs/releases/RELEASE_1.3.0.md).
 
 - Add native [NDI®](https://ndi.video/) video input/output on the desktop platform paths and native
   Syphon Metal input/output on macOS, with one selected live input and concurrent
@@ -30,7 +48,7 @@ Publication and acceptance evidence are tracked in the
 - Preserve source transparency independently of glyph selection through GPU,
   Canvas, native output and crossfades; procedural scenes can add visible content.
 - Bundle pinned native runtimes and notices, validate staging and sign nested Mac
-  libraries. See [Dev evidence and remaining release gates](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/releases/NATIVE_VIDEO_IO_DEV.md).
+  libraries. See [Dev evidence and remaining release gates](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/docs/releases/NATIVE_VIDEO_IO_DEV.md).
 
 NDI® is a registered trademark of Vizrt NDI AB.
 
@@ -61,7 +79,7 @@ NDI® is a registered trademark of Vizrt NDI AB.
 - Give optional scene recipes distinct camera heights/tilts, speeds and framing, plus a narrow corridor, pitched cathedral roof, low shoreline and rotating orbital view. Add shared bounded recursive-ruin, Mandelbrot, Mandelbulb and Mandelbox scenes with zoom, detail and shape controls.
 - Keep manual visual and MIDI edits made during a preset transition instead of letting the transition overwrite them; retain the current Custom look and playing media.
 - Preserve the default Classic Camera ASCII selection, Auto backend preference and density limits. The preset ownership contract is now 90 total / 62 accelerated / 28 explicit Canvas.
-- Add geometric, transport, CPU/GPU pixel-parity, trail-decay and video-continuity checks. See [release scope and acceptance](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/releases/RELEASE_1.1.0.md).
+- Add geometric, transport, CPU/GPU pixel-parity, trail-decay and video-continuity checks. See [release scope and acceptance](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/docs/releases/RELEASE_1.1.0.md).
 
 ## [1.0.6] - 2026-09-25
 
@@ -1096,4 +1114,4 @@ baseline for the current ASCII VJ Remix feature set.
 ## Source Material
 
 This page is generated from ASCII VJ Remix source material. Primary sources:
-- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/CHANGELOG.md)
+- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/CHANGELOG.md)

@@ -325,3 +325,54 @@ English desktop and Spanish mobile checks found no horizontal overflow.
   overflow. Restored the normal viewport and retained a local preview screenshot.
   `git diff --check` passed. This validation preceded website publication;
   deployment verification and cleanup receipts are recorded separately.
+
+## 2026-11-19 — 1.3.4 preview recovery refresh
+
+- Read the current app documentation map, agent guide, README, changelog,
+  User Guide, architecture, rendering, testing, security and release-guide
+  changes since the 1.3.2 import. Reviewed the 1.3.3 and 1.3.4 release records
+  and the boundaries of the opt-in licensing pilot.
+- Imported the clean app checkout at
+  `fb2c236b99373988a386535526ed42b44ca8e77f`, matching remote `main`.
+  This includes the publication acceptance record added after release commit
+  `4bd9e2060606c679198413e70560042dad3ae449`, identified by the peeled
+  `v1.3.4` tag. Generated source links pin the imported revision. The app
+  checkout remains unchanged.
+- Verified the public [v1.3.4 release](https://github.com/aindaco1/ascii-vj-remix/releases/tag/v1.3.4),
+  published November 19 at 05:03:58 UTC (November 18 at 22:03:58 America/Denver),
+  with 22 uploaded assets. The generated macOS DMG, Windows EXE and Linux
+  AppImage targets returned HTTP 200. The public updater manifest reports 1.3.4
+  with nine platform entries. Product data uses the source changelog date,
+  `2026-11-19`.
+- Updated both homepages, release labels, metadata and downloads for preview
+  recovery and the NDI 6.4.0 runtime. Recovery preserves the current media,
+  preset and backend preference, attempts one WebGPU rebuild, then uses an
+  available fallback. The Features guide links to the canonical backend
+  selection section for details.
+- Regenerated all 23 English and 23 Spanish developer pages, including the
+  intervening 1.3.3 changes: offline Software licenses, notice staging,
+  corresponding-source archives, distribution checks and Linux AppImage
+  source/build requirements. Commands links to the canonical release sequence.
+  Added 48 reviewed Spanish translation segments and expanded current-state
+  checks for recovery, NDI 6.4.0 and distribution commands.
+- Kept the licensing pilot explicitly opt-in. The public release retains its
+  free updater and offline rendering. Future paid-distribution proposals remain
+  upstream links; this refresh does not present them as a paid launch or new
+  customer terms. Historical 1.3.1 TLS and 1.3.2 playback guidance remains in
+  its owning guides and the changelog.
+- Validation: all 16 pipeline tests passed with the sibling app checkout
+  unavailable as in CI. The production Jekyll build, current-state audit,
+  52-page internal-link audit, SEO, support and performance audits passed.
+  Both generators reproduced identical output, and `git diff --check` passed.
+- Reviewed English and Spanish release sections and release-note pages in the
+  browser, verified language switching and checked both homepages at 390 CSS
+  pixels with no horizontal overflow. Restored the normal viewport and retained
+  a local preview screenshot. Desktop installs, physical-device testing and
+  updater transactions were not rerun in this website task; their evidence and
+  remaining platform gaps belong to the upstream release records. These are
+  local website changes; publication is a separate step.
+- Editorial follow-up: at the owner's request, removed preview-recovery copy
+  from both homepages and changed the release heading to "NDI runtime update."
+  Updated the translated heading, release badges, metadata and homepage audit
+  markers to match. Technical recovery details remain in the developer guides
+  and release notes.

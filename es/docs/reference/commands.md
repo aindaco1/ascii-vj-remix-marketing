@@ -22,12 +22,12 @@ Las rutas de dispositivos de medios agrupados se generalizan en esta referencia 
 |`npm run test:jev-harness`|`node --test scripts/test_jev_evaluation.mjs`|
 |`npm run dev`|`vite --host 127.0.0.1 --port 8010`|
 |`npm run dev:vite`|`vite --host 127.0.0.1 --port 1420 --strictPort`|
-|`npm run build`|`vite build && node scripts/copy_static_assets.mjs`|
+|`npm run build`|`node scripts/stage_distribution_licenses.mjs && vite build && node scripts/copy_static_assets.mjs`|
 |`npm run preview`|`vite preview --host 127.0.0.1 --port 8010`|
 |`npm run check`|`npm run check:offline`|
 |`npm run check:offline`|`npm run build && node scripts/check_offline_bundle.mjs`|
-|`npm run check:desktop`|`npm run check:offline && npm run test:smoke-diagnostics && npm run check:tauri-policy && npm run check:icons && npm run check:glyph-atlas && npm run test:release-build-reuse && npm run test:spatial && npm run test:render-math && npm run test:palette-cycling && npm run test:preset-backend-contract && npm run test:preset-playlists && npm run test:canvas-readback && npm run test:renderer-fallback && npm run test:renderer-resources && npm run test:media-source-policy && npm run test:audio-reactive && npm run test:midi && npm run test:crash-report-ui && npm run test:crash-relay && npm run test:output-display && npm run test:desktop-updater && npm run test:updater-manifest && npm run test:macos-artifacts && npm run test:macos-secret-args && npm run test:windows-secret-args && npm run test:ffmpeg-policy && npm run check:ffmpeg-resources && npm run check:video-io-resources && npm run test:rust && npm run tauri:build:dev -- --debug --no-bundle`|
-|`npm run check:release`|`npm run check:offline && npm run check:tauri-policy && npm run check:icons && npm run check:glyph-atlas && npm run test:release-build-reuse && npm run test:spatial && npm run test:render-math && npm run test:palette-cycling && npm run test:preset-backend-contract && npm run test:preset-playlists && npm run test:canvas-readback && npm run test:renderer-fallback && npm run test:renderer-resources && npm run test:media-source-policy && npm run test:audio-reactive && npm run test:midi && npm run test:crash-report-ui && npm run test:crash-relay && npm run test:output-display && npm run test:desktop-updater && npm run test:updater-manifest && npm run test:macos-artifacts && npm run test:macos-secret-args && npm run test:windows-secret-args && npm run test:ffmpeg-policy && npm run check:release-runtime && npm run test:rust`|
+|`npm run check:desktop`|`npm run check:offline && npm run test:smoke-diagnostics && npm run check:tauri-policy && npm run check:icons && npm run check:glyph-atlas && npm run test:distribution && npm run test:release-build-reuse && npm run test:spatial && npm run test:render-math && npm run test:palette-cycling && npm run test:preset-backend-contract && npm run test:preset-playlists && npm run test:canvas-readback && npm run test:renderer-fallback && npm run test:renderer-resources && npm run test:media-source-policy && npm run test:audio-reactive && npm run test:midi && npm run test:crash-report-ui && npm run test:crash-relay && npm run test:output-display && npm run test:desktop-updater && npm run test:updater-manifest && npm run test:macos-artifacts && npm run test:macos-secret-args && npm run test:windows-secret-args && npm run test:ffmpeg-policy && npm run check:ffmpeg-resources && npm run check:video-io-resources && npm run test:rust && npm run tauri:build:dev -- --debug --no-bundle`|
+|`npm run check:release`|`npm run check:offline && npm run check:tauri-policy && npm run check:icons && npm run check:glyph-atlas && npm run test:distribution && npm run test:release-build-reuse && npm run test:spatial && npm run test:render-math && npm run test:palette-cycling && npm run test:preset-backend-contract && npm run test:preset-playlists && npm run test:canvas-readback && npm run test:renderer-fallback && npm run test:renderer-resources && npm run test:media-source-policy && npm run test:audio-reactive && npm run test:midi && npm run test:crash-report-ui && npm run test:crash-relay && npm run test:output-display && npm run test:desktop-updater && npm run test:updater-manifest && npm run test:macos-artifacts && npm run test:macos-secret-args && npm run test:windows-secret-args && npm run test:ffmpeg-policy && npm run check:release-runtime && npm run test:rust`|
 |`npm run check:bundle`|`node scripts/check_tauri_bundle.mjs`|
 |`npm run check:bundle:debug`|`node scripts/check_tauri_bundle.mjs --profile debug --expected-bundle-id com.asciline.remix.dev`|
 |`npm run check:bundle:release`|`node scripts/check_tauri_bundle.mjs --profile release --expected-bundle-id com.asciline.remix`|
@@ -44,7 +44,7 @@ Las rutas de dispositivos de medios agrupados se generalizan en esta referencia 
 |`npm run bundle:debug`|`npm run tauri:build:dev -- --debug && npm run check:bundle:debug`|
 |`npm run bundle:test`|`npm run check:ffmpeg-release && npm run tauri:build:dev -- --bundles nsis,msi && node scripts/check_tauri_bundle.mjs --profile release --expected-bundle-id com.asciline.remix.dev && npm run check:windows-gui`|
 |`npm run bundle:test:linux`|`npm run check:ffmpeg-release && npm run tauri:build:dev -- --bundles appimage,deb,rpm && node scripts/check_tauri_bundle.mjs --profile release --expected-bundle-id com.asciline.remix.dev`|
-|`npm run bundle:release`|`npm run video-io:stage && npm run ffmpeg:build-sidecar && npm run check:release && npm run tauri:build && npm run check:bundle:release`|
+|`npm run bundle:release`|`npm run video-io:stage && npm run ffmpeg:build-sidecar && npm run check:release && npm run licenses:sources && npm run tauri:build && npm run check:bundle:release && npm run check:distribution`|
 |`npm run desktop:run-local`|`bash scripts/run_local_desktop_app.sh`|
 |`npm run desktop:run-local:foreground`|`ASCILINE_FOREGROUND=1 bash scripts/run_local_desktop_app.sh`|
 |`npm run desktop:run-local:reset`|`ASCILINE_RESET_TCC=1 bash scripts/run_local_desktop_app.sh`|
@@ -115,6 +115,10 @@ Las rutas de dispositivos de medios agrupados se generalizan en esta referencia 
 |`npm run test:video-io-alpha`|`node scripts/test_video_io_alpha.mjs`|
 |`npm run check:video-io-resources`|`node scripts/check_video_io_resources.mjs`|
 |`npm run test:video-io-runtime`|`node scripts/test_video_io_runtime.mjs`|
+|`npm run test:distribution`|`node --test scripts/test_distribution_licenses.mjs`|
+|`npm run licenses:stage`|`node scripts/stage_distribution_licenses.mjs --release`|
+|`npm run licenses:sources`|`node scripts/stage_distribution_licenses.mjs --sources`|
+|`npm run check:distribution`|`node scripts/check_distribution_artifacts.mjs`|
 
 <a id="command-guidance"></a>
 
@@ -124,6 +128,7 @@ Las rutas de dispositivos de medios agrupados se generalizan en esta referencia 
 - Ejecute comprobaciones del renderizador después de cambiar las matemáticas compartidas, los ajustes preestablecidos, el comportamiento del backend, los adaptadores de origen, las transiciones, la modulación de audio o el comportamiento de Pop Out.
 - Ejecuta `npm run smoke:video-playback` después de cambiar los ajustes de reproducción o los parámetros que controlan los presets. Consulta [Pruebas: Respuesta al audio](/es/docs/operations/testing/#audio-response) para conocer la cobertura, las opciones de pruebas prolongadas con archivos locales y los límites de las pruebas con dispositivos de audio nativos.
 - Ejecute comprobaciones de escritorio/versión después de cambiar las capacidades de Tauri, la configuración del actualizador, la firma, los informes de fallos, la salida nativa o el empaquetado de la plataforma.
+- Antes de empaquetar, consulta [Avisos de distribución y código fuente correspondiente](/es/docs/operations/release/#distribution-notices-and-corresponding-source) para preparar los avisos, los archivos de código fuente y `npm run check:distribution`.
 - Mantenga los secretos y el material de firma fuera de fuentes comprometidas.
 
 <a id="tls-trust-acceptance"></a>
@@ -136,7 +141,7 @@ La versión 1.3.1 actualiza la confianza en certificados TLS para rechazar caden
 npm run test:tls
 ```
 
-La [prueba de aceptación TLS](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/src-tauri/tests/tls_trust.rs) usa las dependencias reqwest/rustls fijadas en el archivo de bloqueo de la app. Primero exige una respuesta HTTPS correcta de `https://example.com/` y luego el rechazo del certificado (`CertDistrusted`) para las 12 cadenas de prueba eMudhra divulgadas. Un tiempo de espera agotado, un error DNS u otro fallo de conexión no cuenta como rechazo del certificado.
+La [prueba de aceptación TLS](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/src-tauri/tests/tls_trust.rs) usa las dependencias reqwest/rustls fijadas en el archivo de bloqueo de la app. Primero exige una respuesta HTTPS correcta de `https://example.com/` y luego el rechazo del certificado (`CertDistrusted`) para las 12 cadenas de prueba eMudhra divulgadas. Un tiempo de espera agotado, un error DNS u otro fallo de conexión no cuenta como rechazo del certificado.
 
 Esta prueba contacta con servidores públicos y se omite en la ejecución habitual de pruebas de Rust; invócala explícitamente al validar cambios en las dependencias TLS. No demuestra aceptación de la app instalada, del actualizador ni de plataformas físicas.
 
@@ -147,8 +152,8 @@ Esta prueba contacta con servidores públicos y se omite en la ejecución habitu
 ## Material de origen
 
 Esta página se genera a partir del material fuente de ASCII VJ Remix. Fuentes primarias:
-- [package.json](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/package.json)
-- [docs/CONTRIBUTORS.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/CONTRIBUTORS.md)
-- [docs/TESTING.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/TESTING.md)
-- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/CHANGELOG.md)
-- [src-tauri/tests/tls_trust.rs](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/src-tauri/tests/tls_trust.rs)
+- [package.json](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/package.json)
+- [docs/CONTRIBUTORS.md](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/docs/CONTRIBUTORS.md)
+- [docs/TESTING.md](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/docs/TESTING.md)
+- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/CHANGELOG.md)
+- [src-tauri/tests/tls_trust.rs](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/src-tauri/tests/tls_trust.rs)

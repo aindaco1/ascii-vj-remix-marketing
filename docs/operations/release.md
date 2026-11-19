@@ -13,8 +13,63 @@ procedure for maintainers. Run commands from the repository root. Use
 [Security](/docs/operations/security/#release-security-posture) for the release security model.
 
 Version-specific decisions and evidence are kept in
-[release records](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/releases/README.md). They are historical snapshots, not the
+[release records](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/docs/releases/README.md). They are historical snapshots, not the
 current release procedure.
+
+## Distribution notices and corresponding source
+
+The consumer owns distribution obligations. `scripts/stage_distribution_licenses.mjs`
+is the single staging owner; its generated `resources/licenses` collection is
+bundled and exposed by the offline **Software licenses** panel. The desktop
+reader opens only that fixed document, including notices added during Linux
+packaging; it is not a general filesystem reader. The iframe has no script or
+IPC permissions. Component terms are independent of paid update/support status.
+Its bundled stylesheet works under the production CSP; do not replace it with
+inline styles or relax the app's security policy for this document.
+
+`npm run licenses:stage` collects original app, font, native, Platform and locked
+dependency notices before compilation. It takes a conservative resolved-source
+superset, including build dependencies, rather than claiming a minimized SBOM.
+`npm run licenses:sources` also creates a per-version/per-platform source tarball
+and SHA-256 record in `.compliance/artifacts`. Complete registry sources include
+MPL files and original notices; FFmpeg's exact pinned source archive, configure
+record and rebuild inputs accompany its sidecars and the source tarball. Sources
+are generated from actual installed locks, not guessed upstream `main` archives.
+
+Release sequence:
+
+1. Stage NDI/Syphon, build FFmpeg from its pinned source and install locked npm/
+   Cargo dependencies. Stage dependency notices before compiling the app.
+2. In the packaging job, create the corresponding source archive, then bundle.
+3. On Linux, capture exact installed distro source packages and full notices
+   for bundled libraries, reviewed AppImage runtime source/build inputs, and
+   launcher scripts; refresh notices and rebundle. Build the runtime and stage
+   pinned tools with `node scripts/stage_appimage_runtime.mjs`, then set
+   `LDAI_RUNTIME_FILE` to its absolute output path for both bundles. See the
+   [source/build contract](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/third_party/appimage-runtime/README.md). The shared
+   verifier fails if the packaged runtime or corresponding sources change.
+4. `npm run check:distribution` extracts every expected installer/updater format,
+   checks notice bytes against the staging manifest, detects lock drift and
+   unknown AppImage libraries, and verifies source archive digests, release
+   identity and extracted manifests. Only verified source archives are copied
+   into release assets. `--sources-only` validates source archives locally.
+5. Publish sources beside the corresponding release, verify their actual URLs
+   and hashes, and retain accessible sources independently of subscription
+   status. Existing publication/signature/install gates still apply. A local
+   path or generated `SOURCES.md` URL is not proof of public availability.
+
+Do not commit generated source archives or license collections. Preserve the
+original root anti-advertisement license. Demo/test footage is public domain by
+the publisher's [recorded attestation](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/media/PUBLIC-DOMAIN.md). The user chose
+to retain VCR OSD Mono pending redistribution evidence; its author statement is
+preserved, but paid-release clearance remains pending. NDI's component-specific
+terms must not restrict FFmpeg/MPL/other component rights.
+
+November 4 local evidence: offline build and legal-panel browser smoke; 732
+notice files and FFmpeg source manifest verified inside an ad-hoc signed macOS
+development app; Rust tests passed. This is not notarized release, installation,
+Windows/Linux or paid-update acceptance. The initial release audit and remaining
+rights review are in [paid distribution review](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/docs/proposals/paid-distribution-review.md).
 
 ## Evidence and Release Records
 
@@ -33,7 +88,7 @@ check from [Testing](/docs/operations/testing/#hardware-and-platform-checks) and
 [Roadmap](/docs/reference/roadmap/#distribution-and-platform-validation).
 
 Create version-specific records under `docs/releases/`, identify the evidence
-stage and date, and add them to the [release index](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/releases/README.md). Preserve
+stage and date, and add them to the [release index](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/docs/releases/README.md). Preserve
 recorded pending rows as historical evidence; do not silently mark them passed
 because a later release shipped. Durable product behavior belongs in the user
 and architecture guides, and release history belongs in the
@@ -145,6 +200,14 @@ notarization credentials are missing.
 
 ## macOS Release Signing
 
+The established public signing identity is **Developer ID Application: Volver
+Health LLC (PWT3Q52LZ2)**. On November 4, 2026, the installed public 1.3.2 app's
+signature and Gatekeeper assessment confirmed this identity and notarized trust.
+The owner confirmed retaining it for the licensing work. The development app's
+Apple Development certificate also belongs to team `PWT3Q52LZ2`. Keep the release
+identity separate from the legal publisher wording, Fumblers LLC dba Dust Wave;
+this signing continuity does not change that publisher decision.
+
 The supported OS floor is `bundle.macOS.minimumSystemVersion` in
 `src-tauri/tauri.conf.json` (13.0). Tauri/Cargo wrappers and the FFmpeg source
 builder use it as `MACOSX_DEPLOYMENT_TARGET`; the sidecar builder also sets
@@ -227,21 +290,20 @@ version/hash and notices, including the complete SDK third-party license file. m
 so Tauri signs nested code before signing the app. Windows/Linux package NDI
 under resources/video-io for the current architecture. Linux deb/rpm metadata
 requires Avahi libraries/service; AppImage users follow the
-[host setup](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/USER_GUIDE.md#linux-ndi-sources-do-not-appear). Bundle notices and pinned
+[host setup](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/docs/USER_GUIDE.md#linux-ndi-sources-do-not-appear). Bundle notices and pinned
 provenance with installers and updater archives. Do not distribute SDK headers,
 NDI Tools or SDK example programs as application dependencies.
 
-The pinned NDI 6.3.2 agreement and required end-user notices were reviewed during
+The pinned NDI 6.4.0 agreement and required end-user notices were reviewed during
 implementation; retain its separate component terms and NDI attribution/link.
 The Tauri bundle copyright metadata supplies the required trademark statement to the default
 native About dialog; the Video I/O link carries the same attribution.
-The [vendor licensing page](https://docs.ndi.video/all/developing-with-ndi/sdk/licensing)
-still identifies SDK 6.3.2 on 2026-10-13. Recheck the full agreement and archive
+The 6.4.0 Apple installer agreement matches the reviewed 6.3.2 agreement byte for byte. See the [vendor licensing page](https://docs.ndi.video/all/developing-with-ndi/sdk/licensing). Recheck the full agreement and archive
 hashes before public redistribution; stop on an upstream checksum change. Preserve
 Syphon's BSD license. Verify signed dynamic library loading, installer contents,
 clean network-permission/firewall behavior and real input/output after updates.
 Published acceptance evidence and unverified platform/device claims are recorded
-in the [1.3.0 release record](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/releases/RELEASE_1.3.0.md).
+in the [1.3.0 release record](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/docs/releases/RELEASE_1.3.0.md).
 
 ## Build and Package
 
@@ -316,4 +378,4 @@ direct install and updater download smoke.
 ## Source Material
 
 This page is generated from ASCII VJ Remix source material. Primary sources:
-- [docs/RELEASING.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/RELEASING.md)
+- [docs/RELEASING.md](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/docs/RELEASING.md)

@@ -99,7 +99,7 @@ Al agregar un comando Tauri:
 
 Los informes de fallas se aceptan por preferencia y son solo de producción para el envío de la red. Las compilaciones de depuración/desarrollo pueden capturar informes locales para realizar pruebas, pero Rust se niega a enviarlos.
 
-El relay compartido también tiene adaptadores con activación independiente para Podcast Visualizer, MKV Magic, Auto Subtitle, CutNotes, Road Notice, Paper y Record. Cada uno mantiene un esquema acotado de campos permitidos y un repositorio de destino fijo, y reutiliza la agregación serializada de incidencias. No amplían los datos admitidos por los informes de ASCII VJ. La [guía del relay](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/crash-relay/README.md) define los esquemas de cada ruta, la evidencia de despliegue y los límites de deduplicación; la [guía de migración](/es/docs/development/shared-desktop-services/) documenta los paquetes compartidos y los cambios posteriores a la última versión de escritorio.
+El relay compartido también tiene adaptadores con activación independiente para Podcast Visualizer, MKV Magic, Auto Subtitle, CutNotes, Road Notice, Paper y Record. Cada uno mantiene un esquema acotado de campos permitidos y un repositorio de destino fijo, y reutiliza la agregación serializada de incidencias. No amplían los datos admitidos por los informes de ASCII VJ. La [guía del relay](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/crash-relay/README.md) define los esquemas de cada ruta, la evidencia de despliegue y los límites de deduplicación; la [guía de migración](/es/docs/development/shared-desktop-services/) documenta los paquetes compartidos y los cambios posteriores a la última versión de escritorio.
 
 El adaptador de MKV Magic usa una entrada con activación independiente y una página de revisión del mismo origen en el navegador. Solo una acción explícita de Send envía la proyección de campos permitidos, limitada a 4 KiB; no se aceptan registros sin filtrar, medios, mensajes arbitrarios, credenciales ni incidentes completos de fallo. La página elimina los datos del fragmento antes de renderizar y usa CSP con nonce, no-referrer y no-store. Comparte la agregación serializada y el escritor de GitHub, pero no el código de la aplicación ni los permisos de escritorio. La app principal de MKV sigue sin permisos de red. El acceso al repositorio y las pruebas sintéticas sobre el despliegue se validan por separado; consulta la guía del relay para la retención y reversión.
 
@@ -338,7 +338,13 @@ El descubrimiento, la entrada y la salida NDI son funciones de video por LAN que
 
 Solo la ventana principal puede configurar, descubrir, leer o escribir video nativo. Rust valida las fuentes seleccionadas, los tamaños, frecuencias y nombres de salida, las dimensiones y pasos de fila, los tamaños de paquete y las generaciones antes de asignar memoria o aceptar píxeles. El almacenamiento de fotogramas y el trabajo GPU tienen límites. Los nombres de fuentes, direcciones de red, identificadores y fotogramas sin procesar quedan fuera de los informes de diagnóstico enviados. Syphon comparte texturas Metal localmente. Ambos transportes excluyen el audio.
 
-La procedencia de las bibliotecas de ejecución y los avisos incluidos están en `src-tauri/resources/video-io/`. El código anidado de Mac se firma con el equipo de la aplicación; la validación de bibliotecas permanece activada. La aceptación del lanzamiento incluye el acuerdo real de NDI 6.3.2, el comportamiento de permisos de red y firewall y la carga de las bibliotecas instaladas.
+La procedencia del runtime y los avisos incluidos se encuentran en `src-tauri/resources/video-io/`. El código anidado de Mac se firma con el equipo de la aplicación; la validación de bibliotecas no se desactiva. La aceptación de la versión incluye el acuerdo real de NDI 6.4.0, el comportamiento de los permisos de red y el firewall, y la carga del runtime instalado.
+
+<a id="opt-in-private-licensing-pilot"></a>
+
+### Piloto opcional de licencias privadas
+
+Un piloto de macOS configurado explícitamente añade activación de claves exclusivamente en Rust y actualizaciones firmadas autenticadas mediante bearer. Su endpoint se fija durante la compilación; las versiones de distribución requieren HTTPS. Solo las compilaciones de depuración aceptan HTTP de loopback. Keychain guarda el token de instalación asociado al servicio; nunca se almacena en JavaScript ni en URLs. Las consultas de estado y actualizaciones suprimen los avisos de Keychain; la activación es una acción explícita. Tanto el cliente de activación como el de actualización rechazan redirecciones, y las URLs de actualización deben permanecer en el origen del servicio fijado. El verificador de firmas existente de Tauri sigue siendo obligatorio. El renderizado y el uso de la aplicación instalada no dependen de la cobertura ni de la conectividad. La configuración de distribución predeterminada sigue usando el canal público. Consulta el [piloto de actualizaciones privadas](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/docs/proposals/software-licensing-pilot.md) para conocer sus límites y las verificaciones pendientes.
 
 
 <a id="source-material"></a>
@@ -346,4 +352,4 @@ La procedencia de las bibliotecas de ejecución y los avisos incluidos están en
 ## Material de origen
 
 Esta página se genera a partir del material fuente de ASCII VJ Remix. Fuentes primarias:
-- [docs/SECURITY.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/SECURITY.md)
+- [docs/SECURITY.md](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/docs/SECURITY.md)

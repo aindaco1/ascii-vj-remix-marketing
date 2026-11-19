@@ -19,12 +19,12 @@ Bundled media fixture paths are generalized in this public reference. Use `packa
 | `npm run test:jev-harness` | `node --test scripts/test_jev_evaluation.mjs` |
 | `npm run dev` | `vite --host 127.0.0.1 --port 8010` |
 | `npm run dev:vite` | `vite --host 127.0.0.1 --port 1420 --strictPort` |
-| `npm run build` | `vite build && node scripts/copy_static_assets.mjs` |
+| `npm run build` | `node scripts/stage_distribution_licenses.mjs && vite build && node scripts/copy_static_assets.mjs` |
 | `npm run preview` | `vite preview --host 127.0.0.1 --port 8010` |
 | `npm run check` | `npm run check:offline` |
 | `npm run check:offline` | `npm run build && node scripts/check_offline_bundle.mjs` |
-| `npm run check:desktop` | `npm run check:offline && npm run test:smoke-diagnostics && npm run check:tauri-policy && npm run check:icons && npm run check:glyph-atlas && npm run test:release-build-reuse && npm run test:spatial && npm run test:render-math && npm run test:palette-cycling && npm run test:preset-backend-contract && npm run test:preset-playlists && npm run test:canvas-readback && npm run test:renderer-fallback && npm run test:renderer-resources && npm run test:media-source-policy && npm run test:audio-reactive && npm run test:midi && npm run test:crash-report-ui && npm run test:crash-relay && npm run test:output-display && npm run test:desktop-updater && npm run test:updater-manifest && npm run test:macos-artifacts && npm run test:macos-secret-args && npm run test:windows-secret-args && npm run test:ffmpeg-policy && npm run check:ffmpeg-resources && npm run check:video-io-resources && npm run test:rust && npm run tauri:build:dev -- --debug --no-bundle` |
-| `npm run check:release` | `npm run check:offline && npm run check:tauri-policy && npm run check:icons && npm run check:glyph-atlas && npm run test:release-build-reuse && npm run test:spatial && npm run test:render-math && npm run test:palette-cycling && npm run test:preset-backend-contract && npm run test:preset-playlists && npm run test:canvas-readback && npm run test:renderer-fallback && npm run test:renderer-resources && npm run test:media-source-policy && npm run test:audio-reactive && npm run test:midi && npm run test:crash-report-ui && npm run test:crash-relay && npm run test:output-display && npm run test:desktop-updater && npm run test:updater-manifest && npm run test:macos-artifacts && npm run test:macos-secret-args && npm run test:windows-secret-args && npm run test:ffmpeg-policy && npm run check:release-runtime && npm run test:rust` |
+| `npm run check:desktop` | `npm run check:offline && npm run test:smoke-diagnostics && npm run check:tauri-policy && npm run check:icons && npm run check:glyph-atlas && npm run test:distribution && npm run test:release-build-reuse && npm run test:spatial && npm run test:render-math && npm run test:palette-cycling && npm run test:preset-backend-contract && npm run test:preset-playlists && npm run test:canvas-readback && npm run test:renderer-fallback && npm run test:renderer-resources && npm run test:media-source-policy && npm run test:audio-reactive && npm run test:midi && npm run test:crash-report-ui && npm run test:crash-relay && npm run test:output-display && npm run test:desktop-updater && npm run test:updater-manifest && npm run test:macos-artifacts && npm run test:macos-secret-args && npm run test:windows-secret-args && npm run test:ffmpeg-policy && npm run check:ffmpeg-resources && npm run check:video-io-resources && npm run test:rust && npm run tauri:build:dev -- --debug --no-bundle` |
+| `npm run check:release` | `npm run check:offline && npm run check:tauri-policy && npm run check:icons && npm run check:glyph-atlas && npm run test:distribution && npm run test:release-build-reuse && npm run test:spatial && npm run test:render-math && npm run test:palette-cycling && npm run test:preset-backend-contract && npm run test:preset-playlists && npm run test:canvas-readback && npm run test:renderer-fallback && npm run test:renderer-resources && npm run test:media-source-policy && npm run test:audio-reactive && npm run test:midi && npm run test:crash-report-ui && npm run test:crash-relay && npm run test:output-display && npm run test:desktop-updater && npm run test:updater-manifest && npm run test:macos-artifacts && npm run test:macos-secret-args && npm run test:windows-secret-args && npm run test:ffmpeg-policy && npm run check:release-runtime && npm run test:rust` |
 | `npm run check:bundle` | `node scripts/check_tauri_bundle.mjs` |
 | `npm run check:bundle:debug` | `node scripts/check_tauri_bundle.mjs --profile debug --expected-bundle-id com.asciline.remix.dev` |
 | `npm run check:bundle:release` | `node scripts/check_tauri_bundle.mjs --profile release --expected-bundle-id com.asciline.remix` |
@@ -41,7 +41,7 @@ Bundled media fixture paths are generalized in this public reference. Use `packa
 | `npm run bundle:debug` | `npm run tauri:build:dev -- --debug && npm run check:bundle:debug` |
 | `npm run bundle:test` | `npm run check:ffmpeg-release && npm run tauri:build:dev -- --bundles nsis,msi && node scripts/check_tauri_bundle.mjs --profile release --expected-bundle-id com.asciline.remix.dev && npm run check:windows-gui` |
 | `npm run bundle:test:linux` | `npm run check:ffmpeg-release && npm run tauri:build:dev -- --bundles appimage,deb,rpm && node scripts/check_tauri_bundle.mjs --profile release --expected-bundle-id com.asciline.remix.dev` |
-| `npm run bundle:release` | `npm run video-io:stage && npm run ffmpeg:build-sidecar && npm run check:release && npm run tauri:build && npm run check:bundle:release` |
+| `npm run bundle:release` | `npm run video-io:stage && npm run ffmpeg:build-sidecar && npm run check:release && npm run licenses:sources && npm run tauri:build && npm run check:bundle:release && npm run check:distribution` |
 | `npm run desktop:run-local` | `bash scripts/run_local_desktop_app.sh` |
 | `npm run desktop:run-local:foreground` | `ASCILINE_FOREGROUND=1 bash scripts/run_local_desktop_app.sh` |
 | `npm run desktop:run-local:reset` | `ASCILINE_RESET_TCC=1 bash scripts/run_local_desktop_app.sh` |
@@ -112,6 +112,10 @@ Bundled media fixture paths are generalized in this public reference. Use `packa
 | `npm run test:video-io-alpha` | `node scripts/test_video_io_alpha.mjs` |
 | `npm run check:video-io-resources` | `node scripts/check_video_io_resources.mjs` |
 | `npm run test:video-io-runtime` | `node scripts/test_video_io_runtime.mjs` |
+| `npm run test:distribution` | `node --test scripts/test_distribution_licenses.mjs` |
+| `npm run licenses:stage` | `node scripts/stage_distribution_licenses.mjs --release` |
+| `npm run licenses:sources` | `node scripts/stage_distribution_licenses.mjs --sources` |
+| `npm run check:distribution` | `node scripts/check_distribution_artifacts.mjs` |
 
 ## Command Guidance
 
@@ -119,6 +123,7 @@ Bundled media fixture paths are generalized in this public reference. Use `packa
 - Run renderer checks after changing shared math, presets, backend behavior, source adapters, transitions, audio modulation, or Pop Out behavior.
 - Run `npm run smoke:video-playback` after changing playback settings or preset ownership. See [Testing: Audio response](/docs/operations/testing/#audio-response) for coverage, local-file soak options, and native audio-device limits.
 - Run desktop/release checks after changing Tauri capabilities, updater config, signing, crash reporting, native output, or platform packaging.
+- Before packaging, follow [Distribution notices and corresponding source](/docs/operations/release/#distribution-notices-and-corresponding-source) for notice staging, source archives and `npm run check:distribution`.
 - Keep secrets and signing material out of committed source.
 
 ## TLS Trust Acceptance
@@ -129,7 +134,7 @@ Version 1.3.1 updates TLS certificate trust to reject compromised eMudhra chains
 npm run test:tls
 ```
 
-The [TLS acceptance test](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/src-tauri/tests/tls_trust.rs) uses the application's locked reqwest/rustls dependencies. It first requires a successful HTTPS response from `https://example.com/`, then requires certificate rejection (`CertDistrusted`) for all 12 disclosed eMudhra test chains. A timeout, DNS error or other connection failure does not count as certificate rejection.
+The [TLS acceptance test](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/src-tauri/tests/tls_trust.rs) uses the application's locked reqwest/rustls dependencies. It first requires a successful HTTPS response from `https://example.com/`, then requires certificate rejection (`CertDistrusted`) for all 12 disclosed eMudhra test chains. A timeout, DNS error or other connection failure does not count as certificate rejection.
 
 This test contacts public endpoints and is ignored by the ordinary Rust test run; invoke it explicitly when validating TLS dependency changes. It does not establish installed-app, updater or physical-platform acceptance.
 
@@ -138,8 +143,8 @@ This test contacts public endpoints and is ignored by the ordinary Rust test run
 ## Source Material
 
 This page is generated from ASCII VJ Remix source material. Primary sources:
-- [package.json](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/package.json)
-- [docs/CONTRIBUTORS.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/CONTRIBUTORS.md)
-- [docs/TESTING.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/TESTING.md)
-- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/CHANGELOG.md)
-- [src-tauri/tests/tls_trust.rs](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/src-tauri/tests/tls_trust.rs)
+- [package.json](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/package.json)
+- [docs/CONTRIBUTORS.md](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/docs/CONTRIBUTORS.md)
+- [docs/TESTING.md](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/docs/TESTING.md)
+- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/CHANGELOG.md)
+- [src-tauri/tests/tls_trust.rs](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/src-tauri/tests/tls_trust.rs)

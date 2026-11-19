@@ -10,6 +10,19 @@ lang: es
 
 # Registro de cambios
 
+## [1.3.4] - 2026-11-19
+
+- Recupera una vista previa WebGPU bloqueada conservando la imagen actual o el video en reproducción, el preset y la preferencia de backend. Ante fallos repetidos, usa un renderizador alternativo disponible.
+- Actualiza el runtime NDI incluido a 6.4.0 y verifica sus avisos de terceros durante la preparación de recursos.
+
+## [1.3.3] - 2026-11-09
+
+- Se añadió un piloto opcional de licencias de cortesía para macOS, con activación en Rust respaldada por Keychain y actualizaciones firmadas autenticadas; los canales de actualización predeterminados y el uso sin conexión de la aplicación instalada se mantienen sin cambios.
+
+- Incluye los avisos originales de la aplicación y sus componentes en un panel Software licenses disponible sin conexión, registra la procedencia de dominio público del video de demostración y conserva la fuente VCR a la espera de pruebas explícitas de permiso de redistribución.
+- Compila el lanzador AppImage de Linux a partir del código fuente fijado e incluye los registros completos del código fuente del runtime estático y de las bibliotecas incluidas.
+- Genera archivos con el código fuente de las dependencias fijadas y FFmpeg, y verifica los recursos legales, los hashes de las fuentes y la identidad de la versión antes de publicarla. Linux requiere además fuentes revisadas del runtime AppImage y de las bibliotecas de la distribución incluidas.
+
 ## [1.3.2] - 2026-10-29
 
 - Conserva el volumen, el silencio y la reproducción en bucle del contenido multimedia al cambiar presets visuales, reproducir listas o usar WTF. Los presets guardados en versiones anteriores ya no sobrescriben estos ajustes de reproducción.
@@ -22,12 +35,12 @@ lang: es
 
 ## [1.3.0] - 2026-10-13
 
-La evidencia de publicación y aceptación se documenta en el [registro de la versión 1.3.0](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/releases/RELEASE_1.3.0.md).
+La evidencia de publicación y aceptación se documenta en el [registro de la versión 1.3.0](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/docs/releases/RELEASE_1.3.0.md).
 
 - Añade entrada y salida nativas de video [NDI®](https://ndi.video/) en las plataformas de escritorio y entrada y salida Syphon Metal en macOS, con una entrada en vivo seleccionada y destinos NDI, Syphon y Pop Out simultáneos. Los transportes no incluyen audio.
 - Añade controles compactos de Video I/O, descubrimiento explícito de fuentes, reconexión, formatos de salida 720p/1080p y salidas compartidas desactivadas al iniciar la app.
 - Conserva la transparencia de la fuente independientemente de la selección de glifos en GPU, Canvas, salida nativa y transiciones; las escenas procedurales pueden añadir contenido visible.
-- Incluye bibliotecas nativas con versiones fijadas y sus avisos, valida su preparación y firma las bibliotecas anidadas en Mac. Consulta la [evidencia Dev y los requisitos de lanzamiento pendientes](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/releases/NATIVE_VIDEO_IO_DEV.md).
+- Incluye bibliotecas nativas con versiones fijadas y sus avisos, valida su preparación y firma las bibliotecas anidadas en Mac. Consulta la [evidencia Dev y los requisitos de lanzamiento pendientes](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/docs/releases/NATIVE_VIDEO_IO_DEV.md).
 
 NDI® es una marca registrada de Vizrt NDI AB.
 
@@ -58,7 +71,7 @@ NDI® es una marca registrada de Vizrt NDI AB.
 - Las configuraciones opcionales de escena tienen alturas e inclinaciones de cámara, velocidades y encuadres distintos, además de un corredor estrecho, un techo inclinado de catedral, una costa baja y una vista orbital giratoria. Se añaden escenas compartidas y acotadas de ruinas recursivas, Mandelbrot, Mandelbulb y Mandelbox, con controles de zoom, detalle y forma.
 - Se conservan las ediciones visuales manuales y MIDI realizadas durante una transición de preset, evitando que la transición las sobrescriba. Se mantiene el look Custom actual y la reproducción del material.
 - Se conservan Classic Camera ASCII como selección predeterminada, Auto como preferencia de backend y los límites de densidad. El contrato de asignación de presets pasa a ser de 90 en total: 62 acelerados y 28 asignados explícitamente a Canvas.
-- Se añaden comprobaciones de geometría, movimiento, paridad de píxeles entre CPU y GPU, desvanecimiento de estelas y continuidad del video. Consulte el [alcance y la aceptación de la versión](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/releases/RELEASE_1.1.0.md).
+- Se añaden comprobaciones de geometría, movimiento, paridad de píxeles entre CPU y GPU, desvanecimiento de estelas y continuidad del video. Consulte el [alcance y la aceptación de la versión](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/docs/releases/RELEASE_1.1.0.md).
 
 ## [1.0.6] - 2026-09-25
 
@@ -734,4 +747,4 @@ La versión 0.9.11 agrega paletas de proyecto con presupuesto de rendimiento, tr
 ## Material de origen
 
 Esta página se genera a partir del material fuente de ASCII VJ Remix. Fuentes primarias:
-- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/CHANGELOG.md)
+- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/CHANGELOG.md)

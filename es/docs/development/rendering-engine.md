@@ -264,6 +264,8 @@ El usuario puede anular el backend manualmente. Los controles que no se aplican 
 
 La elección del backend se resuelve una vez por construcción del renderizador en `renderers/gpu/ascii/renderer/backend-policy.js`; no se evalúa en el bucle del cuadro. Sólo un backend de Canvas seleccionado explícitamente pasa por alto la construcción GPU. La identidad de la plataforma y el agente de usuario no cambian la propiedad preestablecida: las vistas empaquetadas macOS, Windows y Linux intentan el mismo orden de reserva WebGPU, WebGL2 y luego Canvas. La selección de backend nativa de Pop Out es independiente y no cambia.
 
+La vista previa principal reutiliza la fuente multimedia actual tras la pérdida del dispositivo o dos fallos consecutivos de envío de fotogramas. Intenta reconstruir WebGPU una vez y después recurre a WebGL2 o Canvas. Durante una transición en vivo, la capa que sigue funcionando se encarga de la recuperación. Las preferencias de backend siguen bajo el control del usuario.
+
 <a id="webgpu-renderer"></a>
 
 ## Renderizador WebGPU
@@ -576,7 +578,7 @@ UC-33e DIN output
 - Captura/restaura paquetes SysEx opacos delimitados a través de la salida mioXC seleccionada sin exponer los permisos MIDI a la ventana de salida.
 - Las capas de mapeo y transporte están cubiertas por pruebas automatizadas, pero la restauración/verificación física del banco completo sigue siendo una brecha de aceptación experimental.
 
-Consulte [UC-33e y mioXC MIDI Control](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/MIDI_UC33E.md) para ver el mapa físico.
+Consulte [UC-33e y mioXC MIDI Control](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/docs/MIDI_UC33E.md) para ver el mapa físico.
 
 <a id="packaging-and-offline-runtime"></a>
 
@@ -655,4 +657,4 @@ Al cargar presets integrados normales se conservan los campos canónicos del ace
 ## Material de origen
 
 Esta página se genera a partir del material fuente de ASCII VJ Remix. Fuentes primarias:
-- [docs/RENDERING_ENGINE.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/RENDERING_ENGINE.md)
+- [docs/RENDERING_ENGINE.md](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/docs/RENDERING_ENGINE.md)

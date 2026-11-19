@@ -7,22 +7,22 @@ parent: "Overview"
 
 # Release Baseline
 
-The current release is **1.3.2**. The [Changelog](/docs/reference/changelog/) contains the full version history.
+The current release is **1.3.4**. The [Changelog](/docs/reference/changelog/) contains the full version history.
 
-[Download v1.3.2](https://github.com/aindaco1/ascii-vj-remix/releases/tag/v1.3.2).
+[Download v1.3.4](https://github.com/aindaco1/ascii-vj-remix/releases/tag/v1.3.4).
 
-See the [Feature Set](/docs/overview/features/) for current controls and the upstream [release records](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/releases/README.md) for version-specific validation and platform coverage.
+See the [Feature Set](/docs/overview/features/) for current controls and the upstream [release records](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/docs/releases/README.md) for version-specific validation and platform coverage.
 
 
 
-## 1.3.2 Release Notes
+## 1.3.4 Release Notes
 
-- Preserve media volume, mute, and looping across visual presets, playlists, and WTF. Older saved presets no longer override these playback settings.
-- Keep release builds working through FFmpeg source-host outages with a checksum-pinned mirror fallback.
+- Recover a stalled WebGPU preview while preserving the current image or playing video, preset and backend preference. Repeated failures use an available fallback renderer.
+- Update the bundled NDI runtime to 6.4.0 and verify its third-party notices during staging.
 
 
 
 ## Source Material
 
 This page is generated from ASCII VJ Remix source material. Primary sources:
-- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/CHANGELOG.md)
+- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/CHANGELOG.md)

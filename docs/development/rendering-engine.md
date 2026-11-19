@@ -332,6 +332,8 @@ packaged macOS, Windows, and Linux views all attempt the same WebGPU, WebGL2,
 then Canvas fallback order. Native Pop Out backend selection is separate and
 unchanged.
 
+The main preview reuses the current media source after device loss or two consecutive frame submission failures. It tries one WebGPU rebuild, then WebGL2 or Canvas. During a live crossfade the surviving layer handles recovery. Backend preferences remain user-owned.
+
 ## WebGPU Renderer
 
 The WebGPU renderer is the primary quality target.
@@ -762,7 +764,7 @@ UC-33e DIN output
 - The mapping and transport layers are automated-test covered, but physical
   full-bank restore/verification remains an experimental acceptance gap.
 
-See [UC-33e and mioXC MIDI Control](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/MIDI_UC33E.md) for the physical map.
+See [UC-33e and mioXC MIDI Control](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/docs/MIDI_UC33E.md) for the physical map.
 
 ## Packaging and Offline Runtime
 
@@ -939,4 +941,4 @@ WTF anchors. Both paths exclude the global limit from preset-owned parameters.
 ## Source Material
 
 This page is generated from ASCII VJ Remix source material. Primary sources:
-- [docs/RENDERING_ENGINE.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/RENDERING_ENGINE.md)
+- [docs/RENDERING_ENGINE.md](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/docs/RENDERING_ENGINE.md)

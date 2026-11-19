@@ -10,20 +10,20 @@ lang: es
 
 # Base de la versión
 
-La versión actual es **1.3.2**. El [Registro de cambios](/es/docs/reference/changelog/) contiene el historial completo de versiones.
+La versión actual es **1.3.4**. El [Registro de cambios](/es/docs/reference/changelog/) contiene el historial completo de versiones.
 
-[Descargar v1.3.2](https://github.com/aindaco1/ascii-vj-remix/releases/tag/v1.3.2).
+[Descargar v1.3.4](https://github.com/aindaco1/ascii-vj-remix/releases/tag/v1.3.4).
 
-Consulte las [Funciones](/es/docs/overview/features/) para conocer los controles actuales y los [registros de publicación del repositorio principal](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/releases/README.md) para la validación y cobertura de plataformas de cada versión.
+Consulte las [Funciones](/es/docs/overview/features/) para conocer los controles actuales y los [registros de publicación del repositorio principal](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/docs/releases/README.md) para la validación y cobertura de plataformas de cada versión.
 
 
 
-<a id="132-release-notes"></a>
+<a id="134-release-notes"></a>
 
-## Notas de la versión 1.3.2
+## Notas de la versión 1.3.4
 
-- Conserva el volumen, el silencio y la reproducción en bucle del contenido multimedia al cambiar presets visuales, reproducir listas o usar WTF. Los presets guardados en versiones anteriores ya no sobrescriben estos ajustes de reproducción.
-- Mantiene la compilación de versiones durante caídas del servidor de fuentes de FFmpeg mediante un servidor espejo que verifica la suma de comprobación fijada.
+- Recupera una vista previa WebGPU bloqueada conservando la imagen actual o el video en reproducción, el preset y la preferencia de backend. Ante fallos repetidos, usa un renderizador alternativo disponible.
+- Actualiza el runtime NDI incluido a 6.4.0 y verifica sus avisos de terceros durante la preparación de recursos.
 
 
 
@@ -32,4 +32,4 @@ Consulte las [Funciones](/es/docs/overview/features/) para conocer los controles
 ## Material de origen
 
 Esta página se genera a partir del material fuente de ASCII VJ Remix. Fuentes primarias:
-- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/CHANGELOG.md)
+- [CHANGELOG.md](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/CHANGELOG.md)

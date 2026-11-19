@@ -293,6 +293,8 @@ module SyncAsciiDocs
 
         #{source_sections("docs/USER_GUIDE.md", ["Current Capabilities", "Spatial visuals and trails (1.1.0)", "Fractal Accents"])}
 
+        For preview recovery and fallback behavior, see [Rendering Engine: Backend Selection](/docs/development/rendering-engine/#backend-selection).
+
         #{source_note(["docs/USER_GUIDE.md"])}
       MD
       release_baseline: <<~MD,
@@ -414,6 +416,7 @@ module SyncAsciiDocs
         - Run renderer checks after changing shared math, presets, backend behavior, source adapters, transitions, audio modulation, or Pop Out behavior.
         - Run `npm run smoke:video-playback` after changing playback settings or preset ownership. See [Testing: Audio response](/docs/operations/testing/#audio-response) for coverage, local-file soak options, and native audio-device limits.
         - Run desktop/release checks after changing Tauri capabilities, updater config, signing, crash reporting, native output, or platform packaging.
+        - Before packaging, follow [Distribution notices and corresponding source](/docs/operations/release/#distribution-notices-and-corresponding-source) for notice staging, source archives and `npm run check:distribution`.
         - Keep secrets and signing material out of committed source.
 
         ## TLS Trust Acceptance

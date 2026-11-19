@@ -141,7 +141,7 @@ The shared relay also has separately gated adapters for Podcast Visualizer,
 MKV Magic, Auto Subtitle, CutNotes, Road Notice, Paper, and Record. Each owns a
 bounded allowlisted schema and fixed repository routing while reusing serialized
 issue aggregation. These adapters do not broaden the ASCII desktop report
-contract. The [relay guide](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/crash-relay/README.md) owns route-specific schemas,
+contract. The [relay guide](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/crash-relay/README.md) owns route-specific schemas,
 deployment evidence, and deduplication limits; the
 [migration guide](/docs/development/shared-desktop-services/) records shared package ownership
 and changes after the latest desktop release.
@@ -479,11 +479,25 @@ texture sharing. Both transports omit audio.
 
 Runtime provenance and bundled notices are in `src-tauri/resources/video-io/`.
 Mac nested code is signed with the application's team; library validation is
-not disabled. Release acceptance includes the actual NDI 6.3.2 agreement,
+not disabled. Release acceptance includes the actual NDI 6.4.0 agreement,
 network permissions/firewall behavior and installed runtime loading.
+
+### Opt-in private licensing pilot
+
+An explicitly configured macOS pilot adds Rust-only key activation and
+bearer-authenticated signed updates. Its endpoint is pinned at build time;
+release builds require HTTPS. Only debug builds accept loopback HTTP. Keychain
+holds the service-scoped installation token, never JavaScript or URLs. Status
+and update checks suppress Keychain prompts; activation is an explicit action.
+Both activation and updater clients reject redirects, and update URLs must stay
+on the pinned service origin. The existing Tauri signature verifier remains
+mandatory. Rendering and installed use do not depend on coverage or connectivity.
+The default shipping configuration remains on the public feed. See the
+[private-update pilot](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/docs/proposals/software-licensing-pilot.md) for boundaries and
+acceptance gaps.
 
 
 ## Source Material
 
 This page is generated from ASCII VJ Remix source material. Primary sources:
-- [docs/SECURITY.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/SECURITY.md)
+- [docs/SECURITY.md](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/docs/SECURITY.md)

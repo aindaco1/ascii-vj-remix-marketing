@@ -1,6 +1,6 @@
 ---
 title: ASCII VJ Remix
-description: "ASCII VJ Remix turns video, cameras and sound into live ASCII visuals. Version 1.3.2 preserves volume, mute and looping across presets, playlists and WTF."
+description: "ASCII VJ Remix turns video, cameras and sound into live ASCII visuals. Version 1.3.4 updates native video sharing to NDI 6.4.0."
 layout: homepage
 nav_enabled: false
 nav_exclude: true
@@ -8,7 +8,7 @@ nav_exclude: true
 <section class="hero" aria-labelledby="home-title">
   <div class="hero-title-block">
     <h1 id="home-title">Simple visuals for DJs. Deep ASCII control for VJs.</h1>
-    <p class="release-status">Latest release: <a href="#release-heading"><strong>v{{ site.data.product.latest_release.version }}</strong> · Video soundtrack playback</a></p>
+    <p class="release-status">Latest release: <a href="#release-heading"><strong>v{{ site.data.product.latest_release.version }}</strong> · NDI runtime update</a></p>
   </div>
   <aside class="demo-frame demo-frame--video" aria-label="ASCII VJ Remix product preview">
     {% assign hero_webm = '/assets/videos/ascii-hero.webm' %}
@@ -67,8 +67,8 @@ nav_exclude: true
 
 <section class="section-band" aria-labelledby="release-heading">
   <p class="kicker">Latest release</p>
-  <h2 id="release-heading">v{{ site.data.product.latest_release.version }}: Keep your soundtrack playing.</h2>
-  <p class="section-intro">Version 1.3.2 keeps your video’s volume, mute and loop settings steady as you switch presets, run playlists or use WTF. Older saved presets respect those settings too. Change them whenever you want in Playback.</p>
+  <h2 id="release-heading">v{{ site.data.product.latest_release.version }}: NDI runtime update.</h2>
+  <p class="section-intro">Native video sharing now includes the NDI 6.4.0 runtime.</p>
   <p class="release-link"><a href="{{ '/docs/overview/changelog-baseline/' | relative_url }}">See what’s new in v{{ site.data.product.latest_release.version }}</a></p>
 </section>
 

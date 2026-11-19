@@ -210,4 +210,4 @@ and focus requirements.
 ## Source Material
 
 This page is generated from ASCII VJ Remix source material. Primary sources:
-- [docs/ACCESSIBILITY.md](https://github.com/aindaco1/ascii-vj-remix/blob/eebf5bdca6c88c66a04cacd9a2a8256112880fdb/docs/ACCESSIBILITY.md)
+- [docs/ACCESSIBILITY.md](https://github.com/aindaco1/ascii-vj-remix/blob/fb2c236b99373988a386535526ed42b44ca8e77f/docs/ACCESSIBILITY.md)
